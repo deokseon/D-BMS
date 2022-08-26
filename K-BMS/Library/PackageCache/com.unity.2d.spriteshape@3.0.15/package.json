@@ -1,0 +1,46 @@
+{
+  "name": "com.unity.2d.spriteshape",
+  "version": "3.0.15",
+  "unity": "2019.4",
+  "unityRelease": "0a10",
+  "displayName": "2D SpriteShape",
+  "description": "SpriteShape Runtime & Editor Package contains the tooling and the runtime component that allows you to create very organic looking spline based 2D worlds. It comes with intuitive configurator and a highly performant renderer.",
+  "keywords": [
+    "2d",
+    "shape",
+    "spriteshape",
+    "smartsprite",
+    "spline",
+    "terrain2d"
+  ],
+  "category": "2D",
+  "dependencies": {
+    "com.unity.mathematics": "1.1.0",
+    "com.unity.2d.common": "2.1.0",
+    "com.unity.2d.path": "2.1.0"
+  },
+  "samples": [
+    {
+      "displayName": "Sprite Shape Samples",
+      "description": "Samples to get started with SpriteShape",
+      "path": "Samples~/Samples"
+    },
+    {
+      "displayName": "Sprite Shape Extras",
+      "description": "This sample has utility scripts that ihas various use-cases of Spriteshape",
+      "path": "Samples~/Extras"
+    }
+  ],
+  "relatedPackages": {
+    "com.unity.2d.spriteshape.tests": "3.0.15",
+    "com.unity.2d.common.tests": "2.1.0"
+  },
+  "upmCi": {
+    "footprint": "397c178beb59a9793aa7bea351c6e85974c125d3"
+  },
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/2d.git",
+    "type": "git",
+    "revision": "1c5c22e534a838f19c0c45cc6a13e12070278f54"
+  }
+}
