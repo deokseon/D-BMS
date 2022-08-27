@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using TMPro;
 using B83.Image.BMP;
 
 public class GameUIManager : MonoBehaviour
 {
+    public bool isPrepared { get; set; } = false;
     public RawImage bga;
     public Dictionary<string, string> bgImageTable { get; set; }
     public Dictionary<string, Texture2D> bgSprites { get; set; }
@@ -103,17 +105,35 @@ public class GameUIManager : MonoBehaviour
 
     public void LoadImages()
     {
+        StartCoroutine(CLoadImages());
+    }
+
+    private IEnumerator CLoadImages()
+    {
         foreach (KeyValuePair<string, string> p in bgImageTable)
         {
-            string path = BMSGameManager.header.musicFolderPath + p.Value;
+            string path = @"file:\\" + BMSGameManager.header.musicFolderPath + p.Value;
 
             Texture2D texture2D = null;
-            texture2D = (p.Value.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase) ?
-                         loader.LoadBMP(BMSGameManager.header.bmpPath + p.Value).ToTexture2D() :
-                         Resources.Load<Texture2D>(BMSGameManager.header.musicFolderPath + p.Value.Substring(0, path.Length - 4)));
+            if (path.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
+            {
+                UnityWebRequest uwr = UnityWebRequest.Get(path);
+                yield return uwr.SendWebRequest();
+
+                texture2D = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+            }
+            else if (path.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
+                     path.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+            {
+                UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(path);
+                yield return uwr.SendWebRequest();
+
+                texture2D = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+            }
 
             bgSprites.Add(p.Key, texture2D);
         }
+        isPrepared = true;
     }
 
     public void DeleteImages()

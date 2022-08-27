@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using TMPro;
 using B83.Image.BMP;
 
@@ -80,7 +81,7 @@ public class SongSelectUIManager : MonoBehaviour
             else { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = info.header.artist + "        BPM: " + info.header.minBPM.ToString() + " ~ " + info.header.maxBPM.ToString(); }
             t.GetComponentsInChildren<TextMeshProUGUI>()[2].text = info.header.level.ToString();
 
-            LoadRawImage(t.GetComponentsInChildren<RawImage>()[0], info.header.stageFilePath, noStageImageTexture);
+            StartCoroutine(LoadRawImage(t.GetComponentsInChildren<RawImage>()[0], info.header.musicFolderPath, info.header.stageFilePath, noStageImageTexture));
 
             t.GetComponent<Toggle>().onValueChanged.AddListener((bool value) => { if (value) { DrawSongInfoUI(info); } });
             t.GetComponent<Toggle>().group = toggleGroup;
@@ -92,7 +93,7 @@ public class SongSelectUIManager : MonoBehaviour
         if (BMSFileSystem.selectedHeader == null || 
             BMSFileSystem.selectedHeader.textFolderPath.CompareTo(songInfo.header.textFolderPath) != 0)
         {
-            LoadRawImage(banner, songInfo.header.bannerPath, noBannerTexture);
+            StartCoroutine(LoadRawImage(banner, songInfo.header.musicFolderPath, songInfo.header.bannerPath, noBannerTexture));
         }
 
         BMSFileSystem.selectedHeader = songInfo.header;
@@ -109,13 +110,28 @@ public class SongSelectUIManager : MonoBehaviour
         isReady = true;
     }
 
-    public void LoadRawImage(RawImage rawImage, string path, Texture noImage)
+    public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
     {
-        if (string.IsNullOrEmpty(path)) { rawImage.texture = noImage; return; }
+        if (string.IsNullOrEmpty(path)) { rawImage.texture = noImage; yield break; }
+
+        string imagePath = $@"file:\\{musicFolderPath}{path}";
 
         Texture tex = null;
-        tex = (path.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase) ?
-                loader.LoadBMP(path).ToTexture2D() : Resources.Load<Texture>(path));
+        if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
+        {
+            UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
+            yield return uwr.SendWebRequest();
+
+            tex = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+        }
+        else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
+                 imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+        {
+            UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
+            yield return uwr.SendWebRequest();
+
+            tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+        }
 
         rawImage.texture = (tex != null ? tex : noImage);
     }

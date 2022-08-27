@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using TMPro;
 using UnityEngine;
 using B83.Image.BMP;
@@ -70,7 +71,7 @@ public class ResultUIManager : MonoBehaviour
 
         DrawStatisticsResult();
         DrawJudgeGraph();
-        DrawSongInfo();
+        StartCoroutine(DrawSongInfo());
     }
 
     void Update()
@@ -148,14 +149,29 @@ public class ResultUIManager : MonoBehaviour
         averageInputTimingText.text = $"{(int)(total * divideNoteCount)} MS";
     }
 
-    private void DrawSongInfo()
+    private IEnumerator DrawSongInfo()
     {
         if (string.IsNullOrEmpty(BMSGameManager.header.bannerPath)) { banner.texture = noBannerTexture; }
         else
         {
+            string imagePath = $@"file:\\{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.bannerPath}";
+
             Texture tex = null;
-            tex = (BMSGameManager.header.bannerPath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase) ?
-                    loader.LoadBMP(BMSGameManager.header.bannerPath).ToTexture2D() : Resources.Load<Texture>(BMSGameManager.header.bannerPath));
+            if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
+            {
+                UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
+                yield return uwr.SendWebRequest();
+
+                tex = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+            }
+            else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
+                     imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+            {
+                UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
+                yield return uwr.SendWebRequest();
+
+                tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+            }
 
             banner.texture = (tex != null ? tex : noBannerTexture);
         }

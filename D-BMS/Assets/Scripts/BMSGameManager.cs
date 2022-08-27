@@ -71,8 +71,6 @@ public class BMSGameManager : MonoBehaviour
 
     private IEnumerator PreLoad()
     {
-        gameObject.GetComponent<AudioSource>().timeSamples = 0;
-
         ObjectPool.poolInstance.Init();
 
         BMSParser.instance.Parse();
@@ -86,6 +84,9 @@ public class BMSGameManager : MonoBehaviour
 
         gauge = new Gauge();
         gameUIManager.UpdateScore(bmsResult, 0.0f, 0.0d, 0.0d, 0.0d);
+
+        gameUIManager.LoadImages();
+        soundManager.AddAudioClips();
 
         CalulateSpeed();
         bmsDrawer.DrawNotes();
@@ -103,22 +104,18 @@ public class BMSGameManager : MonoBehaviour
         coolAddScore = koolAddScore * 0.7d;
         goodAddScore = koolAddScore * 0.2d;
 
-        gameUIManager.LoadImages();
-        soundManager.AddAudioClips();
-
         if (videoPlayer.isActiveAndEnabled)
         {
             for (int i = pattern.bgaChanges.Count - 1; i > -1; i--)
             {
                 if (!pattern.bgaChanges[i].isPic)
                 {
-                    videoPlayer.clip = Resources.Load<VideoClip>(header.musicFolderPath + 
-                        (pattern.bgVideoTable[pattern.bgaChanges[i].key].Substring(0, 4)));
+                    videoPlayer.url = "file://" + header.musicFolderPath + pattern.bgVideoTable[pattern.bgaChanges[i].key];
                     break;
                 }
             }
 
-            if (videoPlayer.clip != null)
+            if (!string.IsNullOrEmpty(videoPlayer.url))
             {
                 bool errorFlag = false;
                 videoPlayer.errorReceived += (a, b) => errorFlag = true;
@@ -127,8 +124,8 @@ public class BMSGameManager : MonoBehaviour
                 isBGAVideoSupported = !errorFlag;
             }
         }
-
-        yield return wait3Sec;
+        yield return new WaitUntil(() => gameUIManager.isPrepared);
+        yield return new WaitUntil(() => soundManager.isPrepared);
 
         currentTime += (judgeAdjValue * 0.001f);
 
@@ -159,8 +156,7 @@ public class BMSGameManager : MonoBehaviour
 
         gameUIManager.UpdateInfoText();
 
-        currentNote = new int[5];
-        for (int i = 0; i < 5; i++) { currentNote[i] = 0; }
+        currentNote = new int[5] { 0, 0, 0, 0, 0 };
 
         currentScore = 0.0d;
 
