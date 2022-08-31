@@ -5282,6 +5282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00b772cddff3d748bc57c01b437c96f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pathText: {fileID: 0}
   songSelectUIManager: {fileID: 71882828}
 --- !u!1 &1791533318
 GameObject:

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Text;
+using TMPro;
 
 public class BMSFileSystem : MonoBehaviour
 {
-    public static string[] pathes;
-    public static BMSSongInfo[] songInfos;
+    public static BMSHeader[] headers;
     public static BMSHeader selectedHeader;
-    public static string selectedPath;
 
     [SerializeField]
     private SongSelectUIManager songSelectUIManager;
@@ -22,98 +21,75 @@ public class BMSFileSystem : MonoBehaviour
 #if UNITY_EDITOR
             rootPath = $@"{Directory.GetParent((Directory.GetParent(Directory.GetParent(Application.dataPath).ToString())).ToString())}\BMSFiles";
 #else
-            rootPath = $@"{Directory.GetParent(Directory.GetParent(Application.dataPath).ToString())}\BMSFiles";
+            rootPath = $@"{Directory.GetParent(Application.dataPath).ToString()}\BMSFiles";
 #endif
-            DirectoryInfo direcInfo = new DirectoryInfo($@"{rootPath}\TextFolder");
-            int len = direcInfo.GetFiles().Length;
-            songInfos = new BMSSongInfo[len];
+            FileInfo[] fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
+            int len = fileInfos.Length;
+            headers = new BMSHeader[len];
 
-            int k = 0;
-            foreach (FileInfo file in direcInfo.GetFiles())
-            {
-                ParseHeader(file.Name, out songInfos[k++]);
-            }
+            for (int i = 0; i < len; i++) { ParseHeader(fileInfos[i].Name, out headers[i]); }
         }
 
-        songSelectUIManager.DrawSongUI(songInfos);
+        songSelectUIManager.DrawSongUI(headers);
     }
 
-    private void ParseHeader(string sname, out BMSSongInfo songInfo)
+    private void ParseHeader(string sname, out BMSHeader header)
     {
-        songInfo = new BMSSongInfo();
+        header = new BMSHeader();
 
-        string[] file = File.ReadAllLines($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
+        StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
+        string line;
 
-        int len = file.Length;
-        if (len == 0) { return; }
+        header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 6)}\";
+        header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
 
-        songInfo.header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 6)}\";
-        songInfo.header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
-
-        for (int i = 0; i < len; i++)
+        while((line = reader.ReadLine()) != null)
         {
-            if (file[i].Length <= 3) { continue; }
+            if (line.Length <= 3) { continue; }
 
             try
             {
-                if (file[i].Length > 10 && file[i].Substring(0, 10).CompareTo("#PLAYLEVEL") == 0)
+                if (line.Length > 10 && line.Substring(0, 10).CompareTo("#PLAYLEVEL") == 0)
                 {
                     int lvl = 0;
-                    int.TryParse(file[i].Substring(11), out lvl);
-                    songInfo.header.level = lvl;
+                    int.TryParse(line.Substring(11), out lvl);
+                    header.level = lvl;
                 }
-                else if (file[i].Length > 11 && file[i].Substring(0, 10).CompareTo("#STAGEFILE") == 0) songInfo.header.stageFilePath = file[i].Substring(11);
-                else if (file[i].Length >= 9 && file[i].Substring(0, 9).CompareTo("#SUBTITLE") == 0) songInfo.header.subTitle = file[i].Substring(10).Trim('[', ']');
-                else if (file[i].Length >= 8 && file[i].Substring(0, 8).CompareTo("#BACKBMP") == 0) songInfo.header.backBMPPath = file[i].Substring(9);
-                else if (file[i].Length >= 8 && file[i].Substring(0, 7).CompareTo("#PLAYER") == 0) songInfo.header.player = file[i][8] - '0';
-                else if (file[i].Length >= 7 && file[i].Substring(0, 7).CompareTo("#ARTIST") == 0) songInfo.header.artist = file[i].Substring(8);
-                else if (file[i].Length >= 7 && file[i].Substring(0, 7).CompareTo("#BANNER") == 0) songInfo.header.bannerPath = file[i].Substring(8);
-                else if (file[i].Length >= 7 && file[i].Substring(0, 7).CompareTo("#LNTYPE") == 0) songInfo.header.lnType |= (Lntype)(1 << (file[i][8] - '0'));
-                else if (file[i].Length >= 7 && file[i].Substring(0, 6).CompareTo("#GENRE") == 0) songInfo.header.genre = file[i].Substring(7);
-                else if (file[i].Length >= 6 && file[i].Substring(0, 6).CompareTo("#TITLE") == 0)
+                else if (line.Length > 11 && line.Substring(0, 10).CompareTo("#STAGEFILE") == 0) { header.stageFilePath = line.Substring(11); }
+                else if (line.Length >= 9 && line.Substring(0, 9).CompareTo("#SUBTITLE") == 0) { header.subTitle = line.Substring(10).Trim('[', ']'); }
+                else if (line.Length >= 8 && line.Substring(0, 8).CompareTo("#BACKBMP") == 0) { header.backBMPPath = line.Substring(9); }
+                else if (line.Length >= 7 && line.Substring(0, 7).CompareTo("#ARTIST") == 0) { header.artist = line.Substring(8); }
+                else if (line.Length >= 7 && line.Substring(0, 7).CompareTo("#BANNER") == 0) { header.bannerPath = line.Substring(8); }
+                else if (line.Length >= 7 && line.Substring(0, 7).CompareTo("#LNTYPE") == 0) { header.lnType |= (Lntype)(1 << (line[8] - '0')); }
+                else if (line.Length >= 6 && line.Substring(0, 6).CompareTo("#TITLE") == 0)
                 {
-                    songInfo.header.title = file[i].Substring(7);
-                    if (!string.IsNullOrEmpty(songInfo.header.title))
+                    header.title = line.Substring(7);
+                    if (!string.IsNullOrEmpty(header.title))
                     {
                         int idx;
-                        if ((idx = songInfo.header.title.LastIndexOf('[')) >= 0)
+                        if ((idx = header.title.LastIndexOf('[')) >= 0)
                         {
-                            string name = songInfo.header.title.Remove(idx);
-                            if (string.IsNullOrEmpty(songInfo.songName) || songInfo.songName.Length > name.Length)
-                                songInfo.songName = name;
-                            songInfo.header.subTitle = songInfo.header.title.Substring(idx).Trim('[', ']');
-                        }
-                        else
-                        {
-                            if (string.IsNullOrEmpty(songInfo.songName) || songInfo.songName.Length > songInfo.header.title.Length)
-                                songInfo.songName = songInfo.header.title;
+                            header.subTitle = header.title.Substring(idx).Trim('[', ']');
+                            header.title = header.title.Remove(idx);
                         }
                     }
-                    songInfo.header.title = songInfo.songName;
                 }
-                else if (file[i].Length >= 6 && file[i].Substring(0, 6).CompareTo("#TOTAL") == 0)
+                else if (line.Length >= 6 && line.Substring(0, 4).CompareTo("#BPM") == 0)
                 {
-                    float tot = 160;
-                    float.TryParse(file[i].Substring(7), out tot);
-                    songInfo.header.total = tot;
-                }
-                else if (file[i].Length >= 5 && file[i].Substring(0, 5).CompareTo("#RANK") == 0) songInfo.header.rank = int.Parse(file[i].Substring(6));
-                else if (file[i].Length >= 6 && file[i].Substring(0, 4).CompareTo("#BPM") == 0)
-                {
-                    if (file[i][4] == ' ')
+                    if (line[4] == ' ')
                     {
-                        songInfo.header.bpm = double.Parse(file[i].Substring(5));
-                        songInfo.header.minBPM = songInfo.header.bpm;
-                        songInfo.header.maxBPM = songInfo.header.bpm;
+                        header.bpm = double.Parse(line.Substring(5));
+                        header.minBPM = header.bpm;
+                        header.maxBPM = header.bpm;
                     }
                     else
                     {
-                        double tempBPM = double.Parse(file[i].Substring(7));
-                        if (songInfo.header.minBPM > tempBPM) { songInfo.header.minBPM = tempBPM; }
-                        if (songInfo.header.maxBPM < tempBPM) { songInfo.header.maxBPM = tempBPM; }
+                        double tempBPM = double.Parse(line.Substring(7));
+                        if (header.minBPM > tempBPM) { header.minBPM = tempBPM; }
+                        if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
                     }
                 }
-                else if (file[i].Length >= 30 && file[i].CompareTo("*---------------------- MAIN DATA FIELD") == 0) break;
+                else if (line.Length >= 30 && line.CompareTo("*---------------------- MAIN DATA FIELD") == 0) break;
             }
             catch (System.Exception e)
             {

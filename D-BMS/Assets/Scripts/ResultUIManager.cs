@@ -173,7 +173,7 @@ public class ResultUIManager : MonoBehaviour
                 tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
             }
 
-            banner.texture = (tex != null ? tex : noBannerTexture);
+            banner.texture = (tex ?? noBannerTexture);
         }
 
         titleText.text = BMSGameManager.header.title;

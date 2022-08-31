@@ -181,7 +181,7 @@ public class BMSParser : MonoBehaviour
                     }
                     if (header.lnType.HasFlag(Lntype.LNOBJ) && keySound == header.lnobj)
                     {
-                        PushLongNoteTick(line, bar, (((double)(k - 7) / 2.0d) / (double)beatLength) * 4.0d);
+                        PushLongNoteTick(line, bar, (((k - 7) / 2.0d) / beatLength) * 4.0d);
                         pattern.AddNote(line, bar, (k - 7) / 2, beatLength, keySound, 1);
                     }
                     else

@@ -71,7 +71,8 @@ public class BMSDrawer : MonoBehaviour
         }
 
         int barLineCount = pattern.barLine.noteList.Count;
-        for (int i = barLineCount - 1; i >= barLineCount - 10; i--)
+        int loopCount = barLineCount - ObjectPool.poolInstance.maxBarCount;
+        for (int i = barLineCount - 1; i >= loopCount; i--)
         {
             if(i < 0) { break; }
             Note bar = pattern.barLine.noteList[i];

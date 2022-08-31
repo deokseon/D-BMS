@@ -65,46 +65,46 @@ public class SongSelectUIManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
 
-    public void DrawSongUI(BMSSongInfo[] songInfos)
+    public void DrawSongUI(BMSHeader[] headers)
     {
         int i = 0;
-        songViewport.sizeDelta = new Vector2(0, 90 * songInfos.Length);
-        foreach (BMSSongInfo info in songInfos)
+        songViewport.sizeDelta = new Vector2(0, 90 * headers.Length);
+        foreach (BMSHeader header in headers)
         {
             GameObject t = Instantiate(songButtonPrefab, songViewport);
             t.gameObject.name = i.ToString();
 
             t.transform.localPosition = new Vector3(0, 40 - (89 * (++i)));
 
-            t.GetComponentsInChildren<TextMeshProUGUI>()[0].text = info.songName + "  <size=25>" + info.header.subTitle + "</size>";
-            if (info.header.maxBPM == info.header.minBPM) { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = info.header.artist + "        BPM: " + info.header.bpm.ToString(); }
-            else { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = info.header.artist + "        BPM: " + info.header.minBPM.ToString() + " ~ " + info.header.maxBPM.ToString(); }
-            t.GetComponentsInChildren<TextMeshProUGUI>()[2].text = info.header.level.ToString();
+            t.GetComponentsInChildren<TextMeshProUGUI>()[0].text = header.title + "  <size=25>" + header.subTitle + "</size>";
+            if (header.maxBPM == header.minBPM) { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = header.artist + "        BPM: " + header.bpm.ToString(); }
+            else { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = header.artist + "        BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
+            t.GetComponentsInChildren<TextMeshProUGUI>()[2].text = header.level.ToString();
 
-            StartCoroutine(LoadRawImage(t.GetComponentsInChildren<RawImage>()[0], info.header.musicFolderPath, info.header.stageFilePath, noStageImageTexture));
+            StartCoroutine(LoadRawImage(t.GetComponentsInChildren<RawImage>()[0], header.musicFolderPath, header.stageFilePath, noStageImageTexture));
 
-            t.GetComponent<Toggle>().onValueChanged.AddListener((bool value) => { if (value) { DrawSongInfoUI(info); } });
+            t.GetComponent<Toggle>().onValueChanged.AddListener((bool value) => { if (value) { DrawSongInfoUI(header); } });
             t.GetComponent<Toggle>().group = toggleGroup;
         }
     }
 
-    public void DrawSongInfoUI(BMSSongInfo songInfo)
+    public void DrawSongInfoUI(BMSHeader header)
     {
         if (BMSFileSystem.selectedHeader == null || 
-            BMSFileSystem.selectedHeader.textFolderPath.CompareTo(songInfo.header.textFolderPath) != 0)
+            BMSFileSystem.selectedHeader.textFolderPath.CompareTo(header.textFolderPath) != 0)
         {
-            StartCoroutine(LoadRawImage(banner, songInfo.header.musicFolderPath, songInfo.header.bannerPath, noBannerTexture));
+            StartCoroutine(LoadRawImage(banner, header.musicFolderPath, header.bannerPath, noBannerTexture));
         }
 
-        BMSFileSystem.selectedHeader = songInfo.header;
+        BMSFileSystem.selectedHeader = header;
 
-        if (titleText.text.CompareTo(songInfo.songName) != 0)
+        if (titleText.text.CompareTo(header.title) != 0)
         {
-            titleText.text = songInfo.songName;
-            artistText.text = songInfo.header.artist;
-            if (songInfo.header.minBPM == songInfo.header.maxBPM) { bpmText.text = "BPM: " + songInfo.header.bpm.ToString(); }
-            else { bpmText.text = "BPM: " + songInfo.header.minBPM.ToString() + " ~ " + songInfo.header.maxBPM.ToString(); }
-            levelText.text = songInfo.header.level.ToString();
+            titleText.text = header.title;
+            artistText.text = header.artist;
+            if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }
+            else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
+            levelText.text = header.level.ToString();
         }
 
         isReady = true;
@@ -133,7 +133,7 @@ public class SongSelectUIManager : MonoBehaviour
             tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
         }
 
-        rawImage.texture = (tex != null ? tex : noImage);
+        rawImage.texture = (tex ?? noImage);
     }
 
     public void NoteSpeedClick(float value)

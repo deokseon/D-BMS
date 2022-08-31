@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    private List<Queue<GameObject>> notePool;
-    private Queue<GameObject> barPool;
+    private static List<Queue<GameObject>> notePool;
+    private static Queue<GameObject> barPool;
     public int maxNoteCount;
     public int maxBarCount;
     [SerializeField]
@@ -24,10 +24,12 @@ public class ObjectPool : MonoBehaviour
 
         DontDestroyOnLoad(this.gameObject);
 
-        notePool = new List<Queue<GameObject>>();
-        for (int i = 0; i < 5; i++) { notePool.Add(new Queue<GameObject>()); }
-
-        barPool = new Queue<GameObject>();
+        if (notePool == null)
+        {
+            notePool = new List<Queue<GameObject>>();
+            for (int i = 0; i < 5; i++) { notePool.Add(new Queue<GameObject>()); }
+        }
+        if (barPool == null) { barPool = new Queue<GameObject>(); }
 
         notePoolParent = this.transform;
 

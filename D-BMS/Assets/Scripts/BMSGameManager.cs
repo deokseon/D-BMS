@@ -66,7 +66,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void CalulateSpeed()
     {
-        gameSpeed = (userSpeed * 120.3f / (float)header.bpm);
+        gameSpeed = (userSpeed * 131.3f / (float)header.bpm);
     }
 
     private IEnumerator PreLoad()
