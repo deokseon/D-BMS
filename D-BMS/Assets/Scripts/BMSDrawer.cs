@@ -45,7 +45,7 @@ public class BMSDrawer : MonoBehaviour
                     longNote.transform.position = (notePosition + prev) * 0.5f;
                     longNote.transform.localScale = new Vector3(0.3f, ((notePosition - prev).y - 0.3f) * 1.219512f, 1.0f);
                 }
-                else if (j > 0 && pattern.lines[i].noteList[j - 1].extra == 2)
+                else if (j > 0 && (pattern.lines[i].noteList[j - 1].extra == 2 || pattern.lines[i].noteList[j - 1].extra == 1))
                 {
                     note = Instantiate(longNoteEdgePrefab[i % 2], noteParent);
                 }

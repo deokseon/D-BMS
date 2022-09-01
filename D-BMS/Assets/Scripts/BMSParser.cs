@@ -173,6 +173,7 @@ public class BMSParser : MonoBehaviour
                     {
                         if ((lnBits & (1 << line)) != 0)
                         {
+                            PushLongNoteTick(line, bar, (((k - 7) / 2.0d) / beatLength) * 4.0d);
                             pattern.AddNote(line, bar, (k - 7) / 2, beatLength, -1, 1);
                             lnBits &= ~(1 << line);
                             continue;
@@ -248,7 +249,6 @@ public class BMSParser : MonoBehaviour
                 else if (bmsFile[i][5] == '8')
                 {
                     beatLength = (bmsFile[i].Length - 7) / 2;
-                    //int idx = Decode36(s.Substring(7, 2)) - 1;
                     int iLen = bmsFile[i].Length - 1;
                     for (int k = 7; k < iLen; k += 2)
                     {
@@ -258,7 +258,7 @@ public class BMSParser : MonoBehaviour
                 }
             }
         }
-        len = pattern.barCount + 2;
+        len = pattern.barCount + 4;
         for (int i = 0; i < len; i++)
         {
             pattern.AddBar(i, 0, 1, 0, 3);
@@ -267,10 +267,18 @@ public class BMSParser : MonoBehaviour
 
     private void PushLongNoteTick(int line, int bar, double beat)
     {
+        pattern.lines[line].noteList.Sort((x, y) => {
+            int ret1 = x.bar.CompareTo(y.bar);
+            return ret1 != 0 ? ret1 : x.beat.CompareTo(y.beat);
+        });
+
         double currentBeat = 0.0d;
         int currentBar = pattern.lines[line].noteList.Peek.bar;
         double prevBeat = pattern.lines[line].noteList.Peek.beat;
         double endBeat = beat - 0.25d;
+        if (endBeat < 0.0d) { endBeat += 4.0d; bar--; }
+
+        if (currentBar == bar && prevBeat >= endBeat) { return; }
 
         while (true)
         {
@@ -281,9 +289,10 @@ public class BMSParser : MonoBehaviour
             {
                 currentBeat = 0.0d;
                 currentBar++;
+                prevBeat = -4.0d;
             }
 
-            if (currentBar == bar && currentBeat > endBeat) { break; }
+            if ((currentBar == bar && currentBeat > endBeat) || currentBar > bar) { break; }
 
             pattern.AddNote(line, currentBar, currentBeat, 0, 2);
         }

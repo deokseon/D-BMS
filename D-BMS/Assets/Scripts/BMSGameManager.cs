@@ -100,7 +100,7 @@ public class BMSGameManager : MonoBehaviour
         bmsResult.noteCount = pattern.noteCount;
         bmsResult.judgeList = new List<KeyValuePair<int, double>>(bmsResult.noteCount);
 
-        koolAddScore = 1100000.0d / pattern.noteCount;
+        koolAddScore = 1100000.0d / pattern.noteCount * 1000;
         coolAddScore = koolAddScore * 0.7d;
         goodAddScore = koolAddScore * 0.2d;
 
@@ -295,7 +295,7 @@ public class BMSGameManager : MonoBehaviour
 
         UpdateResult(result);
 
-        if (len > 0) { if (l.noteList.Peek.extra != 2) { longNotePress[idx].SetActive(false); } }
+        if ((len > 0 && l.noteList.Peek.extra != 2) || len <= 0) { longNotePress[idx].SetActive(false); }
     }
 
     private void PlayNotes()
@@ -405,7 +405,7 @@ public class BMSGameManager : MonoBehaviour
         }
 
         gameUIManager.UpdateScore(bmsResult, (gauge.HP - currentHP) * (float)divide60,
-            accuracySum / currentCount, currentScore, currentCount * koolAddScore);
+            accuracySum / currentCount, currentScore * 0.001f, currentCount * koolAddScore * 0.001f);
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount);
@@ -445,7 +445,7 @@ public class BMSGameManager : MonoBehaviour
                 keyInput.KeyDisable();
 
                 bmsResult.accuracy = accuracySum / pattern.noteCount;
-                bmsResult.score = currentScore;
+                bmsResult.score = currentScore * 0.001f;
 
                 gameUIManager.SaveJudgeList(bmsResult);
 
