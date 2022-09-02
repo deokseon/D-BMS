@@ -47,6 +47,13 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private Animator[] earlyLateAnimator;
 
+    private int currentIdx;
+    private float[] yPos;
+    [SerializeField]
+    private Sprite[] rank;
+    [SerializeField]
+    private Image rankImage;
+    private Transform rankImageTransform;
     [SerializeField]
     private RectTransform scoreStick;
     [SerializeField]
@@ -95,6 +102,10 @@ public class GameUIManager : MonoBehaviour
         maxComboText.text = maxCombo.ToString("D5");
 
         loader = new BMPLoader();
+
+        currentIdx = -1;
+        rankImageTransform = rankImage.transform;
+        yPos = new float[10] { 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
 
         endCanvas.enabled = false;
 
@@ -199,6 +210,24 @@ public class GameUIManager : MonoBehaviour
         under60 = (maxScore > 600000.0d ? 600000.0d : maxScore) * divide20000;
         up60 = (maxScore > 600000.0d ? maxScore - 600000.0d : 0) * divide6250;
         maxScoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)(under60 + up60));
+
+        int idx = -1;
+        if (score >= 1090000) { idx = 9; }
+        else if (score >= 1050000 && score < 1090000) { idx = 8; }
+        else if (score >= 1025000 && score < 1050000) { idx = 7; }
+        else if (score >= 1000000 && score < 1025000) { idx = 6; }
+        else if (score >= 950000 && score < 1000000) { idx = 5; }
+        else if (score >= 900000 && score < 950000) { idx = 4; }
+        else if (score >= 850000 && score < 900000) { idx = 3; }
+        else if (score >= 750000 && score < 850000) { idx = 2; }
+        else if (score >= 650000 && score < 750000) { idx = 1; }
+        else if (score >= 550000 && score < 650000) { idx = 0; }
+        if (idx != -1 && currentIdx != idx)
+        {
+            rankImage.sprite = rank[idx];
+            rankImageTransform.localPosition = new Vector3(-377.5f, yPos[idx], 0.0f);
+            currentIdx = idx;
+        }
     }
 
     private IEnumerator ChangeHPBarValue(float hpChange)

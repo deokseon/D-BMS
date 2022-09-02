@@ -48,12 +48,10 @@ SpriteAtlas:
     - {fileID: 102900000, guid: 13cd27a6e8a0e3c4eafdf460c3cde532, type: 3}
     - {fileID: 102900000, guid: af863915b4d760442a0cc77504727ca3, type: 3}
     - {fileID: 102900000, guid: e54e7b004fc05144db11457c087d3c04, type: 3}
+    - {fileID: 102900000, guid: 642d449083ad00d469ac511b0a1c0c2a, type: 3}
     - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
-    - {fileID: 21300000, guid: 921e2500a2f76e24bbf7cee71eb6fd36, type: 3}
-    - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
-    - {fileID: 21300000, guid: d3680d208586ac74b98a0e4bd8245589, type: 3}
-    - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
     - {fileID: 21300000, guid: f60e5d6f996009b409f86c1b043ecf43, type: 3}
+    - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -83,11 +81,14 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d3c521d3b4dd36c4193df6d5e2b2a1b2, type: 3}
   - {fileID: 21300000, guid: 0dd70c3497ea47b4b80af6894d773b40, type: 3}
   - {fileID: 21300000, guid: 4f918384dd0c9b349893544ccac13839, type: 3}
+  - {fileID: 21300000, guid: 3c5c2b846c568d64bbfacebdf192ab57, type: 3}
   - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
   - {fileID: 21300000, guid: 642a18c4799bace4f8b876c4718e4519, type: 3}
   - {fileID: 21300000, guid: 40affcc422f7c2148ad59472822a46e0, type: 3}
   - {fileID: 21300000, guid: ba7195d4b0f251248974f3e85f1d7f93, type: 3}
   - {fileID: 21300000, guid: 2363f9e45f191fa44bf15284b0d74a8a, type: 3}
+  - {fileID: 21300000, guid: 75ce4ef4455276b479a847b4dc8ab1e1, type: 3}
+  - {fileID: 21300000, guid: 1ce33175f1861664e8b7347c6027db55, type: 3}
   - {fileID: 21300000, guid: 13398ac5b488cda48a6ffd506ff27159, type: 3}
   - {fileID: 21300000, guid: 12495cc52ef3b7d4e86d19a6fde86e73, type: 3}
   - {fileID: 21300000, guid: 9ecbc7164853f1b479186ee53bfd28a8, type: 3}
@@ -97,6 +98,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
   - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
   - {fileID: 21300000, guid: 7a1f1f18fca76c94c863cc3aa18ccefc, type: 3}
+  - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
+  - {fileID: 21300000, guid: 3ee4bf68b9684a540bc4ec8389733d65, type: 3}
   - {fileID: 21300000, guid: a4350798d33670649abcf492112808dd, type: 3}
   - {fileID: 21300000, guid: 541836b8b9e52a944a89a341e028d314, type: 3}
   - {fileID: 21300000, guid: 081b0a09fe0ce0f44a6993a090243749, type: 3}
@@ -107,6 +110,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
   - {fileID: 21300000, guid: 479bd4e95512f0f4f8cdad63b721f784, type: 3}
   - {fileID: 21300000, guid: 55ae37e9457aa4944998b1e48c727d8f, type: 3}
+  - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
   - {fileID: 21300000, guid: b8606c3ae4328b1449cef199ce7086b0, type: 3}
   - {fileID: 21300000, guid: c1c4963b4c57d2d4eae8c7f46f5f6f1b, type: 3}
   - {fileID: 21300000, guid: 898ec89b045fb9b4692854b030a45193, type: 3}
@@ -122,11 +126,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
   - {fileID: 21300000, guid: 910ddd2ef90a08841a6fce1add891c37, type: 3}
   - {fileID: 21300000, guid: fd8c0e8eea3bc2642badd046bf89940b, type: 3}
+  - {fileID: 21300000, guid: 0170ccaeac3eca648bb9a306f19876f7, type: 3}
   - {fileID: 21300000, guid: 5c975cbe888874542826b715a7834909, type: 3}
   - {fileID: 21300000, guid: 1272b6ee88088494ea59a1589a13a2d2, type: 3}
   - {fileID: 21300000, guid: be2d310f2a32465428f312a3811bde50, type: 3}
   - {fileID: 21300000, guid: 198cb62fc998b7a438faf5cc038cb62e, type: 3}
   - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
+  - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
   - {fileID: 21300000, guid: f60e5d6f996009b409f86c1b043ecf43, type: 3}
   - {fileID: 21300000, guid: 3abcf6ffbbb665b4db851d2e8eb75198, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -156,11 +162,14 @@ SpriteAtlas:
   - kool_1
   - LightingN-5
   - longNoteEdge1
+  - S++
   - background
   - LightingN-9
   - NoteBombEffect16
   - LightingN-18
   - NoteBombEffect12
+  - A+
+  - B
   - LATE
   - NoteBombEffect4
   - note2
@@ -170,6 +179,8 @@ SpriteAtlas:
   - KeyPress
   - key2_Init
   - LightingN-11
+  - D
+  - S+
   - NoteBombEffect2
   - NoteBombEffect6
   - NoteBombEffect8
@@ -180,6 +191,7 @@ SpriteAtlas:
   - note1
   - Miss_0
   - kool_3
+  - F
   - NoteBombEffect18
   - NoteBombEffect11
   - HPbar
@@ -195,11 +207,13 @@ SpriteAtlas:
   - key1_Init
   - LightingN-10
   - LightingN-12
+  - C
   - Panel_Right
   - Fail_0
   - judgeLine
   - NoteBombEffect7
   - BGA_Frame
+  - E
   - Text_Frame
   - LightingN-3
   m_Tag: GameSceneAtlas
