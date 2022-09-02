@@ -63,11 +63,15 @@ public class ResultUIManager : MonoBehaviour
 
     private BMPLoader loader;
 
+    private BMSHeader header;
+    private BMSResult bmsResult;
+
     public void Awake()
     {
-        Resources.UnloadUnusedAssets();
+        loader = new BMPLoader();
 
-        loader = new BMPLoader(); 
+        header = BMSGameManager.header;
+        bmsResult = BMSGameManager.bmsResult;
 
         DrawStatisticsResult();
         DrawJudgeGraph();
@@ -84,21 +88,21 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawStatisticsResult()
     {
-        totalnotesText.text = BMSGameManager.bmsResult.noteCount.ToString();
-        koolText.text = BMSGameManager.bmsResult.koolCount.ToString();
-        coolText.text = BMSGameManager.bmsResult.coolCount.ToString();
-        goodText.text = BMSGameManager.bmsResult.goodCount.ToString();
-        missText.text = BMSGameManager.bmsResult.missCount.ToString();
-        failText.text = BMSGameManager.bmsResult.failCount.ToString();
-        accuracyText.text = BMSGameManager.bmsResult.accuracy.ToString("P");
-        maxComboText.text = BMSGameManager.bmsResult.maxCombo.ToString();
-        scoreText.text = ((int)BMSGameManager.bmsResult.score).ToString();
+        totalnotesText.text = bmsResult.noteCount.ToString();
+        koolText.text = bmsResult.koolCount.ToString();
+        coolText.text = bmsResult.coolCount.ToString();
+        goodText.text = bmsResult.goodCount.ToString();
+        missText.text = bmsResult.missCount.ToString();
+        failText.text = bmsResult.failCount.ToString();
+        accuracyText.text = bmsResult.accuracy.ToString("P");
+        maxComboText.text = bmsResult.maxCombo.ToString();
+        scoreText.text = ((int)bmsResult.score).ToString();
         noteSpeedText.text = BMSGameManager.userSpeed.ToString();
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
-        levelText.text = BMSGameManager.header.level.ToString();
+        levelText.text = header.level.ToString();
 
         int idx = 0;
-        int score = ((int)BMSGameManager.bmsResult.score);
+        int score = ((int)bmsResult.score);
         if (score >= 1090000) { idx = 0; }  // S+++
         else if (score >= 1050000 && score < 1090000) { idx = 1; }  // S++
         else if (score >= 1025000 && score < 1050000) { idx = 2; }  // S+
@@ -116,12 +120,11 @@ public class ResultUIManager : MonoBehaviour
         { 
             playLamp.SetActive(true);
         }
-        else if (BMSGameManager.bmsResult.missCount > 0 || 
-                 BMSGameManager.bmsResult.failCount > 0) 
+        else if (bmsResult.missCount > 0 || bmsResult.failCount > 0) 
         { 
             clearLamp.SetActive(true);
         }
-        else if (BMSGameManager.bmsResult.goodCount > 0)
+        else if (bmsResult.goodCount > 0)
         { 
             nomissLamp.SetActive(true);
         }
@@ -133,15 +136,15 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawJudgeGraph()
     {
-        int len = BMSGameManager.bmsResult.judgeList.Count;
-        double divideNoteCount = 1.0d / BMSGameManager.bmsResult.noteCount;
+        int len = bmsResult.judgeList.Count;
+        double divideNoteCount = 1.0d / bmsResult.noteCount;
         double total = 0;
         for (int i = 0; i < len; i++)
         {
-            double y = BMSGameManager.bmsResult.judgeList[i].Value;
+            double y = bmsResult.judgeList[i].Value;
             total += y;
             if (Utility.Dabs(y) > 115) { continue; }
-            double x = (BMSGameManager.bmsResult.judgeList[i].Key * divideNoteCount * 600) - 300;
+            double x = (bmsResult.judgeList[i].Key * divideNoteCount * 600) - 300;
 
             GameObject tempDot = Instantiate(dot, dotParent);
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);
@@ -151,10 +154,10 @@ public class ResultUIManager : MonoBehaviour
 
     private IEnumerator DrawSongInfo()
     {
-        if (string.IsNullOrEmpty(BMSGameManager.header.bannerPath)) { banner.texture = noBannerTexture; }
+        if (string.IsNullOrEmpty(header.bannerPath)) { banner.texture = noBannerTexture; }
         else
         {
-            string imagePath = $@"file:\\{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.bannerPath}";
+            string imagePath = $@"file:\\{header.musicFolderPath}{header.bannerPath}";
 
             Texture tex = null;
             if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
@@ -176,9 +179,9 @@ public class ResultUIManager : MonoBehaviour
             banner.texture = (tex ?? noBannerTexture);
         }
 
-        titleText.text = BMSGameManager.header.title;
-        artistText.text = BMSGameManager.header.artist;
-        if (BMSGameManager.header.minBPM == BMSGameManager.header.maxBPM) { bpmText.text = "BPM: " + BMSGameManager.header.bpm.ToString(); }
-        else { bpmText.text = "BPM: " + BMSGameManager.header.minBPM.ToString() + " ~ " + BMSGameManager.header.maxBPM.ToString(); }
+        titleText.text = header.title;
+        artistText.text = header.artist;
+        if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }
+        else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
     }
 }

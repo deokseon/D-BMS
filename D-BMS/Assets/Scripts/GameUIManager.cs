@@ -136,11 +136,6 @@ public class GameUIManager : MonoBehaviour
         isPrepared = true;
     }
 
-    public void DeleteImages()
-    {
-        bgSprites = null;
-    }
-
     public void ChangeBGA(string key)
     {
         if (bgSprites.ContainsKey(key))

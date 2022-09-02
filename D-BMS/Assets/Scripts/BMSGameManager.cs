@@ -29,6 +29,7 @@ public class BMSGameManager : MonoBehaviour
 
     private double currentBeat = 0;
     private double currentScrollTime = 0;
+    private int currentTimeSample = 0;
     private double currentTime = 0;
     private double accuracySum = 0;
     private int currentCount = 0;
@@ -66,7 +67,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void CalulateSpeed()
     {
-        gameSpeed = (userSpeed * 131.3f / (float)header.bpm);
+        gameSpeed = (userSpeed * 120.0f / (float)header.bpm);
     }
 
     private IEnumerator PreLoad()
@@ -184,9 +185,12 @@ public class BMSGameManager : MonoBehaviour
             pattern.bgaChanges.RemoveLast();
         }
 
-        double frameTime = timeSampleAudio.timeSamples * divide44100 - currentTime;
         PlayNotes();
-        currentTime += frameTime;
+
+        int tempTimeSample = timeSampleAudio.timeSamples;
+        double frameTime = (tempTimeSample - currentTimeSample) * divide44100;
+        currentTimeSample = tempTimeSample;
+        currentTime = currentTimeSample * divide44100;
 
         double avg = currentBPM * frameTime;
 
@@ -438,9 +442,6 @@ public class BMSGameManager : MonoBehaviour
                 (isBGAVideoSupported && !videoPlayer.isPlaying)))
             {
                 Time.fixedDeltaTime = 0.02f;
-
-                soundManager.DeleteAudioClips();
-                gameUIManager.DeleteImages();
 
                 keyInput.KeyDisable();
 

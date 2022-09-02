@@ -275,7 +275,7 @@ public class BMSParser : MonoBehaviour
         double currentBeat = 0.0d;
         int currentBar = pattern.lines[line].noteList.Peek.bar;
         double prevBeat = pattern.lines[line].noteList.Peek.beat;
-        double endBeat = beat - 0.25d;
+        double endBeat = beat - 0.125d;
         if (endBeat < 0.0d) { endBeat += 4.0d; bar--; }
 
         if (currentBar == bar && prevBeat >= endBeat) { return; }

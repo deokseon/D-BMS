@@ -64,11 +64,6 @@ public class SoundManager : MonoBehaviour
         isPrepared = true;
     }
 
-    public void DeleteAudioClips()
-    {
-        clips = null;
-    }
-
     public void PlayKeySound(int key, float volume = 1.0f)
     {
         if (key == 0) { return; }
