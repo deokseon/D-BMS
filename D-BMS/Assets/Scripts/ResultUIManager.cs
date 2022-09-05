@@ -60,6 +60,8 @@ public class ResultUIManager : MonoBehaviour
     private TextMeshProUGUI artistText;
     [SerializeField]
     private TextMeshProUGUI bpmText;
+    [SerializeField]
+    private Animator fadeOutAnimator;
 
     private BMPLoader loader;
 
@@ -76,6 +78,8 @@ public class ResultUIManager : MonoBehaviour
         DrawStatisticsResult();
         DrawJudgeGraph();
         StartCoroutine(DrawSongInfo());
+
+        fadeOutAnimator.SetTrigger("FadeOut");
     }
 
     void Update()

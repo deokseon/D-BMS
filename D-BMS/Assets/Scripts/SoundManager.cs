@@ -59,6 +59,7 @@ public class SoundManager : MonoBehaviour
                 ac.LoadAudioData();
                 clips.Add(pathes[i].Key, ac);
             }
+            BMSGameManager.currentLoading++;
         }
 
         isPrepared = true;

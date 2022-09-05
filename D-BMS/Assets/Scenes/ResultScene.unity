@@ -6253,6 +6253,7 @@ MonoBehaviour:
   titleText: {fileID: 481035922}
   artistText: {fileID: 2064902195}
   bpmText: {fileID: 1295856078}
+  fadeOutAnimator: {fileID: 2121507811}
 --- !u!1 &1979731532
 GameObject:
   m_ObjectHideFlags: 0

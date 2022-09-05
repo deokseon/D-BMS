@@ -113,7 +113,7 @@ public class BMSParser : MonoBehaviour
             else if (bmsFile[i].Length >= 6 && bmsFile[i].Substring(0, 4).CompareTo("#BMP") == 0)
             {
                 string key = bmsFile[i].Substring(4, 2);
-                string extend = bmsFile[i].Substring(bmsFile[i].Length - 3, 3);
+                string extend = bmsFile[i].Substring(bmsFile[i].Length - 3, 3).ToLower();
                 string path = bmsFile[i].Substring(7, bmsFile[i].Length - 7);
                 if (extend.CompareTo("mpg") == 0)
                 {

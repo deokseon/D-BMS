@@ -62,7 +62,9 @@ public class SongSelectUIManager : MonoBehaviour
     public void GameStart()
     {
         if (isReady)
+        {
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+        }
     }
 
     public void DrawSongUI(BMSHeader[] headers)
@@ -76,14 +78,21 @@ public class SongSelectUIManager : MonoBehaviour
 
             t.transform.localPosition = new Vector3(0, 40 - (89 * (++i)));
 
-            t.GetComponentsInChildren<TextMeshProUGUI>()[0].text = header.title + "  <size=25>" + header.subTitle + "</size>";
+            t.GetComponentsInChildren<TextMeshProUGUI>()[0].text = header.title + "  <size=20>" + header.subTitle + "</size>";
             if (header.maxBPM == header.minBPM) { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = header.artist + "        BPM: " + header.bpm.ToString(); }
             else { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = header.artist + "        BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
             t.GetComponentsInChildren<TextMeshProUGUI>()[2].text = header.level.ToString();
 
             StartCoroutine(LoadRawImage(t.GetComponentsInChildren<RawImage>()[0], header.musicFolderPath, header.stageFilePath, noStageImageTexture));
 
-            t.GetComponent<Toggle>().onValueChanged.AddListener((bool value) => { if (value) { DrawSongInfoUI(header); } });
+            t.GetComponent<Toggle>().onValueChanged.AddListener((bool value) => 
+            { 
+                if (value)
+                {
+                    BMSGameManager.stageTexture = t.GetComponentsInChildren<RawImage>()[0].texture;
+                    DrawSongInfoUI(header);
+                } 
+            });
             t.GetComponent<Toggle>().group = toggleGroup;
         }
     }

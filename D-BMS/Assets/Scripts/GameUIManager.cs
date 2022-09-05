@@ -80,17 +80,33 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI randomEffectorText;
 
     [SerializeField]
+    private GameObject loadingPanel;
+    [SerializeField]
+    private RawImage stageImage;
+    [SerializeField]
+    private Texture noStageImage;
+    [SerializeField]
+    private TextMeshProUGUI loadingTitleText;
+    [SerializeField]
+    private TextMeshProUGUI loadingNoteSpeedText;
+    [SerializeField]
+    private TextMeshProUGUI loadingRandomEffetorText;
+    [SerializeField]
+    private TextMeshProUGUI sliderValueText;
+    [SerializeField]
+    private Slider loadingSlider;
+
+    [SerializeField]
     private Canvas endCanvas;
 
-    private int maxCombo;
+    public int maxCombo { get; set; }
     private int earlyCount;
     private int lateCount;
     private double divide20000 = 1.0d / 20000.0d;
     private double divide6250 = 1.0d / 6250.0d;
     private List<KeyValuePair<int, double>> tempJudgeList;
 
-    BMPLoader loader;
-
+    private BMPLoader loader;
     private void Awake()
     {
         maxCombo = 0;
@@ -101,13 +117,13 @@ public class GameUIManager : MonoBehaviour
 
         maxComboText.text = maxCombo.ToString("D5");
 
-        loader = new BMPLoader();
-
         currentIdx = -1;
         rankImageTransform = rankImage.transform;
         yPos = new float[10] { 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
 
         endCanvas.enabled = false;
+
+        loader = new BMPLoader();
 
         bgImageTable = new Dictionary<string, string>();
         bgSprites = new Dictionary<string, Texture2D>();
@@ -143,6 +159,7 @@ public class GameUIManager : MonoBehaviour
             }
 
             bgSprites.Add(p.Key, texture2D);
+            BMSGameManager.currentLoading++;
         }
         isPrepared = true;
     }
@@ -225,7 +242,7 @@ public class GameUIManager : MonoBehaviour
         if (idx != -1 && currentIdx != idx)
         {
             rankImage.sprite = rank[idx];
-            rankImageTransform.localPosition = new Vector3(-377.5f, yPos[idx], 0.0f);
+            rankImageTransform.localPosition = new Vector3(-390.0f, yPos[idx], 0.0f);
             currentIdx = idx;
         }
     }
@@ -268,7 +285,6 @@ public class GameUIManager : MonoBehaviour
         koolCountText.text = koolCount.ToString();
         coolCountText.text = coolCount.ToString();
         goodCountText.text = goodCount.ToString();
-        BMSGameManager.bmsResult.maxCombo = maxCombo;
 
         endCanvas.enabled = true;
     }
@@ -283,6 +299,26 @@ public class GameUIManager : MonoBehaviour
     public void UpdateBPMText(double bpm)
     {
         bpmText.text = bpm.ToString();
+    }
+
+    public void SetLoading()
+    {
+        stageImage.texture = (BMSGameManager.stageTexture.name.CompareTo("NoStageImage") == 0) ? 
+                                noStageImage : BMSGameManager.stageTexture;
+        loadingTitleText.text = BMSGameManager.header.title;
+        loadingNoteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
+        loadingRandomEffetorText.text = BMSGameManager.randomEffector.ToString();
+    }
+
+    public void SetLoadingSlider(float loadingValue)
+    {
+        loadingSlider.value = loadingValue;
+        sliderValueText.text = ((int)(loadingValue * 100.0f)).ToString() + "%";
+    }
+
+    public void CloseLoading()
+    {
+        loadingPanel.SetActive(false);
     }
 
     public void SaveJudgeList(BMSResult res)

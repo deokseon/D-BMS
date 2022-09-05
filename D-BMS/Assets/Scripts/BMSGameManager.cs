@@ -12,6 +12,7 @@ public class BMSGameManager : MonoBehaviour
     public static int judgeAdjValue = 0;
     public static bool isClear;
     public static bool isPaused;
+    public static Texture stageTexture;
     public double scroll;
 
     [SerializeField]
@@ -33,6 +34,9 @@ public class BMSGameManager : MonoBehaviour
     private double currentTime = 0;
     private double accuracySum = 0;
     private int currentCount = 0;
+    private int totalLoading = 0;
+    private float divideTotalLoading;
+    public static int currentLoading = 0;
 
     private double divide60 = 1.0d / 60.0d;
     private double divide44100 = 1.0d / 44100.0d;
@@ -67,11 +71,14 @@ public class BMSGameManager : MonoBehaviour
 
     public void CalulateSpeed()
     {
-        gameSpeed = (userSpeed * 120.0f / (float)header.bpm);
+        gameSpeed = (userSpeed * 131.3f / (float)header.bpm);
     }
 
     private IEnumerator PreLoad()
     {
+        gameUIManager.SetLoading();
+        stageTexture = null;
+
         ObjectPool.poolInstance.Init();
 
         BMSParser.instance.Parse();
@@ -84,7 +91,11 @@ public class BMSGameManager : MonoBehaviour
         }
 
         gauge = new Gauge();
-        gameUIManager.UpdateScore(bmsResult, 0.0f, 0.0d, 0.0d, 0.0d);
+
+        totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count;
+        for (int i = pattern.bgaChanges.Count - 1; i > -1; i--) { if (!pattern.bgaChanges[i].isPic) { totalLoading++; break; } }
+        divideTotalLoading = 1.0f / totalLoading;
+        StartCoroutine(Loading());
 
         gameUIManager.LoadImages();
         soundManager.AddAudioClips();
@@ -122,6 +133,7 @@ public class BMSGameManager : MonoBehaviour
                 videoPlayer.errorReceived += (a, b) => errorFlag = true;
                 videoPlayer.Prepare();
                 yield return new WaitUntil(() => (videoPlayer.isPrepared || errorFlag));
+                currentLoading++;
                 isBGAVideoSupported = !errorFlag;
             }
         }
@@ -140,7 +152,21 @@ public class BMSGameManager : MonoBehaviour
 
         System.GC.Collect();
 
+        yield return wait3Sec;
+
         isPaused = false;
+    }
+
+    private IEnumerator Loading()
+    {
+        while (currentLoading < totalLoading)
+        {
+            gameUIManager.SetLoadingSlider(currentLoading * divideTotalLoading);
+            yield return null;
+        }
+        gameUIManager.SetLoadingSlider(1.0f);
+        yield return new WaitForSeconds(1.0f);
+        gameUIManager.CloseLoading();
     }
 
     private void Awake()
@@ -408,6 +434,8 @@ public class BMSGameManager : MonoBehaviour
                 break;
         }
 
+        if (gauge.HP == 0) { StartCoroutine(GameEnd(false)); }
+
         gameUIManager.UpdateScore(bmsResult, (gauge.HP - currentHP) * (float)divide60,
             accuracySum / currentCount, currentScore * 0.001f, currentCount * koolAddScore * 0.001f);
 
@@ -433,6 +461,29 @@ public class BMSGameManager : MonoBehaviour
         timeSampleAudio.Play();
     }
 
+    private IEnumerator GameEnd(bool clear)
+    {
+        isPaused = !clear;
+        isClear = clear;
+
+        noteParent.gameObject.SetActive(clear);
+
+        Time.fixedDeltaTime = 0.02f;
+
+        keyInput.KeyDisable();
+
+        bmsResult.accuracy = accuracySum / currentCount;
+        bmsResult.score = currentScore * 0.001f;
+        bmsResult.maxCombo = gameUIManager.maxCombo;
+
+        gameUIManager.SaveJudgeList(bmsResult);
+
+        yield return wait3Sec;
+        fadeinAnimator.SetTrigger("FadeIn");
+        yield return new WaitForSeconds(1.0f);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+    }
+
     private IEnumerator SongEndCheck()
     {
         while (true)
@@ -441,19 +492,7 @@ public class BMSGameManager : MonoBehaviour
                 ((!isBGAVideoSupported && pattern.bgaChanges.Count == 0) || 
                 (isBGAVideoSupported && !videoPlayer.isPlaying)))
             {
-                Time.fixedDeltaTime = 0.02f;
-
-                keyInput.KeyDisable();
-
-                bmsResult.accuracy = accuracySum / pattern.noteCount;
-                bmsResult.score = currentScore * 0.001f;
-
-                gameUIManager.SaveJudgeList(bmsResult);
-
-                yield return wait3Sec;
-                fadeinAnimator.SetTrigger("FadeIn");
-                yield return new WaitForSeconds(1.0f);
-                UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+                StartCoroutine(GameEnd(true));
                 yield break;
             }
             yield return wait3Sec;
