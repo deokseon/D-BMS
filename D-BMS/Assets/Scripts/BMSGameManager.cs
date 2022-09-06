@@ -165,7 +165,7 @@ public class BMSGameManager : MonoBehaviour
             yield return null;
         }
         gameUIManager.SetLoadingSlider(1.0f);
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
         gameUIManager.CloseLoading();
     }
 

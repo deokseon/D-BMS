@@ -128,6 +128,9 @@ public class GameUIManager : MonoBehaviour
         bgImageTable = new Dictionary<string, string>();
         bgSprites = new Dictionary<string, Texture2D>();
         tempJudgeList = new List<KeyValuePair<int, double>>(1000);
+
+        scoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0.0f);
+        maxScoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0.0f);
     }
 
     public void LoadImages()

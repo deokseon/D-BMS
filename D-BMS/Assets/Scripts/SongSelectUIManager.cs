@@ -107,7 +107,7 @@ public class SongSelectUIManager : MonoBehaviour
 
         BMSFileSystem.selectedHeader = header;
 
-        if (titleText.text.CompareTo(header.title) != 0)
+        if (titleText.text.CompareTo(header.title) != 0 || levelText.text.CompareTo(header.level.ToString()) != 0)
         {
             titleText.text = header.title;
             artistText.text = header.artist;
