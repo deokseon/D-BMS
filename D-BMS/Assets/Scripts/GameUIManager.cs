@@ -97,7 +97,7 @@ public class GameUIManager : MonoBehaviour
     private Slider loadingSlider;
 
     [SerializeField]
-    private Canvas endCanvas;
+    private GameObject endInfo;
 
     public int maxCombo { get; set; }
     private int earlyCount;
@@ -121,7 +121,7 @@ public class GameUIManager : MonoBehaviour
         rankImageTransform = rankImage.transform;
         yPos = new float[10] { 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
 
-        endCanvas.enabled = false;
+        endInfo.SetActive(false);
 
         loader = new BMPLoader();
 
@@ -203,8 +203,8 @@ public class GameUIManager : MonoBehaviour
 
         if (judge >= JudgeType.COOL) 
         {
-            noteBombCenter[index].SetTrigger("NoteBombCenter");
-            noteBomb[index].SetTrigger("NoteBomb");
+            noteBombCenter[index].SetTrigger("CenterBomb");
+            noteBomb[index].SetTrigger("BombEffect");
         }
     }
 
@@ -289,7 +289,7 @@ public class GameUIManager : MonoBehaviour
         coolCountText.text = coolCount.ToString();
         goodCountText.text = goodCount.ToString();
 
-        endCanvas.enabled = true;
+        endInfo.SetActive(true);
     }
 
     public void UpdateInfoText()

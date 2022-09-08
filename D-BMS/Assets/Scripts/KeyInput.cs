@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 public class KeyInput : MonoBehaviour
@@ -14,9 +15,9 @@ public class KeyInput : MonoBehaviour
     private InputAction keyLineAction5;
 
     [SerializeField]
-    private GameObject[] keyPressBeam;
+    private GameObject[] keyFeedback;
     [SerializeField]
-    private SpriteRenderer[] keyboard;
+    private Image[] keyboard;
     [SerializeField]
     private Sprite[] keyInitImage;
     [SerializeField]
@@ -64,11 +65,11 @@ public class KeyInput : MonoBehaviour
         action.started += ctx => {
             soundManager.PlayKeySound(bmsGameManager.currentNote[index]);
             bmsGameManager.KeyDown(index);
-            keyPressBeam[index].SetActive(true);
+            keyFeedback[index].SetActive(true);
             keyboard[index].sprite = keyPressedImage[index % 2];
         };  // 눌렀을 때
         action.canceled += ctx => {
-            keyPressBeam[index].SetActive(false);
+            keyFeedback[index].SetActive(false);
             bmsGameManager.KeyUp(index);
             keyboard[index].sprite = keyInitImage[index % 2];
         };  // 뗐을 때
@@ -82,11 +83,11 @@ public class KeyInput : MonoBehaviour
         action.started -= ctx => {
             soundManager.PlayKeySound(bmsGameManager.currentNote[index]);
             bmsGameManager.KeyDown(index);
-            keyPressBeam[index].SetActive(true);
+            keyFeedback[index].SetActive(true);
             keyboard[index].sprite = keyPressedImage[index % 2];
         };  // 눌렀을 때
         action.canceled -= ctx => {
-            keyPressBeam[index].SetActive(false);
+            keyFeedback[index].SetActive(false);
             bmsGameManager.KeyUp(index);
             keyboard[index].sprite = keyInitImage[index % 2];
         };  // 뗐을 때

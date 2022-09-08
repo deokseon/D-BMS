@@ -58,7 +58,7 @@ public class BMSGameManager : MonoBehaviour
     private double koolAddScore;
     private double coolAddScore;
     private double goodAddScore;
-    private double currentScore;
+    private double currentScore = 0.0d;
 
     [SerializeField]
     private GameObject[] longNotePress;
@@ -185,7 +185,7 @@ public class BMSGameManager : MonoBehaviour
 
         currentNote = new int[5] { 0, 0, 0, 0, 0 };
 
-        currentScore = 0.0d;
+        currentLoading = 0;
 
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
@@ -259,7 +259,7 @@ public class BMSGameManager : MonoBehaviour
         currentBeat += avg;
         currentScrollTime += frameTime;
         scroll += avg * gameSpeed;
-        noteParent.transform.position = new Vector3(0.0f, (float)-scroll, 0.0f);
+        noteParent.position = new Vector3(0.0f, (float)-scroll, 0.0f);
     }
 
     private void HandleNote(Line l, int idx)
