@@ -25,8 +25,6 @@ public class BMSGameManager : MonoBehaviour
     private KeyInput keyInput;
     [SerializeField]
     private Transform noteParent;
-    [SerializeField]
-    private Animator fadeinAnimator;
 
     private double currentBeat = 0;
     private double currentScrollTime = 0;
@@ -363,7 +361,7 @@ public class BMSGameManager : MonoBehaviour
             {
                 pattern.barLine.noteList[len].model = bar.model;
                 pattern.barLine.noteList[len].model.transform.localPosition =
-                    new Vector3(0.0f, (float)(pattern.barLine.noteList[len].beat * gameSpeed), 0.0f);
+                    new Vector3(-6.56f, (float)(pattern.barLine.noteList[len].beat * gameSpeed) - 0.285f, 0.0f);
             }
             else
             {
@@ -479,7 +477,7 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.SaveJudgeList(bmsResult);
 
         yield return wait3Sec;
-        fadeinAnimator.SetTrigger("FadeIn");
+        gameUIManager.FadeIn();
         yield return new WaitForSeconds(1.0f);
         UnityEngine.SceneManagement.SceneManager.LoadScene(2);
     }

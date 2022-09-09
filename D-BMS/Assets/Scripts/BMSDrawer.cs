@@ -78,7 +78,7 @@ public class BMSDrawer : MonoBehaviour
             Note bar = pattern.barLine.noteList[i];
             bar.model = ObjectPool.poolInstance.GetBarInPool();
             bar.model.SetActive(true);
-            bar.model.transform.position = new Vector3(0.0f, (float)(bar.beat * speed), 0.0f);
+            bar.model.transform.position = new Vector3(-6.56f, (float)(bar.beat * speed) - 0.285f, 0.0f);
         }
     }
 }

@@ -7,7 +7,6 @@ using UnityEngine.Networking;
 public class SoundManager : MonoBehaviour
 {
     public bool isPrepared { get; set; } = false;
-    public GameObject keySoundObject;
     public BMSMultiChannelAudioSource src;
     public List<KeyValuePair<int, string>> pathes { get; set; }
     public Dictionary<int, AudioClip> clips { get; set; }

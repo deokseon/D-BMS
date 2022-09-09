@@ -98,6 +98,10 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private GameObject endInfo;
+    [SerializeField]
+    private Animator fadeinAnimator;
+    [SerializeField]
+    private GameObject fadeinObject;
 
     public int maxCombo { get; set; }
     private int earlyCount;
@@ -290,6 +294,11 @@ public class GameUIManager : MonoBehaviour
         goodCountText.text = goodCount.ToString();
 
         endInfo.SetActive(true);
+    }
+    public void FadeIn()
+    {
+        fadeinObject.SetActive(true);
+        fadeinAnimator.SetTrigger("FadeIn");
     }
 
     public void UpdateInfoText()
