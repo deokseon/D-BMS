@@ -111,6 +111,18 @@ public class GameUIManager : MonoBehaviour
     private List<KeyValuePair<int, double>> tempJudgeList;
 
     private BMPLoader loader;
+
+    private readonly int hashComboText = Animator.StringToHash("ComboText");
+    private readonly int hashCombo = Animator.StringToHash("Combo");
+    private readonly int hashKoolJudge = Animator.StringToHash("KoolJudge");
+    private readonly int hashCoolJudge = Animator.StringToHash("CoolJudge");
+    private readonly int hashGoodJudge = Animator.StringToHash("GoodJudge");
+    private readonly int hashMissJudge = Animator.StringToHash("MissJudge");
+    private readonly int hashFailJudge = Animator.StringToHash("FailJudge");
+    private readonly int hashCenterBomb = Animator.StringToHash("CenterBomb");
+    private readonly int hashBombEffect = Animator.StringToHash("BombEffect");
+    private readonly int hashEarlyLate = Animator.StringToHash("EarlyLate");
+
     private void Awake()
     {
         maxCombo = 0;
@@ -184,8 +196,8 @@ public class GameUIManager : MonoBehaviour
         if (combo != 0)
         {
             currentComboText.text = combo.ToString();
-            comboTextAnimator.SetTrigger("ComboText");
-            comboAnimator.SetTrigger("Combo");
+            comboTextAnimator.SetTrigger(hashComboText);
+            comboAnimator.SetTrigger(hashCombo);
         }
         else
         {
@@ -199,16 +211,16 @@ public class GameUIManager : MonoBehaviour
             maxComboText.text = maxCombo.ToString("D5");
         }
 
-        if (judge == JudgeType.KOOL) { judgeAnimator.SetTrigger("KoolJudge"); }
-        else if (judge == JudgeType.COOL) { judgeAnimator.SetTrigger("CoolJudge"); }
-        else if (judge == JudgeType.GOOD) { judgeAnimator.SetTrigger("GoodJudge"); }
-        else if (judge == JudgeType.MISS) { judgeAnimator.SetTrigger("MissJudge"); }
-        else  { judgeAnimator.SetTrigger("FailJudge"); }
+        if (judge == JudgeType.KOOL) { judgeAnimator.SetTrigger(hashKoolJudge); }
+        else if (judge == JudgeType.COOL) { judgeAnimator.SetTrigger(hashCoolJudge); }
+        else if (judge == JudgeType.GOOD) { judgeAnimator.SetTrigger(hashGoodJudge); }
+        else if (judge == JudgeType.MISS) { judgeAnimator.SetTrigger(hashMissJudge); }
+        else  { judgeAnimator.SetTrigger(hashFailJudge); }
 
         if (judge >= JudgeType.COOL) 
         {
-            noteBombCenter[index].SetTrigger("CenterBomb");
-            noteBomb[index].SetTrigger("BombEffect");
+            noteBombCenter[index].SetTrigger(hashCenterBomb);
+            noteBomb[index].SetTrigger(hashBombEffect);
         }
     }
 
@@ -282,7 +294,7 @@ public class GameUIManager : MonoBehaviour
         int index = (idx < 2) ? 0 : 1;
 
         earlyLateImage[index].sprite = earlyLateImageArray[earlylate];
-        earlyLateAnimator[index].SetTrigger("EarlyLate");
+        earlyLateAnimator[index].SetTrigger(hashEarlyLate);
     }
 
     public void UpdateSongEndText(int koolCount, int coolCount, int goodCount)

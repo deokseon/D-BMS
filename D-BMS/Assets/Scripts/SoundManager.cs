@@ -7,12 +7,21 @@ using UnityEngine.Networking;
 public class SoundManager : MonoBehaviour
 {
     public bool isPrepared { get; set; } = false;
-    public BMSMultiChannelAudioSource src;
     public List<KeyValuePair<int, string>> pathes { get; set; }
     public Dictionary<int, AudioClip> clips { get; set; }
 
 
     private static string[] soundFileExtensions;
+
+    private int channelLength = 127;
+
+    private AudioClip bgSoundClip;
+    private AudioSource[] bgSoundAudioArray;
+    private AudioClip keySoundClip;
+    private AudioSource[] keySoundAudioArray;
+
+    private int currentBGSoundIndex;
+    private int currentKeySoundIndex;
 
     private void Awake()
     {
@@ -21,6 +30,27 @@ public class SoundManager : MonoBehaviour
 
         if (soundFileExtensions == null)
             soundFileExtensions = new string[] { ".ogg", ".wav", ".mp3" };
+
+        currentBGSoundIndex = 0;
+        currentKeySoundIndex = 0;
+
+        bgSoundAudioArray = new AudioSource[channelLength];
+        keySoundAudioArray = new AudioSource[channelLength];
+
+        for (int i = 0; i < channelLength; i++)
+        {
+            bgSoundAudioArray[i] = gameObject.AddComponent<AudioSource>();
+            bgSoundAudioArray[i].loop = false;
+            bgSoundAudioArray[i].playOnAwake = false;
+            bgSoundAudioArray[i].dopplerLevel = 0.0f;
+            bgSoundAudioArray[i].reverbZoneMix = 0.0f;
+
+            keySoundAudioArray[i] = gameObject.AddComponent<AudioSource>();
+            keySoundAudioArray[i].loop = false;
+            keySoundAudioArray[i].playOnAwake = false;
+            keySoundAudioArray[i].dopplerLevel = 0.0f;
+            keySoundAudioArray[i].reverbZoneMix = 0.0f;
+        }
     }
 
     public void AddAudioClips()
@@ -66,13 +96,40 @@ public class SoundManager : MonoBehaviour
 
     public void PlayKeySound(int key, float volume = 1.0f)
     {
-        if (key == 0) { return; }
-        if (clips.ContainsKey(key)) { src.PlayKeySoundOneShot(clips[key], volume); }
+        if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
+        while (true)
+        {
+            currentKeySoundIndex = (currentKeySoundIndex + 1) % 127;
+
+            if (!keySoundAudioArray[currentKeySoundIndex].isPlaying)
+            {
+                keySoundAudioArray[currentKeySoundIndex].PlayOneShot(keySoundClip, volume);
+                break;
+            }
+        }
     }
 
     public void PlayBGSound(int key, float volume = 0.8f)
     {
-        if (key == 0) { return; }
-        if (clips.ContainsKey(key)) { src.PlayBGSoundOneShot(clips[key], volume); }
+        if (key == 0 || !clips.TryGetValue(key, out bgSoundClip)) { return; }
+        while (true)
+        {
+            currentBGSoundIndex = (currentBGSoundIndex + 1) % 127;
+
+            if (!bgSoundAudioArray[currentBGSoundIndex].isPlaying)
+            {
+                bgSoundAudioArray[currentBGSoundIndex].PlayOneShot(bgSoundClip, volume);
+                break;
+            }
+        }
+    }
+
+    public void AudioAllStop()
+    {
+        for (int i = 0; i < channelLength; i++)
+        {
+            bgSoundAudioArray[i].Stop();
+            keySoundAudioArray[i].Stop();
+        }
     }
 }

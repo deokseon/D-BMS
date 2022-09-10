@@ -15,6 +15,7 @@ public class BMSParser : MonoBehaviour
         }
     }
 
+    [SerializeField]
     private SoundManager soundManager;
     private BMSGameManager bmsGameManager;
     public GameUIManager gameUIManager;
@@ -30,7 +31,7 @@ public class BMSParser : MonoBehaviour
     private void Awake()
     {
         exBpms = new Dictionary<string, double>();
-        soundManager = GetComponent<SoundManager>();
+        //soundManager = GetComponent<SoundManager>();
         bmsGameManager = GetComponent<BMSGameManager>();
         lineIndex = new List<int>();
         SetLineIndex();
