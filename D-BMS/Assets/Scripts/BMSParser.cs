@@ -31,7 +31,6 @@ public class BMSParser : MonoBehaviour
     private void Awake()
     {
         exBpms = new Dictionary<string, double>();
-        //soundManager = GetComponent<SoundManager>();
         bmsGameManager = GetComponent<BMSGameManager>();
         lineIndex = new List<int>();
         SetLineIndex();

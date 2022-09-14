@@ -5,13 +5,22 @@ using UnityEngine;
 public class ObjectPool : MonoBehaviour
 {
     private static List<Queue<GameObject>> notePool;
+    private static List<List<Queue<GameObject>>> longNotePool;
     private static Queue<GameObject> barPool;
+
     public int maxNoteCount;
+    public int maxLongNoteCount;
     public int maxBarCount;
+
     [SerializeField]
     private GameObject[] note;
     [SerializeField]
+    private GameObject[] longNoteEdge;
+    [SerializeField]
+    private GameObject[] longNoteBody;
+    [SerializeField]
     private GameObject barObject;
+
     private Transform noteParent;
     private Transform notePoolParent;
 
@@ -28,6 +37,14 @@ public class ObjectPool : MonoBehaviour
         {
             notePool = new List<Queue<GameObject>>();
             for (int i = 0; i < 5; i++) { notePool.Add(new Queue<GameObject>()); }
+        }
+        if (longNotePool == null)
+        {
+            longNotePool = new List<List<Queue<GameObject>>>();
+            for (int i = 0; i < 5; i++) { 
+                longNotePool.Add(new List<Queue<GameObject>>());
+                for (int j = 0; j < 3; j++) { longNotePool[i].Add(new Queue<GameObject>()); }
+            }
         }
         if (barPool == null) { barPool = new Queue<GameObject>(); }
 
@@ -52,6 +69,20 @@ public class ObjectPool : MonoBehaviour
                 notePool[i].Enqueue(tempNote);
             }
         }
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                GameObject temp = (j == 2 ? longNoteBody[i % 2] : longNoteEdge[i % 2]);
+                while (longNotePool[i][j].Count < maxLongNoteCount)
+                {
+                    GameObject tempObject = Instantiate(temp, notePoolParent);
+                    if (j == 1) { tempObject.transform.rotation = Quaternion.Euler(180.0f, 0.0f, 0.0f); }
+                    tempObject.SetActive(false);
+                    longNotePool[i][j].Enqueue(tempObject);
+                }
+            }
+        }
         while (barPool.Count < maxBarCount)
         {
             GameObject tempBar = Instantiate(barObject, notePoolParent);
@@ -69,12 +100,27 @@ public class ObjectPool : MonoBehaviour
         }
         else { return null; }
     }
-
     public void ReturnNoteInPool(int idx, GameObject note)
     {
         note.transform.SetParent(notePoolParent);
         notePool[idx].Enqueue(note);
     }
+
+    public GameObject GetLongNoteInPool(int idx, int extra)
+    {
+        if (longNotePool[idx][extra].Count > 0)
+        {
+            longNotePool[idx][extra].Peek().transform.SetParent(noteParent);
+            return longNotePool[idx][extra].Dequeue();
+        }
+        else { return null; }
+    }
+    public void ReturnLongNoteInPool(int idx, int extra, GameObject longNote)
+    {
+        longNote.transform.SetParent(notePoolParent);
+        longNotePool[idx][extra].Enqueue(longNote);
+    }
+
     public GameObject GetBarInPool()
     {
         if (barPool.Count > 0)

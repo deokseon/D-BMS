@@ -24,48 +24,39 @@ public class BMSDrawer : MonoBehaviour
 
         for (int i = 0; i < 5; i++)
         {
-            Vector3 prev = Vector2.zero;
-
             float xPosition = xPositionStart + (0.57f * i);
 
             for (int j = pattern.lines[i].noteList.Count - 1; j >= 0; j--)
             {
-                if (pattern.lines[i].noteList[j].extra == 2) { continue; }
-                Note n = pattern.lines[i].noteList[j];
+                if (pattern.lines[i].noteList[j].extra == 2 || 
+                    j > 0 && (pattern.lines[i].noteList[j - 1].extra == 2 || pattern.lines[i].noteList[j - 1].extra == 1)) { continue; }
 
-                Vector3 notePosition = new Vector3(xPosition, (float)(n.beat * speed), 0.0f);
+                GameObject note = ObjectPool.poolInstance.GetNoteInPool(i);
 
-                GameObject note = null;
-                if (n.extra == 1)
-                {
-                    note = Instantiate(longNoteEdgePrefab[i % 2], noteParent);
-                    note.transform.rotation = Quaternion.Euler(180.0f, 0.0f, 0.0f);
+                if (note == null) { break; }
 
-                    GameObject longNote = Instantiate(longNotePrefab[i % 2], noteParent);
-                    longNote.transform.position = (notePosition + prev) * 0.5f;
-                    longNote.transform.localScale = new Vector3(0.3f, ((notePosition - prev).y - 0.3f) * 1.219512f, 1.0f);
-                }
-                else if (j > 0 && (pattern.lines[i].noteList[j - 1].extra == 2 || pattern.lines[i].noteList[j - 1].extra == 1))
-                {
-                    note = Instantiate(longNoteEdgePrefab[i % 2], noteParent);
-                }
-                else
-                {
-                    note = ObjectPool.poolInstance.GetNoteInPool(i);
-                    if (note != null) { note.SetActive(true); }
-                }
-                if (note != null) { note.transform.position = notePosition; }
+                note.SetActive(true);
+                note.transform.position = new Vector3(xPosition, (float)(pattern.lines[i].noteList[j].beat * speed), 0.0f);
 
-                prev = notePosition;
-                n.model = note;
+                pattern.lines[i].noteList[j].model = note;
             }
 
-            for (int j = 0; j < pattern.lines[i].noteList.Count; j++)
+            for (int j = pattern.longNote[i].Count - 1; j >= 0; j -= 3)
             {
-                if (pattern.lines[i].noteList[j].extra == 1)
+                for (int k = 0; k < 3; k++)
                 {
-                    pattern.lines[i].noteList.RemoveAt(j);
-                    j--;
+                    GameObject tempLongNote = ObjectPool.poolInstance.GetLongNoteInPool(i, k);
+
+                    if (tempLongNote == null) { j = -1; break; }
+
+                    tempLongNote.SetActive(true);
+                    tempLongNote.transform.position = new Vector3(xPosition, (float)(pattern.longNote[i][j - ((k + 2) % 3)].beat * speed), 0.0f);
+                    pattern.longNote[i][j - ((k + 2) % 3)].model = tempLongNote;
+                    if (k == 2)
+                    {
+                        pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
+                            new Vector3(0.3f, ((float)(pattern.longNote[i][j].beat - pattern.longNote[i][j - 2].beat) * speed - 0.3f) * 1.219512f, 1.0f);
+                    }
                 }
             }
         }

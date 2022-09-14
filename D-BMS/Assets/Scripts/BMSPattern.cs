@@ -10,8 +10,9 @@ public class BMSPattern
     public Dictionary<int, double> beatCTable { get; set; }
     public Dictionary<string, string> bgVideoTable { get; set; }
     public Line[] lines { get; set; }
-
     public Line barLine { get; set; }  // 마디선 리스트
+    public ListExtension<Note>[] longNote { get; set; }
+    public ListExtension<Note>[] normalNote { get; set; }
 
     public BMSPattern()
     {
@@ -24,6 +25,10 @@ public class BMSPattern
         for (int i = 0; i < 5; i++) { lines[i] = new Line(); }
 
         barLine = new Line();
+        longNote = new ListExtension<Note>[5];
+        for (int i = 0; i < 5; i++) { longNote[i] = new ListExtension<Note>(); }
+        normalNote = new ListExtension<Note>[5];
+        for (int i = 0; i < 5; i++) { normalNote[i] = new ListExtension<Note>(); }
     }
 
     public void AddBGAChange(int bar, double beat, double beatLength, string key, bool isPic = false)
@@ -87,8 +92,42 @@ public class BMSPattern
 
         // GET NOTES
         for (int i = 0; i < 5; i++) { CalculateTimingsInListExtension(lines[i].noteList); }
+        NoteDivideSave();
 
         CalculateTimingsInListExtension(barLine.noteList);
+    }
+
+    public void NoteDivideSave()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            int len = lines[i].noteList.Count;
+            for (int j = 0; j < len; j++)
+            {
+                if (lines[i].noteList[j].extra == 1)
+                {
+                    int k = 0;
+                    for (k = j; k < len; k++) { if (lines[i].noteList[k].extra == 0) { break; } }
+                    longNote[i].Add(lines[i].noteList[k]);
+                    longNote[i].Add(new Note(lines[i].noteList[k].bar, 0, (lines[i].noteList[k].beat + lines[i].noteList[j].beat) / 2.0d, 2));
+                    longNote[i].Add(lines[i].noteList[j]);
+                    j = k;
+                }
+                else
+                {
+                    normalNote[i].Add(lines[i].noteList[j]);
+                }
+            }
+
+            for (int j = 0; j < lines[i].noteList.Count; j++)
+            {
+                if (lines[i].noteList[j].extra == 1)
+                {
+                    lines[i].noteList.RemoveAt(j--);
+                }
+            }
+        }
+
     }
 
     public void CalculateTimingsInListExtension(ListExtension<Note> list)

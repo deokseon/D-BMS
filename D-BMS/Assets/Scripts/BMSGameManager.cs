@@ -66,12 +66,15 @@ public class BMSGameManager : MonoBehaviour
     private bool[] currentButtonPressed = { false, false, false, false, false };
 
     private int notePoolMaxCount;
+    private int longNotePoolMaxCount;
     private int barPoolMaxCount;
 
     private ListExtension<BGChange> bgaChangeList;
     private ListExtension<Note> bgSoundsList;
     private ListExtension<BPM> bpmsList;
     private ListExtension<Note>[] notesList;
+    private ListExtension<Note>[] longNoteList;
+    private ListExtension<Note>[] normalNoteList;
     private ListExtension<Note> barList;
 
     public void CalulateSpeed()
@@ -94,7 +97,12 @@ public class BMSGameManager : MonoBehaviour
         bgaChangeList = pattern.bgaChanges;
         bgSoundsList = pattern.bgSounds;
         bpmsList = pattern.bpms;
-        for (int i = 0; i < 5; i++) { notesList[i] = pattern.lines[i].noteList; }
+        for (int i = 0; i < 5; i++) 
+        { 
+            notesList[i] = pattern.lines[i].noteList;
+            longNoteList[i] = pattern.longNote[i];
+            normalNoteList[i] = pattern.normalNote[i];
+        }
         barList = pattern.barLine.noteList;
 
         for (int i = 0; i < 5; i++) { if (notesList[i].Count > 0) { currentNote[i] = notesList[i].Peek.keySound; } }
@@ -193,10 +201,13 @@ public class BMSGameManager : MonoBehaviour
 
         currentNote = new int[5] { 0, 0, 0, 0, 0 };
         notesList = new ListExtension<Note>[5];
+        longNoteList = new ListExtension<Note>[5];
+        normalNoteList = new ListExtension<Note>[5];
 
         currentLoading = 0;
 
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
+        longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
 
         timeSampleAudio = GetComponent<AudioSource>();
@@ -276,22 +287,21 @@ public class BMSGameManager : MonoBehaviour
         currentCount++;
         noteList.RemoveLast();
 
-        int len = noteList.Count;
-        if (len > 0) { currentNote[idx] = noteList.Peek.keySound; }
+        if (noteList.Count > 0) { currentNote[idx] = noteList.Peek.keySound; }
 
         bool nextCheck = true;
-        if ((len > 0 && noteList.Peek.extra != 2) || (len == 0))
+        if (normalNoteList[idx].Count > 0 && n.beat == normalNoteList[idx].Peek.beat)
         {
-            int k = (len > 0 ? FindIndex(noteList, len) : -1);
-            if (k != -1)
+            normalNoteList[idx].RemoveLast();
+            int tempPeek = normalNoteList[idx].Count - notePoolMaxCount;
+            if (tempPeek >= 0)
             {
-                int tempPeek = len - (notePoolMaxCount + k);
-                noteList[tempPeek].model = n.model;
-                noteList[tempPeek].model.transform.localPosition =
-                    new Vector3(-7.7f + 0.57f * idx, (float)(noteList[tempPeek].beat * gameSpeed), 0.0f);
+                normalNoteList[idx][tempPeek].model = n.model;
+                normalNoteList[idx][tempPeek].model.transform.localPosition =
+                    new Vector3(-7.7f + 0.57f * idx, (float)(normalNoteList[idx][tempPeek].beat * gameSpeed), 0.0f);
             }
-            else 
-            { 
+            else
+            {
                 n.model.SetActive(false);
                 ObjectPool.poolInstance.ReturnNoteInPool(idx, n.model);
             }
@@ -320,8 +330,7 @@ public class BMSGameManager : MonoBehaviour
         currentCount++;
         noteList.RemoveLast();
 
-        int len = noteList.Count;
-        if (len > 0) { currentNote[idx] = noteList.Peek.keySound; }
+        if (noteList.Count > 0) { currentNote[idx] = noteList.Peek.keySound; }
 
         if (!currentButtonPressed[idx]) { currentLongNoteJudge = JudgeType.FAIL; }
         else { if (currentLongNoteJudge == JudgeType.FAIL) { currentLongNoteJudge = JudgeType.GOOD; } }
@@ -332,8 +341,6 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.TextUpdate(++combo, result, idx);
 
         UpdateResult(result);
-
-        if ((len > 0 && noteList.Peek.extra != 2) || len <= 0) { longNotePress[idx].SetActive(false); }
     }
 
     private void PlayNotes()
@@ -342,6 +349,38 @@ public class BMSGameManager : MonoBehaviour
         {
             soundManager.PlayBGSound(bgSoundsList.Peek.keySound);
             bgSoundsList.RemoveLast();
+        }
+
+        for (int i = 0; i < 5; i++)
+        {
+            while (longNoteList[i].Count > 0 && longNoteList[i].Peek.timing <= currentTime)
+            {
+                longNotePress[i].SetActive(false);
+                for (int j = 0; j < 3; j++)
+                {
+                    Note tempNote = longNoteList[i].Peek;
+                    longNoteList[i].RemoveLast();
+
+                    int len = longNoteList[i].Count - (3 * longNotePoolMaxCount);
+                    if (len >= 0)
+                    {
+                        longNoteList[i][len].model = tempNote.model;
+                        longNoteList[i][len].model.transform.localPosition = 
+                            new Vector3(-7.7f + 0.57f * i, (float)(longNoteList[i][len].beat * gameSpeed), 0.0f);
+                        if (j == 1)
+                        {
+                            longNoteList[i][len].model.transform.localScale =
+                                new Vector3(0.3f, ((float)(longNoteList[i][len + 1].beat - longNoteList[i][len - 1].beat) * gameSpeed - 0.3f) * 1.219512f, 1.0f);
+                        }
+                    }
+                    else
+                    {
+                        tempNote.model.SetActive(false);
+                        ObjectPool.poolInstance.ReturnLongNoteInPool(i, (j + 1) % 3, tempNote.model);
+                    }
+                    tempNote.model = null;
+                }
+            }
         }
 
         for (int i = 0; i < 5; i++)  // 롱노트 틱 검사
@@ -446,17 +485,6 @@ public class BMSGameManager : MonoBehaviour
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount);
-    }
-
-    private int FindIndex(ListExtension<Note> noteList, int len)
-    {
-        int k = 0;
-        for (int i = 1; i <= notePoolMaxCount + k; i++)
-        {
-            if (len - i < 0) { return -1; }
-            if ((len - i - 1 >= 0 && noteList[len - i - 1].extra == 2) || noteList[len - i].extra == 2) { k++; }
-        }
-        return k;
     }
 
     private IEnumerator TimerStart()
