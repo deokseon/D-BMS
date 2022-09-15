@@ -34,8 +34,6 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private Animator[] noteBomb;
-    [SerializeField]
-    private Animator[] noteBombCenter;
 
     [SerializeField]
     private Animator judgeAnimator;
@@ -119,7 +117,6 @@ public class GameUIManager : MonoBehaviour
     private readonly int hashGoodJudge = Animator.StringToHash("GoodJudge");
     private readonly int hashMissJudge = Animator.StringToHash("MissJudge");
     private readonly int hashFailJudge = Animator.StringToHash("FailJudge");
-    private readonly int hashCenterBomb = Animator.StringToHash("CenterBomb");
     private readonly int hashBombEffect = Animator.StringToHash("BombEffect");
     private readonly int hashEarlyLate = Animator.StringToHash("EarlyLate");
 
@@ -219,7 +216,6 @@ public class GameUIManager : MonoBehaviour
 
         if (judge >= JudgeType.COOL) 
         {
-            noteBombCenter[index].SetTrigger(hashCenterBomb);
             noteBomb[index].SetTrigger(hashBombEffect);
         }
     }
