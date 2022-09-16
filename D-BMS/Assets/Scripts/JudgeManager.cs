@@ -14,7 +14,8 @@
 
     public JudgeType Judge(Note n, double currentTime)
     {
-        double diff = Utility.Dabs(n.timing - currentTime) * 1000;
+        double diff = (n.timing - currentTime) * 1000.0d;
+        diff = (diff > 0 ? diff : -diff);
 
         if (diff <= 22.0d) { return JudgeType.KOOL; }
         else if (diff <= 55.0d) { return JudgeType.COOL; }

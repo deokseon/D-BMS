@@ -45,11 +45,10 @@ SpriteAtlas:
     - {fileID: 102900000, guid: 9611c845b369af140b15758d84236d85, type: 3}
     - {fileID: 102900000, guid: 53206842dec711c4197ceebd95c23f21, type: 3}
     - {fileID: 102900000, guid: 45f2a7d7a6f45d943a001b0f382fd274, type: 3}
-    - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
+    - {fileID: 102900000, guid: 1c04f9b710502c24099f216a781bf3f1, type: 3}
     - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
     - {fileID: 102900000, guid: e54e7b004fc05144db11457c087d3c04, type: 3}
     - {fileID: 102900000, guid: 642d449083ad00d469ac511b0a1c0c2a, type: 3}
-    - {fileID: 102900000, guid: 1c04f9b710502c24099f216a781bf3f1, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -68,7 +67,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8497aa92934755c47abba80aea694434, type: 3}
   - {fileID: 21300000, guid: df3294d284a44c144964c14cdfe3d3e6, type: 3}
   - {fileID: 21300000, guid: 94a3f8d27cb4f7748af6139077825540, type: 3}
-  - {fileID: 21300000, guid: edcdebc3ab57c8640bb3c913e6ee13e2, type: 3}
   - {fileID: 21300000, guid: d3c521d3b4dd36c4193df6d5e2b2a1b2, type: 3}
   - {fileID: 21300000, guid: 4f918384dd0c9b349893544ccac13839, type: 3}
   - {fileID: 21300000, guid: 3c5c2b846c568d64bbfacebdf192ab57, type: 3}
@@ -121,7 +119,6 @@ SpriteAtlas:
   - Panel_Left
   - NoteBomb5
   - NoteBomb2
-  - BackGround
   - kool_1
   - longNoteEdge1
   - S++

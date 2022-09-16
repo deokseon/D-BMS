@@ -296,16 +296,15 @@ public class BMSGameManager : MonoBehaviour
             int tempPeek = normalNoteList[idx].Count - notePoolMaxCount;
             if (tempPeek >= 0)
             {
+                n.modelTransform.localPosition = new Vector3(-7.7f + 0.57f * idx, (float)(normalNoteList[idx][tempPeek].beat * gameSpeed), 0.0f);
                 normalNoteList[idx][tempPeek].model = n.model;
-                normalNoteList[idx][tempPeek].model.transform.localPosition =
-                    new Vector3(-7.7f + 0.57f * idx, (float)(normalNoteList[idx][tempPeek].beat * gameSpeed), 0.0f);
+                normalNoteList[idx][tempPeek].modelTransform = n.modelTransform;
             }
             else
             {
                 n.model.SetActive(false);
                 ObjectPool.poolInstance.ReturnNoteInPool(idx, n.model);
             }
-            n.model = null;
             nextCheck = false;
         }
 
@@ -364,12 +363,12 @@ public class BMSGameManager : MonoBehaviour
                     int len = longNoteList[i].Count - (3 * longNotePoolMaxCount);
                     if (len >= 0)
                     {
+                        tempNote.modelTransform.localPosition = new Vector3(-7.7f + 0.57f * i, (float)(longNoteList[i][len].beat * gameSpeed), 0.0f);
                         longNoteList[i][len].model = tempNote.model;
-                        longNoteList[i][len].model.transform.localPosition = 
-                            new Vector3(-7.7f + 0.57f * i, (float)(longNoteList[i][len].beat * gameSpeed), 0.0f);
+                        longNoteList[i][len].modelTransform = tempNote.modelTransform;
                         if (j == 1)
                         {
-                            longNoteList[i][len].model.transform.localScale =
+                            longNoteList[i][len].modelTransform.localScale =
                                 new Vector3(0.3f, ((float)(longNoteList[i][len + 1].beat - longNoteList[i][len - 1].beat) * gameSpeed - 0.3f) * 1.219512f, 1.0f);
                         }
                     }
@@ -378,7 +377,6 @@ public class BMSGameManager : MonoBehaviour
                         tempNote.model.SetActive(false);
                         ObjectPool.poolInstance.ReturnLongNoteInPool(i, (j + 1) % 3, tempNote.model);
                     }
-                    tempNote.model = null;
                 }
             }
         }
@@ -406,16 +404,15 @@ public class BMSGameManager : MonoBehaviour
             int len = barList.Count - barPoolMaxCount;
             if (len >= 0)
             {
+                bar.modelTransform.localPosition = new Vector3(-6.56f, (float)(barList[len].beat * gameSpeed) - 0.285f, 0.0f);
                 barList[len].model = bar.model;
-                barList[len].model.transform.localPosition =
-                    new Vector3(-6.56f, (float)(pattern.barLine.noteList[len].beat * gameSpeed) - 0.285f, 0.0f);
+                barList[len].modelTransform = bar.modelTransform;
             }
             else
             {
                 bar.model.SetActive(false);
                 ObjectPool.poolInstance.ReturnBarInPool(bar.model);
             }
-            bar.model = null;
         }
 
         // auto

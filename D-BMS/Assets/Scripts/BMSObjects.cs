@@ -54,6 +54,7 @@ public class Note : BMSObject
     public int keySound { get; private set; }
     public int extra { get; set; }
     public GameObject model { get; set; }
+    public Transform modelTransform { get; set; }
 
     public Note(int bar, int keySound, double beat, double beatLength, int extra) : base(bar, beat, beatLength)
     {

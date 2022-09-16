@@ -26,19 +26,17 @@ public class BMSDrawer : MonoBehaviour
         {
             float xPosition = xPositionStart + (0.57f * i);
 
-            for (int j = pattern.lines[i].noteList.Count - 1; j >= 0; j--)
+            for (int j = pattern.normalNote[i].Count - 1; j >= 0; j--)
             {
-                if (pattern.lines[i].noteList[j].extra == 2 || 
-                    j > 0 && (pattern.lines[i].noteList[j - 1].extra == 2 || pattern.lines[i].noteList[j - 1].extra == 1)) { continue; }
-
                 GameObject note = ObjectPool.poolInstance.GetNoteInPool(i);
 
                 if (note == null) { break; }
 
                 note.SetActive(true);
-                note.transform.position = new Vector3(xPosition, (float)(pattern.lines[i].noteList[j].beat * speed), 0.0f);
+                note.transform.position = new Vector3(xPosition, (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
 
-                pattern.lines[i].noteList[j].model = note;
+                pattern.normalNote[i][j].model = note;
+                pattern.normalNote[i][j].modelTransform = note.transform;
             }
 
             for (int j = pattern.longNote[i].Count - 1; j >= 0; j -= 3)
@@ -52,6 +50,7 @@ public class BMSDrawer : MonoBehaviour
                     tempLongNote.SetActive(true);
                     tempLongNote.transform.position = new Vector3(xPosition, (float)(pattern.longNote[i][j - ((k + 2) % 3)].beat * speed), 0.0f);
                     pattern.longNote[i][j - ((k + 2) % 3)].model = tempLongNote;
+                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform = tempLongNote.transform;
                     if (k == 2)
                     {
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
@@ -68,6 +67,7 @@ public class BMSDrawer : MonoBehaviour
             if(i < 0) { break; }
             Note bar = pattern.barLine.noteList[i];
             bar.model = ObjectPool.poolInstance.GetBarInPool();
+            bar.modelTransform = bar.model.transform;
             bar.model.SetActive(true);
             bar.model.transform.position = new Vector3(-6.56f, (float)(bar.beat * speed) - 0.285f, 0.0f);
         }
