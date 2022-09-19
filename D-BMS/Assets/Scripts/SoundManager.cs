@@ -99,7 +99,7 @@ public class SoundManager : MonoBehaviour
         if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
         while (true)
         {
-            currentKeySoundIndex = (currentKeySoundIndex + 1) % 127;
+            currentKeySoundIndex = currentKeySoundIndex > 125 ? 0 : currentKeySoundIndex + 1;
 
             if (!keySoundAudioArray[currentKeySoundIndex].isPlaying)
             {
@@ -114,7 +114,7 @@ public class SoundManager : MonoBehaviour
         if (key == 0 || !clips.TryGetValue(key, out bgSoundClip)) { return; }
         while (true)
         {
-            currentBGSoundIndex = (currentBGSoundIndex + 1) % 127;
+            currentBGSoundIndex = currentBGSoundIndex > 125 ? 0 : currentBGSoundIndex + 1;
 
             if (!bgSoundAudioArray[currentBGSoundIndex].isPlaying)
             {

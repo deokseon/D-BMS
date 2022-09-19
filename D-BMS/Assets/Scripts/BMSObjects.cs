@@ -13,8 +13,8 @@ public class Line
 public abstract class BMSObject : System.IComparable<BMSObject>
 {
     public int bar { get; protected set; }
-    public double beat { get; protected set; }
-    public double timing { get; set; }
+    public double beat;
+    public double timing;
 
     public BMSObject(int bar, double beat, double beatLength)
     {
@@ -42,7 +42,7 @@ public abstract class BMSObject : System.IComparable<BMSObject>
 public class BGChange : BMSObject
 {
     public string key { get; private set; }
-    public bool isPic { get; set; }
+    public bool isPic;
     public BGChange(int bar, string key, double beat, double beatLength, bool isPic) : base(bar, beat, beatLength)
     {
         this.key = key;
@@ -51,10 +51,10 @@ public class BGChange : BMSObject
 }
 public class Note : BMSObject
 {
-    public int keySound { get; private set; }
-    public int extra { get; set; }
-    public GameObject model { get; set; }
-    public Transform modelTransform { get; set; }
+    public int keySound;
+    public int extra;
+    public GameObject model;
+    public Transform modelTransform;
 
     public Note(int bar, int keySound, double beat, double beatLength, int extra) : base(bar, beat, beatLength)
     {
@@ -72,7 +72,7 @@ public class Note : BMSObject
 
 public class BPM : BMSObject
 {
-    public double bpm { get; private set; }
+    public double bpm;
     public BPM(int bar, double bpm, double beat, double beatLength):base(bar, beat, beatLength)
     {
         this.bpm = bpm;
@@ -88,16 +88,16 @@ public class Utility
 
 public class BMSResult
 {
-    public int noteCount { get; set; }
-    public int koolCount { get; set; }
-    public int coolCount { get; set; }
-    public int goodCount { get; set; }
-    public int missCount { get; set; }
-    public int failCount { get; set; }
+    public int noteCount;
+    public int koolCount;
+    public int coolCount;
+    public int goodCount;
+    public int missCount;
+    public int failCount;
     public int maxCombo { get; set; }
     public double score { get; set; }
     public double accuracy { get; set; }
-    public List<KeyValuePair<int, double>> judgeList;
+    public double[] judgeList;
 }
 
 public class Gauge
@@ -107,18 +107,7 @@ public class Gauge
     public readonly float goodHealAmount;
     public readonly float missDamage;
     public readonly float failDamage;
-
-    private float hp;
-
-    public float HP { 
-        get { return hp; }
-        set
-        {
-            hp = value;
-            if (hp > 1) { hp = 1; }
-            else if (hp < 0) { hp = 0; }
-        }
-    }
+    public float hp;
 
     public Gauge()
     {

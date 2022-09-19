@@ -140,15 +140,15 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawJudgeGraph()
     {
-        int len = bmsResult.judgeList.Count;
+        int len = bmsResult.judgeList.Length;
         double divideNoteCount = 1.0d / bmsResult.noteCount;
         double total = 0;
-        for (int i = 0; i < len; i++)
+        for (int i = 1; i < len; i++)
         {
-            double y = bmsResult.judgeList[i].Value;
+            double y = bmsResult.judgeList[i];
             total += y;
             if (Utility.Dabs(y) > 115) { continue; }
-            double x = (bmsResult.judgeList[i].Key * divideNoteCount * 600) - 300;
+            double x = (i * divideNoteCount * 600) - 300;
 
             GameObject tempDot = Instantiate(dot, dotParent);
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);

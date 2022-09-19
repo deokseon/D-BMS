@@ -2,7 +2,7 @@
 
 public class BMSPattern
 {
-    public int noteCount { get; set; } = 0;
+    public int noteCount = 0;
     public int barCount { get; set; } = 0;
     public ListExtension<BGChange> bgaChanges { get; set; }
     public ListExtension<Note> bgSounds { get; set; }

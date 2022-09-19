@@ -16,7 +16,9 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private Slider hpBar;
     [SerializeField]
-    private TextMeshProUGUI scoreText;
+    private TextMeshProUGUI frontScoreText;
+    [SerializeField]
+    private TextMeshProUGUI backScoreText;
     [SerializeField]
     private TextMeshProUGUI currentComboText;
     [SerializeField]
@@ -28,9 +30,19 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI maxComboText;
     [SerializeField]
-    private TextMeshProUGUI statisticsText;
+    private TextMeshProUGUI koolText;
     [SerializeField]
-    private TextMeshProUGUI accuracyText;
+    private TextMeshProUGUI coolText;
+    [SerializeField]
+    private TextMeshProUGUI goodText;
+    [SerializeField]
+    private TextMeshProUGUI missText;
+    [SerializeField]
+    private TextMeshProUGUI failText;
+    [SerializeField]
+    private TextMeshProUGUI frontAccuracyText;
+    [SerializeField]
+    private TextMeshProUGUI backAccuracyText;
 
     [SerializeField]
     private Animator[] noteBomb;
@@ -56,6 +68,7 @@ public class GameUIManager : MonoBehaviour
     private RectTransform scoreStick;
     [SerializeField]
     private RectTransform maxScoreStick;
+    private readonly RectTransform.Axis vertical = RectTransform.Axis.Vertical;
 
     [SerializeField]
     private TextMeshProUGUI earlyCountText;
@@ -101,12 +114,10 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private GameObject fadeinObject;
 
-    public int maxCombo { get; set; }
+    [HideInInspector]
+    public int maxCombo;
     private int earlyCount;
     private int lateCount;
-    private double divide20000 = 1.0d / 20000.0d;
-    private double divide6250 = 1.0d / 6250.0d;
-    private List<KeyValuePair<int, double>> tempJudgeList;
 
     private BMPLoader loader;
 
@@ -120,6 +131,13 @@ public class GameUIManager : MonoBehaviour
     private readonly int hashBombEffect = Animator.StringToHash("BombEffect");
     private readonly int hashEarlyLate = Animator.StringToHash("EarlyLate");
 
+    private const double divide20000 = 1.0d / 20000.0d;
+    private const double divide6250 = 1.0d / 6250.0d;
+    private string[] str0000to9999Table;
+    private string[] str0to999Table;
+    private string[] str00to100Table;
+    private string[] str000to110Table;
+
     private void Awake()
     {
         maxCombo = 0;
@@ -128,7 +146,7 @@ public class GameUIManager : MonoBehaviour
 
         hpBar.value = 1.0f;
 
-        maxComboText.text = maxCombo.ToString("D5");
+        maxComboText.text = maxCombo.ToString("D4");
 
         currentIdx = -1;
         rankImageTransform = rankImage.transform;
@@ -140,10 +158,25 @@ public class GameUIManager : MonoBehaviour
 
         bgImageTable = new Dictionary<string, string>();
         bgSprites = new Dictionary<string, Texture2D>();
-        tempJudgeList = new List<KeyValuePair<int, double>>(1000);
 
-        scoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0.0f);
-        maxScoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0.0f);
+        scoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
+        maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
+    }
+
+    public void MakeStringTable()
+    {
+        str0000to9999Table = new string[10000];
+        for (int i = 0; i < 10000;i++) { str0000to9999Table[i] = i.ToString("D4"); }
+
+        str0to999Table = new string[1000];
+        for (int i = 0; i < 1000; i++) { str0to999Table[i] = i.ToString(); }
+
+        str00to100Table = new string[101];
+        for (int i = 0; i < 100; i++) { str00to100Table[i] = i.ToString("D2"); }
+        str00to100Table[100] = "100";
+
+        str000to110Table = new string[111];
+        for (int i = 0; i < 111; i++) { str000to110Table[i] = i.ToString("D3"); }
     }
 
     public void LoadImages()
@@ -192,7 +225,7 @@ public class GameUIManager : MonoBehaviour
     {
         if (combo != 0)
         {
-            currentComboText.text = combo.ToString();
+            currentComboText.text = (combo < 1000 ? str0to999Table[combo] : str0000to9999Table[combo]);
             comboTextAnimator.SetTrigger(hashComboText);
             comboAnimator.SetTrigger(hashCombo);
         }
@@ -205,55 +238,62 @@ public class GameUIManager : MonoBehaviour
         if (combo > maxCombo)
         {
             maxCombo = combo;
-            maxComboText.text = maxCombo.ToString("D5");
+            maxComboText.text = str0000to9999Table[maxCombo];
         }
 
-        if (judge == JudgeType.KOOL) { judgeAnimator.SetTrigger(hashKoolJudge); }
-        else if (judge == JudgeType.COOL) { judgeAnimator.SetTrigger(hashCoolJudge); }
-        else if (judge == JudgeType.GOOD) { judgeAnimator.SetTrigger(hashGoodJudge); }
-        else if (judge == JudgeType.MISS) { judgeAnimator.SetTrigger(hashMissJudge); }
-        else  { judgeAnimator.SetTrigger(hashFailJudge); }
-
-        if (judge >= JudgeType.COOL) 
+        switch (judge)
         {
-            noteBomb[index].SetTrigger(hashBombEffect);
+            case JudgeType.KOOL: judgeAnimator.SetTrigger(hashKoolJudge); noteBomb[index].SetTrigger(hashBombEffect); break;
+            case JudgeType.COOL: judgeAnimator.SetTrigger(hashCoolJudge); noteBomb[index].SetTrigger(hashBombEffect); break;
+            case JudgeType.GOOD: judgeAnimator.SetTrigger(hashGoodJudge); break;
+            case JudgeType.MISS: judgeAnimator.SetTrigger(hashMissJudge); break;
+            default: judgeAnimator.SetTrigger(hashFailJudge); break;
         }
     }
 
-    public void UpdateScore(BMSResult res, float hpChange, double accuracy, double score, double maxScore)
+    public void UpdateScore(BMSResult res, float hp, double accuracy, double score, double maxScore)
     {
-        StartCoroutine(ChangeHPBarValue(hpChange));
+        hpBar.value = hp;
 
-        accuracyText.text = accuracy.ToString("P");
+        int frontAC = (int)(accuracy);
+        int backAC = (int)((accuracy - frontAC) * 100.0d);
+        frontAccuracyText.text = str00to100Table[frontAC];
+        backAccuracyText.text = str00to100Table[backAC];
 
-        statisticsText.text =
-            $"{res.koolCount.ToString("D4")}\n" +
-            $"{res.coolCount.ToString("D4")}\n" +
-            $"{res.goodCount.ToString("D4")}\n" +
-            $"{res.missCount.ToString("D4")}\n" +
-            $"{res.failCount.ToString("D4")}";
+        koolText.text = str0000to9999Table[res.koolCount];
+        coolText.text = str0000to9999Table[res.coolCount];
+        goodText.text = str0000to9999Table[res.goodCount];
+        missText.text = str0000to9999Table[res.missCount];
+        failText.text = str0000to9999Table[res.failCount];
 
-        scoreText.text = ((int)score).ToString("D7");
+        int frontSC = (int)(score * 0.0001d);
+        int backSC = (int)(score - (frontSC * 10000));
+        frontScoreText.text = str000to110Table[frontSC];
+        backScoreText.text = str0000to9999Table[backSC];
 
         double under60 = (score > 600000.0d ? 600000.0d : score) * divide20000;
-        double up60 = (score > 600000.0d ? score - 600000.0d : 0) * divide6250;
-        scoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)(under60 + up60));
+        double up60 = (score > 600000.0d ? score - 600000.0d : 0.0d) * divide6250;
+        scoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
 
         under60 = (maxScore > 600000.0d ? 600000.0d : maxScore) * divide20000;
-        up60 = (maxScore > 600000.0d ? maxScore - 600000.0d : 0) * divide6250;
-        maxScoreStick.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)(under60 + up60));
+        up60 = (maxScore > 600000.0d ? maxScore - 600000.0d : 0.0d) * divide6250;
+        maxScoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
 
-        int idx = -1;
-        if (score >= 1090000) { idx = 9; }
-        else if (score >= 1050000 && score < 1090000) { idx = 8; }
-        else if (score >= 1025000 && score < 1050000) { idx = 7; }
-        else if (score >= 1000000 && score < 1025000) { idx = 6; }
-        else if (score >= 950000 && score < 1000000) { idx = 5; }
-        else if (score >= 900000 && score < 950000) { idx = 4; }
-        else if (score >= 850000 && score < 900000) { idx = 3; }
-        else if (score >= 750000 && score < 850000) { idx = 2; }
-        else if (score >= 650000 && score < 750000) { idx = 1; }
-        else if (score >= 550000 && score < 650000) { idx = 0; }
+        int idx;
+        switch (score)
+        {
+            case double n when (n >= 550000.0d && n < 650000.0d): idx = 0; break;
+            case double n when (n >= 650000.0d && n < 750000.0d): idx = 1; break;
+            case double n when (n >= 750000.0d && n < 850000.0d): idx = 2; break;
+            case double n when (n >= 850000.0d && n < 900000.0d): idx = 3; break;
+            case double n when (n >= 900000.0d && n < 950000.0d): idx = 4; break;
+            case double n when (n >= 950000.0d && n < 1000000.0d): idx = 5; break;
+            case double n when (n >= 1000000.0d && n < 1025000.0d): idx = 6; break;
+            case double n when (n >= 1025000.0d && n < 1050000.0d): idx = 7; break;
+            case double n when (n >= 1050000.0d && n < 1090000.0d): idx = 8; break;
+            case double n when (n >= 1090000.0d): idx = 9; break;
+            default: idx = -1; break;
+        }
         if (idx != -1 && currentIdx != idx)
         {
             rankImage.sprite = rank[idx];
@@ -262,19 +302,9 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ChangeHPBarValue(float hpChange)
+    public void UpdateFSText(double diff, int idx)
     {
-        for (int i = 0; i < 60; i++)
-        {
-            hpBar.value += hpChange;
-            yield return null;
-        }
-    }
-
-    public void UpdateFSText(double diff, int idx, int currentCount)
-    {
-        tempJudgeList.Add(new KeyValuePair<int, double>(currentCount, diff));
-        if (Utility.Dabs(diff) <= 22.0d) { return; }
+        if ((diff > 0 ? diff : -diff) <= 22.0d) { return; }
 
         int earlylate = 0;
         if (diff < 0)
@@ -339,14 +369,5 @@ public class GameUIManager : MonoBehaviour
     public void CloseLoading()
     {
         loadingPanel.SetActive(false);
-    }
-
-    public void SaveJudgeList(BMSResult res)
-    {
-        int len = tempJudgeList.Count;
-        for (int i = 0; i < len; i++)
-        {
-            res.judgeList.Add(tempJudgeList[i]);
-        }
     }
 }
