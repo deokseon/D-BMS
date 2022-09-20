@@ -676,9 +676,6 @@
  <Reference Include="Unity.CollabProxy.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
- <Reference Include="Unity.Postprocessing.Editor">
- <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
- </Reference>
  <Reference Include="Unity.Rider.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
  </Reference>
@@ -696,9 +693,6 @@
  </Reference>
  <Reference Include="Unity.2D.Common.Runtime">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.2D.Common.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Postprocessing.Runtime">
- <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
  </Reference>
  <Reference Include="Unity.2D.Tilemap.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>

@@ -41,6 +41,7 @@ public class BMSGameManager : MonoBehaviour
     private const double divide60 = 1.0d / 60.0d;
     private const double divide44100 = 1.0d / 44100.0d;
     private double[] divideTable;
+    private double[] maxScoreTable;
 
     public static BMSHeader header;
     private Gauge gauge;
@@ -70,6 +71,14 @@ public class BMSGameManager : MonoBehaviour
     private int longNotePoolMaxCount;
     private int barPoolMaxCount;
 
+    private readonly float[] xPosition = { -7.7f, -7.13f, -6.56f, -5.99f, -5.42f };
+    private int bgaChangeListCount;
+    private int bgSoundsListCount;
+    private int bpmsListCount;
+    private int[] notesListCount;
+    private int[] longNoteListCount;
+    private int[] normalNoteListCount;
+    private int barListCount;
     private ListExtension<BGChange> bgaChangeList;
     private ListExtension<Note> bgSoundsList;
     private ListExtension<BPM> bpmsList;
@@ -103,30 +112,38 @@ public class BMSGameManager : MonoBehaviour
             notesList[i] = pattern.lines[i].noteList;
             longNoteList[i] = pattern.longNote[i];
             normalNoteList[i] = pattern.normalNote[i];
+
+            notesListCount[i] = notesList[i].Count;
+            longNoteListCount[i] = longNoteList[i].Count;
+            normalNoteListCount[i] = normalNoteList[i].Count;
         }
         barList = pattern.barLine.noteList;
 
-        for (int i = 0; i < 5; i++) { if (notesList[i].Count > 0) { currentNote[i] = notesList[i].Peek().keySound; } }
+        bgaChangeListCount = bgaChangeList.Count;
+        bgSoundsListCount = bgSoundsList.Count;
+        bpmsListCount = bpmsList.Count;
+        barListCount = barList.Count;
+        
+
+        for (int i = 0; i < 5; i++) { if (notesListCount[i] > 0) { currentNote[i] = notesList[i][notesListCount[i] - 1].keySound; } }
 
         gauge = new Gauge();
 
         totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count;
-        for (int i = bgaChangeList.Count - 1; i > -1; i--) { if (!bgaChangeList[i].isPic) { totalLoading++; break; } }
+        for (int i = bgaChangeListCount - 1; i > -1; i--) { if (!bgaChangeList[i].isPic) { totalLoading++; break; } }
         divideTotalLoading = 1.0f / totalLoading;
         StartCoroutine(Loading());
 
         gameUIManager.LoadImages();
         soundManager.AddAudioClips();
 
-        MakeTable();
-
         CalulateSpeed();
         bmsDrawer.DrawNotes();
 
         keyInput.KeySetting();
         
-        currentBPM = bpmsList.Peek().bpm;
-        bpmsList.RemoveLast();
+        currentBPM = bpmsList[bpmsListCount - 1].bpm;
+        --bpmsListCount;
         gameUIManager.UpdateBPMText(currentBPM);
 
         bmsResult.noteCount = pattern.noteCount;
@@ -137,9 +154,11 @@ public class BMSGameManager : MonoBehaviour
         coolAddScore = koolAddScore * 0.7d;
         goodAddScore = koolAddScore * 0.2d;
 
+        MakeTable();
+
         if (videoPlayer.isActiveAndEnabled)
         {
-            for (int i = bgaChangeList.Count - 1; i > -1; i--)
+            for (int i = bgaChangeListCount - 1; i > -1; i--)
             {
                 if (!bgaChangeList[i].isPic)
                 {
@@ -204,6 +223,9 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.UpdateInfoText();
 
         currentNote = new int[5] { 0, 0, 0, 0, 0 };
+        notesListCount = new int[5];
+        longNoteListCount = new int[5];
+        normalNoteListCount = new int[5];
         notesList = new ListExtension<Note>[5];
         longNoteList = new ListExtension<Note>[5];
         normalNoteList = new ListExtension<Note>[5];
@@ -227,11 +249,11 @@ public class BMSGameManager : MonoBehaviour
     {
         if (isPaused) { return; }
 
-        while (bgaChangeList.Count > 0 && bgaChangeList.Peek().timing - ((!bgaChangeList.Peek().isPic) ? 0.4 : 0) <= currentTime)
+        while (bgaChangeListCount > 0 && bgaChangeList[bgaChangeListCount - 1].timing - ((!bgaChangeList[bgaChangeListCount - 1].isPic) ? 0.4 : 0) <= currentTime)
         {
-            if (isBGAVideoSupported && !bgaChangeList.Peek().isPic) { videoPlayer.Play(); }
-            else { gameUIManager.ChangeBGA(bgaChangeList.Peek().key); }
-            bgaChangeList.RemoveLast();
+            if (isBGAVideoSupported && !bgaChangeList[bgaChangeListCount - 1].isPic) { videoPlayer.Play(); }
+            else { gameUIManager.ChangeBGA(bgaChangeList[bgaChangeListCount - 1].key); }
+            --bgaChangeListCount;
         }
 
         PlayNotes();
@@ -246,9 +268,9 @@ public class BMSGameManager : MonoBehaviour
         BPM next = null;
         bool flag = false;
 
-        if (bpmsList.Count > 0)
+        if (bpmsListCount > 0)
         {
-            BPM bpm = bpmsList.Peek();
+            BPM bpm = bpmsList[bpmsListCount - 1];
             if (next == null) { next = bpm; }
             else if (bpm.beat <= next.beat) { next = bpm; }
 
@@ -267,10 +289,10 @@ public class BMSGameManager : MonoBehaviour
             currentBPM = next.bpm;
             gameUIManager.UpdateBPMText(currentBPM);
             prevTime = next.timing;
-            bpmsList.RemoveLast();
+            --bpmsListCount;
 
             next = null;
-            if (bpmsList.Count > 0) { next = bpmsList.Peek(); }
+            if (bpmsListCount > 0) { next = bpmsList[bpmsListCount - 1]; }
         }
 
         if (flag && prevTime <= currentScrollTime + frameTime)
@@ -287,20 +309,20 @@ public class BMSGameManager : MonoBehaviour
 
     private void HandleNote(ListExtension<Note> noteList, int idx)
     {
-        Note n = noteList.Peek();
+        Note n = noteList[notesListCount[idx] - 1];
         currentCount++;
-        noteList.RemoveLast();
+        --notesListCount[idx];
 
-        if (noteList.Count > 0) { currentNote[idx] = noteList.Peek().keySound; }
+        if (notesListCount[idx] > 0) { currentNote[idx] = noteList[notesListCount[idx] - 1].keySound; }
 
         bool nextCheck = true;
-        if (normalNoteList[idx].Count > 0 && n.beat == normalNoteList[idx].Peek().beat)
+        if (normalNoteListCount[idx] > 0 && n.beat == normalNoteList[idx][normalNoteListCount[idx] - 1].beat)
         {
-            normalNoteList[idx].RemoveLast();
-            int tempPeek = normalNoteList[idx].Count - notePoolMaxCount;
+            --normalNoteListCount[idx];
+            int tempPeek = normalNoteListCount[idx] - notePoolMaxCount;
             if (tempPeek >= 0)
             {
-                n.modelTransform.localPosition = new Vector3(-7.7f + 0.57f * idx, (float)(normalNoteList[idx][tempPeek].beat * gameSpeed), 0.0f);
+                n.modelTransform.localPosition = new Vector3(xPosition[idx], (float)(normalNoteList[idx][tempPeek].beat * gameSpeed), 0.0f);
                 normalNoteList[idx][tempPeek].model = n.model;
                 normalNoteList[idx][tempPeek].modelTransform = n.modelTransform;
             }
@@ -323,7 +345,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (result <= JudgeType.MISS) { combo = -1; }
         else { bmsResult.judgeList[currentCount] = diff; }
-        gameUIManager.TextUpdate(++combo, result, idx);
+        gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
 
         if (result != JudgeType.FAIL) { gameUIManager.UpdateFSText((float)diff, idx); }
 
@@ -333,9 +355,9 @@ public class BMSGameManager : MonoBehaviour
     private void HandleLongNoteTick(ListExtension<Note> noteList, int idx)
     {
         currentCount++;
-        noteList.RemoveLast();
+        --notesListCount[idx];
 
-        if (noteList.Count > 0) { currentNote[idx] = noteList.Peek().keySound; }
+        if (notesListCount[idx] > 0) { currentNote[idx] = noteList[notesListCount[idx] - 1].keySound; }
 
         if (!currentButtonPressed[idx]) { currentLongNoteJudge = JudgeType.FAIL; }
         else { if (currentLongNoteJudge == JudgeType.FAIL) { currentLongNoteJudge = JudgeType.GOOD; } }
@@ -343,33 +365,33 @@ public class BMSGameManager : MonoBehaviour
         JudgeType result = currentLongNoteJudge;
 
         if (result <= JudgeType.MISS) { combo = -1; }
-        gameUIManager.TextUpdate(++combo, result, idx);
+        gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
 
         UpdateResult(result);
     }
 
     private void PlayNotes()
     {
-        while (bgSoundsList.Count > 0 && bgSoundsList.Peek().timing <= currentTime)  // 배경음 재생
+        while (bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= currentTime)  // 배경음 재생
         {
-            soundManager.PlayBGSound(bgSoundsList.Peek().keySound);
-            bgSoundsList.RemoveLast();
+            soundManager.PlayBGSound(bgSoundsList[bgSoundsListCount - 1].keySound);
+            --bgSoundsListCount;
         }
 
         for (int i = 0; i < 5; i++)
         {
-            while (longNoteList[i].Count > 0 && longNoteList[i].Peek().timing <= currentTime)
+            while (longNoteListCount[i] > 0 && longNoteList[i][longNoteListCount[i] - 1].timing <= currentTime)
             {
                 longNotePress[i].SetActive(false);
                 for (int j = 0; j < 3; j++)
                 {
-                    Note tempNote = longNoteList[i].Peek();
-                    longNoteList[i].RemoveLast();
+                    Note tempNote = longNoteList[i][longNoteListCount[i] - 1];
+                    --longNoteListCount[i];
 
-                    int len = longNoteList[i].Count - (3 * longNotePoolMaxCount);
+                    int len = longNoteListCount[i] - (3 * longNotePoolMaxCount);
                     if (len >= 0)
                     {
-                        tempNote.modelTransform.localPosition = new Vector3(-7.7f + 0.57f * i, (float)(longNoteList[i][len].beat * gameSpeed), 0.0f);
+                        tempNote.modelTransform.localPosition = new Vector3(xPosition[i], (float)(longNoteList[i][len].beat * gameSpeed), 0.0f);
                         longNoteList[i][len].model = tempNote.model;
                         longNoteList[i][len].modelTransform = tempNote.modelTransform;
                         if (j == 1)
@@ -389,7 +411,7 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++)  // 롱노트 틱 검사
         {
-            while (notesList[i].Count > 0 && notesList[i].Peek().extra == 2 && notesList[i].Peek().timing <= currentTime)
+            while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra == 2 && notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
                 HandleLongNoteTick(notesList[i], i);
             }
@@ -397,17 +419,17 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++)  // 놓친 노트 검사
         {
-            while (notesList[i].Count > 0 && judge.Judge(notesList[i].Peek(), currentTime) == JudgeType.FAIL)
+            while (notesListCount[i] > 0 && judge.Judge(notesList[i][notesListCount[i] - 1], currentTime) == JudgeType.FAIL)
             {
                 HandleNote(notesList[i], i);
             }
         }
 
-        while (barList.Count > 0 && barList.Peek().timing + 0.175f <= currentTime)
+        while (barListCount > 0 && barList[barListCount - 1].timing + 0.175f <= currentTime)
         {
-            Note bar = barList.Peek();
-            barList.RemoveLast();
-            int len = barList.Count - barPoolMaxCount;
+            Note bar = barList[barListCount - 1];
+            --barListCount;
+            int len = barListCount - barPoolMaxCount;
             if (len >= 0)
             {
                 bar.modelTransform.localPosition = new Vector3(-6.56f, (float)(barList[len].beat * gameSpeed) - 0.285f, 0.0f);
@@ -425,9 +447,9 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             currentButtonPressed[i] = true;
-            while (notesList[i].Count > 0 && notesList[i].Peek().extra != 2 && notesList[i].Peek().timing <= currentTime)
+            while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra != 2 && notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
-                soundManager.PlayKeySound(notesList[i].Peek().keySound);
+                soundManager.PlayKeySound(notesList[i][notesListCount[i] - 1].keySound);
                 HandleNote(notesList[i], i);
             }
         }
@@ -437,8 +459,8 @@ public class BMSGameManager : MonoBehaviour
     {
         currentButtonPressed[index] = true;
 
-        if (notesList[index].Count <= 0 || notesList[index].Peek().extra == 2 || 
-            judge.Judge(notesList[index].Peek(), currentTime) == JudgeType.IGNORE) { return; }
+        if (notesListCount[index] <= 0 || notesList[index][notesListCount[index] - 1].extra == 2 || 
+            judge.Judge(notesList[index][notesListCount[index] - 1], currentTime) == JudgeType.IGNORE) { return; }
 
         HandleNote(notesList[index], index);
     }
@@ -483,7 +505,7 @@ public class BMSGameManager : MonoBehaviour
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
         else if (gauge.hp <= 0.0f) { StartCoroutine(GameEnd(false)); }
 
-        gameUIManager.UpdateScore(bmsResult, gauge.hp, accuracySum * divideTable[currentCount], currentScore * 0.001f, currentCount * koolAddScore * 0.001f);
+        gameUIManager.UpdateScore(gauge.hp, accuracySum * divideTable[currentCount], currentScore * 0.001d, maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount);
@@ -524,7 +546,7 @@ public class BMSGameManager : MonoBehaviour
         while (true)
         {
             if (currentCount >= pattern.noteCount && 
-                ((!isBGAVideoSupported && pattern.bgaChanges.Count == 0) || 
+                ((!isBGAVideoSupported && bgaChangeListCount == 0) || 
                 (isBGAVideoSupported && !videoPlayer.isPlaying)))
             {
                 StartCoroutine(GameEnd(true));
@@ -539,6 +561,9 @@ public class BMSGameManager : MonoBehaviour
         int len = pattern.noteCount + 1;
         divideTable = new double[len];
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
+
+        maxScoreTable = new double[len];
+        for (int i = 1; i < len; i++) { maxScoreTable[i] = koolAddScore * i * 0.001d; }
 
         gameUIManager.MakeStringTable();
     }

@@ -221,7 +221,7 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void TextUpdate(int combo, JudgeType judge, int index)
+    public void TextUpdate(BMSResult res, int combo, JudgeType judge, int index)
     {
         if (combo != 0)
         {
@@ -243,15 +243,32 @@ public class GameUIManager : MonoBehaviour
 
         switch (judge)
         {
-            case JudgeType.KOOL: judgeAnimator.SetTrigger(hashKoolJudge); noteBomb[index].SetTrigger(hashBombEffect); break;
-            case JudgeType.COOL: judgeAnimator.SetTrigger(hashCoolJudge); noteBomb[index].SetTrigger(hashBombEffect); break;
-            case JudgeType.GOOD: judgeAnimator.SetTrigger(hashGoodJudge); break;
-            case JudgeType.MISS: judgeAnimator.SetTrigger(hashMissJudge); break;
-            default: judgeAnimator.SetTrigger(hashFailJudge); break;
+            case JudgeType.KOOL:
+                koolText.text = str0000to9999Table[res.koolCount];
+                judgeAnimator.SetTrigger(hashKoolJudge); 
+                noteBomb[index].SetTrigger(hashBombEffect); 
+                break;
+            case JudgeType.COOL:
+                coolText.text = str0000to9999Table[res.coolCount];
+                judgeAnimator.SetTrigger(hashCoolJudge); 
+                noteBomb[index].SetTrigger(hashBombEffect); 
+                break;
+            case JudgeType.GOOD:
+                goodText.text = str0000to9999Table[res.goodCount];
+                judgeAnimator.SetTrigger(hashGoodJudge); 
+                break;
+            case JudgeType.MISS:
+                missText.text = str0000to9999Table[res.missCount];
+                judgeAnimator.SetTrigger(hashMissJudge); 
+                break;
+            default:
+                failText.text = str0000to9999Table[res.failCount];
+                judgeAnimator.SetTrigger(hashFailJudge); 
+                break;
         }
     }
 
-    public void UpdateScore(BMSResult res, float hp, double accuracy, double score, double maxScore)
+    public void UpdateScore(float hp, double accuracy, double score, double maxScore)
     {
         hpBar.value = hp;
 
@@ -259,12 +276,6 @@ public class GameUIManager : MonoBehaviour
         int backAC = (int)((accuracy - frontAC) * 100.0d);
         frontAccuracyText.text = str00to100Table[frontAC];
         backAccuracyText.text = str00to100Table[backAC];
-
-        koolText.text = str0000to9999Table[res.koolCount];
-        coolText.text = str0000to9999Table[res.coolCount];
-        goodText.text = str0000to9999Table[res.goodCount];
-        missText.text = str0000to9999Table[res.missCount];
-        failText.text = str0000to9999Table[res.failCount];
 
         int frontSC = (int)(score * 0.0001d);
         int backSC = (int)(score - (frontSC * 10000));

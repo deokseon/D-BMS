@@ -9950,6 +9950,7 @@ MonoBehaviour:
   endInfo: {fileID: 9427965}
   fadeinAnimator: {fileID: 1949911354}
   fadeinObject: {fileID: 1949911352}
+  maxCombo: 0
 --- !u!1 &1805796324
 GameObject:
   m_ObjectHideFlags: 0

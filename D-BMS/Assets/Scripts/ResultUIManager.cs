@@ -143,17 +143,18 @@ public class ResultUIManager : MonoBehaviour
         int len = bmsResult.judgeList.Length;
         double divideNoteCount = 1.0d / bmsResult.noteCount;
         double total = 0;
+        int totalCount = 0;
         for (int i = 1; i < len; i++)
         {
             double y = bmsResult.judgeList[i];
-            total += y;
             if (Utility.Dabs(y) > 115) { continue; }
+            total += y; totalCount++;
             double x = (i * divideNoteCount * 600) - 300;
 
             GameObject tempDot = Instantiate(dot, dotParent);
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);
         }
-        averageInputTimingText.text = $"{(int)(total * divideNoteCount)} MS";
+        averageInputTimingText.text = $"{(int)(total / totalCount)} MS";
     }
 
     private IEnumerator DrawSongInfo()
