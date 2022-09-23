@@ -13,7 +13,8 @@ public class SoundManager : MonoBehaviour
 
     private static string[] soundFileExtensions;
 
-    private int channelLength = 127;
+    private const int channelLength = 127;
+    private const int maxChannelIndex = channelLength - 2;
 
     private AudioClip bgSoundClip;
     private AudioSource[] bgSoundAudioArray;
@@ -99,12 +100,12 @@ public class SoundManager : MonoBehaviour
         if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
         while (true)
         {
-            currentKeySoundIndex = currentKeySoundIndex > 125 ? 0 : currentKeySoundIndex + 1;
+            currentKeySoundIndex = currentKeySoundIndex > maxChannelIndex ? 0 : currentKeySoundIndex + 1;
 
             if (!keySoundAudioArray[currentKeySoundIndex].isPlaying)
             {
                 keySoundAudioArray[currentKeySoundIndex].PlayOneShot(keySoundClip, volume);
-                break;
+                return;
             }
         }
     }
@@ -114,12 +115,12 @@ public class SoundManager : MonoBehaviour
         if (key == 0 || !clips.TryGetValue(key, out bgSoundClip)) { return; }
         while (true)
         {
-            currentBGSoundIndex = currentBGSoundIndex > 125 ? 0 : currentBGSoundIndex + 1;
+            currentBGSoundIndex = currentBGSoundIndex > maxChannelIndex ? 0 : currentBGSoundIndex + 1;
 
             if (!bgSoundAudioArray[currentBGSoundIndex].isPlaying)
             {
                 bgSoundAudioArray[currentBGSoundIndex].PlayOneShot(bgSoundClip, volume);
-                break;
+                return;
             }
         }
     }

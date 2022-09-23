@@ -17,7 +17,7 @@ public class KeyInput : MonoBehaviour
     [SerializeField]
     private GameObject[] keyFeedback;
     [SerializeField]
-    private Image[] keyboard;
+    private SpriteRenderer[] keyboard;
     [SerializeField]
     private Sprite[] keyInitImage;
     [SerializeField]

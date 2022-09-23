@@ -61,7 +61,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 128
+    maxTextureSize: 64
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -73,7 +73,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 128
+    maxTextureSize: 64
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -85,7 +85,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Android
-    maxTextureSize: 128
+    maxTextureSize: 64
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -99,35 +99,10 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline:
-    - - {x: 27, y: -54}
-      - {x: 32, y: -44}
-      - {x: 42, y: -42}
-      - {x: 81, y: -1}
-      - {x: 62, y: 26}
-      - {x: 68, y: 35}
-      - {x: 52, y: 34}
-      - {x: 52, y: 42}
-      - {x: 56, y: 50}
-      - {x: 44, y: 44}
-      - {x: 26, y: 56}
-      - {x: 5, y: 62}
-      - {x: -2, y: 58}
-      - {x: -10, y: 62}
-      - {x: -20, y: 57}
-      - {x: -26, y: 52}
-      - {x: -36, y: 54}
-      - {x: -37, y: 47}
-      - {x: -44, y: 44}
-      - {x: -76, y: 12}
-      - {x: -78, y: 1}
-      - {x: -76, y: -5}
-      - {x: -60, y: -23}
-      - {x: -66, y: -34}
-      - {x: -53, y: -32}
-      - {x: -35, y: -46}
-      - {x: -14, y: -53}
-      - {x: 2, y: -59}
-      - {x: 9, y: -54}
+    - - {x: -78, y: -61}
+      - {x: -78, y: 63}
+      - {x: 81, y: 65}
+      - {x: 81, y: -60}
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000

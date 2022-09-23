@@ -45,17 +45,17 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI backAccuracyText;
 
     [SerializeField]
-    private Animator[] noteBomb;
+    private Animator[] noteBombEffect;
 
     [SerializeField]
-    private Animator judgeAnimator;
+    private Animator judgeEffectAnimator;
 
     [SerializeField]
     private Sprite[] earlyLateImageArray;
     [SerializeField]
-    private Image[] earlyLateImage;
+    private SpriteRenderer[] earlyLateSprite;
     [SerializeField]
-    private Animator[] earlyLateAnimator;
+    private Animator[] earlyLateEffectAnimator;
 
     private int currentIdx;
     private float[] yPos;
@@ -123,15 +123,16 @@ public class GameUIManager : MonoBehaviour
 
     private readonly int hashComboText = Animator.StringToHash("ComboText");
     private readonly int hashCombo = Animator.StringToHash("Combo");
-    private readonly int hashKoolJudge = Animator.StringToHash("KoolJudge");
-    private readonly int hashCoolJudge = Animator.StringToHash("CoolJudge");
-    private readonly int hashGoodJudge = Animator.StringToHash("GoodJudge");
-    private readonly int hashMissJudge = Animator.StringToHash("MissJudge");
-    private readonly int hashFailJudge = Animator.StringToHash("FailJudge");
-    private readonly int hashBombEffect = Animator.StringToHash("BombEffect");
-    private readonly int hashEarlyLate = Animator.StringToHash("EarlyLate");
+    private readonly int hashJudgeEffectKOOL = Animator.StringToHash("JudgeEffectKOOL");
+    private readonly int hashJudgeEffectCOOL = Animator.StringToHash("JudgeEffectCOOL");
+    private readonly int hashJudgeEffectGOOD = Animator.StringToHash("JudgeEffectGOOD");
+    private readonly int hashJudgeEffectMISS = Animator.StringToHash("JudgeEffectMISS");
+    private readonly int hashJudgeEffectFAIL = Animator.StringToHash("JudgeEffectFAIL");
+    private readonly int hashNoteBombEffect = Animator.StringToHash("NoteBomb");
+    private readonly int hashEarlyLateEffect = Animator.StringToHash("EarlyLateEffect");
 
     private const double divide20000 = 1.0d / 20000.0d;
+    private const double height60 = 600000.0d * divide20000;
     private const double divide6250 = 1.0d / 6250.0d;
     private string[] str0000to9999Table;
     private string[] str0to999Table;
@@ -245,30 +246,30 @@ public class GameUIManager : MonoBehaviour
         {
             case JudgeType.KOOL:
                 koolText.text = str0000to9999Table[res.koolCount];
-                judgeAnimator.SetTrigger(hashKoolJudge); 
-                noteBomb[index].SetTrigger(hashBombEffect); 
+                judgeEffectAnimator.SetTrigger(hashJudgeEffectKOOL);
+                noteBombEffect[index].SetTrigger(hashNoteBombEffect);
                 break;
             case JudgeType.COOL:
                 coolText.text = str0000to9999Table[res.coolCount];
-                judgeAnimator.SetTrigger(hashCoolJudge); 
-                noteBomb[index].SetTrigger(hashBombEffect); 
+                judgeEffectAnimator.SetTrigger(hashJudgeEffectCOOL);
+                noteBombEffect[index].SetTrigger(hashNoteBombEffect);
                 break;
             case JudgeType.GOOD:
                 goodText.text = str0000to9999Table[res.goodCount];
-                judgeAnimator.SetTrigger(hashGoodJudge); 
+                judgeEffectAnimator.SetTrigger(hashJudgeEffectGOOD);
                 break;
             case JudgeType.MISS:
                 missText.text = str0000to9999Table[res.missCount];
-                judgeAnimator.SetTrigger(hashMissJudge); 
+                judgeEffectAnimator.SetTrigger(hashJudgeEffectMISS);
                 break;
-            default:
+            case JudgeType.FAIL:
                 failText.text = str0000to9999Table[res.failCount];
-                judgeAnimator.SetTrigger(hashFailJudge); 
+                judgeEffectAnimator.SetTrigger(hashJudgeEffectFAIL);
                 break;
         }
     }
 
-    public void UpdateScore(float hp, double accuracy, double score, double maxScore)
+    public void UpdateScore(float hp, float accuracy, double score, double maxScore)
     {
         hpBar.value = hp;
 
@@ -282,17 +283,17 @@ public class GameUIManager : MonoBehaviour
         frontScoreText.text = str000to110Table[frontSC];
         backScoreText.text = str0000to9999Table[backSC];
 
-        double under60 = (score > 600000.0d ? 600000.0d : score) * divide20000;
-        double up60 = (score > 600000.0d ? score - 600000.0d : 0.0d) * divide6250;
+        double under60 = height60;
+        double up60 = 0.0d;
+        if (score <= 600000.0d) { under60 = score * divide20000; }
+        else { up60 = (score - 600000.0d) * divide6250; }
         scoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
+        maxScoreStick.SetSizeWithCurrentAnchors(vertical, (float)(maxScore));
 
-        under60 = (maxScore > 600000.0d ? 600000.0d : maxScore) * divide20000;
-        up60 = (maxScore > 600000.0d ? maxScore - 600000.0d : 0.0d) * divide6250;
-        maxScoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
-
-        int idx;
+        int idx = -1;
         switch (score)
         {
+            case double n when (n >= 0.0d && n < 550000.0d): idx = -1; break;
             case double n when (n >= 550000.0d && n < 650000.0d): idx = 0; break;
             case double n when (n >= 650000.0d && n < 750000.0d): idx = 1; break;
             case double n when (n >= 750000.0d && n < 850000.0d): idx = 2; break;
@@ -303,7 +304,6 @@ public class GameUIManager : MonoBehaviour
             case double n when (n >= 1025000.0d && n < 1050000.0d): idx = 7; break;
             case double n when (n >= 1050000.0d && n < 1090000.0d): idx = 8; break;
             case double n when (n >= 1090000.0d): idx = 9; break;
-            default: idx = -1; break;
         }
         if (idx != -1 && currentIdx != idx)
         {
@@ -330,8 +330,8 @@ public class GameUIManager : MonoBehaviour
         }
         int index = (idx < 2) ? 0 : 1;
 
-        earlyLateImage[index].sprite = earlyLateImageArray[earlylate];
-        earlyLateAnimator[index].SetTrigger(hashEarlyLate);
+        earlyLateSprite[index].sprite = earlyLateImageArray[earlylate];
+        earlyLateEffectAnimator[index].SetTrigger(hashEarlyLateEffect);
     }
 
     public void UpdateSongEndText(int koolCount, int coolCount, int goodCount)

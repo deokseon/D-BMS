@@ -496,7 +496,7 @@ public class BMSGameManager : MonoBehaviour
                 bmsResult.missCount++;
                 gauge.hp -= gauge.missDamage;
                 break;
-            default:
+            case JudgeType.FAIL:
                 bmsResult.failCount++;
                 gauge.hp -= gauge.failDamage;
                 break;
@@ -505,7 +505,7 @@ public class BMSGameManager : MonoBehaviour
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
         else if (gauge.hp <= 0.0f) { StartCoroutine(GameEnd(false)); }
 
-        gameUIManager.UpdateScore(gauge.hp, accuracySum * divideTable[currentCount], currentScore * 0.001d, maxScoreTable[currentCount]);
+        gameUIManager.UpdateScore(gauge.hp, (float)(accuracySum * divideTable[currentCount]), currentScore * 0.001d, maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount);
@@ -562,8 +562,16 @@ public class BMSGameManager : MonoBehaviour
         divideTable = new double[len];
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
 
+        double divide20000 = 1.0d / 20000.0d;
+        double divide6250 = 1.0d / 6250.0d;
         maxScoreTable = new double[len];
-        for (int i = 1; i < len; i++) { maxScoreTable[i] = koolAddScore * i * 0.001d; }
+        for (int i = 1; i < len; i++) 
+        { 
+            maxScoreTable[i] = koolAddScore * i * 0.001d;
+            double under60 = (maxScoreTable[i] > 600000.0d ? 600000.0d : maxScoreTable[i]) * divide20000;
+            double up60 = (maxScoreTable[i] > 600000.0d ? maxScoreTable[i] - 600000.0d : 0.0d) * divide6250;
+            maxScoreTable[i] = under60 + up60;
+        }
 
         gameUIManager.MakeStringTable();
     }
