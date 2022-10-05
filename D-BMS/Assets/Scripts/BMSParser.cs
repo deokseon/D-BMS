@@ -17,7 +17,6 @@ public class BMSParser : MonoBehaviour
 
     [SerializeField]
     private SoundManager soundManager;
-    private BMSGameManager bmsGameManager;
     public GameUIManager gameUIManager;
 
     public BMSPattern pattern { get; private set; }
@@ -25,16 +24,7 @@ public class BMSParser : MonoBehaviour
 
     private string[] bmsFile { get; set; }
     private Dictionary<string, double> exBpms;
-
     private List<int> lineIndex;
-
-    private void Awake()
-    {
-        exBpms = new Dictionary<string, double>();
-        bmsGameManager = GetComponent<BMSGameManager>();
-        lineIndex = new List<int>();
-        SetLineIndex();
-    }
 
     private void SetLineIndex()
     {
@@ -78,34 +68,41 @@ public class BMSParser : MonoBehaviour
         }
     }
 
-    public void Parse()
+    public void Parse(bool isRestart)
     {
+        exBpms = null;
+        lineIndex = null;
+        pattern = null;
+        exBpms = new Dictionary<string, double>();
+        lineIndex = new List<int>();
         pattern = new BMSPattern();
+        SetLineIndex();
         GetFile();
-        ParseGameHeader();
+        ParseGameHeader(isRestart);
         ParseMainData();
     }
 
     public void GetFile()
     {
         header = BMSGameManager.header;
+        bmsFile = null;
         bmsFile = File.ReadAllLines(header.textFolderPath);
     }
 
-    private void ParseGameHeader()
+    private void ParseGameHeader(bool isRestart)
     {
         int len = bmsFile.Length;
         for (int i = 0; i < len; i++)
         {
             if (bmsFile[i].Length <= 3) { continue; }
 
-            if (bmsFile[i].Length >= 4 && bmsFile[i].Substring(0, 4).CompareTo("#WAV") == 0)
+            if (bmsFile[i].Length >= 4 && bmsFile[i].Substring(0, 4).CompareTo("#WAV") == 0 && !isRestart)
             {
                 int key = Decode36(bmsFile[i].Substring(4, 2));
                 string path = bmsFile[i].Substring(7, bmsFile[i].Length - 11);
                 soundManager.pathes.Add(new KeyValuePair<int, string>(key, path));
             }
-            else if (bmsFile[i].Length >= 6 && bmsFile[i].Substring(0, 6).CompareTo("#LNOBJ") == 0)
+            else if (bmsFile[i].Length >= 6 && bmsFile[i].Substring(0, 6).CompareTo("#LNOBJ") == 0 && !isRestart)
             {
                 header.lnobj = Decode36(bmsFile[i].Substring(7, 2));
                 header.lnType |= Lntype.LNOBJ;
@@ -119,7 +116,7 @@ public class BMSParser : MonoBehaviour
                 {
                     pattern.bgVideoTable.Add(key, path);
                 }
-                else if (extend.CompareTo("bmp") == 0 || extend.CompareTo("png") == 0)
+                else if ((extend.CompareTo("bmp") == 0 || extend.CompareTo("png") == 0) && !isRestart)
                 {
                     gameUIManager.bgImageTable.Add(key, path);
                 }

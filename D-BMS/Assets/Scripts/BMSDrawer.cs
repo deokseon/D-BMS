@@ -8,10 +8,6 @@ public class BMSDrawer : MonoBehaviour
     private float xPositionStart = -7.7f;
 
     [SerializeField]
-    private GameObject[] longNotePrefab;
-    [SerializeField]
-    private GameObject[] longNoteEdgePrefab;
-    [SerializeField]
     private Transform noteParent;
 
     public void DrawNotes()

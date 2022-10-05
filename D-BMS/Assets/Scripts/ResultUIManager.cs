@@ -154,7 +154,8 @@ public class ResultUIManager : MonoBehaviour
             GameObject tempDot = Instantiate(dot, dotParent);
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);
         }
-        averageInputTimingText.text = $"{(int)(total / totalCount)} MS";
+        int average = (totalCount == 0 ? 0 : (int)(total / totalCount));
+        averageInputTimingText.text = $"{average} MS";
     }
 
     private IEnumerator DrawSongInfo()

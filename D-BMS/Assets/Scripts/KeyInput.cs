@@ -8,11 +8,16 @@ using UnityEngine.InputSystem;
 public class KeyInput : MonoBehaviour
 {
     // 1번키부터 5번키까지 입력액션
-    private InputAction keyLineAction1;
-    private InputAction keyLineAction2;
-    private InputAction keyLineAction3;
-    private InputAction keyLineAction4;
-    private InputAction keyLineAction5;
+    private InputAction keyInputAction1;
+    private InputAction keyInputAction2;
+    private InputAction keyInputAction3;
+    private InputAction keyInputAction4;
+    private InputAction keyInputAction5;
+
+    private InputAction funcGameEndAction;
+    private InputAction funcGameRestartAction;
+    private InputAction funcSpeedUpAction;
+    private InputAction funcSpeedDownAction;
 
     [SerializeField]
     private GameObject[] keyFeedback;
@@ -32,34 +37,43 @@ public class KeyInput : MonoBehaviour
 
     void Awake()
     {
-        keyLineAction1 = new InputAction($"Key Line 1", InputActionType.Button, $"<Keyboard>/{keyMapping[0]}");
-        keyLineAction2 = new InputAction($"Key Line 2", InputActionType.Button, $"<Keyboard>/{keyMapping[1]}");
-        keyLineAction3 = new InputAction($"Key Line 3", InputActionType.Button, $"<Keyboard>/{keyMapping[2]}");
-        keyLineAction4 = new InputAction($"Key Line 4", InputActionType.Button, $"<Keyboard>/{keyMapping[3]}");
-        keyLineAction5 = new InputAction($"Key Line 5", InputActionType.Button, $"<Keyboard>/{keyMapping[4]}");
+        keyInputAction1 = new InputAction("KeyInput1", InputActionType.Button, $"<Keyboard>/{keyMapping[0]}");
+        keyInputAction2 = new InputAction("KeyInput2", InputActionType.Button, $"<Keyboard>/{keyMapping[1]}");
+        keyInputAction3 = new InputAction("KeyInput3", InputActionType.Button, $"<Keyboard>/{keyMapping[2]}");
+        keyInputAction4 = new InputAction("KeyInput4", InputActionType.Button, $"<Keyboard>/{keyMapping[3]}");
+        keyInputAction5 = new InputAction("KeyInput5", InputActionType.Button, $"<Keyboard>/{keyMapping[4]}");
+
+        funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
+        funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");
+        funcSpeedUpAction = new InputAction("FuncSpeedUp", InputActionType.Button, "<Keyboard>/F1");
+        funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, "<Keyboard>/F2");
     }
 
     public void KeySetting()
     {
-        MakeKeyAction(keyLineAction1, 0);
-        MakeKeyAction(keyLineAction2, 1);
-        MakeKeyAction(keyLineAction3, 2);
-        MakeKeyAction(keyLineAction4, 3);
-        MakeKeyAction(keyLineAction5, 4);
+        MakeKeyAction(keyInputAction1, 0);
+        MakeKeyAction(keyInputAction2, 1);
+        MakeKeyAction(keyInputAction3, 2);
+        MakeKeyAction(keyInputAction4, 3);
+        MakeKeyAction(keyInputAction5, 4);
+
+        MakeFunctionKeyAction();
 
         InputSystem.pollingFrequency = 1000.0f;
     }
 
     public void KeyDisable()
     {
-        DeleteKeyAction(keyLineAction1, 0);
-        DeleteKeyAction(keyLineAction2, 1);
-        DeleteKeyAction(keyLineAction3, 2);
-        DeleteKeyAction(keyLineAction4, 3);
-        DeleteKeyAction(keyLineAction5, 4);
+        DeleteKeyAction(keyInputAction1, 0);
+        DeleteKeyAction(keyInputAction2, 1);
+        DeleteKeyAction(keyInputAction3, 2);
+        DeleteKeyAction(keyInputAction4, 3);
+        DeleteKeyAction(keyInputAction5, 4);
+
+        DeleteFunctionKeyAction();
     }
 
-    void MakeKeyAction(InputAction action, int index)
+    private void MakeKeyAction(InputAction action, int index)
     {
         // 액션 이벤트 연결
         action.started += ctx => {
@@ -78,7 +92,28 @@ public class KeyInput : MonoBehaviour
         action.Enable();
     }
 
-    void DeleteKeyAction(InputAction action, int index)
+    private void MakeFunctionKeyAction()
+    {
+        funcGameEndAction.started += ctx => {
+            StartCoroutine(bmsGameManager.GameEnd(false));
+        };
+        funcGameRestartAction.started += ctx => {
+            StartCoroutine(bmsGameManager.GameRestart());
+        };
+        funcSpeedUpAction.started += ctx => {
+            bmsGameManager.ChangeSpeed(-0.1f);
+        };
+        funcSpeedDownAction.started += ctx => {
+            bmsGameManager.ChangeSpeed(0.1f);
+        };
+
+        funcGameEndAction.Enable();
+        funcGameRestartAction.Enable();
+        funcSpeedUpAction.Enable();
+        funcSpeedDownAction.Enable();
+    }
+
+    private void DeleteKeyAction(InputAction action, int index)
     {
         action.started -= ctx => {
             soundManager.PlayKeySound(bmsGameManager.currentNote[index]);
@@ -94,5 +129,30 @@ public class KeyInput : MonoBehaviour
 
         action.Disable();
         action = null;
+    }
+
+    private void DeleteFunctionKeyAction()
+    {
+        funcGameEndAction.started -= ctx => {
+            StartCoroutine(bmsGameManager.GameEnd(false));
+        };
+        funcGameRestartAction.started -= ctx => {
+            StartCoroutine(bmsGameManager.GameRestart());
+        };
+        funcSpeedUpAction.started -= ctx => {
+            bmsGameManager.ChangeSpeed(-0.1f);
+        };
+        funcSpeedDownAction.started -= ctx => {
+            bmsGameManager.ChangeSpeed(0.1f);
+        };
+
+        funcGameEndAction.Disable();
+        funcGameRestartAction.Disable();
+        funcSpeedUpAction.Disable();
+        funcSpeedDownAction.Disable();
+        funcGameEndAction = null;
+        funcGameRestartAction = null;
+        funcSpeedUpAction = null;
+        funcSpeedDownAction = null;
     }
 }

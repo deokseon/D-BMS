@@ -236,7 +236,7 @@ public class GameUIManager : MonoBehaviour
             comboText.enabled = false;
         }
 
-        if (combo > maxCombo)
+        if (combo >= maxCombo)
         {
             maxCombo = combo;
             maxComboText.text = str0000to9999Table[maxCombo];
@@ -265,6 +265,13 @@ public class GameUIManager : MonoBehaviour
             case JudgeType.FAIL:
                 failText.text = str0000to9999Table[res.failCount];
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectFAIL);
+                break;
+            case JudgeType.IGNORE:
+                koolText.text = str0000to9999Table[res.koolCount];
+                coolText.text = str0000to9999Table[res.coolCount];
+                goodText.text = str0000to9999Table[res.goodCount];
+                missText.text = str0000to9999Table[res.missCount];
+                failText.text = str0000to9999Table[res.failCount];
                 break;
         }
     }
@@ -349,12 +356,22 @@ public class GameUIManager : MonoBehaviour
         fadeinObject.SetActive(true);
         fadeinAnimator.SetTrigger("FadeIn");
     }
+    public IEnumerator FadeOut()
+    {
+        fadeinAnimator.SetTrigger("FadeOut");
+        yield return new WaitForSecondsRealtime(1.0f);
+        fadeinObject.SetActive(false);
+    }
 
     public void UpdateInfoText()
     {
         levelText.text = BMSGameManager.header.level.ToString();
-        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+    }
+
+    public void UpdateSpeedText()
+    {
+        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
     }
 
     public void UpdateBPMText(double bpm)

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 public class Line
 {
-    public ListExtension<Note> noteList;
+    public List<Note> noteList;
     public Line()
     {
-        noteList = new ListExtension<Note>() { Capacity = 250 };
+        noteList = new List<Note>() { Capacity = 250 };
     }
 }
 
