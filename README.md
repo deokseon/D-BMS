@@ -1,4 +1,5 @@
 Unity RhythmGame(only 5 key, bms).
+공부용으로 만든 프로그램입니다.
 
 https://github.com/Unengine/UBMS  에서 많은 참고를 했습니다. 감사합니다.
 
