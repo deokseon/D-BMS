@@ -35,6 +35,7 @@ public class BMSGameManager : MonoBehaviour
     private int currentCount = 0;
     private int totalLoading = 0;
     private float divideTotalLoading;
+    private double judgeAdjValueTime;
     public static int currentLoading = 0;
     private Coroutine coSongEndCheck;
 
@@ -135,8 +136,6 @@ public class BMSGameManager : MonoBehaviour
         bmsResult.noteCount = pattern.noteCount;
         bmsResult.judgeList = new double[bmsResult.noteCount + 1];
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] = 200.0d; }
-
-        currentTime += (judgeAdjValue * 0.001f);
 
         coSongEndCheck = StartCoroutine(SongEndCheck());
         StartCoroutine(TimerStart());
@@ -322,6 +321,8 @@ public class BMSGameManager : MonoBehaviour
 
         currentLoading = 0;
 
+        judgeAdjValueTime = judgeAdjValue * 0.001d;
+
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
@@ -352,7 +353,7 @@ public class BMSGameManager : MonoBehaviour
         int tempTimeSample = timeSampleAudio.timeSamples;
         double frameTime = (tempTimeSample - currentTimeSample) * divide44100;
         currentTimeSample = tempTimeSample;
-        currentTime = currentTimeSample * divide44100;
+        currentTime = currentTimeSample * divide44100 + judgeAdjValueTime;
 
         double avg = currentBPM * frameTime;
 
@@ -439,7 +440,7 @@ public class BMSGameManager : MonoBehaviour
         else { bmsResult.judgeList[currentCount] = diff; }
         gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
 
-        if (result != JudgeType.FAIL) { gameUIManager.UpdateFSText((float)diff, idx); }
+        if (result != JudgeType.FAIL && result != JudgeType.KOOL) { gameUIManager.UpdateFSText((float)diff, idx); }
 
         UpdateResult(result);
     }
@@ -709,5 +710,18 @@ public class BMSGameManager : MonoBehaviour
             barList[i].modelTransform.localPosition = new Vector3(-6.56f, (float)(barList[i].beat * gameSpeed) - 0.285f, 0.0f);
         }
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed), 0.0f);
+    }
+
+    public void ChangeJudgeAdjValue(int value)
+    {
+        if (isPaused) { return; }
+
+        judgeAdjValue += value;
+        if (judgeAdjValue > 100) { judgeAdjValue = 100; }
+        else if (judgeAdjValue < -100) { judgeAdjValue = -100; }
+
+        judgeAdjValueTime = judgeAdjValue * 0.001d;
+
+        StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
     }
 }

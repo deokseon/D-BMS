@@ -89,6 +89,8 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI noteSpeedText;
     [SerializeField]
     private TextMeshProUGUI randomEffectorText;
+    [SerializeField]
+    private TextMeshProUGUI judgeAdjValueText;
 
     [SerializeField]
     private GameObject loadingPanel;
@@ -120,6 +122,7 @@ public class GameUIManager : MonoBehaviour
     private int lateCount;
 
     private BMPLoader loader;
+    private WaitForSecondsRealtime wait1sec;
 
     private readonly int hashComboText = Animator.StringToHash("ComboText");
     private readonly int hashCombo = Animator.StringToHash("Combo");
@@ -156,6 +159,7 @@ public class GameUIManager : MonoBehaviour
         endInfo.SetActive(false);
 
         loader = new BMPLoader();
+        wait1sec = new WaitForSecondsRealtime(1.0f);
 
         bgImageTable = new Dictionary<string, string>();
         bgSprites = new Dictionary<string, Texture2D>();
@@ -322,8 +326,6 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateFSText(double diff, int idx)
     {
-        if ((diff > 0 ? diff : -diff) <= 22.0d) { return; }
-
         int earlylate = 0;
         if (diff < 0)
         {
@@ -359,8 +361,16 @@ public class GameUIManager : MonoBehaviour
     public IEnumerator FadeOut()
     {
         fadeinAnimator.SetTrigger("FadeOut");
-        yield return new WaitForSecondsRealtime(1.0f);
+        yield return wait1sec;
         fadeinObject.SetActive(false);
+    }
+
+    public IEnumerator UpdateJudgeAdjValueText()
+    {
+        judgeAdjValueText.text = "JudgeAdjustValue : " + BMSGameManager.judgeAdjValue.ToString() + " ms";
+        judgeAdjValueText.gameObject.SetActive(true);
+        yield return wait1sec;
+        judgeAdjValueText.gameObject.SetActive(false);
     }
 
     public void UpdateInfoText()
