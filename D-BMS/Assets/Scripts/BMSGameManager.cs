@@ -123,8 +123,6 @@ public class BMSGameManager : MonoBehaviour
         bgSoundsListCount = bgSoundsList.Count;
         bpmsListCount = bpmsList.Count;
         barListCount = barList.Count;
-        
-        for (int i = 0; i < 5; i++) { if (notesListCount[i] > 0) { currentNote[i] = notesList[i][notesListCount[i] - 1].keySound; } }
 
         divideBPM = (float)(1.0f / header.bpm);
         CalulateSpeed();
@@ -187,6 +185,8 @@ public class BMSGameManager : MonoBehaviour
             yield return new WaitUntil(() => soundManager.isPrepared);
             yield return wait3Sec;
         }
+
+        for (int i = 0; i < 5; i++) { if (notesListCount[i] > 0) { currentNote[i] = notesList[i][notesListCount[i] - 1].keySound; } }
 
         gameUIManager.bga.texture = videoPlayer.texture;
         gameUIManager.bga.color = Color.white;
@@ -353,7 +353,7 @@ public class BMSGameManager : MonoBehaviour
         int tempTimeSample = timeSampleAudio.timeSamples;
         double frameTime = (tempTimeSample - currentTimeSample) * divide44100;
         currentTimeSample = tempTimeSample;
-        currentTime = currentTimeSample * divide44100 + judgeAdjValueTime;
+        currentTime = currentTimeSample * divide44100;
 
         double avg = currentBPM * frameTime;
 
@@ -401,7 +401,7 @@ public class BMSGameManager : MonoBehaviour
     private void HandleNote(List<Note> noteList, int idx)
     {
         Note n = noteList[notesListCount[idx] - 1];
-        double diff = (currentTime - n.timing) * 1000.0d;
+        double diff = (currentTime - n.timing + judgeAdjValueTime) * 1000.0d;
         JudgeType result = judge.Judge(diff);
         if (result == JudgeType.IGNORE) { return; }
 
@@ -432,8 +432,15 @@ public class BMSGameManager : MonoBehaviour
         if (nextCheck)
         { 
             currentLongNoteJudge = result;
-            if (currentLongNoteJudge == JudgeType.COOL) { currentLongNoteJudge = JudgeType.KOOL; }
-            longNotePress[idx].SetActive(true);
+            if (currentLongNoteJudge == JudgeType.COOL) { currentLongNoteJudge = JudgeType.KOOL; result = JudgeType.KOOL; }
+            if (n.beat == longNoteList[idx][longNoteListCount[idx] - 3].beat)
+            {
+                longNotePress[idx].SetActive(true);
+                longNoteList[idx][longNoteListCount[idx] - 2].modelTransform.localPosition = 
+                    new Vector3(xPosition[idx], (float)((currentBeat + longNoteList[idx][longNoteListCount[idx] - 1].beat) * 0.5d * gameSpeed), 0.0f);
+                longNoteList[idx][longNoteListCount[idx] - 2].modelTransform.localScale =
+                    new Vector3(0.3f, ((float)(longNoteList[idx][longNoteListCount[idx] - 1].beat - currentBeat) * gameSpeed - 0.3f) * 1.219512f, 1.0f);
+            }
         }
 
         if (result <= JudgeType.MISS) { combo = -1; }
@@ -504,7 +511,8 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++)  // 롱노트 틱 검사
         {
-            while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra == 2 && notesList[i][notesListCount[i] - 1].timing <= currentTime)
+            while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra == 2 && 
+                notesList[i][notesListCount[i] - 1].timing <= currentTime + judgeAdjValueTime)
             {
                 HandleLongNoteTick(notesList[i], i);
             }
@@ -540,7 +548,8 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             currentButtonPressed[i] = true;
-            while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra != 2 && notesList[i][notesListCount[i] - 1].timing <= currentTime)
+            while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra != 2 && 
+                notesList[i][notesListCount[i] - 1].timing <= currentTime + judgeAdjValueTime)
             {
                 soundManager.PlayKeySound(notesList[i][notesListCount[i] - 1].keySound);
                 HandleNote(notesList[i], i);
@@ -717,8 +726,8 @@ public class BMSGameManager : MonoBehaviour
         if (isPaused) { return; }
 
         judgeAdjValue += value;
-        if (judgeAdjValue > 100) { judgeAdjValue = 100; }
-        else if (judgeAdjValue < -100) { judgeAdjValue = -100; }
+        if (judgeAdjValue > 50) { judgeAdjValue = 50; }
+        else if (judgeAdjValue < -50) { judgeAdjValue = -50; }
 
         judgeAdjValueTime = judgeAdjValue * 0.001d;
 
