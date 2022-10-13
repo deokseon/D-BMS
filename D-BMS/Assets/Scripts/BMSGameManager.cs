@@ -35,7 +35,7 @@ public class BMSGameManager : MonoBehaviour
     private int currentCount = 0;
     private int totalLoading = 0;
     private float divideTotalLoading;
-    private double judgeAdjValueTime;
+    private double judgeAdjBeat;
     public static int currentLoading = 0;
     private Coroutine coSongEndCheck;
 
@@ -127,6 +127,8 @@ public class BMSGameManager : MonoBehaviour
         divideBPM = (float)(1.0f / header.bpm);
         CalulateSpeed();
         bmsDrawer.DrawNotes();
+
+        judgeAdjBeat = judgeAdjValue * 0.001d * header.bpm * divide60;
         
         currentBPM = bpmsList[bpmsListCount - 1].bpm;
         --bpmsListCount;
@@ -321,8 +323,6 @@ public class BMSGameManager : MonoBehaviour
 
         currentLoading = 0;
 
-        judgeAdjValueTime = judgeAdjValue * 0.001d;
-
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
@@ -395,13 +395,13 @@ public class BMSGameManager : MonoBehaviour
         avg *= divide60;
         currentBeat += avg;
         currentScrollTime += frameTime;
-        noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed), 0.0f);
+        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + judgeAdjBeat) * gameSpeed), 0.0f);
     }
 
     private void HandleNote(List<Note> noteList, int idx)
     {
         Note n = noteList[notesListCount[idx] - 1];
-        double diff = (currentTime - n.timing + judgeAdjValueTime) * 1000.0d;
+        double diff = (currentTime - n.timing) * 1000.0d;
         JudgeType result = judge.Judge(diff);
         if (result == JudgeType.IGNORE) { return; }
 
@@ -431,8 +431,8 @@ public class BMSGameManager : MonoBehaviour
 
         if (nextCheck)
         { 
+            if (result == JudgeType.COOL) { result = JudgeType.KOOL; }
             currentLongNoteJudge = result;
-            if (currentLongNoteJudge == JudgeType.COOL) { currentLongNoteJudge = JudgeType.KOOL; result = JudgeType.KOOL; }
             if (n.beat == longNoteList[idx][longNoteListCount[idx] - 3].beat)
             {
                 longNotePress[idx].SetActive(true);
@@ -512,7 +512,7 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++)  // 롱노트 틱 검사
         {
             while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra == 2 && 
-                notesList[i][notesListCount[i] - 1].timing <= currentTime + judgeAdjValueTime)
+                notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
                 HandleLongNoteTick(notesList[i], i);
             }
@@ -549,7 +549,7 @@ public class BMSGameManager : MonoBehaviour
         {
             currentButtonPressed[i] = true;
             while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra != 2 && 
-                notesList[i][notesListCount[i] - 1].timing <= currentTime + judgeAdjValueTime)
+                notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
                 soundManager.PlayKeySound(notesList[i][notesListCount[i] - 1].keySound);
                 HandleNote(notesList[i], i);
@@ -726,10 +726,10 @@ public class BMSGameManager : MonoBehaviour
         if (isPaused) { return; }
 
         judgeAdjValue += value;
-        if (judgeAdjValue > 50) { judgeAdjValue = 50; }
-        else if (judgeAdjValue < -50) { judgeAdjValue = -50; }
+        if (judgeAdjValue > 80) { judgeAdjValue = 80; }
+        else if (judgeAdjValue < -80) { judgeAdjValue = -80; }
 
-        judgeAdjValueTime = judgeAdjValue * 0.001d;
+        judgeAdjBeat = judgeAdjValue * 0.001d * header.bpm * divide60;
 
         StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
     }
