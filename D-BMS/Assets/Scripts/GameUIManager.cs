@@ -391,11 +391,36 @@ public class GameUIManager : MonoBehaviour
 
     public void SetLoading()
     {
-        stageImage.texture = (BMSGameManager.stageTexture.name.CompareTo("NoStageImage") == 0) ? 
-                                noStageImage : BMSGameManager.stageTexture;
+        StartCoroutine(LoadRawImage(stageImage, BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
         loadingTitleText.text = BMSGameManager.header.title;
         loadingNoteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
         loadingRandomEffetorText.text = BMSGameManager.randomEffector.ToString();
+    }
+
+    public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
+    {
+        if (string.IsNullOrEmpty(path)) { rawImage.texture = noImage; yield break; }
+
+        string imagePath = $@"file:\\{musicFolderPath}{path}";
+
+        Texture tex = null;
+        if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
+        {
+            UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
+            yield return uwr.SendWebRequest();
+
+            tex = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+        }
+        else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
+                 imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+        {
+            UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
+            yield return uwr.SendWebRequest();
+
+            tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+        }
+
+        rawImage.texture = (tex ?? noImage);
     }
 
     public void SetLoadingSlider(float loadingValue)

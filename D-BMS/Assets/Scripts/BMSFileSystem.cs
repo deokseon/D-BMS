@@ -12,6 +12,8 @@ public class BMSFileSystem : MonoBehaviour
 
     [SerializeField]
     private SongSelectUIManager songSelectUIManager;
+    [SerializeField]
+    private Demo.InitOnStart initOnStart;
     private static string rootPath;
 
     void Awake()
@@ -30,7 +32,7 @@ public class BMSFileSystem : MonoBehaviour
             for (int i = 0; i < len; i++) { ParseHeader(fileInfos[i].Name, out headers[i]); }
         }
 
-        songSelectUIManager.DrawSongUI(headers);
+        initOnStart.DrawSongUI();
     }
 
     private void ParseHeader(string sname, out BMSHeader header)

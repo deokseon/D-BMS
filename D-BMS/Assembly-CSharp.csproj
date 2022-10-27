@@ -55,6 +55,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\CustomListBank.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\InitOnStart.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\InitOnStartMulti.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\LoopListBankBase.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\ScrollIndexCallback1.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\ScrollIndexCallback2.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\ScrollIndexCallback3.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\ScrollIndexCallbackBase.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\ScrollIndexCallback_Custom.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\SizeHelper.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\SizeHelper2.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\UI_ControlData.cs" />
+     <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\UI_ControlScene.cs" />
      <Compile Include="Assets\Scripts\BMPLoader.cs" />
      <Compile Include="Assets\Scripts\BMSDrawer.cs" />
      <Compile Include="Assets\Scripts\BMSFileSystem.cs" />
@@ -723,6 +736,14 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="LoopScrollRect.Editor.csproj">
+      <Project>{0529CCEC-E2EF-BB97-3B97-0E3AA18FFB70}</Project>
+      <Name>LoopScrollRect.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="LoopScrollRect.Runtime.csproj">
+      <Project>{DCD066F6-EBEE-4138-E781-A523D02B30C8}</Project>
+      <Name>LoopScrollRect.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

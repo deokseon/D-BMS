@@ -12,7 +12,6 @@ public class BMSGameManager : MonoBehaviour
     public static int judgeAdjValue = 0;
     public static bool isClear;
     public static bool isPaused;
-    public static Texture stageTexture;
 
     [SerializeField]
     private BMSDrawer bmsDrawer;
@@ -155,7 +154,6 @@ public class BMSGameManager : MonoBehaviour
             Time.fixedDeltaTime = 0.001f;
 
             gameUIManager.SetLoading();
-            stageTexture = null;
             totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count;
             for (int i = bgaChangeListCount - 1; i > -1; i--) { if (!bgaChangeList[i].isPic) { totalLoading++; break; } }
             divideTotalLoading = 1.0f / totalLoading;

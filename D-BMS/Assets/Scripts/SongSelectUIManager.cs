@@ -8,21 +8,10 @@ using B83.Image.BMP;
 
 public class SongSelectUIManager : MonoBehaviour
 {
-    public static float scrollValue = 1;
-    public Scrollbar songScroll;
-
-    [SerializeField]
-    private GameObject songButtonPrefab;
-    [SerializeField]
-    private ToggleGroup toggleGroup;
-    [SerializeField]
-    private RectTransform songViewport;
     [SerializeField]
     private RawImage banner;
     [SerializeField]
     private Texture noBannerTexture;
-    [SerializeField]
-    private Texture noStageImageTexture;
     [SerializeField]
     private TextMeshProUGUI titleText;
     [SerializeField]
@@ -36,14 +25,17 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI levelText;
 
+    [SerializeField]
+    private LoopVerticalScrollRect lvScrollRect;
+    public GameObject currentContent;
+    public int currentIndex = 0;
+
     private bool isReady = false;
 
     private BMPLoader loader;
 
     void Awake()
     {
-        songScroll.value = scrollValue;
-
         loader = new BMPLoader();
 
         noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
@@ -52,10 +44,16 @@ public class SongSelectUIManager : MonoBehaviour
 
     void Update()
     {
-        scrollValue = songScroll.value;
-
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
             GameStart();
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            lvScrollRect.ScrollToCellWithinTime(++currentIndex, 0.05f);
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Mouse ScrollWheel") > 0)
+        {
+            lvScrollRect.ScrollToCellWithinTime(--currentIndex, 0.05f);
         }
     }
 
@@ -64,36 +62,6 @@ public class SongSelectUIManager : MonoBehaviour
         if (isReady)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
-        }
-    }
-
-    public void DrawSongUI(BMSHeader[] headers)
-    {
-        int i = 0;
-        songViewport.sizeDelta = new Vector2(0, 90 * headers.Length);
-        foreach (BMSHeader header in headers)
-        {
-            GameObject t = Instantiate(songButtonPrefab, songViewport);
-            t.gameObject.name = i.ToString();
-
-            t.transform.localPosition = new Vector3(0, 40 - (89 * (++i)));
-
-            t.GetComponentsInChildren<TextMeshProUGUI>()[0].text = header.title + "  <size=20>" + header.subTitle + "</size>";
-            if (header.maxBPM == header.minBPM) { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = header.artist + "        BPM: " + header.bpm.ToString(); }
-            else { t.GetComponentsInChildren<TextMeshProUGUI>()[1].text = header.artist + "        BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
-            t.GetComponentsInChildren<TextMeshProUGUI>()[2].text = header.level.ToString();
-
-            StartCoroutine(LoadRawImage(t.GetComponentsInChildren<RawImage>()[0], header.musicFolderPath, header.stageFilePath, noStageImageTexture));
-
-            t.GetComponent<Toggle>().onValueChanged.AddListener((bool value) => 
-            { 
-                if (value)
-                {
-                    BMSGameManager.stageTexture = t.GetComponentsInChildren<RawImage>()[0].texture;
-                    DrawSongInfoUI(header);
-                } 
-            });
-            t.GetComponent<Toggle>().group = toggleGroup;
         }
     }
 
