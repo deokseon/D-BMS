@@ -8,10 +8,9 @@ using TMPro;
 public class BMSFileSystem : MonoBehaviour
 {
     public static BMSHeader[] headers;
+    public static List<BMSHeader> selectedCategoryHeaderList;
     public static BMSHeader selectedHeader;
 
-    [SerializeField]
-    private SongSelectUIManager songSelectUIManager;
     [SerializeField]
     private Demo.InitOnStart initOnStart;
     private static string rootPath;
@@ -28,8 +27,13 @@ public class BMSFileSystem : MonoBehaviour
             FileInfo[] fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
             int len = fileInfos.Length;
             headers = new BMSHeader[len];
+            selectedCategoryHeaderList = new List<BMSHeader>(len);
 
-            for (int i = 0; i < len; i++) { ParseHeader(fileInfos[i].Name, out headers[i]); }
+            for (int i = 0; i < len; i++) 
+            { 
+                ParseHeader(fileInfos[i].Name, out headers[i]);
+                selectedCategoryHeaderList.Add(headers[i]);
+            }
         }
 
         initOnStart.DrawSongUI();
@@ -89,6 +93,15 @@ public class BMSFileSystem : MonoBehaviour
                         double tempBPM = double.Parse(line.Substring(7));
                         if (header.minBPM > tempBPM) { header.minBPM = tempBPM; }
                         if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
+                    }
+                }
+                else if (line.Length >= 9 && line.Substring(0, 9).CompareTo("#CATEGORY") == 0)
+                {
+                    switch (line.Substring(10))
+                    {
+                        case "AERY": header.songCategory = Category.AERY; break;
+                        case "SeoRi": header.songCategory = Category.SEORI; break;
+                        default: header.songCategory = Category.NONE; break;
                     }
                 }
                 else if (line.Length >= 30 && line.CompareTo("*---------------------- MAIN DATA FIELD") == 0) break;

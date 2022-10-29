@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 1502450986926141523}
   - component: {fileID: 1502450986926141522}
   m_Layer: 5
-  m_Name: ScrollCell
+  m_Name: SongToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -426,9 +426,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aae79c5fe0add56479237307a95fbb7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisObjectToggle: {fileID: 1502450986926141524}
   toggleTitleText: {fileID: 5421705528229750489}
   toggleArtistBPMText: {fileID: 2318628779043307255}
   toggleLevelText: {fileID: 7522387541424117382}
+  checkmark: {fileID: 6524239388480237295}
 --- !u!1 &5905092450399533260
 GameObject:
   m_ObjectHideFlags: 0

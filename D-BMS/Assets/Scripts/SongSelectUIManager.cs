@@ -26,9 +26,16 @@ public class SongSelectUIManager : MonoBehaviour
     private TextMeshProUGUI levelText;
 
     [SerializeField]
-    private LoopVerticalScrollRect lvScrollRect;
+    private Toggle[] categoryToggles;
+    private int currentCategoryIndex;
+    private int categoryCount;
+
+    public LoopVerticalScrollRect lvScrollRect;
+    public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
+    public Sprite seoriToggleSprite;
+    public Sprite aeryToggleSprite;
 
     private bool isReady = false;
 
@@ -40,6 +47,10 @@ public class SongSelectUIManager : MonoBehaviour
 
         noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+
+        for (int i = categoryToggles.Length - 1; i >= 0; i--) { AddToggleListener(categoryToggles[i]); }
+        currentCategoryIndex = 0;
+        categoryCount = System.Enum.GetValues(typeof(Category)).Length;
     }
 
     void Update()
@@ -54,6 +65,16 @@ public class SongSelectUIManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             lvScrollRect.ScrollToCellWithinTime(--currentIndex, 0.05f);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            currentCategoryIndex = (currentCategoryIndex - 1 + categoryCount) % categoryCount;
+            categoryToggles[currentCategoryIndex].isOn = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            currentCategoryIndex = (currentCategoryIndex + 1) % categoryCount;
+            categoryToggles[currentCategoryIndex].isOn = true;
         }
     }
 
@@ -135,5 +156,45 @@ public class SongSelectUIManager : MonoBehaviour
             randomEffectorText.text = "MF-RANDOM";
         else
             randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+    }
+
+    private void AddToggleListener(Toggle toggle)
+    {
+        toggle.onValueChanged.AddListener((bool value) =>
+        {
+            if (value)
+            {
+                switch (toggle.tag)
+                {
+                    case "Category_All": currentCategoryIndex = 0; break;
+                    case "Category_Aery": currentCategoryIndex = 1; break;
+                    case "Category_SeoRi": currentCategoryIndex = 2; break;
+                }
+                ChangeCategory();
+            }
+        });
+    }
+
+    private void ChangeCategory()
+    {
+        StopAllCoroutines();
+        BMSFileSystem.selectedCategoryHeaderList.Clear();
+
+        Category currentCategory = (Category)(currentCategoryIndex);
+
+        int headerCount = BMSFileSystem.headers.Length;
+        for (int i = 0; i < headerCount; i++)
+        {
+            if (currentCategory == Category.NONE || BMSFileSystem.headers[i].songCategory == currentCategory)
+            {
+                BMSFileSystem.selectedCategoryHeaderList.Add(BMSFileSystem.headers[i]);
+            }
+        }
+
+        currentIndex = 0;
+        if (currentContent != null) { currentContent.tag = "Untagged"; }
+        currentContent = null;
+
+        lvScrollRect.RefillCells(-4);
     }
 }

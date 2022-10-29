@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - CurrentContent
+  - Category_All
+  - Category_Aery
+  - Category_SeoRi
   layers:
   - Default
   - TransparentFX
