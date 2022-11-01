@@ -16,9 +16,13 @@ public class UIMouseClick : MonoBehaviour, IPointerClickHandler
             {
                 selectUIManager.NoteSpeedClick(0.1f);
             }
-            else
+            else if (this.gameObject.name[0] == 'R')
             {
                 selectUIManager.RandomEffectorClick(1);
+            }
+            else
+            {
+                selectUIManager.SortByClick(1);
             }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
@@ -27,9 +31,13 @@ public class UIMouseClick : MonoBehaviour, IPointerClickHandler
             {
                 selectUIManager.NoteSpeedClick(-0.1f);
             }
-            else
+            else if (this.gameObject.name[0] == 'R')
             {
                 selectUIManager.RandomEffectorClick(-1);
+            }
+            else
+            {
+                selectUIManager.SortByClick(-1);
             }
         }
     }

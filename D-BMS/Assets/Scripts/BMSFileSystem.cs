@@ -34,6 +34,7 @@ public class BMSFileSystem : MonoBehaviour
                 ParseHeader(fileInfos[i].Name, out headers[i]);
                 selectedCategoryHeaderList.Add(headers[i]);
             }
+            selectedCategoryHeaderList.Sort((x, y) => { return x.level.CompareTo(y.level); });
         }
 
         initOnStart.DrawSongUI();

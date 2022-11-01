@@ -22,6 +22,7 @@ public class SongSelectUIManager : MonoBehaviour
     private TextMeshProUGUI noteSpeedText;
     [SerializeField]
     private TextMeshProUGUI randomEffectorText;
+    private int randomEffectorCount;
     [SerializeField]
     private TextMeshProUGUI levelText;
 
@@ -29,6 +30,10 @@ public class SongSelectUIManager : MonoBehaviour
     private Toggle[] categoryToggles;
     private int currentCategoryIndex;
     private int categoryCount;
+    [SerializeField]
+    private TextMeshProUGUI sortByText;
+    private SortBy currentSortBy;
+    private int sortByCount;
 
     public LoopVerticalScrollRect lvScrollRect;
     public ToggleGroup songToggleGroup;
@@ -47,10 +52,12 @@ public class SongSelectUIManager : MonoBehaviour
 
         noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+        randomEffectorCount = System.Enum.GetValues(typeof(RandomEffector)).Length;
 
         for (int i = categoryToggles.Length - 1; i >= 0; i--) { AddToggleListener(categoryToggles[i]); }
         currentCategoryIndex = 0;
         categoryCount = System.Enum.GetValues(typeof(Category)).Length;
+        sortByCount = System.Enum.GetValues(typeof(SortBy)).Length;
     }
 
     void Update()
@@ -146,9 +153,7 @@ public class SongSelectUIManager : MonoBehaviour
 
     public void RandomEffectorClick(int value)
     {
-        int count = System.Enum.GetValues(typeof(RandomEffector)).Length;
-
-        BMSGameManager.randomEffector = (RandomEffector)(((int)BMSGameManager.randomEffector + value + count) % count);
+        BMSGameManager.randomEffector = (RandomEffector)(((int)BMSGameManager.randomEffector + value + randomEffectorCount) % randomEffectorCount);
 
         if (BMSGameManager.randomEffector == RandomEffector.FRANDOM)
             randomEffectorText.text = "F-RANDOM";
@@ -156,6 +161,16 @@ public class SongSelectUIManager : MonoBehaviour
             randomEffectorText.text = "MF-RANDOM";
         else
             randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+    }
+
+    public void SortByClick(int value)
+    {
+        currentSortBy = (SortBy)(((int)currentSortBy + value + sortByCount) % sortByCount);
+
+        if (currentSortBy == SortBy.LEVEL) { sortByText.text = "Sort by Level"; }
+        else { sortByText.text = "Sort by Title"; }
+
+        SortHeaderList();
     }
 
     private void AddToggleListener(Toggle toggle)
@@ -190,6 +205,24 @@ public class SongSelectUIManager : MonoBehaviour
                 BMSFileSystem.selectedCategoryHeaderList.Add(BMSFileSystem.headers[i]);
             }
         }
+
+        SortHeaderList();
+    }
+
+    private void SortHeaderList()
+    {
+        BMSFileSystem.selectedCategoryHeaderList.Sort((x, y) => {
+            if (currentSortBy == SortBy.LEVEL)
+            {
+                int result = x.level.CompareTo(y.level);
+                return result != 0 ? result : string.Compare(x.title, y.title);
+            }
+            else
+            {
+                int result = string.Compare(x.title, y.title);
+                return result != 0 ? result : x.level.CompareTo(y.level);
+            }
+        });
 
         currentIndex = 0;
         if (currentContent != null) { currentContent.tag = "Untagged"; }
