@@ -168,7 +168,8 @@ public class SongSelectUIManager : MonoBehaviour
         currentSortBy = (SortBy)(((int)currentSortBy + value + sortByCount) % sortByCount);
 
         if (currentSortBy == SortBy.LEVEL) { sortByText.text = "Sort by Level"; }
-        else { sortByText.text = "Sort by Title"; }
+        else if (currentSortBy == SortBy.TITLE) { sortByText.text = "Sort by Title"; }
+        else { sortByText.text = "Sort by BPM"; }
 
         SortHeaderList();
     }
@@ -217,10 +218,16 @@ public class SongSelectUIManager : MonoBehaviour
                 int result = x.level.CompareTo(y.level);
                 return result != 0 ? result : string.Compare(x.title, y.title);
             }
-            else
+            else if (currentSortBy == SortBy.TITLE)
             {
                 int result = string.Compare(x.title, y.title);
                 return result != 0 ? result : x.level.CompareTo(y.level);
+            }
+            else
+            {
+                int result1 = x.maxBPM.CompareTo(y.maxBPM);
+                int result2 = result1 != 0 ? result1 : x.level.CompareTo(y.level);
+                return result2 != 0 ? result2 : string.Compare(x.title, y.title);
             }
         });
 
