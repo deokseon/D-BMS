@@ -40,6 +40,7 @@ namespace Demo
 
         public void DrawSongUI()
         {
+            if (BMSFileSystem.selectedCategoryHeaderList.Count == 0) { return; }
             var ls = GetComponent<LoopScrollRect>();
             ls.prefabSource = this;
             ls.dataSource = this;

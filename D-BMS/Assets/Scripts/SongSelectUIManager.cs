@@ -25,6 +25,10 @@ public class SongSelectUIManager : MonoBehaviour
     private int randomEffectorCount;
     [SerializeField]
     private TextMeshProUGUI levelText;
+    [SerializeField]
+    private TextMeshProUGUI songIndexText;
+    [SerializeField]
+    private Scrollbar scrollbar;
 
     [SerializeField]
     private Toggle[] categoryToggles;
@@ -39,6 +43,8 @@ public class SongSelectUIManager : MonoBehaviour
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
+    private int convertedIndex = 0;
+    private int currentHeaderListCount;
     public Sprite seoriToggleSprite;
     public Sprite aeryToggleSprite;
 
@@ -58,6 +64,9 @@ public class SongSelectUIManager : MonoBehaviour
         currentCategoryIndex = 0;
         categoryCount = System.Enum.GetValues(typeof(Category)).Length;
         sortByCount = System.Enum.GetValues(typeof(SortBy)).Length;
+        currentHeaderListCount = BMSFileSystem.selectedCategoryHeaderList.Count;
+        SongIndexUpdate();
+        ScrollbarSetting();
     }
 
     void Update()
@@ -67,11 +76,11 @@ public class SongSelectUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Mouse ScrollWheel") < 0)
         {
-            lvScrollRect.ScrollToCellWithinTime(++currentIndex, 0.05f);
+            MoveCurrentIndex(currentIndex + 1);
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Mouse ScrollWheel") > 0)
         {
-            lvScrollRect.ScrollToCellWithinTime(--currentIndex, 0.05f);
+            MoveCurrentIndex(currentIndex - 1);
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -83,6 +92,15 @@ public class SongSelectUIManager : MonoBehaviour
             currentCategoryIndex = (currentCategoryIndex + 1) % categoryCount;
             categoryToggles[currentCategoryIndex].isOn = true;
         }
+    }
+
+    public void MoveCurrentIndex(int index)
+    {
+        currentIndex = index;
+        lvScrollRect.ScrollToCellWithinTime(currentIndex, 0.05f);
+        ConvertIndex();
+        scrollbar.value = convertedIndex / (currentHeaderListCount - 1.0f);
+        SongIndexUpdate();
     }
 
     public void GameStart()
@@ -176,6 +194,7 @@ public class SongSelectUIManager : MonoBehaviour
 
     private void AddToggleListener(Toggle toggle)
     {
+        toggle.onValueChanged.RemoveAllListeners();
         toggle.onValueChanged.AddListener((bool value) =>
         {
             if (value)
@@ -189,6 +208,18 @@ public class SongSelectUIManager : MonoBehaviour
                 ChangeCategory();
             }
         });
+    }
+
+    private void ScrollbarSetting()
+    {
+        scrollbar.onValueChanged.RemoveAllListeners();
+        scrollbar.onValueChanged.AddListener((float value) =>
+        {
+            int tempValue = Mathf.RoundToInt(value * (currentHeaderListCount - 1));
+            if (tempValue != convertedIndex) { MoveCurrentIndex(tempValue); }
+        });
+        scrollbar.size = 1.0f / currentHeaderListCount;
+        scrollbar.value = 0.0f;
     }
 
     private void ChangeCategory()
@@ -208,6 +239,7 @@ public class SongSelectUIManager : MonoBehaviour
         }
 
         SortHeaderList();
+        ScrollbarSetting();
     }
 
     private void SortHeaderList()
@@ -236,5 +268,22 @@ public class SongSelectUIManager : MonoBehaviour
         currentContent = null;
 
         lvScrollRect.RefillCells(-4);
+
+        currentHeaderListCount = BMSFileSystem.selectedCategoryHeaderList.Count;
+        SongIndexUpdate();
+    }
+
+    public void SongIndexUpdate()
+    {
+        if (currentHeaderListCount == 0) { return; }
+        int tempIndex = convertedIndex + 1;
+        songIndexText.text = tempIndex.ToString() + " / " + currentHeaderListCount.ToString();
+    }
+
+    private void ConvertIndex()
+    {
+        convertedIndex = currentIndex;
+        while (convertedIndex < 0) { convertedIndex += (currentHeaderListCount * 10); }
+        convertedIndex %= currentHeaderListCount;
     }
 }

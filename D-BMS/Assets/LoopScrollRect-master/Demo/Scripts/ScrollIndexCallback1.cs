@@ -6,7 +6,6 @@ using System.Collections;
 public class ScrollIndexCallback1 : MonoBehaviour
 {
     private SongSelectUIManager songSelectUIManager = null;
-    //private LoopVerticalScrollRect lvScrollRect = null;
 
     [SerializeField]
     private Toggle thisObjectToggle;
@@ -60,11 +59,7 @@ public class ScrollIndexCallback1 : MonoBehaviour
             {
                 songSelectUIManager.songToggleGroup.allowSwitchOff = false;
                 songSelectUIManager.DrawSongInfoUI(header);
-                if (idx != songSelectUIManager.currentIndex) 
-                { 
-                    songSelectUIManager.currentIndex = idx;
-                    songSelectUIManager.lvScrollRect.ScrollToCellWithinTime(idx, 0.05f);
-                }
+                if (idx != songSelectUIManager.currentIndex) { songSelectUIManager.MoveCurrentIndex(idx); }
                 if (songSelectUIManager.currentContent != null) { songSelectUIManager.currentContent.tag = "Untagged"; }
                 gameObject.tag = "CurrentContent";
                 songSelectUIManager.currentContent = gameObject;
