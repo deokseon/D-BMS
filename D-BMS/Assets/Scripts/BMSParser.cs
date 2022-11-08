@@ -107,12 +107,13 @@ public class BMSParser : MonoBehaviour
                 header.lnobj = Decode36(bmsFile[i].Substring(7, 2));
                 header.lnType |= Lntype.LNOBJ;
             }
-            else if (bmsFile[i].Length >= 6 && bmsFile[i].Substring(0, 4).CompareTo("#BMP") == 0)
+            else if (bmsFile[i].Length >= 6 && (bmsFile[i].Substring(0, 4).CompareTo("#BMP") == 0 || bmsFile[i].Substring(0, 4).CompareTo("#bmp") == 0))
             {
                 string key = bmsFile[i].Substring(4, 2);
-                string extend = bmsFile[i].Substring(bmsFile[i].Length - 3, 3).ToLower();
+                //string extend = bmsFile[i].Substring(bmsFile[i].Length - 3, 3).ToLower();
+                string extend = bmsFile[i].Substring(bmsFile[i].IndexOf('.', 0) + 1).ToLower();
                 string path = bmsFile[i].Substring(7, bmsFile[i].Length - 7);
-                if (extend.CompareTo("mpg") == 0)
+                if (extend.CompareTo("mpg") == 0 || extend.CompareTo("mpeg") == 0 || extend.CompareTo("wmv") == 0)
                 {
                     pattern.bgVideoTable.Add(key, path);
                 }

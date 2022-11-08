@@ -123,6 +123,8 @@ public class SongSelectUIManager : MonoBehaviour
 
         if (titleText.text.CompareTo(header.title) != 0 || levelText.text.CompareTo(header.level.ToString()) != 0)
         {
+            if (header.title.Length >= 20) { titleText.fontSize = 30; }
+            else { titleText.fontSize = 60; }
             titleText.text = header.title;
             artistText.text = header.artist;
             if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }

@@ -13,7 +13,7 @@ public class SoundManager : MonoBehaviour
 
     private static string[] soundFileExtensions;
 
-    private const int channelLength = 127;
+    private const int channelLength = 300;
     private const int maxChannelIndex = channelLength - 2;
 
     private AudioClip bgSoundClip;
@@ -81,6 +81,9 @@ public class SoundManager : MonoBehaviour
             uwr = UnityWebRequestMultimedia.GetAudioClip(
                 @"file:\\" + musicFolderPath +
                 UnityWebRequest.EscapeURL(pathes[i].Value + soundFileExtensions[extensionFailCount]).Replace('+', ' '), type);
+
+            ((DownloadHandlerAudioClip)uwr.downloadHandler).streamAudio = false;
+            ((DownloadHandlerAudioClip)uwr.downloadHandler).compressed = false;
             yield return uwr.SendWebRequest();
 
             if (uwr.downloadHandler.data.Length != 0)
@@ -90,6 +93,7 @@ public class SoundManager : MonoBehaviour
                 clips.Add(pathes[i].Key, ac);
             }
             BMSGameManager.currentLoading++;
+            //Debug.Log(pathes[i].Key);
         }
 
         isPrepared = true;

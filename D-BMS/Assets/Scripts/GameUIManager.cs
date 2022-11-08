@@ -280,7 +280,7 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void UpdateScore(float hp, float accuracy, double score, double maxScore)
+    public void UpdateScore(float hp, float accuracy, float score, double maxScore)
     {
         hpBar.value = hp;
 
@@ -304,17 +304,17 @@ public class GameUIManager : MonoBehaviour
         int idx = -1;
         switch (score)
         {
-            case double n when (n >= 0.0d && n < 550000.0d): idx = -1; break;
-            case double n when (n >= 550000.0d && n < 650000.0d): idx = 0; break;
-            case double n when (n >= 650000.0d && n < 750000.0d): idx = 1; break;
-            case double n when (n >= 750000.0d && n < 850000.0d): idx = 2; break;
-            case double n when (n >= 850000.0d && n < 900000.0d): idx = 3; break;
-            case double n when (n >= 900000.0d && n < 950000.0d): idx = 4; break;
-            case double n when (n >= 950000.0d && n < 1000000.0d): idx = 5; break;
-            case double n when (n >= 1000000.0d && n < 1025000.0d): idx = 6; break;
-            case double n when (n >= 1025000.0d && n < 1050000.0d): idx = 7; break;
-            case double n when (n >= 1050000.0d && n < 1090000.0d): idx = 8; break;
-            case double n when (n >= 1090000.0d): idx = 9; break;
+            case float n when (n >= 0.0f && n < 550000.0f): idx = -1; break;
+            case float n when (n >= 550000.0f && n < 650000.0f): idx = 0; break;
+            case float n when (n >= 650000.0f && n < 750000.0f): idx = 1; break;
+            case float n when (n >= 750000.0f && n < 850000.0f): idx = 2; break;
+            case float n when (n >= 850000.0f && n < 900000.0f): idx = 3; break;
+            case float n when (n >= 900000.0f && n < 950000.0f): idx = 4; break;
+            case float n when (n >= 950000.0f && n < 1000000.0f): idx = 5; break;
+            case float n when (n >= 1000000.0f && n < 1025000.0f): idx = 6; break;
+            case float n when (n >= 1025000.0f && n < 1050000.0f): idx = 7; break;
+            case float n when (n >= 1050000.0f && n < 1090000.0f): idx = 8; break;
+            case float n when (n >= 1090000.0f): idx = 9; break;
         }
         if (idx != -1 && currentIdx != idx)
         {

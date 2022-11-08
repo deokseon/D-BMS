@@ -26,13 +26,22 @@ public class BMSFileSystem : MonoBehaviour
 #endif
             FileInfo[] fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
             int len = fileInfos.Length;
-            headers = new BMSHeader[len];
-            selectedCategoryHeaderList = new List<BMSHeader>(len);
+            int bmsFileCount = 0;
+            for (int i = 0; i < len; i++)
+            {
+                string extend = fileInfos[i].Name.Substring(fileInfos[i].Name.IndexOf('.', 0) + 1).ToLower();
+                if (extend.CompareTo("bms") == 0 || extend.CompareTo("bme") == 0 || extend.CompareTo("bml") == 0) { bmsFileCount++; }
+            }
+            headers = new BMSHeader[bmsFileCount];
+            selectedCategoryHeaderList = new List<BMSHeader>(bmsFileCount);
 
+            int headersIndex = 0;
             for (int i = 0; i < len; i++) 
-            { 
-                ParseHeader(fileInfos[i].Name, out headers[i]);
-                selectedCategoryHeaderList.Add(headers[i]);
+            {
+                string extend = fileInfos[i].Name.Substring(fileInfos[i].Name.IndexOf('.', 0) + 1).ToLower();
+                if (extend.CompareTo("bms") != 0 && extend.CompareTo("bme") != 0 && extend.CompareTo("bml") != 0) { continue; }
+                ParseHeader(fileInfos[i].Name, out headers[headersIndex]);
+                selectedCategoryHeaderList.Add(headers[headersIndex++]);
             }
             selectedCategoryHeaderList.Sort((x, y) => { return x.level.CompareTo(y.level); });
         }

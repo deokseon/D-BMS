@@ -91,7 +91,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void CalulateSpeed()
     {
-        gameSpeed = (userSpeed * 131.3f * divideBPM);
+        gameSpeed = (userSpeed * 120.0f * divideBPM);
     }
 
     private IEnumerator PreLoad(bool isRestart)
@@ -189,11 +189,11 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++) { if (notesListCount[i] > 0) { currentNote[i] = notesList[i][notesListCount[i] - 1].keySound; } }
 
         gameUIManager.bga.texture = videoPlayer.texture;
-        gameUIManager.bga.color = Color.white;
+        gameUIManager.bga.color = Color.black;
 
         gameUIManager.UpdateBPMText(currentBPM);
         gameUIManager.TextUpdate(bmsResult, 0, JudgeType.IGNORE, 0);
-        gameUIManager.UpdateScore(gauge.hp, 100.0f, 0.0d, 0.0d);
+        gameUIManager.UpdateScore(gauge.hp, 100.0f, 0.0f, 0.0d);
 
         System.GC.Collect();
 
@@ -602,7 +602,7 @@ public class BMSGameManager : MonoBehaviour
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
         else if (gauge.hp <= 0.0f) { StartCoroutine(GameEnd(false)); }
 
-        gameUIManager.UpdateScore(gauge.hp, (float)(accuracySum * divideTable[currentCount]), currentScore * 0.001d, maxScoreTable[currentCount]);
+        gameUIManager.UpdateScore(gauge.hp, (float)(accuracySum * divideTable[currentCount]), (float)(currentScore * 0.001d), maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount);
