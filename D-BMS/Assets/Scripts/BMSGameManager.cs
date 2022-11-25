@@ -96,6 +96,9 @@ public class BMSGameManager : MonoBehaviour
 
     private IEnumerator PreLoad(bool isRestart)
     {
+        gameUIManager.bga.color = new Color(1, 1, 1, 0);
+        gameUIManager.bga.texture = null;
+
         ObjectPool.poolInstance.Init();
 
         BMSParser.instance.Parse(isRestart);
@@ -189,7 +192,8 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++) { if (notesListCount[i] > 0) { currentNote[i] = notesList[i][notesListCount[i] - 1].keySound; } }
 
         gameUIManager.bga.texture = videoPlayer.texture;
-        gameUIManager.bga.color = Color.black;
+        if (bgaChangeListCount == 0) { gameUIManager.bga.color = Color.black; }
+        else { gameUIManager.bga.color = Color.white; }
 
         gameUIManager.UpdateBPMText(currentBPM);
         gameUIManager.TextUpdate(bmsResult, 0, JudgeType.IGNORE, 0);
@@ -330,8 +334,6 @@ public class BMSGameManager : MonoBehaviour
         wait3Sec = new WaitForSeconds(3.0f);
         wait1Sec = new WaitForSeconds(1.5f);
 
-        gameUIManager.bga.color = new Color(1, 1, 1, 0);
-
         StartCoroutine(PreLoad(false));
     }
 
@@ -443,11 +445,11 @@ public class BMSGameManager : MonoBehaviour
 
         if (result <= JudgeType.MISS) { combo = -1; }
         else { bmsResult.judgeList[currentCount] = diff; }
-        gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
 
         if (result != JudgeType.FAIL && result != JudgeType.KOOL) { gameUIManager.UpdateFSText((float)diff, idx); }
 
         UpdateResult(result);
+        gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
     }
 
     private void HandleLongNoteTick(List<Note> noteList, int idx)
@@ -463,9 +465,9 @@ public class BMSGameManager : MonoBehaviour
         JudgeType result = currentLongNoteJudge;
 
         if (result <= JudgeType.MISS) { combo = -1; }
-        gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
 
         UpdateResult(result);
+        gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
     }
 
     private void PlayNotes()
@@ -621,6 +623,7 @@ public class BMSGameManager : MonoBehaviour
         isPaused = !clear;
         isClear = clear;
 
+        while (isClear && soundManager.IsPlayingAudioClip()) { yield return wait3Sec; }
         soundManager.AudioAllStop();
 
         noteParent.gameObject.SetActive(clear);

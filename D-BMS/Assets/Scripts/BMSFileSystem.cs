@@ -43,9 +43,11 @@ public class BMSFileSystem : MonoBehaviour
                 ParseHeader(fileInfos[i].Name, out headers[headersIndex]);
                 selectedCategoryHeaderList.Add(headers[headersIndex++]);
             }
-            selectedCategoryHeaderList.Sort((x, y) => { return x.level.CompareTo(y.level); });
+            selectedCategoryHeaderList.Sort((x, y) => {
+                int result = x.level.CompareTo(y.level);
+                return result != 0 ? result : string.Compare(x.title, y.title);
+            });
         }
-
         initOnStart.DrawSongUI();
     }
 
@@ -56,7 +58,7 @@ public class BMSFileSystem : MonoBehaviour
         StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
         string line;
 
-        header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 6)}\";
+        header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 9)}\";
         header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
 
         while((line = reader.ReadLine()) != null)
@@ -65,19 +67,19 @@ public class BMSFileSystem : MonoBehaviour
 
             try
             {
-                if (line.Length > 10 && line.Substring(0, 10).CompareTo("#PLAYLEVEL") == 0)
+                if (line.Length > 10 && string.Compare(line.Substring(0, 10), "#PLAYLEVEL", true) == 0)
                 {
                     int lvl = 0;
                     int.TryParse(line.Substring(11), out lvl);
                     header.level = lvl;
                 }
-                else if (line.Length > 11 && line.Substring(0, 10).CompareTo("#STAGEFILE") == 0) { header.stageFilePath = line.Substring(11); }
-                else if (line.Length >= 9 && line.Substring(0, 9).CompareTo("#SUBTITLE") == 0) { header.subTitle = line.Substring(10).Trim('[', ']'); }
-                else if (line.Length >= 8 && line.Substring(0, 8).CompareTo("#BACKBMP") == 0) { header.backBMPPath = line.Substring(9); }
-                else if (line.Length >= 7 && line.Substring(0, 7).CompareTo("#ARTIST") == 0) { header.artist = line.Substring(8); }
-                else if (line.Length >= 7 && line.Substring(0, 7).CompareTo("#BANNER") == 0) { header.bannerPath = line.Substring(8); }
-                else if (line.Length >= 7 && line.Substring(0, 7).CompareTo("#LNTYPE") == 0) { header.lnType |= (Lntype)(1 << (line[8] - '0')); }
-                else if (line.Length >= 6 && line.Substring(0, 6).CompareTo("#TITLE") == 0)
+                else if (line.Length > 11 && string.Compare(line.Substring(0, 10), "#STAGEFILE", true) == 0) { header.stageFilePath = line.Substring(11); }
+                else if (line.Length >= 9 && string.Compare(line.Substring(0, 9), "#SUBTITLE", true) == 0) { header.subTitle = line.Substring(10).Trim('[', ']'); }
+                else if (line.Length >= 8 && string.Compare(line.Substring(0, 8), "#BACKBMP", true) == 0) { header.backBMPPath = line.Substring(9); }
+                else if (line.Length >= 7 && string.Compare(line.Substring(0, 7), "#ARTIST", true) == 0) { header.artist = line.Substring(8); }
+                else if (line.Length >= 7 && string.Compare(line.Substring(0, 7), "#BANNER", true) == 0) { header.bannerPath = line.Substring(8); }
+                else if (line.Length >= 7 && string.Compare(line.Substring(0, 7), "#LNTYPE", true) == 0) { header.lnType |= (Lntype)(1 << (line[8] - '0')); }
+                else if (line.Length >= 6 && string.Compare(line.Substring(0, 6), "#TITLE", true) == 0)
                 {
                     header.title = line.Substring(7);
                     if (!string.IsNullOrEmpty(header.title))
@@ -90,7 +92,7 @@ public class BMSFileSystem : MonoBehaviour
                         }
                     }
                 }
-                else if (line.Length >= 6 && line.Substring(0, 4).CompareTo("#BPM") == 0)
+                else if (line.Length >= 6 && string.Compare(line.Substring(0, 4), "#BPM", true) == 0)
                 {
                     if (line[4] == ' ')
                     {
@@ -105,7 +107,7 @@ public class BMSFileSystem : MonoBehaviour
                         if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
                     }
                 }
-                else if (line.Length >= 9 && line.Substring(0, 9).CompareTo("#CATEGORY") == 0)
+                else if (line.Length >= 9 && string.Compare(line.Substring(0, 9), "#CATEGORY", true) == 0)
                 {
                     switch (line.Substring(10))
                     {
@@ -114,7 +116,7 @@ public class BMSFileSystem : MonoBehaviour
                         default: header.songCategory = Category.NONE; break;
                     }
                 }
-                else if (line.Length >= 30 && line.CompareTo("*---------------------- MAIN DATA FIELD") == 0) break;
+                else if (line.Length >= 30 && string.Compare(line, "*---------------------- MAIN DATA FIELD", true) == 0) break;
             }
             catch (System.Exception e)
             {

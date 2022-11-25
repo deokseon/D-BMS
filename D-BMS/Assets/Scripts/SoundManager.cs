@@ -102,6 +102,7 @@ public class SoundManager : MonoBehaviour
     public void PlayKeySound(int key, float volume = 1.0f)
     {
         if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
+        //Debug.Log(key);
         while (true)
         {
             currentKeySoundIndex = currentKeySoundIndex > maxChannelIndex ? 0 : currentKeySoundIndex + 1;
@@ -127,6 +128,15 @@ public class SoundManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public bool IsPlayingAudioClip()
+    {
+        for (int i = 0; i < channelLength; i++)
+        {
+            if (bgSoundAudioArray[i].isPlaying || keySoundAudioArray[i].isPlaying) { return true; }
+        }
+        return false;
     }
 
     public void AudioAllStop()

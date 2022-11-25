@@ -91,38 +91,65 @@ public class BMSParser : MonoBehaviour
 
     private void ParseGameHeader(bool isRestart)
     {
+        bool isIfBlockOpen = false;
+        bool isValid = false;
+        int randomValue = 1;
+        System.Random rand = new System.Random();
+
         int len = bmsFile.Length;
         for (int i = 0; i < len; i++)
         {
             if (bmsFile[i].Length <= 3) { continue; }
 
-            if (bmsFile[i].Length >= 4 && bmsFile[i].Substring(0, 4).CompareTo("#WAV") == 0 && !isRestart)
+            if (bmsFile[i].Length >= 9 && string.Compare(bmsFile[i].Substring(0, 7), "#random", true) == 0)
+            {
+                randomValue = rand.Next(1, int.Parse(bmsFile[i].Substring(8)) + 1);
+                continue;
+            }
+
+            if (bmsFile[i].Length >= 3 && string.Compare(bmsFile[i].Substring(0, 3), "#if", true) == 0)
+            {
+                isIfBlockOpen = true;
+                if (int.Parse(bmsFile[i].Substring(4)) == randomValue) { isValid = true; }
+                continue;
+            }
+
+            if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 6), "#endif", true) == 0)
+            {
+                isIfBlockOpen = false;
+                isValid = false;
+                continue;
+            }
+            if (isIfBlockOpen && !isValid) { continue; }
+
+            if (bmsFile[i].Length >= 4 && string.Compare(bmsFile[i].Substring(0, 4), "#WAV", true) == 0 && !isRestart)
             {
                 int key = Decode36(bmsFile[i].Substring(4, 2));
                 string path = bmsFile[i].Substring(7, bmsFile[i].Length - 11);
                 soundManager.pathes.Add(new KeyValuePair<int, string>(key, path));
             }
-            else if (bmsFile[i].Length >= 6 && bmsFile[i].Substring(0, 6).CompareTo("#LNOBJ") == 0 && !isRestart)
+            else if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 6), "#LNOBJ", true) == 0 && !isRestart)
             {
                 header.lnobj = Decode36(bmsFile[i].Substring(7, 2));
                 header.lnType |= Lntype.LNOBJ;
             }
-            else if (bmsFile[i].Length >= 6 && (bmsFile[i].Substring(0, 4).CompareTo("#BMP") == 0 || bmsFile[i].Substring(0, 4).CompareTo("#bmp") == 0))
+            else if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 4), "#BMP", true) == 0)
             {
                 string key = bmsFile[i].Substring(4, 2);
-                //string extend = bmsFile[i].Substring(bmsFile[i].Length - 3, 3).ToLower();
                 string extend = bmsFile[i].Substring(bmsFile[i].IndexOf('.', 0) + 1).ToLower();
                 string path = bmsFile[i].Substring(7, bmsFile[i].Length - 7);
-                if (extend.CompareTo("mpg") == 0 || extend.CompareTo("mpeg") == 0 || extend.CompareTo("wmv") == 0)
+                if (string.Compare(extend, "mpg", true) == 0 || string.Compare(extend, "mpeg", true) == 0 ||
+                    string.Compare(extend, "wmv", true) == 0 || string.Compare(extend, "avi", true) == 0 || string.Compare(extend, "mp4", true) == 0)
                 {
                     pattern.bgVideoTable.Add(key, path);
                 }
-                else if ((extend.CompareTo("bmp") == 0 || extend.CompareTo("png") == 0) && !isRestart)
+                else if ((string.Compare(extend, "bmp", true) == 0 || string.Compare(extend, "png", true) == 0 ||
+                          string.Compare(extend, "jpg", true) == 0) && !isRestart)
                 {
                     gameUIManager.bgImageTable.Add(key, path);
                 }
             }
-            else if (bmsFile[i].Length >= 6 && bmsFile[i].Substring(0, 4).CompareTo("#BPM") == 0)
+            else if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 4), "#BPM", true) == 0)
             {
                 if (bmsFile[i][4] == ' ')
                     header.bpm = double.Parse(bmsFile[i].Substring(5));
@@ -133,12 +160,17 @@ public class BMSParser : MonoBehaviour
                     exBpms.Add(key, bpm);
                 }
             }
-            else if (bmsFile[i].Length >= 30 && bmsFile[i].CompareTo("*---------------------- MAIN DATA FIELD") == 0) break;
+            else if (bmsFile[i].Length >= 30 && string.Compare(bmsFile[i], "*---------------------- MAIN DATA FIELD", true) == 0) break;
         }
     }
 
     private void ParseMainData()
     {
+        bool isIfBlockOpen = false;
+        bool isValid = false;
+        int randomValue = 1;
+        System.Random rand = new System.Random();
+
         double beatC = 1.0d;
 
         int lnBits = 0;
@@ -148,6 +180,27 @@ public class BMSParser : MonoBehaviour
         {
             if (bmsFile[i].Length == 0) { continue; }
             if (bmsFile[i][0] != '#') { continue; }
+
+            if (bmsFile[i].Length >= 9 && string.Compare(bmsFile[i].Substring(0, 7), "#random", true) == 0)
+            {
+                randomValue = rand.Next(1, int.Parse(bmsFile[i].Substring(8)) + 1);
+                continue;
+            }
+
+            if (bmsFile[i].Length >= 3 && string.Compare(bmsFile[i].Substring(0, 3), "#if", true) == 0)
+            {
+                isIfBlockOpen = true;
+                if (int.Parse(bmsFile[i].Substring(4)) == randomValue) { isValid = true; }
+                continue;
+            }
+
+            if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 6), "#endif", true) == 0)
+            {
+                isIfBlockOpen = false;
+                isValid = false;
+                continue;
+            }
+            if (isIfBlockOpen && !isValid) { continue; }
 
             int bar;
             if (!int.TryParse(bmsFile[i].Substring(1, 3), out bar)) { continue; }
@@ -224,7 +277,7 @@ public class BMSParser : MonoBehaviour
                         if (bpm != 0) { pattern.AddBPM(bar, (k - 7) / 2, beatLength, bpm); }
                     }
                 }
-                else if (bmsFile[i][5] == '4')
+                else if (bmsFile[i][5] == '4' || bmsFile[i][5] == '7')
                 {
                     beatLength = (bmsFile[i].Length - 7) / 2;
                     int iLen = bmsFile[i].Length - 1;
