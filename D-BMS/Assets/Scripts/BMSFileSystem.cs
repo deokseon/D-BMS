@@ -56,73 +56,73 @@ public class BMSFileSystem : MonoBehaviour
         header = new BMSHeader();
 
         StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
-        string line;
 
         header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 9)}\";
         header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
 
-        while((line = reader.ReadLine()) != null)
+        string line;
+        while ((line = reader.ReadLine()) != null)
         {
             if (line.Length <= 3) { continue; }
 
+            string temp = line.Substring(0, 4).ToUpper();
             try
             {
-                if (line.Length > 10 && string.Compare(line.Substring(0, 10), "#PLAYLEVEL", true) == 0)
+                switch (temp)
                 {
-                    int lvl = 0;
-                    int.TryParse(line.Substring(11), out lvl);
-                    header.level = lvl;
-                }
-                else if (line.Length > 11 && string.Compare(line.Substring(0, 10), "#STAGEFILE", true) == 0) { header.stageFilePath = line.Substring(11); }
-                else if (line.Length >= 9 && string.Compare(line.Substring(0, 9), "#SUBTITLE", true) == 0) { header.subTitle = line.Substring(10).Trim('[', ']'); }
-                else if (line.Length >= 8 && string.Compare(line.Substring(0, 8), "#BACKBMP", true) == 0) { header.backBMPPath = line.Substring(9); }
-                else if (line.Length >= 7 && string.Compare(line.Substring(0, 7), "#ARTIST", true) == 0) { header.artist = line.Substring(8); }
-                else if (line.Length >= 7 && string.Compare(line.Substring(0, 7), "#BANNER", true) == 0) { header.bannerPath = line.Substring(8); }
-                else if (line.Length >= 7 && string.Compare(line.Substring(0, 7), "#LNTYPE", true) == 0) { header.lnType |= (Lntype)(1 << (line[8] - '0')); }
-                else if (line.Length >= 6 && string.Compare(line.Substring(0, 6), "#TITLE", true) == 0)
-                {
-                    header.title = line.Substring(7);
-                    if (!string.IsNullOrEmpty(header.title))
-                    {
-                        int idx;
-                        if ((idx = header.title.LastIndexOf('[')) >= 0)
+                    case "#STA": header.stageFilePath = line.Substring(11); break;   // STAGEFILE
+                    case "#BAC": header.backBMPPath = line.Substring(9); break;      // BACKBMP
+                    case "#ART": header.artist = line.Substring(8); break;           // ARTIST
+                    case "#BAN": header.bannerPath = line.Substring(8); break;       // BANNER
+                    case "#LNT": header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
+                    case "#TIT":   // TITLE
+                        header.title = line.Substring(7);
+                        if (!string.IsNullOrEmpty(header.title))
                         {
-                            header.subTitle = header.title.Substring(idx).Trim('[', ']');
-                            header.title = header.title.Remove(idx);
+                            int idx;
+                            if ((idx = header.title.LastIndexOf('[')) >= 0)
+                            {
+                                header.subTitle = header.title.Substring(idx).Trim('[', ']');
+                                header.title = header.title.Remove(idx);
+                            }
+                        } break;
+                    case "#BPM":  // BPM
+                        if (line[4] == ' ')
+                        {
+                            header.bpm = double.Parse(line.Substring(5));
+                            header.minBPM = header.bpm;
+                            header.maxBPM = header.bpm;
                         }
-                    }
+                        else
+                        {
+                            double tempBPM = double.Parse(line.Substring(7));
+                            if (header.minBPM > tempBPM) { header.minBPM = tempBPM; }
+                            if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
+                        } break;
+                    case "#CAT":  // CATEGORY
+                        switch (line.Substring(10))
+                        {
+                            case "AERY": header.songCategory = Category.AERY; break;
+                            case "SeoRi": header.songCategory = Category.SEORI; break;
+                            default: header.songCategory = Category.NONE; break;
+                        } break;
+                    case "*---":
+                        if (string.Compare(line, "*---------------------- MAIN DATA FIELD", true) == 0) { return; }
+                        break;
+                    case "#PLA":  // PLAYLEVEL
+                        if (line[5] == 'L')
+                        {
+                            int lvl = 0;
+                            int.TryParse(line.Substring(11), out lvl);
+                            header.level = lvl;
+                        } break;
+                    case "#SUB":  // SUBTITLE
+                        if (line[4] == 'T') { header.subTitle = line.Substring(10).Trim('[', ']'); }
+                        break;
+                    default: break;
                 }
-                else if (line.Length >= 6 && string.Compare(line.Substring(0, 4), "#BPM", true) == 0)
-                {
-                    if (line[4] == ' ')
-                    {
-                        header.bpm = double.Parse(line.Substring(5));
-                        header.minBPM = header.bpm;
-                        header.maxBPM = header.bpm;
-                    }
-                    else
-                    {
-                        double tempBPM = double.Parse(line.Substring(7));
-                        if (header.minBPM > tempBPM) { header.minBPM = tempBPM; }
-                        if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
-                    }
-                }
-                else if (line.Length >= 9 && string.Compare(line.Substring(0, 9), "#CATEGORY", true) == 0)
-                {
-                    switch (line.Substring(10))
-                    {
-                        case "AERY": header.songCategory = Category.AERY; break;
-                        case "SeoRi": header.songCategory = Category.SEORI; break;
-                        default: header.songCategory = Category.NONE; break;
-                    }
-                }
-                else if (line.Length >= 30 && string.Compare(line, "*---------------------- MAIN DATA FIELD", true) == 0) break;
             }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning(e);
-                break;
-            }
+            catch (System.Exception e) { Debug.LogWarning(e); break; }
         }
     }
 }
