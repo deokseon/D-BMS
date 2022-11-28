@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Text;
-using TMPro;
 
 public class BMSFileSystem : MonoBehaviour
 {
@@ -54,12 +53,10 @@ public class BMSFileSystem : MonoBehaviour
     private void ParseHeader(string sname, out BMSHeader header)
     {
         header = new BMSHeader();
-
-        StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
-
         header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 9)}\";
         header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
 
+        StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
         string line;
         while ((line = reader.ReadLine()) != null)
         {
@@ -75,6 +72,16 @@ public class BMSFileSystem : MonoBehaviour
                     case "#ART": header.artist = line.Substring(8); break;           // ARTIST
                     case "#BAN": header.bannerPath = line.Substring(8); break;       // BANNER
                     case "#LNT": header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
+                    case "#SUB":  // SUBTITLE
+                        if (line[4] == 'T') { header.subTitle = line.Substring(10).Trim('[', ']'); }
+                        break;
+                    case "#PLA":  // PLAYLEVEL
+                        if (line[5] == 'L')
+                        {
+                            int lvl = 0;
+                            int.TryParse(line.Substring(11), out lvl);
+                            header.level = lvl;
+                        } break;
                     case "#TIT":   // TITLE
                         header.title = line.Substring(7);
                         if (!string.IsNullOrEmpty(header.title))
@@ -107,22 +114,33 @@ public class BMSFileSystem : MonoBehaviour
                             default: header.songCategory = Category.NONE; break;
                         } break;
                     case "*---":
-                        if (string.Compare(line, "*---------------------- MAIN DATA FIELD", true) == 0) { return; }
-                        break;
-                    case "#PLA":  // PLAYLEVEL
-                        if (line[5] == 'L')
-                        {
-                            int lvl = 0;
-                            int.TryParse(line.Substring(11), out lvl);
-                            header.level = lvl;
-                        } break;
-                    case "#SUB":  // SUBTITLE
-                        if (line[4] == 'T') { header.subTitle = line.Substring(10).Trim('[', ']'); }
+                        if (string.Compare(line, "*---------------------- MAIN DATA FIELD", true) == 0) { ParseBPM(reader, header); return; }
                         break;
                     default: break;
                 }
             }
             catch (System.Exception e) { Debug.LogWarning(e); break; }
+        }
+    }
+
+    private void ParseBPM(StreamReader reader, BMSHeader header)
+    {
+        string line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            int len = line.Length;
+            if (len < 9 || line[0] != '#' || line[5] != '3' || line[4] != '0') { continue; }
+
+            int iLen = len - 1;
+            for (int k = 7; k < iLen; k += 2)
+            {
+                double bpm = int.Parse(line.Substring(k, 2), System.Globalization.NumberStyles.HexNumber);
+
+                if (bpm == 0) { continue; } 
+
+                if (header.minBPM > bpm) { header.minBPM = bpm; }
+                if (header.maxBPM < bpm) { header.maxBPM = bpm; }
+            }
         }
     }
 }
