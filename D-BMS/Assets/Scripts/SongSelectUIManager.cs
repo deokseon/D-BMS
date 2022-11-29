@@ -32,17 +32,18 @@ public class SongSelectUIManager : MonoBehaviour
 
     [SerializeField]
     private Toggle[] categoryToggles;
-    private int currentCategoryIndex;
+    private static int currentCategoryIndex = 0;
     private int categoryCount;
     [SerializeField]
     private TextMeshProUGUI sortByText;
-    private SortBy currentSortBy;
+    private static SortBy currentSortBy;
     private int sortByCount;
 
     public LoopVerticalScrollRect lvScrollRect;
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
+    public static int savedIndex = 0;
     private int convertedIndex = 0;
     private int currentHeaderListCount;
     public Sprite seoriToggleSprite;
@@ -61,12 +62,14 @@ public class SongSelectUIManager : MonoBehaviour
         randomEffectorCount = System.Enum.GetValues(typeof(RandomEffector)).Length;
 
         for (int i = categoryToggles.Length - 1; i >= 0; i--) { AddToggleListener(categoryToggles[i]); }
-        currentCategoryIndex = 0;
         categoryCount = System.Enum.GetValues(typeof(Category)).Length;
         sortByCount = System.Enum.GetValues(typeof(SortBy)).Length;
         currentHeaderListCount = BMSFileSystem.selectedCategoryHeaderList.Count;
         SongIndexUpdate();
         ScrollbarSetting();
+
+        categoryToggles[currentCategoryIndex].isOn = true;
+        MoveCurrentIndex(savedIndex);
     }
 
     void Update()
@@ -107,6 +110,7 @@ public class SongSelectUIManager : MonoBehaviour
     {
         if (isReady)
         {
+            savedIndex = currentIndex;
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         }
     }
@@ -189,11 +193,6 @@ public class SongSelectUIManager : MonoBehaviour
     public void SortByClick(int value)
     {
         currentSortBy = (SortBy)(((int)currentSortBy + value + sortByCount) % sortByCount);
-
-        if (currentSortBy == SortBy.LEVEL) { sortByText.text = "Sort by Level"; }
-        else if (currentSortBy == SortBy.TITLE) { sortByText.text = "Sort by Title"; }
-        else { sortByText.text = "Sort by BPM"; }
-
         SortHeaderList();
     }
 
@@ -249,24 +248,28 @@ public class SongSelectUIManager : MonoBehaviour
 
     private void SortHeaderList()
     {
-        BMSFileSystem.selectedCategoryHeaderList.Sort((x, y) => {
-            if (currentSortBy == SortBy.LEVEL)
-            {
-                int result = x.level.CompareTo(y.level);
-                return result != 0 ? result : string.Compare(x.title, y.title);
-            }
-            else if (currentSortBy == SortBy.TITLE)
-            {
-                int result = string.Compare(x.title, y.title);
-                return result != 0 ? result : x.level.CompareTo(y.level);
-            }
-            else
-            {
-                int result1 = x.maxBPM.CompareTo(y.maxBPM);
-                int result2 = result1 != 0 ? result1 : x.level.CompareTo(y.level);
-                return result2 != 0 ? result2 : string.Compare(x.title, y.title);
-            }
-        });
+        switch (currentSortBy)
+        {
+            case SortBy.LEVEL:
+                sortByText.text = "Sort by Level";
+                BMSFileSystem.selectedCategoryHeaderList.Sort((x, y) => {
+                    int result = x.level.CompareTo(y.level);
+                    return result != 0 ? result : string.Compare(x.title, y.title);
+                }); break;
+            case SortBy.TITLE:
+                sortByText.text = "Sort by Title";
+                BMSFileSystem.selectedCategoryHeaderList.Sort((x, y) => {
+                    int result = string.Compare(x.title, y.title);
+                    return result != 0 ? result : x.level.CompareTo(y.level);
+                }); break;
+            case SortBy.BPM:
+                sortByText.text = "Sort by BPM";
+                BMSFileSystem.selectedCategoryHeaderList.Sort((x, y) => {
+                    int result1 = x.maxBPM.CompareTo(y.maxBPM);
+                    int result2 = result1 != 0 ? result1 : x.level.CompareTo(y.level);
+                    return result2 != 0 ? result2 : string.Compare(x.title, y.title);
+                }); break;
+        }
 
         currentIndex = 0;
         if (currentContent != null) { currentContent.tag = "Untagged"; }
