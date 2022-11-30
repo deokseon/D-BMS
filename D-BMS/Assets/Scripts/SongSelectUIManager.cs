@@ -43,7 +43,8 @@ public class SongSelectUIManager : MonoBehaviour
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
-    public static int savedIndex = 0;
+    //public static int savedIndex = 0;
+    private static int[] savedIndex;
     private int convertedIndex = 0;
     private int currentHeaderListCount;
     public Sprite seoriToggleSprite;
@@ -65,11 +66,18 @@ public class SongSelectUIManager : MonoBehaviour
         categoryCount = System.Enum.GetValues(typeof(Category)).Length;
         sortByCount = System.Enum.GetValues(typeof(SortBy)).Length;
         currentHeaderListCount = BMSFileSystem.selectedCategoryHeaderList.Count;
+
+        if (savedIndex == null) 
+        { 
+            savedIndex = new int[categoryCount];
+            for (int i = 0; i < categoryCount; i++) { savedIndex[i] = 0; }
+        }
+
         SongIndexUpdate();
         ScrollbarSetting();
 
         categoryToggles[currentCategoryIndex].isOn = true;
-        MoveCurrentIndex(savedIndex);
+        //MoveCurrentIndex(savedIndex[currentCategoryIndex]);
     }
 
     void Update()
@@ -87,11 +95,13 @@ public class SongSelectUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
+            savedIndex[currentCategoryIndex] = currentIndex;
             currentCategoryIndex = (currentCategoryIndex - 1 + categoryCount) % categoryCount;
             categoryToggles[currentCategoryIndex].isOn = true;
         }
         else if (Input.GetKeyDown(KeyCode.RightShift))
         {
+            savedIndex[currentCategoryIndex] = currentIndex;
             currentCategoryIndex = (currentCategoryIndex + 1) % categoryCount;
             categoryToggles[currentCategoryIndex].isOn = true;
         }
@@ -110,7 +120,7 @@ public class SongSelectUIManager : MonoBehaviour
     {
         if (isReady)
         {
-            savedIndex = currentIndex;
+            savedIndex[currentCategoryIndex] = currentIndex;
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         }
     }
@@ -192,8 +202,10 @@ public class SongSelectUIManager : MonoBehaviour
 
     public void SortByClick(int value)
     {
+        savedIndex[currentCategoryIndex] = currentIndex;
         currentSortBy = (SortBy)(((int)currentSortBy + value + sortByCount) % sortByCount);
         SortHeaderList();
+        MoveCurrentIndex(savedIndex[currentCategoryIndex]);
     }
 
     private void AddToggleListener(Toggle toggle)
@@ -203,12 +215,15 @@ public class SongSelectUIManager : MonoBehaviour
         {
             if (value)
             {
+                int curCategory = currentCategoryIndex;
+                int nextCategory = 0;
                 switch (toggle.tag)
                 {
-                    case "Category_All": currentCategoryIndex = 0; break;
-                    case "Category_Aery": currentCategoryIndex = 1; break;
-                    case "Category_SeoRi": currentCategoryIndex = 2; break;
+                    case "Category_All": currentCategoryIndex = 0; nextCategory = 0; break;
+                    case "Category_Aery": currentCategoryIndex = 1; nextCategory = 1; break;
+                    case "Category_SeoRi": currentCategoryIndex = 2; nextCategory = 2; break;
                 }
+                if (curCategory != nextCategory) { savedIndex[curCategory] = currentIndex; }
                 ChangeCategory();
             }
         });
@@ -244,6 +259,7 @@ public class SongSelectUIManager : MonoBehaviour
 
         SortHeaderList();
         ScrollbarSetting();
+        MoveCurrentIndex(savedIndex[currentCategoryIndex]);
     }
 
     private void SortHeaderList()
@@ -278,7 +294,6 @@ public class SongSelectUIManager : MonoBehaviour
         lvScrollRect.RefillCells(-4);
 
         currentHeaderListCount = BMSFileSystem.selectedCategoryHeaderList.Count;
-        SongIndexUpdate();
     }
 
     public void SongIndexUpdate()
