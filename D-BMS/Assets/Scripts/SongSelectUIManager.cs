@@ -32,6 +32,8 @@ public class SongSelectUIManager : MonoBehaviour
 
     [SerializeField]
     private Toggle[] categoryToggles;
+    [SerializeField]
+    private ToggleGroup categoryToggleGroup;
     private static int currentCategoryIndex = 0;
     private int categoryCount;
     [SerializeField]
@@ -43,7 +45,6 @@ public class SongSelectUIManager : MonoBehaviour
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
-    //public static int savedIndex = 0;
     private static int[] savedIndex;
     private int convertedIndex = 0;
     private int currentHeaderListCount;
@@ -51,6 +52,7 @@ public class SongSelectUIManager : MonoBehaviour
     public Sprite aeryToggleSprite;
 
     private bool isReady = false;
+    private static bool isStart = false;
 
     private BMPLoader loader;
 
@@ -76,12 +78,17 @@ public class SongSelectUIManager : MonoBehaviour
         SongIndexUpdate();
         ScrollbarSetting();
 
+        categoryToggleGroup.allowSwitchOff = true;
+        categoryToggleGroup.SetAllTogglesOff(false);
         categoryToggles[currentCategoryIndex].isOn = true;
-        //MoveCurrentIndex(savedIndex[currentCategoryIndex]);
+        categoryToggleGroup.allowSwitchOff = false;
+        isStart = false;
     }
 
     void Update()
     {
+        if (isStart) { return; }
+
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
             GameStart();
         }
@@ -105,6 +112,36 @@ public class SongSelectUIManager : MonoBehaviour
             currentCategoryIndex = (currentCategoryIndex + 1) % categoryCount;
             categoryToggles[currentCategoryIndex].isOn = true;
         }
+        else if (Input.anyKeyDown)
+        {
+            for (int i = 0; i < 26; i++)
+            {
+                if (Input.GetKeyDown((KeyCode)(i + 'a')))
+                { 
+                    int index = FindSongTitleIndex((KeyCode)(i + 'a')); 
+                    if (index != -1)
+                    {
+                        Debug.Log(BMSFileSystem.selectedCategoryHeaderList[index].title);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private int FindSongTitleIndex(KeyCode keycode)
+    {
+        int index = -1;
+        char findTitleChar = (char)keycode;
+        for (int i = 0; i < currentHeaderListCount; i++)
+        {
+            if (BMSFileSystem.selectedCategoryHeaderList[i].title.ToLower()[0] == findTitleChar)
+            {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     public void MoveCurrentIndex(int index)
@@ -120,6 +157,7 @@ public class SongSelectUIManager : MonoBehaviour
     {
         if (isReady)
         {
+            isStart = true;
             savedIndex[currentCategoryIndex] = currentIndex;
             UnityEngine.SceneManagement.SceneManager.LoadScene(1);
         }

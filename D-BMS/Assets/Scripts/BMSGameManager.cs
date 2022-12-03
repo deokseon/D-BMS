@@ -212,7 +212,7 @@ public class BMSGameManager : MonoBehaviour
 
     public IEnumerator GameRestart()
     {
-        if (isPaused) { yield break; }
+        if (isPaused || isClear) { yield break; }
 
         isPaused = true;
         gameUIManager.FadeIn();
@@ -225,6 +225,7 @@ public class BMSGameManager : MonoBehaviour
 
         ReturnAllNotes();
         gameUIManager.bga.texture = null;
+        gameUIManager.UpdateSongEndText(0, 0, 0, false);
         bmsResult = null;
         pattern = null;
         bgaChangeList = null;
@@ -241,7 +242,7 @@ public class BMSGameManager : MonoBehaviour
         normalNoteList = null;
         barList = null;
 
-        isClear = true;
+        isClear = false;
         currentBeat = 0;
         currentScrollTime = 0;
         currentTimeSample = 0;
@@ -252,6 +253,8 @@ public class BMSGameManager : MonoBehaviour
         currentScore = 0.0d;
         gauge.hp = 1.0f;
         gameUIManager.maxCombo = 0;
+        gameUIManager.earlyCount = 0;
+        gameUIManager.lateCount = 0;
         for (int i = 0; i < 5; i++) { currentButtonPressed[i] = false; }
 
         bmsResult = new BMSResult();
@@ -305,7 +308,7 @@ public class BMSGameManager : MonoBehaviour
     private void Awake()
     {
         isPaused = true;
-        isClear = true;
+        isClear = false;
         judge = JudgeManager.instance;
         bmsResult = new BMSResult();
 
@@ -607,7 +610,7 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.UpdateScore(gauge.hp, (float)(accuracySum * divideTable[currentCount]), (float)(currentScore * 0.001d), maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
-            gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount);
+            gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount, true);
     }
 
     private IEnumerator TimerStart()
@@ -623,7 +626,11 @@ public class BMSGameManager : MonoBehaviour
         isPaused = !clear;
         isClear = clear;
 
-        while (isClear && soundManager.IsPlayingAudioClip()) { yield return wait3Sec; }
+        if (isClear)
+        {
+            soundManager.DividePlayingAudio();
+            while (soundManager.IsPlayingAudioClip()) { yield return wait1Sec; }
+        }
         soundManager.AudioAllStop();
 
         noteParent.gameObject.SetActive(clear);
@@ -680,7 +687,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void ChangeSpeed(float value)
     {
-        if (isPaused) { return; }
+        if (isPaused || isClear) { return; }
 
         userSpeed += value;
         if (userSpeed > 20.0f) { userSpeed = 20.0f; }
@@ -724,7 +731,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void ChangeJudgeAdjValue(int value)
     {
-        if (isPaused) { return; }
+        if (isPaused || isClear) { return; }
 
         judgeAdjValue += value;
         if (judgeAdjValue > 80) { judgeAdjValue = 80; }

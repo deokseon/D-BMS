@@ -118,8 +118,10 @@ public class GameUIManager : MonoBehaviour
 
     [HideInInspector]
     public int maxCombo;
-    private int earlyCount;
-    private int lateCount;
+    [HideInInspector]
+    public int earlyCount;
+    [HideInInspector]
+    public int lateCount;
 
     private BMPLoader loader;
     private WaitForSecondsRealtime wait1sec;
@@ -154,7 +156,7 @@ public class GameUIManager : MonoBehaviour
 
         currentIdx = -1;
         rankImageTransform = rankImage.transform;
-        yPos = new float[10] { 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
+        yPos = new float[11] { -90.0f, 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
 
         endInfo.SetActive(false);
 
@@ -301,22 +303,22 @@ public class GameUIManager : MonoBehaviour
         scoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, (float)(maxScore));
 
-        int idx = -1;
+        int idx = 0;
         switch (score)
         {
-            case float n when (n >= 0.0f && n < 550000.0f): idx = -1; break;
-            case float n when (n >= 550000.0f && n < 650000.0f): idx = 0; break;
-            case float n when (n >= 650000.0f && n < 750000.0f): idx = 1; break;
-            case float n when (n >= 750000.0f && n < 850000.0f): idx = 2; break;
-            case float n when (n >= 850000.0f && n < 900000.0f): idx = 3; break;
-            case float n when (n >= 900000.0f && n < 950000.0f): idx = 4; break;
-            case float n when (n >= 950000.0f && n < 1000000.0f): idx = 5; break;
-            case float n when (n >= 1000000.0f && n < 1025000.0f): idx = 6; break;
-            case float n when (n >= 1025000.0f && n < 1050000.0f): idx = 7; break;
-            case float n when (n >= 1050000.0f && n < 1090000.0f): idx = 8; break;
-            case float n when (n >= 1090000.0f): idx = 9; break;
+            case float n when (n >= 0.0f && n < 550000.0f): idx = 0; break;
+            case float n when (n >= 550000.0f && n < 650000.0f): idx = 1; break;
+            case float n when (n >= 650000.0f && n < 750000.0f): idx = 2; break;
+            case float n when (n >= 750000.0f && n < 850000.0f): idx = 3; break;
+            case float n when (n >= 850000.0f && n < 900000.0f): idx = 4; break;
+            case float n when (n >= 900000.0f && n < 950000.0f): idx = 5; break;
+            case float n when (n >= 950000.0f && n < 1000000.0f): idx = 6; break;
+            case float n when (n >= 1000000.0f && n < 1025000.0f): idx = 7; break;
+            case float n when (n >= 1025000.0f && n < 1050000.0f): idx = 8; break;
+            case float n when (n >= 1050000.0f && n < 1090000.0f): idx = 9; break;
+            case float n when (n >= 1090000.0f): idx = 10; break;
         }
-        if (idx != -1 && currentIdx != idx)
+        if (currentIdx != idx)
         {
             rankImage.sprite = rank[idx];
             rankImageTransform.localPosition = new Vector3(-390.0f, yPos[idx], 0.0f);
@@ -343,7 +345,7 @@ public class GameUIManager : MonoBehaviour
         earlyLateEffectAnimator[index].SetTrigger(hashEarlyLateEffect);
     }
 
-    public void UpdateSongEndText(int koolCount, int coolCount, int goodCount)
+    public void UpdateSongEndText(int koolCount, int coolCount, int goodCount, bool isActive)
     {
         earlyCountText.text = earlyCount.ToString();
         lateCountText.text = lateCount.ToString();
@@ -351,7 +353,7 @@ public class GameUIManager : MonoBehaviour
         coolCountText.text = coolCount.ToString();
         goodCountText.text = goodCount.ToString();
 
-        endInfo.SetActive(true);
+        endInfo.SetActive(isActive);
     }
     public void FadeIn()
     {

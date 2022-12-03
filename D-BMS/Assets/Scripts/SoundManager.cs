@@ -13,14 +13,19 @@ public class SoundManager : MonoBehaviour
 
     private static string[] soundFileExtensions;
 
-    private const int channelLength = 300;
-    private const int maxChannelIndex = channelLength - 2;
+    private const int channelCount = 300;
 
     private AudioClip bgSoundClip;
-    private AudioSource[] bgSoundAudioArray;
+    private List<AudioSource> bgSoundAudioList;
+    private int bgSoundAudioListCount;
     private AudioClip keySoundClip;
-    private AudioSource[] keySoundAudioArray;
+    private List<AudioSource> keySoundAudioList;
+    private int keySoundAudioListCount;
 
+    private List<AudioSource> playingAudioList;
+
+    private int maxBGSoundIndex;
+    private int maxKeySoundIndex;
     private int currentBGSoundIndex;
     private int currentKeySoundIndex;
 
@@ -35,23 +40,27 @@ public class SoundManager : MonoBehaviour
         currentBGSoundIndex = 0;
         currentKeySoundIndex = 0;
 
-        bgSoundAudioArray = new AudioSource[channelLength];
-        keySoundAudioArray = new AudioSource[channelLength];
-
-        for (int i = 0; i < channelLength; i++)
+        bgSoundAudioList = new List<AudioSource>(channelCount);
+        keySoundAudioList = new List<AudioSource>(channelCount);
+        playingAudioList = new List<AudioSource>(channelCount);
+        for (int i = 0; i < channelCount; i++)
         {
-            bgSoundAudioArray[i] = gameObject.AddComponent<AudioSource>();
-            bgSoundAudioArray[i].loop = false;
-            bgSoundAudioArray[i].playOnAwake = false;
-            bgSoundAudioArray[i].dopplerLevel = 0.0f;
-            bgSoundAudioArray[i].reverbZoneMix = 0.0f;
+            bgSoundAudioList.Add(gameObject.AddComponent<AudioSource>());
+            bgSoundAudioList[i].loop = false;
+            bgSoundAudioList[i].playOnAwake = false;
+            bgSoundAudioList[i].dopplerLevel = 0.0f;
+            bgSoundAudioList[i].reverbZoneMix = 0.0f;
 
-            keySoundAudioArray[i] = gameObject.AddComponent<AudioSource>();
-            keySoundAudioArray[i].loop = false;
-            keySoundAudioArray[i].playOnAwake = false;
-            keySoundAudioArray[i].dopplerLevel = 0.0f;
-            keySoundAudioArray[i].reverbZoneMix = 0.0f;
+            keySoundAudioList.Add(gameObject.AddComponent<AudioSource>());
+            keySoundAudioList[i].loop = false;
+            keySoundAudioList[i].playOnAwake = false;
+            keySoundAudioList[i].dopplerLevel = 0.0f;
+            keySoundAudioList[i].reverbZoneMix = 0.0f;
         }
+        bgSoundAudioListCount = bgSoundAudioList.Count;
+        keySoundAudioListCount = keySoundAudioList.Count;
+        maxBGSoundIndex = bgSoundAudioListCount - 2;
+        maxKeySoundIndex = keySoundAudioListCount - 2;
     }
 
     public void AddAudioClips()
@@ -103,13 +112,13 @@ public class SoundManager : MonoBehaviour
     {
         if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
         //Debug.Log(key);
-        while (true)
-        {
-            currentKeySoundIndex = currentKeySoundIndex > maxChannelIndex ? 0 : currentKeySoundIndex + 1;
 
-            if (!keySoundAudioArray[currentKeySoundIndex].isPlaying)
+        for (int i = keySoundAudioListCount; i > 0; i--)
+        {
+            currentKeySoundIndex = currentKeySoundIndex > maxKeySoundIndex ? 0 : currentKeySoundIndex + 1;
+            if (!keySoundAudioList[currentKeySoundIndex].isPlaying)
             {
-                keySoundAudioArray[currentKeySoundIndex].PlayOneShot(keySoundClip, volume);
+                keySoundAudioList[currentKeySoundIndex].PlayOneShot(keySoundClip, volume);
                 return;
             }
         }
@@ -118,33 +127,52 @@ public class SoundManager : MonoBehaviour
     public void PlayBGSound(int key, float volume = 0.8f)
     {
         if (key == 0 || !clips.TryGetValue(key, out bgSoundClip)) { return; }
-        while (true)
-        {
-            currentBGSoundIndex = currentBGSoundIndex > maxChannelIndex ? 0 : currentBGSoundIndex + 1;
 
-            if (!bgSoundAudioArray[currentBGSoundIndex].isPlaying)
+        for (int i = bgSoundAudioListCount; i > 0; i--)
+        {
+            currentBGSoundIndex = currentBGSoundIndex > maxBGSoundIndex ? 0 : currentBGSoundIndex + 1;
+            if (!bgSoundAudioList[currentBGSoundIndex].isPlaying)
             {
-                bgSoundAudioArray[currentBGSoundIndex].PlayOneShot(bgSoundClip, volume);
+                bgSoundAudioList[currentBGSoundIndex].PlayOneShot(bgSoundClip, volume);
                 return;
+            }
+        }
+    }
+
+    public void DividePlayingAudio()
+    {
+        for (int i = channelCount - 1; i >= 0; i--)
+        {
+            if (keySoundAudioList[i].isPlaying)
+            {
+                playingAudioList.Add(keySoundAudioList[i]);
+                keySoundAudioList.RemoveAt(i);
+                keySoundAudioListCount--;
+                maxKeySoundIndex--;
+            }
+            if (bgSoundAudioList[i].isPlaying)
+            {
+                playingAudioList.Add(bgSoundAudioList[i]);
+                bgSoundAudioList.RemoveAt(i);
+                bgSoundAudioListCount--;
+                maxBGSoundIndex--;
             }
         }
     }
 
     public bool IsPlayingAudioClip()
     {
-        for (int i = 0; i < channelLength; i++)
+        int audioListCount = playingAudioList.Count;
+        for (int i = 0; i < audioListCount; i++)
         {
-            if (bgSoundAudioArray[i].isPlaying || keySoundAudioArray[i].isPlaying) { return true; }
+            if (playingAudioList[i].isPlaying) { return true; }
         }
         return false;
     }
 
     public void AudioAllStop()
     {
-        for (int i = 0; i < channelLength; i++)
-        {
-            bgSoundAudioArray[i].Stop();
-            keySoundAudioArray[i].Stop();
-        }
+        for (int i = 0; i < keySoundAudioListCount; i++) { keySoundAudioList[i].Stop(); }
+        for (int i = 0; i < bgSoundAudioListCount; i++) { bgSoundAudioList[i].Stop(); }
     }
 }

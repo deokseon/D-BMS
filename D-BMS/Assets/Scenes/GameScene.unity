@@ -10160,6 +10160,7 @@ MonoBehaviour:
   - {fileID: 60749191}
   - {fileID: 2040985582}
   rank:
+  - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
   - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
   - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
   - {fileID: 21300000, guid: 0170ccaeac3eca648bb9a306f19876f7, type: 3}
@@ -10195,6 +10196,8 @@ MonoBehaviour:
   fadeinAnimator: {fileID: 1949911354}
   fadeinObject: {fileID: 1949911352}
   maxCombo: 0
+  earlyCount: 0
+  lateCount: 0
 --- !u!1 &1831003517
 GameObject:
   m_ObjectHideFlags: 0

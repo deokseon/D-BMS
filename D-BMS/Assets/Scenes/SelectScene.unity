@@ -390,6 +390,7 @@ MonoBehaviour:
   - {fileID: 1885647525}
   - {fileID: 85361086}
   - {fileID: 766565565}
+  categoryToggleGroup: {fileID: 319120881}
   sortByText: {fileID: 1373157133}
   lvScrollRect: {fileID: 2030358876}
   songToggleGroup: {fileID: 15336907}
