@@ -51,6 +51,9 @@ public class SongSelectUIManager : MonoBehaviour
     public Sprite seoriToggleSprite;
     public Sprite aeryToggleSprite;
 
+    private char prevFindAlphabet;
+    private int findSequence;
+
     private bool isReady = false;
     private static bool isStart = false;
 
@@ -82,6 +85,10 @@ public class SongSelectUIManager : MonoBehaviour
         categoryToggleGroup.SetAllTogglesOff(false);
         categoryToggles[currentCategoryIndex].isOn = true;
         categoryToggleGroup.allowSwitchOff = false;
+
+        prevFindAlphabet = '.';
+        findSequence = 0;
+
         isStart = false;
     }
 
@@ -89,7 +96,8 @@ public class SongSelectUIManager : MonoBehaviour
     {
         if (isStart) { return; }
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
+        {
             GameStart();
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Mouse ScrollWheel") < 0)
@@ -121,7 +129,7 @@ public class SongSelectUIManager : MonoBehaviour
                     int index = FindSongTitleIndex((KeyCode)(i + 'a')); 
                     if (index != -1)
                     {
-                        Debug.Log(BMSFileSystem.selectedCategoryHeaderList[index].title);
+                        MoveCurrentIndex(index);
                     }
                     break;
                 }
@@ -133,13 +141,25 @@ public class SongSelectUIManager : MonoBehaviour
     {
         int index = -1;
         char findTitleChar = (char)keycode;
+        findSequence = (findTitleChar == prevFindAlphabet ? findSequence + 1 : 0);
+        prevFindAlphabet = findTitleChar;
+        int firstIndex = -1;
+        int currentSequence = 0;
         for (int i = 0; i < currentHeaderListCount; i++)
         {
-            if (BMSFileSystem.selectedCategoryHeaderList[i].title.ToLower()[0] == findTitleChar)
+            if (BMSFileSystem.selectedCategoryHeaderList[i].title.ToLower()[0] != findTitleChar) { continue; }
+            if (currentSequence == findSequence)
             {
                 index = i;
                 break;
             }
+            if (currentSequence == 0) { firstIndex = i; }
+            currentSequence++;
+        }
+        if (index == -1)
+        {
+            index = firstIndex;
+            findSequence = 0;
         }
         return index;
     }
