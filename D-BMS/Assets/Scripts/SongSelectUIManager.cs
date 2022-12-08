@@ -51,6 +51,10 @@ public class SongSelectUIManager : MonoBehaviour
     public Sprite seoriToggleSprite;
     public Sprite aeryToggleSprite;
 
+    private WaitForSeconds wait100ms;
+    private bool isUpArrowPressed;
+    private bool isDownArrowPressed;
+
     private char prevFindAlphabet;
     private int findSequence;
 
@@ -86,6 +90,9 @@ public class SongSelectUIManager : MonoBehaviour
         categoryToggles[currentCategoryIndex].isOn = true;
         categoryToggleGroup.allowSwitchOff = false;
 
+        wait100ms = new WaitForSeconds(0.1f);
+        isUpArrowPressed = false;
+        isDownArrowPressed = false;
         prevFindAlphabet = '.';
         findSequence = 0;
 
@@ -100,11 +107,27 @@ public class SongSelectUIManager : MonoBehaviour
         {
             GameStart();
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetAxis("Mouse ScrollWheel") < 0)
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && !isUpArrowPressed)
+        {
+            isDownArrowPressed = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            isDownArrowPressed = false;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) && !isDownArrowPressed)
+        {
+            isUpArrowPressed = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            isUpArrowPressed = false;
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             MoveCurrentIndex(currentIndex + 1);
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetAxis("Mouse ScrollWheel") > 0)
+        else if (Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             MoveCurrentIndex(currentIndex - 1);
         }
@@ -122,25 +145,60 @@ public class SongSelectUIManager : MonoBehaviour
         }
         else if (Input.anyKeyDown)
         {
-            for (int i = 0; i < 26; i++)
-            {
-                if (Input.GetKeyDown((KeyCode)(i + 'a')))
-                { 
-                    int index = FindSongTitleIndex((KeyCode)(i + 'a')); 
-                    if (index != -1)
-                    {
-                        MoveCurrentIndex(index);
-                    }
-                    break;
-                }
-            }
+            int code, index;
+            if (!CheckKeyCode(out code)) { return; }
+
+            if (code >= 97 && code <= 122) { index = FindSongTitleIndex((char)code); }
+            else { index = (int)(currentHeaderListCount * 0.1f) * code; }
+
+            if (index == -1) { return; }
+
+            MoveCurrentIndex(index);
         }
     }
 
-    private int FindSongTitleIndex(KeyCode keycode)
+    private bool CheckKeyCode(out int code)
+    {
+        code = -1;
+        for (int i = 0; i < 26; i++)
+        {
+            if (Input.GetKeyDown((KeyCode)(i + 'a'))) {
+                code = i + 'a';
+                return true;
+            }
+        }
+        for (int i = 0; i < 10; i++)
+        {
+            if (Input.GetKeyDown((KeyCode)(i + 48)) || Input.GetKeyDown((KeyCode)(i + 256)))
+            {
+                code = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private IEnumerator CheckUpDownArrowPress()
+    {
+        while (true)
+        {
+            while (isDownArrowPressed)
+            {
+                MoveCurrentIndex(currentIndex + 1);
+                yield return wait100ms;
+            }
+            while (isUpArrowPressed)
+            {
+                MoveCurrentIndex(currentIndex - 1);
+                yield return wait100ms;
+            }
+            yield return null;
+        }
+    }
+
+    private int FindSongTitleIndex(char findTitleChar)
     {
         int index = -1;
-        char findTitleChar = (char)keycode;
         findSequence = (findTitleChar == prevFindAlphabet ? findSequence + 1 : 0);
         prevFindAlphabet = findTitleChar;
         int firstIndex = -1;
@@ -283,6 +341,7 @@ public class SongSelectUIManager : MonoBehaviour
                 }
                 if (curCategory != nextCategory) { savedIndex[curCategory] = currentIndex; }
                 ChangeCategory();
+                StartCoroutine(CheckUpDownArrowPress());
             }
         });
     }
