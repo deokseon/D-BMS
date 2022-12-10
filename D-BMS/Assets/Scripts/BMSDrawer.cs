@@ -50,7 +50,7 @@ public class BMSDrawer : MonoBehaviour
                     if (k == 2)
                     {
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
-                            new Vector3(0.3f, ((float)(pattern.longNote[i][j].beat - pattern.longNote[i][j - 2].beat) * speed - 0.3f) * 1.219512f, 1.0f);
+                            new Vector3(0.3f, ((float)(pattern.longNote[i][j].beat - pattern.longNote[i][j - 2].beat) * speed - 0.3f) * 1.21577f, 1.0f);
                     }
                 }
             }

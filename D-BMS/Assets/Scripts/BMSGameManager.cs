@@ -500,7 +500,7 @@ public class BMSGameManager : MonoBehaviour
                         if (j == 1)
                         {
                             longNoteList[i][len].modelTransform.localScale =
-                                new Vector3(0.3f, ((float)(longNoteList[i][len + 1].beat - longNoteList[i][len - 1].beat) * gameSpeed - 0.3f) * 1.219512f, 1.0f);
+                                new Vector3(0.3f, ((float)(longNoteList[i][len + 1].beat - longNoteList[i][len - 1].beat) * gameSpeed - 0.3f) * 1.21577f, 1.0f);
                         }
                     }
                     else
