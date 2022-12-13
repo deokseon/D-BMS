@@ -9,4 +9,5 @@ LoopScrollRect(재사용 스크롤뷰) => https://github.com/qiankanglai/LoopScr
 
 BMS파일 => https://drive.google.com/file/d/1kSpbT0p7nVfGtbTblYK02ZwXtv7yDDhY/view?usp=sharing
            https://drive.google.com/file/d/18DMGCFieiwBPzS4stelSQV7krZJyzb4N/view?usp=sharing
-           2개를 모두 받고 압축을 풀어주세요.
+
+2개를 모두 받고 압축을 풀어주세요.
