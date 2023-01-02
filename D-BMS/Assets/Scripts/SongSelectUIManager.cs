@@ -29,6 +29,14 @@ public class SongSelectUIManager : MonoBehaviour
     private TextMeshProUGUI songIndexText;
     [SerializeField]
     private Scrollbar scrollbar;
+    [SerializeField]
+    private Canvas optionCanvas;
+    [SerializeField]
+    private TextMeshProUGUI[] keySettingButtonTexts;
+    [SerializeField]
+    private KeySettingManager keySettingManager;
+    [SerializeField]
+    private GameObject waitInputPanel;
 
     [SerializeField]
     private Toggle[] categoryToggles;
@@ -60,6 +68,7 @@ public class SongSelectUIManager : MonoBehaviour
 
     private bool isReady = false;
     private static bool isStart = false;
+    private bool isChanging = false;
 
     private BMPLoader loader;
 
@@ -101,7 +110,12 @@ public class SongSelectUIManager : MonoBehaviour
 
     void Update()
     {
-        if (isStart) { return; }
+        if (isChanging) { return; }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ToggleOptionCanvas();
+        }
+        if (isStart || optionCanvas.enabled) { return; }
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
         {
@@ -425,5 +439,125 @@ public class SongSelectUIManager : MonoBehaviour
         convertedIndex = currentIndex;
         while (convertedIndex < 0) { convertedIndex += (currentHeaderListCount * 10); }
         convertedIndex %= currentHeaderListCount;
+    }
+
+    private void ToggleOptionCanvas()
+    {
+        if (optionCanvas.enabled)
+        {
+            keySettingManager.SaveKeyConfig();
+        }
+        else
+        {
+            for (int i = 0; i < keySettingButtonTexts.Length; i++)
+            {
+                keySettingButtonTexts[i].text = KeySettingManager.keyConfig.keys[i];
+            }
+        }
+        optionCanvas.enabled = !optionCanvas.enabled;
+    }
+
+    public void ChangeKey(int index)
+    {
+        if (!isChanging)
+        {
+            StartCoroutine(WaitKeyChange(index));
+        }
+    }
+
+    private IEnumerator WaitKeyChange(int index)
+    {
+        isChanging = true;
+        waitInputPanel.SetActive(true);
+
+        string key = KeySettingManager.keyConfig.keys[index];
+
+        float timer = 0.0f;
+        while (isChanging)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape)) { isChanging = false; }
+            #region keyinput
+            else if (Input.GetKeyDown(KeyCode.BackQuote)) { key = "Backquote"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Backslash)) { key = "Backslash"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Equals)) { key = "Equals"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftBracket)) { key = "LeftBracket"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightBracket)) { key = "RightBracket"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Minus)) { key = "Minus"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Semicolon)) { key = "Semicolon"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Quote)) { key = "Quote"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Comma)) { key = "Comma"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Period)) { key = "Period"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Slash)) { key = "Slash"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftShift)) { key = "LeftShift"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightShift)) { key = "RightShift"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftAlt)) { key = "LeftAlt"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightAlt)) { key = "RightAlt"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftControl)) { key = "LeftCtrl"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightControl)) { key = "RightCtrl"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Space)) { key = "Space"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Return)) { key = "Enter"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Delete)) { key = "Delete"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.End)) { key = "End"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Home)) { key = "Home"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Insert)) { key = "Insert"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.PageDown)) { key = "PageDown"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.PageUp)) { key = "PageUp"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow)) { key = "LeftArrow"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightArrow)) { key = "RightArrow"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.UpArrow)) { key = "UpArrow"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.DownArrow)) { key = "DownArrow"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadDivide)) { key = "NumpadDivide"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadEnter)) { key = "NumpadEnter"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadEquals)) { key = "NumpadEquals"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadMinus)) { key = "NumpadMinus"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadMultiply)) { key = "NumpadMultiply"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadPeriod)) { key = "NumpadPeriod"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadPlus)) { key = "NumpadPlus"; isChanging = false; }
+            else if (Input.anyKeyDown)
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    if (Input.GetKeyDown((KeyCode)(i + 'a')))
+                    {
+                        key = $"{(char)(i + 'A')}";
+                        isChanging = false;
+                        break;
+                    }
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    if (Input.GetKeyDown((KeyCode)(i + 48)))
+                    {
+                        key = $"{i}";
+                        isChanging = false;
+                        break;
+                    }
+                    else if (Input.GetKeyDown((KeyCode)(i + 256)))
+                    {
+                        key = $"Numpad{i}";
+                        isChanging = false;
+                        break;
+                    }
+                }
+            }
+            #endregion
+
+            timer += Time.deltaTime;
+            if (timer >= 10.0f)
+            {
+                isChanging = false;
+            }
+            yield return null;
+        }
+
+        if (timer < 10.0f)
+        {
+            if (keySettingManager.SetKey(index, key))
+            {
+                keySettingButtonTexts[index].text = KeySettingManager.keyConfig.keys[index];
+            }
+        }
+
+        waitInputPanel.SetActive(false);
     }
 }

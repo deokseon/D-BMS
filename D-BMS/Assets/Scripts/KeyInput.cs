@@ -35,15 +35,13 @@ public class KeyInput : MonoBehaviour
     [SerializeField]
     private BMSGameManager bmsGameManager;
 
-    private char[] keyMapping = { 'a', 'w', 'j', 'i', 'l' };
-
     void Awake()
     {
-        keyInputAction1 = new InputAction("KeyInput1", InputActionType.Button, $"<Keyboard>/{keyMapping[0]}");
-        keyInputAction2 = new InputAction("KeyInput2", InputActionType.Button, $"<Keyboard>/{keyMapping[1]}");
-        keyInputAction3 = new InputAction("KeyInput3", InputActionType.Button, $"<Keyboard>/{keyMapping[2]}");
-        keyInputAction4 = new InputAction("KeyInput4", InputActionType.Button, $"<Keyboard>/{keyMapping[3]}");
-        keyInputAction5 = new InputAction("KeyInput5", InputActionType.Button, $"<Keyboard>/{keyMapping[4]}");
+        keyInputAction1 = new InputAction("KeyInput1", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[0]}");
+        keyInputAction2 = new InputAction("KeyInput2", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[1]}");
+        keyInputAction3 = new InputAction("KeyInput3", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[2]}");
+        keyInputAction4 = new InputAction("KeyInput4", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[3]}");
+        keyInputAction5 = new InputAction("KeyInput5", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[4]}");
 
         funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
         funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");

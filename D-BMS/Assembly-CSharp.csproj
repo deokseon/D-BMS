@@ -80,6 +80,7 @@
      <Compile Include="Assets\Scripts\GameUIManager.cs" />
      <Compile Include="Assets\Scripts\JudgeManager.cs" />
      <Compile Include="Assets\Scripts\KeyInput.cs" />
+     <Compile Include="Assets\Scripts\KeySettingManager.cs" />
      <Compile Include="Assets\Scripts\ListExtension.cs" />
      <Compile Include="Assets\Scripts\ObjectPool.cs" />
      <Compile Include="Assets\Scripts\ResultUIManager.cs" />
@@ -102,6 +103,7 @@
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+     <None Include="Assets\Shader\BlurShader.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
      <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />

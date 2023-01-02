@@ -26,9 +26,10 @@ public class BMSGameManager : MonoBehaviour
     [SerializeField]
     private Transform noteParent;
 
+    private System.Diagnostics.Stopwatch stopwatch;
     private double currentBeat = 0;
     private double currentScrollTime = 0;
-    private int currentTimeSample = 0;
+    private long currentMilliSeconds = 0;
     private double currentTime = 0;
     private int accuracySum = 0;
     private int currentCount = 0;
@@ -39,7 +40,6 @@ public class BMSGameManager : MonoBehaviour
     private Coroutine coSongEndCheck;
 
     private const double divide60 = 1.0d / 60.0d;
-    private const double divide44100 = 1.0d / 44100.0d;
     private float divideBPM;
     private double[] divideTable;
     private double[] maxScoreTable;
@@ -55,8 +55,6 @@ public class BMSGameManager : MonoBehaviour
     private bool isBGAVideoSupported = false;
 
     public int[] currentNote;
-
-    private AudioSource timeSampleAudio;
 
     private double koolAddScore;
     private double coolAddScore;
@@ -96,6 +94,8 @@ public class BMSGameManager : MonoBehaviour
 
     private IEnumerator PreLoad(bool isRestart)
     {
+        stopwatch.Reset();
+
         gameUIManager.bga.color = new Color(1, 1, 1, 0);
         gameUIManager.bga.texture = null;
 
@@ -214,12 +214,11 @@ public class BMSGameManager : MonoBehaviour
     {
         if (isPaused || isClear) { yield break; }
 
+        stopwatch.Stop();
         isPaused = true;
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
         StopCoroutine(coSongEndCheck);
-        timeSampleAudio.Stop();
-        timeSampleAudio.timeSamples = 0;
         if (videoPlayer.isPlaying) { videoPlayer.Pause(); videoPlayer.time = 0.0d; }
         yield return wait1Sec;
 
@@ -245,7 +244,7 @@ public class BMSGameManager : MonoBehaviour
         isClear = false;
         currentBeat = 0;
         currentScrollTime = 0;
-        currentTimeSample = 0;
+        currentMilliSeconds = 0;
         currentTime = 0;
         accuracySum = 0;
         currentCount = 0;
@@ -307,6 +306,7 @@ public class BMSGameManager : MonoBehaviour
 
     private void Awake()
     {
+        stopwatch = new System.Diagnostics.Stopwatch();
         isPaused = true;
         isClear = false;
         judge = JudgeManager.instance;
@@ -332,8 +332,6 @@ public class BMSGameManager : MonoBehaviour
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
 
-        timeSampleAudio = GetComponent<AudioSource>();
-
         wait3Sec = new WaitForSeconds(3.0f);
         wait1Sec = new WaitForSeconds(1.5f);
 
@@ -353,10 +351,10 @@ public class BMSGameManager : MonoBehaviour
 
         PlayNotes();
 
-        int tempTimeSample = timeSampleAudio.timeSamples;
-        double frameTime = (tempTimeSample - currentTimeSample) * divide44100;
-        currentTimeSample = tempTimeSample;
-        currentTime = currentTimeSample * divide44100;
+        long tempMilliSeconds = stopwatch.ElapsedMilliseconds;
+        double frameTime = (tempMilliSeconds - currentMilliSeconds) * 0.001d;
+        currentMilliSeconds = tempMilliSeconds;
+        currentTime = currentMilliSeconds * 0.001d;
 
         double avg = currentBPM * frameTime;
 
@@ -617,7 +615,7 @@ public class BMSGameManager : MonoBehaviour
     {
         while (isPaused) { yield return null; }
 
-        timeSampleAudio.Play();
+        stopwatch.Start();
     }
 
     public IEnumerator GameEnd(bool clear)
