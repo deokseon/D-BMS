@@ -399,10 +399,10 @@ public class BMSGameManager : MonoBehaviour
         noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + judgeAdjBeat) * gameSpeed), 0.0f);
     }
 
-    private void HandleNote(List<Note> noteList, int idx)
+    private void HandleNote(List<Note> noteList, int idx, long time)
     {
         Note n = noteList[notesListCount[idx] - 1];
-        double diff = (currentTime - n.timing) * 1000.0d;
+        double diff = time - (n.timing * 1000.0d);
         JudgeType result = judge.Judge(diff);
         if (result == JudgeType.IGNORE) { return; }
 
@@ -523,7 +523,7 @@ public class BMSGameManager : MonoBehaviour
         {
             while (notesListCount[i] > 0 && judge.Judge(notesList[i][notesListCount[i] - 1], currentTime) == JudgeType.FAIL)
             {
-                HandleNote(notesList[i], i);
+                HandleNote(notesList[i], i, currentMilliSeconds);
             }
         }
 
@@ -553,21 +553,24 @@ public class BMSGameManager : MonoBehaviour
                 notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
                 soundManager.PlayKeySound(notesList[i][notesListCount[i] - 1].keySound);
-                HandleNote(notesList[i], i);
+                HandleNote(notesList[i], i, currentMilliSeconds);
             }
         }
     }
 
     public void KeyDown(int index)
     {
+        soundManager.PlayKeySound(currentNote[index]);
         currentButtonPressed[index] = true;
+        gameUIManager.KeyInputImageSetActive(true, index);
         if (notesListCount[index] <= 0 || notesList[index][notesListCount[index] - 1].extra == 2) { return; }
-        HandleNote(notesList[index], index);
+        HandleNote(notesList[index], index, stopwatch.ElapsedMilliseconds);
     }
 
     public void KeyUp(int index)
     {
         currentButtonPressed[index] = false;
+        gameUIManager.KeyInputImageSetActive(false, index);
     }
 
     public void UpdateResult(JudgeType judge)

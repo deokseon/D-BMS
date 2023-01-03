@@ -45,6 +45,15 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI backAccuracyText;
 
     [SerializeField]
+    private GameObject[] keyFeedback;
+    [SerializeField]
+    private SpriteRenderer[] keyboard;
+    [SerializeField]
+    private Sprite[] keyInitImage;
+    [SerializeField]
+    private Sprite[] keyPressedImage;
+
+    [SerializeField]
     private Animator[] noteBombEffect;
 
     [SerializeField]
@@ -226,6 +235,12 @@ public class GameUIManager : MonoBehaviour
         {
             bga.texture = bgSprites[key];
         }
+    }
+
+    public void KeyInputImageSetActive(bool active, int index)
+    {
+        keyFeedback[index].SetActive(active);
+        keyboard[index].sprite = active ? keyPressedImage[index] : keyInitImage[index];
     }
 
     public void TextUpdate(BMSResult res, int combo, JudgeType judge, int index)

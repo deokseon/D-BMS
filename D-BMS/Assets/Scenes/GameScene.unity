@@ -2851,9 +2851,15 @@ MonoBehaviour:
   keyInitImage:
   - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
   - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
+  - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
+  - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
+  - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
   keyPressedImage:
   - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
   - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
+  - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
+  - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
+  - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
   soundManager: {fileID: 598371738}
   bmsGameManager: {fileID: 519420030}
 --- !u!114 &519420037
@@ -10046,6 +10052,30 @@ MonoBehaviour:
   failText: {fileID: 1660287977}
   frontAccuracyText: {fileID: 1913257176}
   backAccuracyText: {fileID: 642571083}
+  keyFeedback:
+  - {fileID: 646343036}
+  - {fileID: 1473800971}
+  - {fileID: 1188769469}
+  - {fileID: 2012448061}
+  - {fileID: 1063431288}
+  keyboard:
+  - {fileID: 539691149}
+  - {fileID: 1149737874}
+  - {fileID: 1282487813}
+  - {fileID: 453967750}
+  - {fileID: 263074927}
+  keyInitImage:
+  - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
+  - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
+  - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
+  - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
+  - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
+  keyPressedImage:
+  - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
+  - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
+  - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
+  - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
+  - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
   noteBombEffect:
   - {fileID: 1639891462}
   - {fileID: 1007026721}

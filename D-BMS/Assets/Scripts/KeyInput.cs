@@ -22,17 +22,6 @@ public class KeyInput : MonoBehaviour
     private InputAction funcJudgeAdjDownAction;
 
     [SerializeField]
-    private GameObject[] keyFeedback;
-    [SerializeField]
-    private SpriteRenderer[] keyboard;
-    [SerializeField]
-    private Sprite[] keyInitImage;
-    [SerializeField]
-    private Sprite[] keyPressedImage;
-
-    [SerializeField]
-    private SoundManager soundManager;
-    [SerializeField]
     private BMSGameManager bmsGameManager;
 
     void Awake()
@@ -78,17 +67,8 @@ public class KeyInput : MonoBehaviour
     private void MakeKeyAction(InputAction action, int index)
     {
         // 액션 이벤트 연결
-        action.started += ctx => {
-            soundManager.PlayKeySound(bmsGameManager.currentNote[index]);
-            bmsGameManager.KeyDown(index);
-            keyFeedback[index].SetActive(true);
-            keyboard[index].sprite = keyPressedImage[index % 2];
-        };  // 눌렀을 때
-        action.canceled += ctx => {
-            keyFeedback[index].SetActive(false);
-            bmsGameManager.KeyUp(index);
-            keyboard[index].sprite = keyInitImage[index % 2];
-        };  // 뗐을 때
+        action.started += ctx => { bmsGameManager.KeyDown(index); };  // 눌렀을 때
+        action.canceled += ctx => { bmsGameManager.KeyUp(index); };  // 뗐을 때
 
         // 액션 활성화
         action.Enable();
@@ -113,17 +93,8 @@ public class KeyInput : MonoBehaviour
 
     private void DeleteKeyAction(InputAction action, int index)
     {
-        action.started -= ctx => {
-            soundManager.PlayKeySound(bmsGameManager.currentNote[index]);
-            bmsGameManager.KeyDown(index);
-            keyFeedback[index].SetActive(true);
-            keyboard[index].sprite = keyPressedImage[index % 2];
-        };  // 눌렀을 때
-        action.canceled -= ctx => {
-            keyFeedback[index].SetActive(false);
-            bmsGameManager.KeyUp(index);
-            keyboard[index].sprite = keyInitImage[index % 2];
-        };  // 뗐을 때
+        action.started -= ctx => { bmsGameManager.KeyDown(index); };  // 눌렀을 때
+        action.canceled -= ctx => { bmsGameManager.KeyUp(index); };  // 뗐을 때
 
         action.Disable();
         action = null;
