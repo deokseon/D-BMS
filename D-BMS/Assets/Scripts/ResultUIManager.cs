@@ -185,7 +185,12 @@ public class ResultUIManager : MonoBehaviour
             banner.texture = (tex ?? noBannerTexture);
         }
 
+        if (header.title.Length > 30) { titleText.fontSize = 15; }
+        else if (header.title.Length <= 30 && header.title.Length >= 15) { titleText.fontSize = 25; }
+        else { titleText.fontSize = 50; }
         titleText.text = header.title;
+        if (header.artist.Length >= 30) { artistText.fontSize = 15; }
+        else { artistText.fontSize = 25; }
         artistText.text = header.artist;
         if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }
         else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
