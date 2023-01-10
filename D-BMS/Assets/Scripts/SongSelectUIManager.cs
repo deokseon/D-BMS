@@ -9,6 +9,26 @@ using B83.Image.BMP;
 public class SongSelectUIManager : MonoBehaviour
 {
     [SerializeField]
+    private TextMeshProUGUI koolText;
+    [SerializeField]
+    private TextMeshProUGUI coolText;
+    [SerializeField]
+    private TextMeshProUGUI goodText;
+    [SerializeField]
+    private TextMeshProUGUI missText;
+    [SerializeField]
+    private TextMeshProUGUI failText;
+    [SerializeField]
+    private TextMeshProUGUI accuracyText;
+    [SerializeField]
+    private TextMeshProUGUI maxComboText;
+    [SerializeField]
+    private TextMeshProUGUI scoreText;
+    [SerializeField]
+    private Image rankImage;
+    [SerializeField]
+    private Sprite[] rankImageArray;
+    [SerializeField]
     private RawImage banner;
     [SerializeField]
     private Texture noBannerTexture;
@@ -70,10 +90,13 @@ public class SongSelectUIManager : MonoBehaviour
     private static bool isStart = false;
     private bool isChanging = false;
 
+    public static SaveData songRecordData;
+
     private BMPLoader loader;
 
     void Awake()
     {
+        if (songRecordData == null) { songRecordData = new SaveData(); }
         loader = new BMPLoader();
 
         noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
@@ -243,6 +266,8 @@ public class SongSelectUIManager : MonoBehaviour
         ConvertIndex();
         scrollbar.value = convertedIndex / (currentHeaderListCount - 1.0f);
         SongIndexUpdate();
+        DataSaveManager.LoadResultData(BMSFileSystem.selectedCategoryHeaderList[convertedIndex].fileName);
+        SetSongRecord();
     }
 
     public void GameStart()
@@ -559,5 +584,18 @@ public class SongSelectUIManager : MonoBehaviour
         }
 
         waitInputPanel.SetActive(false);
+    }
+
+    public void SetSongRecord()
+    {
+        koolText.text = songRecordData.koolCount.ToString();
+        coolText.text = songRecordData.coolCount.ToString();
+        goodText.text = songRecordData.goodCount.ToString();
+        missText.text = songRecordData.missCount.ToString();
+        failText.text = songRecordData.failCount.ToString();
+        accuracyText.text = ((float)songRecordData.accuracy).ToString("P");
+        maxComboText.text = songRecordData.maxCombo.ToString();
+        scoreText.text = ((int)((float)songRecordData.score)).ToString();
+        rankImage.sprite = rankImageArray[songRecordData.rankIndex];
     }
 }

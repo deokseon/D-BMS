@@ -11,6 +11,7 @@ public class BMSHeader
 {
     public string musicFolderPath { get; set; }
     public string textFolderPath { get; set; }
+    public string fileName { get; set; }
     public Lntype lnType { get; set; }
 
     public Category songCategory { get; set; } = Category.NONE;

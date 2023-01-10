@@ -77,6 +77,7 @@
      <Compile Include="Assets\Scripts\BMSObjects.cs" />
      <Compile Include="Assets\Scripts\BMSParser.cs" />
      <Compile Include="Assets\Scripts\BMSPattern.cs" />
+     <Compile Include="Assets\Scripts\DataSaveManager.cs" />
      <Compile Include="Assets\Scripts\GameUIManager.cs" />
      <Compile Include="Assets\Scripts\JudgeManager.cs" />
      <Compile Include="Assets\Scripts\KeyInput.cs" />

@@ -59,7 +59,12 @@ public class ScrollIndexCallback1 : MonoBehaviour
             {
                 songSelectUIManager.songToggleGroup.allowSwitchOff = false;
                 songSelectUIManager.DrawSongInfoUI(header);
-                if (idx != songSelectUIManager.currentIndex) { songSelectUIManager.MoveCurrentIndex(idx); }
+                if (idx != songSelectUIManager.currentIndex) 
+                { 
+                    songSelectUIManager.MoveCurrentIndex(idx);
+                    DataSaveManager.LoadResultData(header.fileName);
+                    songSelectUIManager.SetSongRecord();
+                }
                 if (songSelectUIManager.currentContent != null) { songSelectUIManager.currentContent.tag = "Untagged"; }
                 gameObject.tag = "CurrentContent";
                 songSelectUIManager.currentContent = gameObject;

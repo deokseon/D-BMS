@@ -55,6 +55,7 @@ public class BMSFileSystem : MonoBehaviour
         header = new BMSHeader();
         header.musicFolderPath = $@"{rootPath}\MusicFolder\{sname.Substring(0, sname.Length - 9)}\";
         header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
+        header.fileName = sname.Substring(0, sname.Length - 4);
 
         StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
         string line;

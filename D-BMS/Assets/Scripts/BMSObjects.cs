@@ -94,9 +94,10 @@ public class BMSResult
     public int goodCount;
     public int missCount;
     public int failCount;
-    public int maxCombo { get; set; }
-    public double score { get; set; }
-    public double accuracy { get; set; }
+    public int maxCombo;
+    public int rankIndex;
+    public double score;
+    public double accuracy;
     public double[] judgeList;
 }
 

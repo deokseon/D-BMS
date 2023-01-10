@@ -297,7 +297,7 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void UpdateScore(float hp, float accuracy, float score, double maxScore)
+    public void UpdateScore(BMSResult res, float hp, float accuracy, float score, double maxScore)
     {
         hpBar.value = hp;
 
@@ -318,26 +318,25 @@ public class GameUIManager : MonoBehaviour
         scoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, (float)(maxScore));
 
-        int idx = 0;
         switch (score)
         {
-            case float n when (n >= 0.0f && n < 550000.0f): idx = 0; break;
-            case float n when (n >= 550000.0f && n < 650000.0f): idx = 1; break;
-            case float n when (n >= 650000.0f && n < 750000.0f): idx = 2; break;
-            case float n when (n >= 750000.0f && n < 850000.0f): idx = 3; break;
-            case float n when (n >= 850000.0f && n < 900000.0f): idx = 4; break;
-            case float n when (n >= 900000.0f && n < 950000.0f): idx = 5; break;
-            case float n when (n >= 950000.0f && n < 1000000.0f): idx = 6; break;
-            case float n when (n >= 1000000.0f && n < 1025000.0f): idx = 7; break;
-            case float n when (n >= 1025000.0f && n < 1050000.0f): idx = 8; break;
-            case float n when (n >= 1050000.0f && n < 1090000.0f): idx = 9; break;
-            case float n when (n >= 1090000.0f): idx = 10; break;
+            case float n when (n >= 0.0f && n < 550000.0f): res.rankIndex = 0; break;
+            case float n when (n >= 550000.0f && n < 650000.0f): res.rankIndex = 1; break;
+            case float n when (n >= 650000.0f && n < 750000.0f): res.rankIndex = 2; break;
+            case float n when (n >= 750000.0f && n < 850000.0f): res.rankIndex = 3; break;
+            case float n when (n >= 850000.0f && n < 900000.0f): res.rankIndex = 4; break;
+            case float n when (n >= 900000.0f && n < 950000.0f): res.rankIndex = 5; break;
+            case float n when (n >= 950000.0f && n < 1000000.0f): res.rankIndex = 6; break;
+            case float n when (n >= 1000000.0f && n < 1025000.0f): res.rankIndex = 7; break;
+            case float n when (n >= 1025000.0f && n < 1050000.0f): res.rankIndex = 8; break;
+            case float n when (n >= 1050000.0f && n < 1090000.0f): res.rankIndex = 9; break;
+            case float n when (n >= 1090000.0f): res.rankIndex = 10; break;
         }
-        if (currentIdx != idx)
+        if (currentIdx != res.rankIndex)
         {
-            rankImage.sprite = rank[idx];
-            rankImageTransform.localPosition = new Vector3(-390.0f, yPos[idx], 0.0f);
-            currentIdx = idx;
+            rankImage.sprite = rank[res.rankIndex];
+            rankImageTransform.localPosition = new Vector3(-390.0f, yPos[res.rankIndex], 0.0f);
+            currentIdx = res.rankIndex;
         }
     }
 

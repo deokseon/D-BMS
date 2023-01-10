@@ -6306,17 +6306,17 @@ MonoBehaviour:
   levelText: {fileID: 53243284}
   rankImage: {fileID: 226062586}
   rankImageArray:
-  - {fileID: 21300000, guid: d3680d208586ac74b98a0e4bd8245589, type: 3}
-  - {fileID: 21300000, guid: 3c5c2b846c568d64bbfacebdf192ab57, type: 3}
-  - {fileID: 21300000, guid: 3ee4bf68b9684a540bc4ec8389733d65, type: 3}
-  - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
-  - {fileID: 21300000, guid: 75ce4ef4455276b479a847b4dc8ab1e1, type: 3}
-  - {fileID: 21300000, guid: 921e2500a2f76e24bbf7cee71eb6fd36, type: 3}
-  - {fileID: 21300000, guid: 1ce33175f1861664e8b7347c6027db55, type: 3}
-  - {fileID: 21300000, guid: 0170ccaeac3eca648bb9a306f19876f7, type: 3}
-  - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
-  - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
   - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
+  - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
+  - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
+  - {fileID: 21300000, guid: 0170ccaeac3eca648bb9a306f19876f7, type: 3}
+  - {fileID: 21300000, guid: 1ce33175f1861664e8b7347c6027db55, type: 3}
+  - {fileID: 21300000, guid: 921e2500a2f76e24bbf7cee71eb6fd36, type: 3}
+  - {fileID: 21300000, guid: 75ce4ef4455276b479a847b4dc8ab1e1, type: 3}
+  - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
+  - {fileID: 21300000, guid: 3ee4bf68b9684a540bc4ec8389733d65, type: 3}
+  - {fileID: 21300000, guid: 3c5c2b846c568d64bbfacebdf192ab57, type: 3}
+  - {fileID: 21300000, guid: d3680d208586ac74b98a0e4bd8245589, type: 3}
   playLamp: {fileID: 13033420}
   clearLamp: {fileID: 536094229}
   nomissLamp: {fileID: 345120142}

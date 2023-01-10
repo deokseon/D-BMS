@@ -80,6 +80,8 @@ public class ResultUIManager : MonoBehaviour
         StartCoroutine(DrawSongInfo());
 
         fadeOutAnimator.SetTrigger("FadeOut");
+
+        DataSaveManager.SaveResultData(bmsResult, header.fileName);
     }
 
     void Update()
@@ -98,27 +100,14 @@ public class ResultUIManager : MonoBehaviour
         goodText.text = bmsResult.goodCount.ToString();
         missText.text = bmsResult.missCount.ToString();
         failText.text = bmsResult.failCount.ToString();
-        accuracyText.text = bmsResult.accuracy.ToString("P");
+        accuracyText.text = ((float)bmsResult.accuracy).ToString("P");
         maxComboText.text = bmsResult.maxCombo.ToString();
-        scoreText.text = ((int)bmsResult.score).ToString();
+        scoreText.text = ((int)((float)bmsResult.score)).ToString();
         noteSpeedText.text = BMSGameManager.userSpeed.ToString();
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
         levelText.text = header.level.ToString();
 
-        int idx = 0;
-        int score = ((int)bmsResult.score);
-        if (score >= 1090000) { idx = 0; }  // S+++
-        else if (score >= 1050000 && score < 1090000) { idx = 1; }  // S++
-        else if (score >= 1025000 && score < 1050000) { idx = 2; }  // S+
-        else if (score >= 1000000 && score < 1025000) { idx = 3; }  // S
-        else if (score >= 950000 && score < 1000000) { idx = 4; }   // A+
-        else if (score >= 900000 && score < 950000) { idx = 5; }    // A
-        else if (score >= 850000 && score < 900000) { idx = 6; }    // B
-        else if (score >= 750000 && score < 850000) { idx = 7; }    // C
-        else if (score >= 650000 && score < 750000) { idx = 8; }    // D
-        else if (score >= 550000 && score < 650000) { idx = 9; }    // E
-        else { idx = 10; }  // F
-        rankImage.sprite = rankImageArray[idx];
+        rankImage.sprite = rankImageArray[bmsResult.rankIndex];
 
         if (!BMSGameManager.isClear) 
         { 

@@ -197,7 +197,7 @@ public class BMSGameManager : MonoBehaviour
 
         gameUIManager.UpdateBPMText(currentBPM);
         gameUIManager.TextUpdate(bmsResult, 0, JudgeType.IGNORE, 0);
-        gameUIManager.UpdateScore(gauge.hp, 100.0f, 0.0f, 0.0d);
+        gameUIManager.UpdateScore(bmsResult, gauge.hp, 100.0f, 0.0f, 0.0d);
 
         System.GC.Collect();
 
@@ -608,7 +608,8 @@ public class BMSGameManager : MonoBehaviour
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
         else if (gauge.hp <= 0.0f) { StartCoroutine(GameEnd(false)); }
 
-        gameUIManager.UpdateScore(gauge.hp, (float)(accuracySum * divideTable[currentCount]), (float)(currentScore * 0.001d), maxScoreTable[currentCount]);
+        gameUIManager.UpdateScore(bmsResult, gauge.hp, (float)(accuracySum * divideTable[currentCount]), 
+                                    (float)(currentScore * 0.001d), maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount, true);
