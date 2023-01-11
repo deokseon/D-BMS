@@ -42,7 +42,7 @@ public class BMSGameManager : MonoBehaviour
     private const double divide60 = 1.0d / 60.0d;
     private float divideBPM;
     private double[] divideTable;
-    private double[] maxScoreTable;
+    private float[] maxScoreTable;
 
     public static BMSHeader header;
     private Gauge gauge;
@@ -137,6 +137,7 @@ public class BMSGameManager : MonoBehaviour
 
         bmsResult.noteCount = pattern.noteCount;
         bmsResult.judgeList = new double[bmsResult.noteCount + 1];
+        bmsResult.scoreBarArray = new float[bmsResult.noteCount + 1]; bmsResult.scoreBarArray[0] = 0.0f;
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] = 200.0d; }
 
         coSongEndCheck = StartCoroutine(SongEndCheck());
@@ -197,7 +198,7 @@ public class BMSGameManager : MonoBehaviour
 
         gameUIManager.UpdateBPMText(currentBPM);
         gameUIManager.TextUpdate(bmsResult, 0, JudgeType.IGNORE, 0);
-        gameUIManager.UpdateScore(bmsResult, gauge.hp, 100.0f, 0.0f, 0.0d);
+        gameUIManager.UpdateScore(bmsResult, 0, gauge.hp, 100.0f, 0.0f, 0.0f);
 
         System.GC.Collect();
 
@@ -608,7 +609,7 @@ public class BMSGameManager : MonoBehaviour
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
         else if (gauge.hp <= 0.0f) { StartCoroutine(GameEnd(false)); }
 
-        gameUIManager.UpdateScore(bmsResult, gauge.hp, (float)(accuracySum * divideTable[currentCount]), 
+        gameUIManager.UpdateScore(bmsResult, currentCount, gauge.hp, (float)(accuracySum * divideTable[currentCount]), 
                                     (float)(currentScore * 0.001d), maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
@@ -673,15 +674,14 @@ public class BMSGameManager : MonoBehaviour
         divideTable = new double[len];
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
 
-        double divide20000 = 1.0d / 20000.0d;
-        double divide6250 = 1.0d / 6250.0d;
-        maxScoreTable = new double[len];
-        for (int i = 1; i < len; i++) 
-        { 
-            maxScoreTable[i] = koolAddScore * i * 0.001d;
-            double under60 = (maxScoreTable[i] > 600000.0d ? 600000.0d : maxScoreTable[i]) * divide20000;
-            double up60 = (maxScoreTable[i] > 600000.0d ? maxScoreTable[i] - 600000.0d : 0.0d) * divide6250;
-            maxScoreTable[i] = under60 + up60;
+        maxScoreTable = new float[len];
+        if (SongSelectUIManager.songRecordData.rankIndex == 11)
+        {
+            for (int i = 1; i < len; i++) { maxScoreTable[i] = 0; }
+        }
+        else
+        {
+            for (int i = 1; i < len; i++) { maxScoreTable[i] = SongSelectUIManager.songRecordData.scoreBarList[i]; }
         }
 
         gameUIManager.MakeStringTable();

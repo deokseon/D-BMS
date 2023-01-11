@@ -297,7 +297,7 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void UpdateScore(BMSResult res, float hp, float accuracy, float score, double maxScore)
+    public void UpdateScore(BMSResult res, int currentCount, float hp, float accuracy, float score, float maxScore)
     {
         hpBar.value = hp;
 
@@ -315,8 +315,11 @@ public class GameUIManager : MonoBehaviour
         double up60 = 0.0d;
         if (score <= 600000.0d) { under60 = score * divide20000; }
         else { up60 = (score - 600000.0d) * divide6250; }
-        scoreStick.SetSizeWithCurrentAnchors(vertical, (float)(under60 + up60));
-        maxScoreStick.SetSizeWithCurrentAnchors(vertical, (float)(maxScore));
+        float scoreStickHeight = (float)(under60 + up60);
+        scoreStick.SetSizeWithCurrentAnchors(vertical, scoreStickHeight);
+        maxScoreStick.SetSizeWithCurrentAnchors(vertical, maxScore);
+
+        res.scoreBarArray[currentCount] = scoreStickHeight;
 
         switch (score)
         {

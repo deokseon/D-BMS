@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 [System.Serializable]
@@ -13,6 +14,7 @@ public class SaveData
     public int rankIndex;
     public double score;
     public double accuracy;
+    public List<float> scoreBarList;
 
     public void InitData()
     {
@@ -22,9 +24,10 @@ public class SaveData
         missCount = 0;
         failCount = 0;
         maxCombo = 0;
-        rankIndex = 0;
+        rankIndex = 11;
         score = 0;
         accuracy = 0;
+        scoreBarList.Clear();
     }
 
     public void SetData(BMSResult result)
@@ -38,6 +41,12 @@ public class SaveData
         rankIndex = result.rankIndex;
         score = result.score;
         accuracy = result.accuracy;
+        scoreBarList.Clear();
+        int count = result.scoreBarArray.Length;
+        for (int i = 0; i < count; i++)
+        {
+            scoreBarList.Add(result.scoreBarArray[i]);
+        }
     }
 
     public SaveData()
@@ -51,6 +60,7 @@ public class SaveData
         rankIndex = 0;
         score = 0;
         accuracy = 0;
+        scoreBarList = new List<float>();
     }
 }
 

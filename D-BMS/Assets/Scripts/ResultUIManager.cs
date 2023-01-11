@@ -81,7 +81,10 @@ public class ResultUIManager : MonoBehaviour
 
         fadeOutAnimator.SetTrigger("FadeOut");
 
-        DataSaveManager.SaveResultData(bmsResult, header.fileName);
+        if (BMSGameManager.isClear && SongSelectUIManager.songRecordData.score < bmsResult.score) 
+        { 
+            DataSaveManager.SaveResultData(bmsResult, header.fileName);
+        }
     }
 
     void Update()

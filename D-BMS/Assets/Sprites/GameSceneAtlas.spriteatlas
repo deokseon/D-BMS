@@ -82,6 +82,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
   - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
   - {fileID: 21300000, guid: 3ee4bf68b9684a540bc4ec8389733d65, type: 3}
+  - {fileID: 21300000, guid: d86c43c8a8f6da442988feb1364dd08b, type: 3}
   - {fileID: 21300000, guid: 5d6870f861a406142a89ebde7c49c63e, type: 3}
   - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
   - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
@@ -134,6 +135,7 @@ SpriteAtlas:
   - key2_Init
   - D
   - S+
+  - norank
   - NoteBomb10
   - key1_Pressed
   - key2_Pressed
