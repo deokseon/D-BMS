@@ -126,6 +126,8 @@ public class BMSGameManager : MonoBehaviour
         bpmsListCount = bpmsList.Count;
         barListCount = barList.Count;
 
+        for (int i = 0; i < bgSoundsListCount; i++) { bgSoundsList[i].timing *= 1000.0d; }
+
         divideBPM = (float)(1.0f / header.bpm);
         CalulateSpeed();
         bmsDrawer.DrawNotes();
@@ -400,6 +402,15 @@ public class BMSGameManager : MonoBehaviour
         noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + judgeAdjBeat) * gameSpeed), 0.0f);
     }
 
+    private void FixedUpdate()
+    {
+        while (bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= stopwatch.ElapsedMilliseconds)  // 배경음 재생
+        {
+            soundManager.PlayBGSound(bgSoundsList[bgSoundsListCount - 1].keySound);
+            --bgSoundsListCount;
+        }
+    }
+
     private void HandleNote(List<Note> noteList, int idx, long time)
     {
         Note n = noteList[notesListCount[idx] - 1];
@@ -474,12 +485,6 @@ public class BMSGameManager : MonoBehaviour
 
     private void PlayNotes()
     {
-        while (bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= currentTime)  // 배경음 재생
-        {
-            soundManager.PlayBGSound(bgSoundsList[bgSoundsListCount - 1].keySound);
-            --bgSoundsListCount;
-        }
-
         for (int i = 0; i < 5; i++)
         {
             while (longNoteListCount[i] > 0 && longNoteList[i][longNoteListCount[i] - 1].timing <= currentTime)
@@ -632,7 +637,13 @@ public class BMSGameManager : MonoBehaviour
         if (isClear)
         {
             soundManager.DividePlayingAudio();
-            while (soundManager.IsPlayingAudioClip()) { yield return wait1Sec; }
+            int maxWaitTime = 0;
+            while (soundManager.IsPlayingAudioClip()) 
+            {
+                maxWaitTime++;
+                if (maxWaitTime >= 10) { break; }
+                yield return wait1Sec;
+            }
         }
         soundManager.AudioAllStop();
 
