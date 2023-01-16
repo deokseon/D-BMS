@@ -27,6 +27,38 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI scoreText;
     [SerializeField]
+    private TextMeshProUGUI koolDiffText;
+    [SerializeField]
+    private TextMeshProUGUI coolDiffText;
+    [SerializeField]
+    private TextMeshProUGUI goodDiffText;
+    [SerializeField]
+    private TextMeshProUGUI missDiffText;
+    [SerializeField]
+    private TextMeshProUGUI failDiffText;
+    [SerializeField]
+    private TextMeshProUGUI accuracyDiffText;
+    [SerializeField]
+    private TextMeshProUGUI maxComboDiffText;
+    [SerializeField]
+    private Image koolChangeImage;
+    [SerializeField]
+    private Image coolChangeImage;
+    [SerializeField]
+    private Image goodChangeImage;
+    [SerializeField]
+    private Image missChangeImage;
+    [SerializeField]
+    private Image failChangeImage;
+    [SerializeField]
+    private Image accuracyChangeImage;
+    [SerializeField]
+    private Image maxComboChangeImage;
+    [SerializeField]
+    private Sprite changeImage;
+    [SerializeField]
+    private GameObject newRecordImage;
+    [SerializeField]
     private TextMeshProUGUI noteSpeedText;
     [SerializeField]
     private TextMeshProUGUI randomEffectorText;
@@ -79,12 +111,13 @@ public class ResultUIManager : MonoBehaviour
         DrawJudgeGraph();
         StartCoroutine(DrawSongInfo());
 
-        fadeOutAnimator.SetTrigger("FadeOut");
-
-        if (BMSGameManager.isClear && SongSelectUIManager.songRecordData.score < bmsResult.score) 
-        { 
+        if (BMSGameManager.isClear && SongSelectUIManager.songRecordData.score < bmsResult.score)
+        {
             DataSaveManager.SaveResultData(bmsResult, header.fileName);
+            newRecordImage.SetActive(true);
         }
+
+        fadeOutAnimator.SetTrigger("FadeOut");
     }
 
     void Update()
@@ -110,6 +143,14 @@ public class ResultUIManager : MonoBehaviour
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
         levelText.text = header.level.ToString();
 
+        DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.songRecordData.koolCount, koolDiffText, koolChangeImage);
+        DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.songRecordData.coolCount, coolDiffText, coolChangeImage);
+        DrawDiffTextAndImage(bmsResult.goodCount - SongSelectUIManager.songRecordData.goodCount, goodDiffText, goodChangeImage);
+        DrawDiffTextAndImage(bmsResult.missCount - SongSelectUIManager.songRecordData.missCount, missDiffText, missChangeImage, -1);
+        DrawDiffTextAndImage(bmsResult.failCount - SongSelectUIManager.songRecordData.failCount, failDiffText, failChangeImage, -1);
+        DrawDiffTextAndImage((float)(bmsResult.accuracy - SongSelectUIManager.songRecordData.accuracy), accuracyDiffText, accuracyChangeImage, 1, true);
+        DrawDiffTextAndImage(bmsResult.maxCombo - SongSelectUIManager.songRecordData.maxCombo, maxComboDiffText, maxComboChangeImage);
+
         rankImage.sprite = rankImageArray[bmsResult.rankIndex];
 
         if (!BMSGameManager.isClear) 
@@ -127,6 +168,20 @@ public class ResultUIManager : MonoBehaviour
         else 
         { 
             allcoolLamp.SetActive(true);
+        }
+    }
+
+    private void DrawDiffTextAndImage(float diff, TextMeshProUGUI diffText, Image image, int isReverse = 1, bool isPercentage = false)
+    {
+        string diffString = isPercentage ? diff.ToString("P") : diff.ToString();
+        if (diff > 0) { diffString = "+" + diffString; }
+        diffText.text = diffString;
+
+        if (diff != 0)
+        {
+            image.sprite = changeImage;
+            image.color = diff * isReverse > 0 ? Color.yellow : Color.red;
+            image.transform.rotation = diff > 0 ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 0, 180);
         }
     }
 
