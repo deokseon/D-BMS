@@ -87,6 +87,7 @@
      <Compile Include="Assets\Scripts\ResultUIManager.cs" />
      <Compile Include="Assets\Scripts\SongSelectUIManager.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
+     <Compile Include="Assets\Scripts\StartSceneManager.cs" />
      <Compile Include="Assets\Scripts\UIMouseClick.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />

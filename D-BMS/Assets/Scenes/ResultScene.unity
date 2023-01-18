@@ -7846,7 +7846,7 @@ MonoBehaviour:
   titleText: {fileID: 481035922}
   artistText: {fileID: 2064902195}
   bpmText: {fileID: 1295856078}
-  fadeOutAnimator: {fileID: 2121507811}
+  fadeAnimator: {fileID: 2121507811}
 --- !u!1 &1979731532
 GameObject:
   m_ObjectHideFlags: 0
@@ -8423,7 +8423,7 @@ GameObject:
   - component: {fileID: 2121507812}
   - component: {fileID: 2121507811}
   m_Layer: 5
-  m_Name: FadeOut
+  m_Name: Fade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8458,7 +8458,7 @@ Animator:
   m_GameObject: {fileID: 2121507809}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a8bb6d2abfc7863429d0e4766263151d, type: 2}
+  m_Controller: {fileID: 9100000, guid: ad2d7ddd304710a44b66b3c752d7db29, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

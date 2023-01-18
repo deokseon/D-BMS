@@ -134,6 +134,7 @@ public class GameUIManager : MonoBehaviour
 
     private BMPLoader loader;
     private WaitForSecondsRealtime wait1sec;
+    private WaitForSecondsRealtime wait10ms;
 
     private readonly int hashComboText = Animator.StringToHash("ComboText");
     private readonly int hashCombo = Animator.StringToHash("Combo");
@@ -171,6 +172,7 @@ public class GameUIManager : MonoBehaviour
 
         loader = new BMPLoader();
         wait1sec = new WaitForSecondsRealtime(1.0f);
+        wait10ms = new WaitForSecondsRealtime(0.01f);
 
         bgImageTable = new Dictionary<string, string>();
         bgSprites = new Dictionary<string, Texture2D>();
@@ -411,9 +413,21 @@ public class GameUIManager : MonoBehaviour
     public void SetLoading()
     {
         StartCoroutine(LoadRawImage(stageImage, BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
+        StartCoroutine(StageImageFade());
         loadingTitleText.text = BMSGameManager.header.title;
         loadingNoteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
         loadingRandomEffetorText.text = BMSGameManager.randomEffector.ToString();
+    }
+
+    private IEnumerator StageImageFade()
+    {
+        float fadeValue = 0.1f;
+        while (fadeValue < 0.9f)
+        {
+            fadeValue += 0.015f;
+            yield return wait10ms;
+            stageImage.color = new Color(1, 1, 1, fadeValue);
+        }
     }
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)

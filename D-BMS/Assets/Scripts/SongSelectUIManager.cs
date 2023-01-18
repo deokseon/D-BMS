@@ -57,6 +57,8 @@ public class SongSelectUIManager : MonoBehaviour
     private KeySettingManager keySettingManager;
     [SerializeField]
     private GameObject waitInputPanel;
+    [SerializeField]
+    private Animator fadeAnimator;
 
     [SerializeField]
     private Toggle[] categoryToggles;
@@ -89,6 +91,7 @@ public class SongSelectUIManager : MonoBehaviour
     private bool isReady = false;
     private static bool isStart = false;
     private bool isChanging = false;
+    private bool isExit = false;
 
     public static SaveData songRecordData;
 
@@ -128,19 +131,41 @@ public class SongSelectUIManager : MonoBehaviour
         prevFindAlphabet = '.';
         findSequence = 0;
 
+        StartCoroutine(CoFadeOut());
+    }
+
+    private IEnumerator CoFadeOut()
+    {
+        yield return new WaitForSeconds(0.5f);
+        fadeAnimator.SetTrigger("FadeOut");
+        yield return new WaitForSeconds(0.5f);
         isStart = false;
+    }
+
+    private IEnumerator CoLoadStartScene()
+    {
+        isExit = true;
+        fadeAnimator.SetTrigger("FadeIn");
+
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
     void Update()
     {
-        if (isChanging) { return; }
+        if (isStart || isChanging || isExit) { return; }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ToggleOptionCanvas();
         }
-        if (isStart || optionCanvas.enabled) { return; }
+        if (optionCanvas.enabled) { return; }
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StartCoroutine(CoLoadStartScene());
+        }
+        else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
         {
             GameStart();
         }
@@ -276,13 +301,13 @@ public class SongSelectUIManager : MonoBehaviour
         {
             isStart = true;
             savedIndex[currentCategoryIndex] = currentIndex;
-            UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(2);
         }
     }
 
     public void DrawSongInfoUI(BMSHeader header)
     {
-        if (BMSFileSystem.selectedHeader == null || 
+        if (BMSFileSystem.selectedHeader == null || banner.texture == null ||
             BMSFileSystem.selectedHeader.textFolderPath.CompareTo(header.textFolderPath) != 0)
         {
             StartCoroutine(LoadRawImage(banner, header.musicFolderPath, header.bannerPath, noBannerTexture));

@@ -93,7 +93,7 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI bpmText;
     [SerializeField]
-    private Animator fadeOutAnimator;
+    private Animator fadeAnimator;
 
     private BMPLoader loader;
 
@@ -117,14 +117,29 @@ public class ResultUIManager : MonoBehaviour
             newRecordImage.SetActive(true);
         }
 
-        fadeOutAnimator.SetTrigger("FadeOut");
+        StartCoroutine(CoFadeOut());
+    }
+
+    private IEnumerator CoFadeOut()
+    {
+        yield return new WaitForSeconds(0.5f);
+        fadeAnimator.SetTrigger("FadeOut");
+    }
+
+    private IEnumerator CoLoadSelectScene()
+    {
+        fadeAnimator.SetTrigger("FadeIn");
+
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
 
     void Update()
     {
         if (Input.anyKeyDown)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            StartCoroutine(CoLoadSelectScene());
         }
     }
 

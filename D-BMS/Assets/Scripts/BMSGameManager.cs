@@ -34,6 +34,7 @@ public class BMSGameManager : MonoBehaviour
     private int accuracySum = 0;
     private int currentCount = 0;
     private int totalLoading = 0;
+    private bool isFadeEnd = false;
     private float divideTotalLoading;
     private double judgeAdjBeat;
     public static int currentLoading = 0;
@@ -189,6 +190,7 @@ public class BMSGameManager : MonoBehaviour
             }
             yield return new WaitUntil(() => gameUIManager.isPrepared);
             yield return new WaitUntil(() => soundManager.isPrepared);
+            yield return new WaitUntil(() => isFadeEnd);
             yield return wait3Sec;
         }
 
@@ -303,8 +305,12 @@ public class BMSGameManager : MonoBehaviour
             yield return null;
         }
         gameUIManager.SetLoadingSlider(1.0f);
-        yield return new WaitForSeconds(0.5f);
+        gameUIManager.FadeIn();
+        yield return new WaitForSecondsRealtime(1.0f);
         gameUIManager.CloseLoading();
+        StartCoroutine(gameUIManager.FadeOut());
+        yield return new WaitForSecondsRealtime(0.5f);
+        isFadeEnd = true;
     }
 
     private void Awake()
@@ -661,7 +667,7 @@ public class BMSGameManager : MonoBehaviour
         else { yield return new WaitForSeconds(1.0f); }
         gameUIManager.FadeIn();
         yield return new WaitForSeconds(1.0f);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(3);
     }
 
     private IEnumerator SongEndCheck()
