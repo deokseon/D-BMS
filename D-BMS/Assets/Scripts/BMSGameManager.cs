@@ -572,11 +572,12 @@ public class BMSGameManager : MonoBehaviour
 
     public void KeyDown(int index)
     {
+        long keyDownTime = stopwatch.ElapsedMilliseconds;
         soundManager.PlayKeySound(currentNote[index]);
         currentButtonPressed[index] = true;
         gameUIManager.KeyInputImageSetActive(true, index);
         if (notesListCount[index] <= 0 || notesList[index][notesListCount[index] - 1].extra == 2) { return; }
-        HandleNote(notesList[index], index, stopwatch.ElapsedMilliseconds);
+        HandleNote(notesList[index], index, keyDownTime);
     }
 
     public void KeyUp(int index)
