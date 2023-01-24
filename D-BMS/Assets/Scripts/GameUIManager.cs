@@ -340,7 +340,7 @@ public class GameUIManager : MonoBehaviour
         if (currentIdx != res.rankIndex)
         {
             rankImage.sprite = rank[res.rankIndex];
-            rankImageTransform.localPosition = new Vector3(-390.0f, yPos[res.rankIndex], 0.0f);
+            rankImageTransform.localPosition = new Vector3(-324.0f, yPos[res.rankIndex], 0.0f);
             currentIdx = res.rankIndex;
         }
     }

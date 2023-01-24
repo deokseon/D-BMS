@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8fa305b139c5c394fa64fa80950f754b
+guid: cdaae3c9e6ddebf4a886a89ce191b85d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -46,7 +46,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 22, y: 37, z: 22, w: 24}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -61,7 +61,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 64
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -73,7 +73,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 64
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -85,7 +85,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Android
-    maxTextureSize: 64
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -99,10 +99,10 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline:
-    - - {x: -105, y: -90}
-      - {x: -105, y: 102}
-      - {x: 108, y: 102}
-      - {x: 108, y: -90}
+    - - {x: -128, y: -128}
+      - {x: -128, y: 128}
+      - {x: 128, y: 128}
+      - {x: 128, y: -128}
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000

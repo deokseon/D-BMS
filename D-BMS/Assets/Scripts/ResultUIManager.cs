@@ -154,7 +154,7 @@ public class ResultUIManager : MonoBehaviour
         accuracyText.text = ((float)bmsResult.accuracy).ToString("P");
         maxComboText.text = bmsResult.maxCombo.ToString();
         scoreText.text = ((int)((float)bmsResult.score)).ToString();
-        noteSpeedText.text = BMSGameManager.userSpeed.ToString();
+        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
         randomEffectorText.text = BMSGameManager.randomEffector.ToString();
         levelText.text = header.level.ToString();
 

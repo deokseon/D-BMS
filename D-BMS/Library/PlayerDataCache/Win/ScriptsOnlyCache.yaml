@@ -4,15 +4,20 @@ ScriptsOnlyBuild:
     - BMSDrawer
     - BMSFileSystem
     - BMSGameManager
-    - BMSMultiChannelAudioSource
     - BMSParser
+    - Demo.InitOnStart
     - GameUIManager
     - KeyInput
+    - KeySettingManager
     - ObjectPool
     - ResultUIManager
+    - ScrollIndexCallback1
     - SongSelectUIManager
     - SoundManager
+    - StartSceneManager
     - UIMouseClick
+    LoopScrollRect.Runtime.dll:
+    - UnityEngine.UI.LoopVerticalScrollRect
     Unity.2D.Animation.Editor.dll:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.Tilemap.Editor.dll:
@@ -39,10 +44,8 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -53,15 +56,17 @@ ScriptsOnlyBuild:
     - UnityEngine.EventSystems.StandaloneInputModule
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
+    - UnityEngine.UI.ContentSizeFitter
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
+    - UnityEngine.UI.LayoutElement
     - UnityEngine.UI.RawImage
     - UnityEngine.UI.RectMask2D
-    - UnityEngine.UI.ScrollRect
     - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Slider
     - UnityEngine.UI.Toggle
     - UnityEngine.UI.ToggleGroup
+    - UnityEngine.UI.VerticalLayoutGroup
   sceneClasses:
     Assets/Scenes/GameScene.unity:
     - Class: 1
@@ -80,10 +85,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
-    - Class: 82
-      Script: {instanceID: 0}
-    - Class: 83
-      Script: {instanceID: 0}
     - Class: 91
       Script: {instanceID: 0}
     - Class: 95
@@ -91,46 +92,40 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11338}
+      Script: {instanceID: 11346}
     - Class: 114
-      Script: {instanceID: 11370}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11592}
+      Script: {instanceID: 11584}
     - Class: 114
-      Script: {instanceID: 12048}
+      Script: {instanceID: 12012}
     - Class: 114
-      Script: {instanceID: 12504}
+      Script: {instanceID: 12462}
     - Class: 114
-      Script: {instanceID: 12534}
+      Script: {instanceID: 12492}
     - Class: 114
-      Script: {instanceID: 12648}
+      Script: {instanceID: 12610}
     - Class: 114
-      Script: {instanceID: 12748}
+      Script: {instanceID: 12710}
     - Class: 114
-      Script: {instanceID: 13014}
+      Script: {instanceID: 12966}
     - Class: 114
-      Script: {instanceID: 13124}
+      Script: {instanceID: 13068}
     - Class: 114
-      Script: {instanceID: 13604}
+      Script: {instanceID: 13540}
     - Class: 114
-      Script: {instanceID: 13706}
+      Script: {instanceID: 13728}
     - Class: 114
-      Script: {instanceID: 13802}
+      Script: {instanceID: 13920}
     - Class: 114
-      Script: {instanceID: 13998}
+      Script: {instanceID: 14252}
     - Class: 114
-      Script: {instanceID: 14334}
+      Script: {instanceID: 14302}
     - Class: 114
-      Script: {instanceID: 14384}
+      Script: {instanceID: 15006}
     - Class: 114
-      Script: {instanceID: 14510}
-    - Class: 114
-      Script: {instanceID: 15112}
-    - Class: 114
-      Script: {instanceID: 15310}
+      Script: {instanceID: 15196}
     - Class: 115
-      Script: {instanceID: 0}
-    - Class: 120
       Script: {instanceID: 0}
     - Class: 128
       Script: {instanceID: 0}
@@ -176,21 +171,21 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11338}
+      Script: {instanceID: 11346}
     - Class: 114
-      Script: {instanceID: 11370}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11656}
+      Script: {instanceID: 11644}
     - Class: 114
-      Script: {instanceID: 12648}
+      Script: {instanceID: 12610}
     - Class: 114
-      Script: {instanceID: 13604}
+      Script: {instanceID: 13540}
     - Class: 114
-      Script: {instanceID: 13998}
+      Script: {instanceID: 13920}
     - Class: 114
-      Script: {instanceID: 14384}
+      Script: {instanceID: 14302}
     - Class: 114
-      Script: {instanceID: 15246}
+      Script: {instanceID: 15138}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -222,52 +217,129 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
-    - Class: 49
+    - Class: 74
       Script: {instanceID: 0}
     - Class: 81
+      Script: {instanceID: 0}
+    - Class: 91
+      Script: {instanceID: 0}
+    - Class: 95
       Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11338}
+      Script: {instanceID: 11344}
     - Class: 114
-      Script: {instanceID: 11370}
+      Script: {instanceID: 11346}
     - Class: 114
-      Script: {instanceID: 11602}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11748}
+      Script: {instanceID: 11592}
     - Class: 114
-      Script: {instanceID: 12220}
+      Script: {instanceID: 11730}
     - Class: 114
-      Script: {instanceID: 12648}
+      Script: {instanceID: 11988}
     - Class: 114
-      Script: {instanceID: 12710}
+      Script: {instanceID: 12016}
     - Class: 114
-      Script: {instanceID: 13112}
+      Script: {instanceID: 12182}
     - Class: 114
-      Script: {instanceID: 13570}
+      Script: {instanceID: 12402}
     - Class: 114
-      Script: {instanceID: 13604}
+      Script: {instanceID: 12610}
     - Class: 114
-      Script: {instanceID: 13998}
+      Script: {instanceID: 13504}
     - Class: 114
-      Script: {instanceID: 14018}
+      Script: {instanceID: 13540}
+    - Class: 114
+      Script: {instanceID: 13682}
+    - Class: 114
+      Script: {instanceID: 13690}
+    - Class: 114
+      Script: {instanceID: 13920}
+    - Class: 114
+      Script: {instanceID: 13962}
+    - Class: 114
+      Script: {instanceID: 14302}
     - Class: 114
       Script: {instanceID: 14384}
     - Class: 114
-      Script: {instanceID: 14474}
+      Script: {instanceID: 14422}
     - Class: 114
-      Script: {instanceID: 14510}
+      Script: {instanceID: 15138}
     - Class: 114
-      Script: {instanceID: 14840}
+      Script: {instanceID: 15158}
     - Class: 114
-      Script: {instanceID: 15246}
+      Script: {instanceID: 15230}
     - Class: 114
       Script: {instanceID: 15280}
+    - Class: 115
+      Script: {instanceID: 0}
+    - Class: 128
+      Script: {instanceID: 0}
+    - Class: 157
+      Script: {instanceID: 0}
+    - Class: 196
+      Script: {instanceID: 0}
+    - Class: 213
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
+      Script: {instanceID: 0}
+    - Class: 687078895
+      Script: {instanceID: 0}
+    Assets/Scenes/StartScene.unity:
+    - Class: 1
+      Script: {instanceID: 0}
+    - Class: 4
+      Script: {instanceID: 0}
+    - Class: 20
+      Script: {instanceID: 0}
+    - Class: 21
+      Script: {instanceID: 0}
+    - Class: 28
+      Script: {instanceID: 0}
+    - Class: 48
+      Script: {instanceID: 0}
+    - Class: 49
+      Script: {instanceID: 0}
+    - Class: 74
+      Script: {instanceID: 0}
+    - Class: 81
+      Script: {instanceID: 0}
+    - Class: 91
+      Script: {instanceID: 0}
+    - Class: 95
+      Script: {instanceID: 0}
+    - Class: 104
+      Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 15348}
+      Script: {instanceID: 11346}
     - Class: 114
-      Script: {instanceID: 15400}
+      Script: {instanceID: 11372}
+    - Class: 114
+      Script: {instanceID: 12610}
+    - Class: 114
+      Script: {instanceID: 12672}
+    - Class: 114
+      Script: {instanceID: 12736}
+    - Class: 114
+      Script: {instanceID: 13504}
+    - Class: 114
+      Script: {instanceID: 13920}
+    - Class: 114
+      Script: {instanceID: 13940}
+    - Class: 114
+      Script: {instanceID: 14302}
+    - Class: 114
+      Script: {instanceID: 14422}
+    - Class: 114
+      Script: {instanceID: 14744}
+    - Class: 114
+      Script: {instanceID: 15138}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -289,34 +361,22 @@ ScriptsOnlyBuild:
   scriptHashData:
   - hash:
       serializedVersion: 2
+      Hash: aa88ae22474df55295327e4ee99e5a24
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: Toggle
+  - hash:
+      serializedVersion: 2
       Hash: 89f9a1b4c64db9559e39f4a2e3bfaadd
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Image
   - hash:
       serializedVersion: 2
-      Hash: a1f19ad47d3094e235f21b74dfc423a8
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: PostProcessLayer
-  - hash:
-      serializedVersion: 2
       Hash: 4bc4346a71a8df53a6b106f68ef3a190
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: CanvasScaler
-  - hash:
-      serializedVersion: 2
-      Hash: 726fcf7961cbb4108aa5be5e55b8c8bf
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: ColorGrading
-  - hash:
-      serializedVersion: 2
-      Hash: b13de7a0a457cb8e026d4237dc1b5797
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: LensDistortion
   - hash:
       serializedVersion: 2
       Hash: c42672c997f8be6b1aa86a927ebea785
@@ -337,19 +397,13 @@ ScriptsOnlyBuild:
     className: TMP_Dropdown
   - hash:
       serializedVersion: 2
-      Hash: 71f7f12b8d0f4fd73590db8bcb6d453c
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: Bloom
-  - hash:
-      serializedVersion: 2
       Hash: e7a73f5f78ba6445195ec23b74a1ce2d
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_ScrollbarEventHandler
   - hash:
       serializedVersion: 2
-      Hash: e5503c049ccae587ba25170fe39a82c4
+      Hash: 96c1875c5cbb374b62464fe9ad1d002a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: KeyInput
@@ -361,22 +415,22 @@ ScriptsOnlyBuild:
     className: PlayerQuitHandler
   - hash:
       serializedVersion: 2
-      Hash: af93f9c42e90877a9ba31e37adfd900c
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: MotionBlur
-  - hash:
-      serializedVersion: 2
-      Hash: bf1c909aa8e2dc485090f0971eacbabb
+      Hash: 9ac567bb7b4c9e7dd74844928427f5a7
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SongSelectUIManager
   - hash:
       serializedVersion: 2
-      Hash: 2c866e67b788d4059326dc72d7a10c3f
+      Hash: ec367834c0561abc9d7286c64238ef3f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ResultUIManager
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: SizeHelper2
   - hash:
       serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
@@ -439,12 +493,6 @@ ScriptsOnlyBuild:
     className: SpriteShapeController
   - hash:
       serializedVersion: 2
-      Hash: f542c1afca5bb4022f91fdda19b8d622
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: DepthOfField
-  - hash:
-      serializedVersion: 2
       Hash: 234d407605354852c48e57df17c9a1c6
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
@@ -455,12 +503,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: GridLayoutGroup
-  - hash:
-      serializedVersion: 2
-      Hash: 63d7b9b64a11859f416d72ba9a3c3fec
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: ScreenSpaceReflections
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -487,13 +529,7 @@ ScriptsOnlyBuild:
     className: SignalAsset
   - hash:
       serializedVersion: 2
-      Hash: 38bcb4d3f9a1812fd650f92e87a4cf64
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: PostProcessProfile
-  - hash:
-      serializedVersion: 2
-      Hash: 7df005db217f7aa0742f84accaa10a6b
+      Hash: b9720a8fe178124461cf89929b913a36
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameUIManager
@@ -523,10 +559,10 @@ ScriptsOnlyBuild:
     className: InputActionEditorWindow
   - hash:
       serializedVersion: 2
-      Hash: e82c0521cdfe8cb6a168ef7208a98d4a
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: Vignette
+      Hash: 751bb3c35e1fb4d144cb7fa1f88573ea
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: ScrollIndexCallbackBase
   - hash:
       serializedVersion: 2
       Hash: bd3cf68c8964d3c66d1c43f4f98508c9
@@ -589,10 +625,22 @@ ScriptsOnlyBuild:
     className: AnimationPlayableAsset
   - hash:
       serializedVersion: 2
+      Hash: 4ce15e99c635d2567873d27549d1f16f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ScrollIndexCallback3
+  - hash:
+      serializedVersion: 2
       Hash: aba7b2852ef61d175dd9602e7723d5e5
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Mask
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: KeySettingManager
   - hash:
       serializedVersion: 2
       Hash: caa533b001ae39b864ba8425019e2268
@@ -607,16 +655,16 @@ ScriptsOnlyBuild:
     className: InputSystemUIInputModule
   - hash:
       serializedVersion: 2
-      Hash: b473ef57f131972143daa8eabbb3961f
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SoundManager
   - hash:
       serializedVersion: 2
-      Hash: 7e6ed836cbaa230e56d6a2bbae1b9bb5
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: PostProcessEffectSettings
+      Hash: 927b86349956b8b257393f77d0a14fed
+    assemblyName: LoopScrollRect.Runtime.dll
+    namespaceName: UnityEngine.UI
+    className: LoopHorizontalScrollRectMulti
   - hash:
       serializedVersion: 2
       Hash: 5f170942ee57c7a568f5bcfc7521adea
@@ -667,7 +715,7 @@ ScriptsOnlyBuild:
     className: PlayerInputManager
   - hash:
       serializedVersion: 2
-      Hash: 60c40ff7f2b58059bd2bffd7902964eb
+      Hash: a3a7998c57cf956db3f92c0a440268c1
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ObjectPool
@@ -677,6 +725,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Selectable
+  - hash:
+      serializedVersion: 2
+      Hash: 08e60e9d508fc9e568de5ca7c8259125
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: StartSceneManager
   - hash:
       serializedVersion: 2
       Hash: e3a9d5756f1162dd7720942841561275
@@ -689,12 +743,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem
     className: InputSettings
-  - hash:
-      serializedVersion: 2
-      Hash: 61b9d9b6f4b6a222dfea8b131b3d3227
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: ChromaticAberration
   - hash:
       serializedVersion: 2
       Hash: cd0ecdca0166232906c6f2df9dddc3d3
@@ -715,7 +763,13 @@ ScriptsOnlyBuild:
     className: PlayerInputEditor
   - hash:
       serializedVersion: 2
-      Hash: 2e3698928808f6a0521aac4c8b2329d0
+      Hash: fa36d160c6b89c28c9db5ea3e1043447
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: CustomListBank
+  - hash:
+      serializedVersion: 2
+      Hash: 6a7f91bce74cb4c3883407df5e3fd9d2
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSGameManager
@@ -727,10 +781,16 @@ ScriptsOnlyBuild:
     className: ScrollRect
   - hash:
       serializedVersion: 2
-      Hash: 876cc53b589091f84140cdec6e932e2a
+      Hash: 860bdb33b4fed006aee9b32905a59acd
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSDrawer
+  - hash:
+      serializedVersion: 2
+      Hash: 927b86349956b8b257393f77d0a14fed
+    assemblyName: LoopScrollRect.Runtime.dll
+    namespaceName: UnityEngine.UI
+    className: LoopHorizontalScrollRect
   - hash:
       serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
@@ -751,22 +811,16 @@ ScriptsOnlyBuild:
     className: InputDebuggerWindow
   - hash:
       serializedVersion: 2
-      Hash: d6fc8d3165070298511ec776ea575626
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: PostProcessResources
+      Hash: 4424665f79eff107542e98480a0bd977
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: ScrollIndexCallback_Custom
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_SpriteAnimator
-  - hash:
-      serializedVersion: 2
-      Hash: a53651ee3996fbba20dfe0fce02f0b23
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: AutoExposure
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -779,12 +833,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem.UI
     className: BaseInputOverride
-  - hash:
-      serializedVersion: 2
-      Hash: 50c443b12ccc0b475183318b5088bcc5
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: PostProcessDebug
   - hash:
       serializedVersion: 2
       Hash: c1f5356fcd27668ddc25078e27f9828d
@@ -839,6 +887,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSMultiChannelAudioSource
+  - hash:
+      serializedVersion: 2
+      Hash: 879a5d583f3189db7456323c36291e99
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: InitOnStart
   - hash:
       serializedVersion: 2
       Hash: 5ad4aa237d47ac2bab17bacb672edf7a
@@ -913,10 +967,28 @@ ScriptsOnlyBuild:
     className: ActivationPlayableAsset
   - hash:
       serializedVersion: 2
+      Hash: 235728287b996efeda1f13f6e9edc3c3
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: InitOnStartMulti
+  - hash:
+      serializedVersion: 2
+      Hash: 466c5102f3bc4b106556f82629e6fe91
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ScrollIndexCallback2
+  - hash:
+      serializedVersion: 2
       Hash: 18c222bef9ae745ce69ddde9b74337ca
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: Physics2DRaycaster
+  - hash:
+      serializedVersion: 2
+      Hash: 927b86349956b8b257393f77d0a14fed
+    assemblyName: LoopScrollRect.Runtime.dll
+    namespaceName: UnityEngine.UI
+    className: LoopVerticalScrollRect
   - hash:
       serializedVersion: 2
       Hash: c1933cc0a2f4ff6eb13333347497beb3
@@ -937,7 +1009,7 @@ ScriptsOnlyBuild:
     className: TextMeshProUGUI
   - hash:
       serializedVersion: 2
-      Hash: 3b0e702289d2f901372407a9a63a3bf4
+      Hash: b067886ed93192293e134b68633752e4
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSFileSystem
@@ -947,6 +1019,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: AudioTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 2f8751c2a8d3135cb41b758987e9ead9
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: UI_ControlScene
   - hash:
       serializedVersion: 2
       Hash: ae83e830e7a90c0aff918c4c2e520825
@@ -959,6 +1037,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestTools
     className: BeforeAfterTestCommandState
+  - hash:
+      serializedVersion: 2
+      Hash: 5c68abe52614ec50be1d2f58fc896342
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: SizeHelper
   - hash:
       serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
@@ -979,16 +1063,10 @@ ScriptsOnlyBuild:
     className: AdvancedDropdownWindow
   - hash:
       serializedVersion: 2
-      Hash: d5630f96bd5a6a6eed7e1754c3fb8703
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: PostProcessVolume
-  - hash:
-      serializedVersion: 2
-      Hash: d0987ce3e9092dbe0fa30d73f333fffa
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: Grain
+      Hash: 6fa3db9624fff37ef6356690aed67cd6
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Demo
+    className: UI_ControlData
   - hash:
       serializedVersion: 2
       Hash: 8cd1cbba27f3cb1717254f668e9e0d5a
@@ -1009,19 +1087,13 @@ ScriptsOnlyBuild:
     className: PlayModeRunnerCallback
   - hash:
       serializedVersion: 2
-      Hash: ac6acd886c54c48c599ab5fed5781ea7
-    assemblyName: Unity.Postprocessing.Runtime.dll
-    namespaceName: UnityEngine.Rendering.PostProcessing
-    className: AmbientOcclusion
-  - hash:
-      serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: BaseInput
   - hash:
       serializedVersion: 2
-      Hash: 624e619493425dec095188b9e66dd862
+      Hash: c924172b4c01568aec39cc057a3153c4
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSParser
@@ -1051,6 +1123,12 @@ ScriptsOnlyBuild:
     className: TestRunCallbackListener
   - hash:
       serializedVersion: 2
+      Hash: 927b86349956b8b257393f77d0a14fed
+    assemblyName: LoopScrollRect.Runtime.dll
+    namespaceName: UnityEngine.UI
+    className: LoopVerticalScrollRectMulti
+  - hash:
+      serializedVersion: 2
       Hash: 9726bc46e15d44429bd38fb013657f1e
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestTools.TestRunner
@@ -1069,10 +1147,10 @@ ScriptsOnlyBuild:
     className: StandaloneInputModule
   - hash:
       serializedVersion: 2
-      Hash: aa88ae22474df55295327e4ee99e5a24
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: Toggle
+      Hash: 4bab63575944e3b9e24a182790c6bf89
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ScrollIndexCallback1
   - hash:
       serializedVersion: 2
       Hash: 8220b46879dc5e37db1b940c938f5744
@@ -1117,7 +1195,8 @@ ScriptsOnlyBuild:
     className: UIMouseClick
   platform: 5
   scenePathNames:
+  - Assets/Scenes/StartScene.unity
   - Assets/Scenes/SelectScene.unity
   - Assets/Scenes/GameScene.unity
   - Assets/Scenes/ResultScene.unity
-  playerPath: C:/Users/user/BMS/BMS/D-BMS.exe
+  playerPath: C:/Users/user/BMS/D-BMS.exe
