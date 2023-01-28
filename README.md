@@ -7,9 +7,3 @@ https://github.com/Unengine/UBMS  에서 많은 참고를 했습니다. 감사�
 
 LoopScrollRect(재사용 스크롤뷰) => https://github.com/qiankanglai/LoopScrollRect
 
-
-BMS파일(분할압축)
-1)  https://drive.google.com/file/d/1-ELOZTdDhIlum0fquhljUqH0Sd2ZeQE5/view?usp=sharing
-2)  https://drive.google.com/file/d/1s_nOoko1BGO9uiVQ5lU4AZdKbxmTWCOD/view?usp=sharing
-
-2개를 모두 받고 압축을 풀어주세요.
