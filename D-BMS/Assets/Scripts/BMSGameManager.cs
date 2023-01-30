@@ -315,6 +315,9 @@ public class BMSGameManager : MonoBehaviour
 
     private void Awake()
     {
+        QualitySettings.vSyncCount = PlayerPrefs.GetInt("SyncCount");
+        Application.targetFrameRate = PlayerPrefs.GetInt("FrameRate");
+
         stopwatch = new System.Diagnostics.Stopwatch();
         isPaused = true;
         isClear = false;

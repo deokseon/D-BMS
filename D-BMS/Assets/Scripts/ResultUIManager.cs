@@ -102,6 +102,9 @@ public class ResultUIManager : MonoBehaviour
 
     public void Awake()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
         loader = new BMPLoader();
 
         header = BMSGameManager.header;

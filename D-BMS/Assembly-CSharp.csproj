@@ -78,6 +78,7 @@
      <Compile Include="Assets\Scripts\BMSParser.cs" />
      <Compile Include="Assets\Scripts\BMSPattern.cs" />
      <Compile Include="Assets\Scripts\DataSaveManager.cs" />
+     <Compile Include="Assets\Scripts\FrameChecker.cs" />
      <Compile Include="Assets\Scripts\GameUIManager.cs" />
      <Compile Include="Assets\Scripts\JudgeManager.cs" />
      <Compile Include="Assets\Scripts\KeyInput.cs" />
@@ -88,6 +89,7 @@
      <Compile Include="Assets\Scripts\SongSelectUIManager.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\StartSceneManager.cs" />
+     <Compile Include="Assets\Scripts\SystemOptionManager.cs" />
      <Compile Include="Assets\Scripts\UIMouseClick.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class StartSceneManager : MonoBehaviour
 {
@@ -9,65 +10,24 @@ public class StartSceneManager : MonoBehaviour
     private Animator fadeAnimator;
     [SerializeField]
     private Image fadeImage;
-    private static bool isFirst = true;
-    private bool isStart;
-    private bool isEnd;
+    [SerializeField]
+    private RawImage screen;
+    [SerializeField]
+    private VideoPlayer videoPlayer;
+    [SerializeField]
+    private Button startButton;
+
+    private bool isLoadScene;
 
     private void Awake()
     {
-        isStart = false;
-        isEnd = false;
+        SetFrameRate();
 
-        if (isFirst)
-        {
-            fadeImage.color = new Color(0, 0, 0, 0);
-            fadeImage.gameObject.SetActive(false);
-        }
-        else
-        {
-            isStart = true;
-            isEnd = true;
-            StartCoroutine(CoFadeOut());
-        }
-    }
-    private IEnumerator CoFadeOut()
-    {
-        yield return new WaitForSeconds(0.5f);
-        fadeAnimator.SetTrigger("FadeOut");
-        yield return new WaitForSecondsRealtime(1.0f);
-        fadeImage.gameObject.SetActive(false);
-        isStart = false;
-        isEnd = false;
+        isLoadScene = false;
+
+        StartCoroutine(PrepareVideo());
     }
 
-    public void StartButtonClick()
-    {
-        if (isStart || isEnd) { return; }
-        isStart = true;
-        isFirst = false;
-        StartCoroutine(CoLoadSelectScene());
-    }
-
-    private IEnumerator CoLoadSelectScene()
-    {
-        fadeAnimator.gameObject.SetActive(true);
-        fadeAnimator.SetTrigger("FadeIn");
-
-        yield return new WaitForSecondsRealtime(1.0f);
-
-        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
-    }
-
-    public void ExitButtonClick()
-    {
-        if (isEnd || isStart) { return; }
-        isEnd = true;
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
 
     private void Update()
     {
@@ -75,9 +35,72 @@ public class StartSceneManager : MonoBehaviour
         {
             ExitButtonClick();
         }
-        else if (Input.GetKeyDown(KeyCode.Return))
+    }
+
+    private void SetFrameRate()
+    {
+        if (PlayerPrefs.GetInt("FrameRate") == 0)
         {
-            StartButtonClick();
+            PlayerPrefs.SetInt("FrameRate", -1);
+            PlayerPrefs.SetInt("SyncCount", 1);
+            SetFrameRate();
         }
+        else
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
+        }
+    }
+
+    private IEnumerator PrepareVideo()
+    {
+        videoPlayer.Prepare();
+
+        while (!videoPlayer.isPrepared) { yield return null; }
+
+        screen.texture = videoPlayer.texture;
+
+        videoPlayer.Play();
+
+        isLoadScene = true;
+        StartCoroutine(CoFadeOut());
+        startButton.Select();
+    }
+
+    private IEnumerator CoFadeOut()
+    {
+        yield return new WaitForSeconds(0.5f);
+        fadeAnimator.SetTrigger("FadeOut");
+        yield return new WaitForSecondsRealtime(1.0f);
+        fadeImage.gameObject.SetActive(false);
+        isLoadScene = false;
+    }
+
+    public void ButtonClick(int scene)
+    {
+        if (isLoadScene) { return; }
+        isLoadScene = true;
+        StartCoroutine(CoLoadScene(scene));
+    }
+
+    private IEnumerator CoLoadScene(int scene)
+    {
+        fadeAnimator.gameObject.SetActive(true);
+        fadeAnimator.SetTrigger("FadeIn");
+
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+    }
+
+    public void ExitButtonClick()
+    {
+        if (isLoadScene) { return; }
+        isLoadScene = true;
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
