@@ -19,10 +19,15 @@ public class SystemOptionManager : MonoBehaviour
     private TextMeshProUGUI frameValueText;
     [SerializeField]
     private GameObject frameSelectPanel;
+    [SerializeField]
+    private TextMeshProUGUI displayModeText;
+    [SerializeField]
+    private GameObject displayModeSelectPanel;
 
     private void Awake()
     {
         SetFrameText();
+        SetDisplayModeText();
         StartCoroutine(PrepareVideo());
     }
 
@@ -62,6 +67,7 @@ public class SystemOptionManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (frameSelectPanel.activeSelf) { frameSelectPanel.SetActive(false); }
+            else if (displayModeSelectPanel.activeSelf) { displayModeSelectPanel.SetActive(false); }
             else { StartCoroutine(CoLoadScene(0)); }
         }
     }
@@ -69,6 +75,10 @@ public class SystemOptionManager : MonoBehaviour
     public void FrameButtonClick()
     {
         frameSelectPanel.SetActive(true);
+    }
+    public void DisplayModeButtonClick()
+    {
+        displayModeSelectPanel.SetActive(true);
     }
 
     public void FrameValueButtonClick(int index)
@@ -96,6 +106,14 @@ public class SystemOptionManager : MonoBehaviour
         frameSelectPanel.SetActive(false);
     }
 
+    public void DisplayModeValueButtonClick(int index)
+    {
+        PlayerPrefs.SetInt("DisplayMode", index);
+        SetDisplayModeText();
+        displayModeSelectPanel.SetActive(false);
+        Screen.fullScreenMode = (FullScreenMode)index;
+    }
+
     private void SetFrameText()
     {
         if (PlayerPrefs.GetInt("SyncCount") == 1) { frameValueText.text = "V-Sync"; }
@@ -104,6 +122,16 @@ public class SystemOptionManager : MonoBehaviour
             int frame = PlayerPrefs.GetInt("FrameRate");
             if (frame == -1) { frameValueText.text = "Unlimited"; }
             else { frameValueText.text = frame + " FPS"; }
+        }
+    }
+
+    private void SetDisplayModeText()
+    {
+        switch (PlayerPrefs.GetInt("DisplayMode"))
+        {
+            case 0: displayModeText.text = "Fullscreen"; break;
+            case 1: displayModeText.text = "Fullscreen Window"; break;
+            case 3: displayModeText.text = "Windowed"; break;
         }
     }
 }

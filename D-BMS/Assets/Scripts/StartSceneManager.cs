@@ -21,7 +21,8 @@ public class StartSceneManager : MonoBehaviour
 
     private void Awake()
     {
-        SetFrameRate();
+        InitializeSystemOption();
+        SetSystemOption();
 
         isLoadScene = false;
 
@@ -37,19 +38,24 @@ public class StartSceneManager : MonoBehaviour
         }
     }
 
-    private void SetFrameRate()
+    private void InitializeSystemOption()
     {
-        if (PlayerPrefs.GetInt("FrameRate") == 0)
+        if (PlayerPrefs.GetInt("SystemOption") == 0)
         {
+            PlayerPrefs.SetInt("SystemOption", 1);
+            PlayerPrefs.SetInt("DisplayMode", 1);
             PlayerPrefs.SetInt("FrameRate", -1);
             PlayerPrefs.SetInt("SyncCount", 1);
-            SetFrameRate();
         }
-        else
-        {
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = 60;
-        }
+    }
+
+    private void SetSystemOption()
+    {
+        QualitySettings.vSyncCount = 1;
+        Application.targetFrameRate = -1;
+
+        Screen.SetResolution(1920, 1080, true);
+        Screen.fullScreenMode = (FullScreenMode)(PlayerPrefs.GetInt("DisplayMode"));
     }
 
     private IEnumerator PrepareVideo()

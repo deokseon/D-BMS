@@ -15,7 +15,9 @@ public class ObjectPool : MonoBehaviour
     [SerializeField]
     private GameObject[] note;
     [SerializeField]
-    private GameObject[] longNoteEdge;
+    private GameObject[] longNoteEdgeBottom;
+    [SerializeField]
+    private GameObject[] longNoteEdgeTop;
     [SerializeField]
     private GameObject[] longNoteBody;
     [SerializeField]
@@ -73,11 +75,10 @@ public class ObjectPool : MonoBehaviour
         {
             for (int j = 0; j < 3; j++)
             {
-                GameObject temp = (j == 2 ? longNoteBody[i % 2] : longNoteEdge[i % 2]);
+                GameObject temp = (j == 2 ? longNoteBody[i % 2] : (j == 1 ? longNoteEdgeTop[i % 2] : longNoteEdgeBottom[i % 2]));
                 while (longNotePool[i][j].Count < maxLongNoteCount)
                 {
                     GameObject tempObject = Instantiate(temp, notePoolParent);
-                    if (j == 1) { tempObject.transform.rotation = Quaternion.Euler(180.0f, 0.0f, 0.0f); }
                     tempObject.SetActive(false);
                     longNotePool[i][j].Enqueue(tempObject);
                 }

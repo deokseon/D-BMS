@@ -44,14 +44,16 @@ public class BMSDrawer : MonoBehaviour
                     if (tempLongNote == null) { j = -1; break; }
 
                     tempLongNote.SetActive(true);
-                    tempLongNote.transform.position = new Vector3(xPosition, (float)(pattern.longNote[i][j - ((k + 2) % 3)].beat * speed), 0.0f);
+                    float yPos = (float)(pattern.longNote[i][j - ((k + 2) % 3)].beat * speed);
                     pattern.longNote[i][j - ((k + 2) % 3)].model = tempLongNote;
                     pattern.longNote[i][j - ((k + 2) % 3)].modelTransform = tempLongNote.transform;
                     if (k == 2)
                     {
+                        yPos += 0.5f;
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
-                            new Vector3(0.3f, ((float)(pattern.longNote[i][j].beat - pattern.longNote[i][j - 2].beat) * speed - 0.3f) * 1.21577f, 1.0f);
+                            new Vector3(0.3f, ((float)(pattern.longNote[i][j].beat - pattern.longNote[i][j - 1].beat) * speed - 0.5f) * 1.21577f + 0.05f, 1.0f);
                     }
+                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.position = new Vector3(xPosition, yPos, 0.0f);
                 }
             }
         }
@@ -65,7 +67,7 @@ public class BMSDrawer : MonoBehaviour
             bar.model = ObjectPool.poolInstance.GetBarInPool();
             bar.modelTransform = bar.model.transform;
             bar.model.SetActive(true);
-            bar.model.transform.position = new Vector3(-6.56f, (float)(bar.beat * speed) - 0.285f, 0.0f);
+            bar.model.transform.position = new Vector3(-6.56f, (float)(bar.beat * speed), 0.0f);
         }
     }
 }

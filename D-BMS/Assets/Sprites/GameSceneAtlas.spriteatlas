@@ -59,6 +59,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5c1ec6c04b25efd409e43ec79ed55c81, type: 3}
   - {fileID: 21300000, guid: 95e519d0727d3ad49a856280da54696b, type: 3}
   - {fileID: 21300000, guid: 5bc74f117bf46f7459740d6b825eab4c, type: 3}
+  - {fileID: 21300000, guid: 0c49da51eb24e91478a38f744955861e, type: 3}
   - {fileID: 21300000, guid: 0cd008c1465fef142ae52526401b37b2, type: 3}
   - {fileID: 21300000, guid: 025829c1d1a560e499020beecae600da, type: 3}
   - {fileID: 21300000, guid: 3de2d8e1ff27f0b44b2c39e6ec075512, type: 3}
@@ -110,6 +111,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: be2d310f2a32465428f312a3811bde50, type: 3}
   - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
   - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
+  - {fileID: 21300000, guid: 090b608f043e7f64cbc2c5418578c758, type: 3}
   m_PackedSpriteNamesToIndex:
   - A
   - S+++
@@ -118,6 +120,7 @@ SpriteAtlas:
   - longNote2
   - NoteBomb-7
   - HPbar_bg
+  - longNoteEdgeTop2
   - NoteBomb-9
   - Cool_0
   - EARLY
@@ -127,7 +130,7 @@ SpriteAtlas:
   - NoteBomb-11
   - NoteBomb-14
   - kool_1
-  - longNoteEdge1
+  - longNoteEdgeBottom1
   - S++
   - background
   - NoteBomb-3
@@ -155,7 +158,7 @@ SpriteAtlas:
   - NoteBomb-1
   - NoteBomb-2
   - HPbar
-  - longNoteEdge2
+  - longNoteEdgeBottom2
   - S
   - longNote1
   - BarLine
@@ -169,5 +172,6 @@ SpriteAtlas:
   - judgeLine
   - BGA_Frame
   - E
+  - longNoteEdgeTop1
   m_Tag: GameSceneAtlas
   m_IsVariant: 0

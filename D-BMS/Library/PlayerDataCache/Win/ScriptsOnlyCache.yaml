@@ -1176,7 +1176,7 @@ ScriptsOnlyBuild:
     className: TMP_ColorGradient
   - hash:
       serializedVersion: 2
-      Hash: ef7f91f6f1aac29815ac4ce6a47e1057
+      Hash: 5acf8c6c746f0e4d5772a3b6c38cfdc9
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SystemOptionManager
