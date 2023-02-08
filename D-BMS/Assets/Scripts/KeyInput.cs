@@ -7,12 +7,14 @@ using UnityEngine.InputSystem;
 
 public class KeyInput : MonoBehaviour
 {
+    bool isAssistKeyUse;
     // 1번키부터 5번키까지 입력액션
     private InputAction keyInputAction1;
     private InputAction keyInputAction2;
     private InputAction keyInputAction3;
     private InputAction keyInputAction4;
     private InputAction keyInputAction5;
+    private InputAction keyInputAction6;  // 3번 보조키
 
     private InputAction funcGameEndAction;
     private InputAction funcGameRestartAction;
@@ -26,11 +28,13 @@ public class KeyInput : MonoBehaviour
 
     void Awake()
     {
-        keyInputAction1 = new InputAction("KeyInput1", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[0]}");
-        keyInputAction2 = new InputAction("KeyInput2", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[1]}");
-        keyInputAction3 = new InputAction("KeyInput3", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[2]}");
-        keyInputAction4 = new InputAction("KeyInput4", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[3]}");
-        keyInputAction5 = new InputAction("KeyInput5", InputActionType.Button, $"<Keyboard>/{KeySettingManager.keyConfig.keys[4]}");
+        isAssistKeyUse = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? true : false;
+        keyInputAction1 = new InputAction("KeyInput1", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key1")}");
+        keyInputAction2 = new InputAction("KeyInput2", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key2")}");
+        keyInputAction3 = new InputAction("KeyInput3", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key3")}");
+        keyInputAction4 = new InputAction("KeyInput4", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key4")}");
+        keyInputAction5 = new InputAction("KeyInput5", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key5")}");
+        if (isAssistKeyUse) { keyInputAction6 = new InputAction("KeyInput6", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key6")}"); }
 
         funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
         funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");
@@ -47,6 +51,7 @@ public class KeyInput : MonoBehaviour
         MakeKeyAction(keyInputAction3, 2);
         MakeKeyAction(keyInputAction4, 3);
         MakeKeyAction(keyInputAction5, 4);
+        if(isAssistKeyUse) { MakeKeyAction(keyInputAction6, 2); }
 
         MakeFunctionKeyAction();
 
@@ -60,6 +65,7 @@ public class KeyInput : MonoBehaviour
         DeleteKeyAction(keyInputAction3, 2);
         DeleteKeyAction(keyInputAction4, 3);
         DeleteKeyAction(keyInputAction5, 4);
+        if (isAssistKeyUse) { DeleteKeyAction(keyInputAction6, 2); }
 
         DeleteFunctionKeyAction();
     }

@@ -82,7 +82,6 @@
      <Compile Include="Assets\Scripts\GameUIManager.cs" />
      <Compile Include="Assets\Scripts\JudgeManager.cs" />
      <Compile Include="Assets\Scripts\KeyInput.cs" />
-     <Compile Include="Assets\Scripts\KeySettingManager.cs" />
      <Compile Include="Assets\Scripts\ListExtension.cs" />
      <Compile Include="Assets\Scripts\ObjectPool.cs" />
      <Compile Include="Assets\Scripts\ResultUIManager.cs" />

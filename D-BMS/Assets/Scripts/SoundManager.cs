@@ -15,6 +15,9 @@ public class SoundManager : MonoBehaviour
 
     private const int channelCount = 300;
 
+    private float keySoundVolume;
+    private float bgmVolume;
+
     private AudioClip bgSoundClip;
     private List<AudioSource> bgSoundAudioList;
     private int bgSoundAudioListCount;
@@ -31,6 +34,9 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
+        keySoundVolume = PlayerPrefs.GetFloat("KeySoundVolume") * 0.7f + 0.3f;
+        bgmVolume = PlayerPrefs.GetFloat("BGMVolume") * 0.7f + 0.3f;
+
         pathes = new List<KeyValuePair<int, string>>();
         clips = new Dictionary<int, AudioClip>();
 
@@ -108,7 +114,7 @@ public class SoundManager : MonoBehaviour
         isPrepared = true;
     }
 
-    public void PlayKeySound(int key, float volume = 1.0f)
+    public void PlayKeySound(int key)
     {
         if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
         //Debug.Log(key);
@@ -118,13 +124,13 @@ public class SoundManager : MonoBehaviour
             currentKeySoundIndex = currentKeySoundIndex > maxKeySoundIndex ? 0 : currentKeySoundIndex + 1;
             if (!keySoundAudioList[currentKeySoundIndex].isPlaying)
             {
-                keySoundAudioList[currentKeySoundIndex].PlayOneShot(keySoundClip, volume);
+                keySoundAudioList[currentKeySoundIndex].PlayOneShot(keySoundClip, keySoundVolume);
                 return;
             }
         }
     }
 
-    public void PlayBGSound(int key, float volume = 0.8f)
+    public void PlayBGSound(int key)
     {
         if (key == 0 || !clips.TryGetValue(key, out bgSoundClip)) { return; }
 
@@ -133,7 +139,7 @@ public class SoundManager : MonoBehaviour
             currentBGSoundIndex = currentBGSoundIndex > maxBGSoundIndex ? 0 : currentBGSoundIndex + 1;
             if (!bgSoundAudioList[currentBGSoundIndex].isPlaying)
             {
-                bgSoundAudioList[currentBGSoundIndex].PlayOneShot(bgSoundClip, volume);
+                bgSoundAudioList[currentBGSoundIndex].PlayOneShot(bgSoundClip, bgmVolume);
                 return;
             }
         }
