@@ -236,7 +236,7 @@ public class SystemOptionManager : MonoBehaviour
 
     private void SetAssistKeyUseText()
     {
-        assistKeyUseText.text = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? "Use" : "Not Use";
+        assistKeyUseText.text = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? "Enabled" : "Disabled";
     }
 
     public void ChangeKey(int index)

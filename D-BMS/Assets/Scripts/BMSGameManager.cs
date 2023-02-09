@@ -26,6 +26,8 @@ public class BMSGameManager : MonoBehaviour
     [SerializeField]
     private Transform noteParent;
 
+    private float longNoteOffset;
+
     private System.Diagnostics.Stopwatch stopwatch;
     private double currentBeat = 0;
     private double currentScrollTime = 0;
@@ -55,18 +57,16 @@ public class BMSGameManager : MonoBehaviour
     private int combo = 0;
     private bool isBGAVideoSupported = false;
 
-    public int[] currentNote;
+    private int[] currentNote;
 
     private double koolAddScore;
     private double coolAddScore;
     private double goodAddScore;
     private double currentScore = 0.0d;
 
-    [SerializeField]
-    private GameObject[] longNotePress;
-
     private JudgeType currentLongNoteJudge;
     private bool[] currentButtonPressed = { false, false, false, false, false };
+    private bool[] isCurrentLongNote = { false, false, false, false, false };
 
     private int notePoolMaxCount;
     private int longNotePoolMaxCount;
@@ -340,6 +340,8 @@ public class BMSGameManager : MonoBehaviour
 
         currentLoading = 0;
 
+        longNoteOffset = ObjectPool.poolInstance.GetOffset();
+
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
@@ -458,11 +460,9 @@ public class BMSGameManager : MonoBehaviour
             currentLongNoteJudge = result;
             if (n.beat == longNoteList[idx][longNoteListCount[idx] - 3].beat)
             {
-                longNotePress[idx].SetActive(true);
-                longNoteList[idx][longNoteListCount[idx] - 2].modelTransform.localPosition =
-                    new Vector3(xPosition[idx], (float)(currentBeat * gameSpeed) + 0.5f, 0.0f);
+                isCurrentLongNote[idx] = true;
                 longNoteList[idx][longNoteListCount[idx] - 2].modelTransform.localScale =
-                    new Vector3(0.3f, ((float)(longNoteList[idx][longNoteListCount[idx] - 1].beat - currentBeat) * gameSpeed - 0.5f) * 1.21577f + 0.05f, 1.0f);
+                    new Vector3(0.3f, ((float)(longNoteList[idx][longNoteListCount[idx] - 1].beat - currentBeat) * gameSpeed - longNoteOffset) * 1.21577f, 1.0f);
             }
         }
 
@@ -499,7 +499,7 @@ public class BMSGameManager : MonoBehaviour
         {
             while (longNoteListCount[i] > 0 && longNoteList[i][longNoteListCount[i] - 1].timing <= currentTime)
             {
-                longNotePress[i].SetActive(false);
+                isCurrentLongNote[i] = false;
                 for (int j = 0; j < 3; j++)
                 {
                     Note tempNote = longNoteList[i][longNoteListCount[i] - 1];
@@ -508,14 +508,14 @@ public class BMSGameManager : MonoBehaviour
                     int len = longNoteListCount[i] - (3 * longNotePoolMaxCount);
                     if (len >= 0)
                     {
-                        float yPos = (float)(longNoteList[i][len].beat * gameSpeed);
-                        tempNote.modelTransform.localPosition = new Vector3(xPosition[i], j == 1 ? yPos + 0.5f : yPos, 0.0f);
+                        float yPos = (j == 1 ? (float)longNoteList[i][len + 1].beat : (float)longNoteList[i][len].beat) * gameSpeed;
+                        tempNote.modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
                         longNoteList[i][len].model = tempNote.model;
                         longNoteList[i][len].modelTransform = tempNote.modelTransform;
                         if (j == 1)
                         {
                             longNoteList[i][len].modelTransform.localScale =
-                                new Vector3(0.3f, ((float)(longNoteList[i][len + 1].beat - longNoteList[i][len].beat) * gameSpeed - 0.5f) * 1.21577f + 0.05f, 1.0f);
+                                new Vector3(0.3f, ((float)pattern.longNote[i][len].beat * gameSpeed - longNoteOffset) * 1.21577f, 1.0f);
                         }
                     }
                     else
@@ -524,6 +524,14 @@ public class BMSGameManager : MonoBehaviour
                         ObjectPool.poolInstance.ReturnLongNoteInPool(i, (j == 2 ? 0 : j + 1), tempNote.model);
                     }
                 }
+            }
+
+            if (isCurrentLongNote[i])
+            {
+                longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition =
+                    new Vector3(xPosition[i], (float)currentBeat * gameSpeed, 0.0f);
+                longNoteList[i][longNoteListCount[i] - 2].modelTransform.localScale =
+                    new Vector3(0.3f, ((float)(longNoteList[i][longNoteListCount[i] - 1].beat - currentBeat) * gameSpeed - longNoteOffset) * 1.21577f, 1.0f);
             }
         }
 
@@ -729,21 +737,32 @@ public class BMSGameManager : MonoBehaviour
                 normalNoteList[i][j].modelTransform.localPosition = new Vector3(xPosition[i], (float)(normalNoteList[i][j].beat * gameSpeed), 0.0f);
             }
 
+            bool isCurrent = true;
             for (int j = longNoteListCount[i] - 1; j >= 0; j -= 3)
             {
                 if (longNoteList[i][j].model == null) { break; }
 
                 for (int k = 0; k < 3; k++)
                 {
-                    float yPos = (float)(longNoteList[i][j - k].beat * gameSpeed);
-                    longNoteList[i][j - k].modelTransform.localPosition = new Vector3(xPosition[i], k == 1 ? yPos + 0.5f : yPos, 0.0f);
+                    float yPos;
+                    if (k == 2)
+                    {
+                        if (isCurrentLongNote[i] && isCurrent) { yPos = (float)currentBeat * gameSpeed; }
+                        else { yPos = (float)longNoteList[i][j - 2].beat * gameSpeed; }
+                    }
+                    else { yPos = (float)longNoteList[i][j].beat * gameSpeed; }
+
+                    longNoteList[i][j - k].modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
 
                     if (k == 1)
                     {
-                        longNoteList[i][j - k].modelTransform.localScale =
-                                new Vector3(0.3f, ((float)(longNoteList[i][j].beat - longNoteList[i][j - 1].beat) * gameSpeed - 0.5f) * 1.21577f + 0.05f, 1.0f);
+                        float scale;
+                        if (isCurrentLongNote[i] && isCurrent) { scale = ((float)(longNoteList[i][j].beat - currentBeat) * gameSpeed - longNoteOffset) * 1.21577f; }
+                        else { scale = ((float)longNoteList[i][j - 1].beat * gameSpeed - longNoteOffset) * 1.21577f; }
+                        longNoteList[i][j - k].modelTransform.localScale = new Vector3(0.3f, scale, 1.0f);
                     }
                 }
+                isCurrent = false;
             }
         }
         for (int i = barListCount - 1; i >= 0; i--)
@@ -767,4 +786,6 @@ public class BMSGameManager : MonoBehaviour
 
         StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
     }
+
+    public float GetLongNoteOffset() { return longNoteOffset; }
 }

@@ -60,6 +60,8 @@ public class ObjectPool : MonoBehaviour
         noteParent = GameObject.Find("Notes").transform;
     }
 
+    public float GetOffset() { return longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * longNoteEdgeBottom[0].transform.localScale.y - 0.0002f; }
+
     private void CreateNotePool()
     {
         for (int i = 0; i < 5; i++)

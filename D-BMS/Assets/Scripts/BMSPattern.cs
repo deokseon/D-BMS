@@ -109,7 +109,7 @@ public class BMSPattern
                     int k = 0;
                     for (k = j; k < len; k++) { if (lines[i].noteList[k].extra == 0) { break; } }
                     longNote[i].Add(lines[i].noteList[k]);
-                    longNote[i].Add(new Note(lines[i].noteList[k].bar, 0, lines[i].noteList[k].beat, 2));
+                    longNote[i].Add(new Note(lines[i].noteList[k].bar, 0, lines[i].noteList[j].beat - lines[i].noteList[k].beat, 2));
                     longNote[i].Add(lines[i].noteList[j]);
                     j = k;
                 }
