@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6105467044341698897}
   - component: {fileID: 2424664120787389959}
   m_Layer: 0
-  m_Name: longNoteEdge2
+  m_Name: longNoteEdgeBottom2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +70,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: e2f1e0db73b7d8e4e882bc3db9a8222b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f4e49939226a43b40be98f4dbc948222, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

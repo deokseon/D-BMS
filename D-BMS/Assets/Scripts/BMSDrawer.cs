@@ -14,6 +14,7 @@ public class BMSDrawer : MonoBehaviour
     {
         float speed = BMSGameManager.gameSpeed;
         float offset = GetComponent<BMSGameManager>().GetLongNoteOffset();
+        float longNoteLen = GetComponent<BMSGameManager>().GetLongNoteLength();
 
         noteParent.position = Vector3.zero;
 
@@ -51,7 +52,7 @@ public class BMSDrawer : MonoBehaviour
                     if (k == 2)
                     {
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
-                            new Vector3(0.3f, ((float)pattern.longNote[i][j - 1].beat * speed - offset) * 1.21577f, 1.0f);
+                            new Vector3(0.3f, ((float)pattern.longNote[i][j - 1].beat * speed - offset) * longNoteLen, 1.0f);
                     }
                     pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.localPosition = new Vector3(xPosition, yPos, 0.0f);
                 }

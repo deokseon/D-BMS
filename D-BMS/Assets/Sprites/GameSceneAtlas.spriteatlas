@@ -59,7 +59,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5c1ec6c04b25efd409e43ec79ed55c81, type: 3}
   - {fileID: 21300000, guid: 95e519d0727d3ad49a856280da54696b, type: 3}
   - {fileID: 21300000, guid: 5bc74f117bf46f7459740d6b825eab4c, type: 3}
-  - {fileID: 21300000, guid: 0c49da51eb24e91478a38f744955861e, type: 3}
+  - {fileID: 21300000, guid: 5ab5d981a4b061449a76adb2f923cca0, type: 3}
   - {fileID: 21300000, guid: 0cd008c1465fef142ae52526401b37b2, type: 3}
   - {fileID: 21300000, guid: 025829c1d1a560e499020beecae600da, type: 3}
   - {fileID: 21300000, guid: 3de2d8e1ff27f0b44b2c39e6ec075512, type: 3}
@@ -69,7 +69,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cb43b1a20d82c64498a02aaa10766e11, type: 3}
   - {fileID: 21300000, guid: 50aef4d29e5cbad4f992c85a8d35887a, type: 3}
   - {fileID: 21300000, guid: d3c521d3b4dd36c4193df6d5e2b2a1b2, type: 3}
-  - {fileID: 21300000, guid: 4f918384dd0c9b349893544ccac13839, type: 3}
   - {fileID: 21300000, guid: 3c5c2b846c568d64bbfacebdf192ab57, type: 3}
   - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
   - {fileID: 21300000, guid: fa01c1e412f612d46b6157c7eeffb92c, type: 3}
@@ -88,6 +87,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 13a14409469796e44a8b88ffd211bf17, type: 3}
   - {fileID: 21300000, guid: 507d75097e00115449010eb13dd2ff81, type: 3}
   - {fileID: 21300000, guid: 3734fc291b88901479696189cfff6bb3, type: 3}
+  - {fileID: 21300000, guid: f4e49939226a43b40be98f4dbc948222, type: 3}
   - {fileID: 21300000, guid: 3d90bbc9b602cd843a7b3b3dd00a14a5, type: 3}
   - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
   - {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
@@ -96,8 +96,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
   - {fileID: 21300000, guid: 53ad5fe98f3b1d54c96e48bdaa968adb, type: 3}
   - {fileID: 21300000, guid: 97001f3b6aff1d34bbd65afa8be4a314, type: 3}
+  - {fileID: 21300000, guid: 13686d6b01f5aa34a9b4a6663c6a37b0, type: 3}
+  - {fileID: 21300000, guid: 24812d8b1072094499d9754f1b97a0c3, type: 3}
   - {fileID: 21300000, guid: 898ec89b045fb9b4692854b030a45193, type: 3}
-  - {fileID: 21300000, guid: e2f1e0db73b7d8e4e882bc3db9a8222b, type: 3}
   - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
   - {fileID: 21300000, guid: 946bf93c0faf6674095967a8d001ee2c, type: 3}
   - {fileID: 21300000, guid: 8c43f1ec34f818847b2a62b3d7e6730c, type: 3}
@@ -111,7 +112,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: be2d310f2a32465428f312a3811bde50, type: 3}
   - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
   - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
-  - {fileID: 21300000, guid: 090b608f043e7f64cbc2c5418578c758, type: 3}
   m_PackedSpriteNamesToIndex:
   - A
   - S+++
@@ -120,7 +120,7 @@ SpriteAtlas:
   - longNote2
   - NoteBomb-7
   - HPbar_bg
-  - longNoteEdgeTop2
+  - longNoteEdgeTop1
   - NoteBomb-9
   - Cool_0
   - EARLY
@@ -130,7 +130,6 @@ SpriteAtlas:
   - NoteBomb-11
   - NoteBomb-14
   - kool_1
-  - longNoteEdgeBottom1
   - S++
   - background
   - NoteBomb-3
@@ -149,6 +148,7 @@ SpriteAtlas:
   - NoteBomb-4
   - NoteBomb-12
   - NoteBomb-10
+  - longNoteEdgeBottom2
   - key1_Pressed
   - key2_Pressed
   - note1
@@ -157,8 +157,9 @@ SpriteAtlas:
   - F
   - NoteBomb-1
   - NoteBomb-2
+  - longNoteEdgeTop2
+  - longNoteEdgeBottom1
   - HPbar
-  - longNoteEdgeBottom2
   - S
   - longNote1
   - BarLine
@@ -172,6 +173,5 @@ SpriteAtlas:
   - judgeLine
   - BGA_Frame
   - E
-  - longNoteEdgeTop1
   m_Tag: GameSceneAtlas
   m_IsVariant: 0
