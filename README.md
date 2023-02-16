@@ -19,8 +19,8 @@ UBMS
 
 Copyright (c) 2019 Unengine
 
-https://github.com/Unengine/UBMS
+[Homepage](https://github.com/Unengine/UBMS)
 
-https://github.com/Unengine/UBMS/blob/master/LICENSE
+[Show License](https://github.com/Unengine/UBMS/blob/master/LICENSE)
 
 MIT License
