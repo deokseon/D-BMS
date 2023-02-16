@@ -15,12 +15,22 @@ BMS File (분할 압축)
 
 # Open source licenses
 
-UBMS
+### UBMS
 
 Copyright (c) 2019 Unengine
 
 [Homepage](https://github.com/Unengine/UBMS)
 
 [Show License](https://github.com/Unengine/UBMS/blob/master/LICENSE)
+
+MIT License
+<br/><br/>
+### LoopScrollRect
+
+Copyright (c) 2017 Kanglai Qian
+
+[Homepage](https://github.com/qiankanglai/LoopScrollRect)
+
+[Show License](https://github.com/qiankanglai/LoopScrollRect/blob/master/LICENSE)
 
 MIT License
