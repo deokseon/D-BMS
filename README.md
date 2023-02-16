@@ -3,8 +3,6 @@ Unity RhythmGame(only 5 key, bms).
 
 게임 시스템과 UI는 ez2on을 참고했는데 문제가 된다면 내리고 변경하겠습니다.
 
-LoopScrollRect(재사용 스크롤뷰) => https://github.com/qiankanglai/LoopScrollRect
-
 BMS File (분할 압축)
 1) https://drive.google.com/file/d/1zPiAg2gfI2FFOD8rXqoE91DwVGHalcvD/view?usp=sharing
 2) https://drive.google.com/file/d/1Y1n4U-R1A3rIdqpTvkPS4_PCTtNCN4fJ/view?usp=sharing
