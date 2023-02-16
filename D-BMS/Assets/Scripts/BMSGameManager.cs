@@ -73,7 +73,7 @@ public class BMSGameManager : MonoBehaviour
     private int longNotePoolMaxCount;
     private int barPoolMaxCount;
 
-    private readonly float[] xPosition = { -7.7f, -7.13f, -6.56f, -5.99f, -5.42f };
+    private readonly float[] xPosition = { -7.63f, -6.87f, -6.111f, -5.351f, -4.592f };
     private int bgaChangeListCount;
     private int bgSoundsListCount;
     private int bpmsListCount;
@@ -348,6 +348,8 @@ public class BMSGameManager : MonoBehaviour
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
 
+        ObjectPool.poolInstance.SetVerticalLine();
+
         wait3Sec = new WaitForSeconds(3.0f);
         wait1Sec = new WaitForSeconds(1.5f);
 
@@ -561,7 +563,7 @@ public class BMSGameManager : MonoBehaviour
             int len = barListCount - barPoolMaxCount;
             if (len >= 0)
             {
-                bar.modelTransform.localPosition = new Vector3(-6.56f, (float)(barList[len].beat * gameSpeed), 0.0f);
+                bar.modelTransform.localPosition = new Vector3(-6.111f, (float)(barList[len].beat * gameSpeed), 0.0f);
                 barList[len].model = bar.model;
                 barList[len].modelTransform = bar.modelTransform;
             }

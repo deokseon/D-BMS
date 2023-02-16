@@ -156,6 +156,8 @@ public class GameUIManager : MonoBehaviour
 
     private void Awake()
     {
+        SetNoteBombPosition();
+
         maxCombo = 0;
         earlyCount = 0;
         lateCount = 0;
@@ -179,6 +181,16 @@ public class GameUIManager : MonoBehaviour
 
         scoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
+    }
+
+    private void SetNoteBombPosition()
+    {
+        float yPos = GameObject.Find("JudgeLine1").GetComponent<SpriteRenderer>().sprite.bounds.size.y * GameObject.Find("JudgeLine1").transform.localScale.y * 0.5f;
+        for (int i = 1; i < 6; i++)
+        {
+            GameObject tempObject = GameObject.Find($"NoteBomb{i}");
+            tempObject.transform.localPosition = new Vector3(tempObject.transform.localPosition.x, yPos, tempObject.transform.localPosition.z);
+        }
     }
 
     public void MakeStringTable()
@@ -340,7 +352,7 @@ public class GameUIManager : MonoBehaviour
         if (currentIdx != res.rankIndex)
         {
             rankImage.sprite = rank[res.rankIndex];
-            rankImageTransform.localPosition = new Vector3(-324.0f, yPos[res.rankIndex], 0.0f);
+            rankImageTransform.localPosition = new Vector3(-244.0f, yPos[res.rankIndex], 0.0f);
             currentIdx = res.rankIndex;
         }
     }

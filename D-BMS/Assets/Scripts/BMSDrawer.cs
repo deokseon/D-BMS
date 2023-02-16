@@ -5,7 +5,7 @@ using UnityEngine;
 public class BMSDrawer : MonoBehaviour
 {
     public BMSPattern pattern;
-    private float xPositionStart = -7.7f;
+    private readonly float[] xPosition = { -7.63f, -6.87f, -6.111f, -5.351f, -4.592f };
 
     [SerializeField]
     private Transform noteParent;
@@ -22,8 +22,6 @@ public class BMSDrawer : MonoBehaviour
 
         for (int i = 0; i < 5; i++)
         {
-            float xPosition = xPositionStart + (0.57f * i);
-
             for (int j = pattern.normalNote[i].Count - 1; j >= 0; j--)
             {
                 GameObject note = ObjectPool.poolInstance.GetNoteInPool(i);
@@ -31,7 +29,7 @@ public class BMSDrawer : MonoBehaviour
                 if (note == null) { break; }
 
                 note.SetActive(true);
-                note.transform.position = new Vector3(xPosition, (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
+                note.transform.position = new Vector3(xPosition[i], (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
 
                 pattern.normalNote[i][j].model = note;
                 pattern.normalNote[i][j].modelTransform = note.transform;
@@ -54,7 +52,7 @@ public class BMSDrawer : MonoBehaviour
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
                             new Vector3(0.3f, ((float)pattern.longNote[i][j - 1].beat * speed - offset) * longNoteLen, 1.0f);
                     }
-                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.localPosition = new Vector3(xPosition, yPos, 0.0f);
+                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
                 }
             }
         }
@@ -68,7 +66,7 @@ public class BMSDrawer : MonoBehaviour
             bar.model = ObjectPool.poolInstance.GetBarInPool();
             bar.modelTransform = bar.model.transform;
             bar.model.SetActive(true);
-            bar.model.transform.position = new Vector3(-6.56f, (float)(bar.beat * speed), 0.0f);
+            bar.model.transform.position = new Vector3(-6.111f, (float)(bar.beat * speed), 0.0f);
         }
     }
 }

@@ -63,6 +63,60 @@ public class ObjectPool : MonoBehaviour
     public float GetOffset() { return longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * longNoteEdgeBottom[0].transform.localScale.y; }
     public float GetLength() { return 1.0f / longNoteBody[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y; }
 
+    private float GetLontNoteBodyVerticalLineLength()
+    {
+        GameObject temp = longNotePool[0][2].Dequeue();
+        temp.SetActive(true);
+        float len = longNoteBody[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y /
+                    temp.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+        temp.SetActive(false);
+        longNotePool[0][2].Enqueue(temp);
+        return len;
+    }
+
+    public void SetVerticalLine()
+    {
+        float normalNoteVerticalLineYPosition = note[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * 0.5f;
+        float longNoteBodyVerticalLineLength = GetLontNoteBodyVerticalLineLength();
+        float longNoteBottomVerticalLineYPosition = longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
+                                                
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < maxNoteCount; j++)
+            {
+                GameObject tempNoteObject = notePool[i].Dequeue();
+                tempNoteObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempNoteObject.transform.GetChild(k).localPosition = new Vector3(k == 0 ? -1.25f : 1.25f, normalNoteVerticalLineYPosition, 0.0f);
+                }
+                tempNoteObject.SetActive(false);
+                notePool[i].Enqueue(tempNoteObject);
+            }
+
+            for (int j = 0; j < maxLongNoteCount; j++)
+            {
+                GameObject tempLongNoteObject = longNotePool[i][2].Dequeue();
+                tempLongNoteObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempLongNoteObject.transform.GetChild(k).localScale = new Vector3(longNoteBodyVerticalLineLength, 0.7f, 1.0f);
+                }
+                tempLongNoteObject.SetActive(false);
+                longNotePool[i][2].Enqueue(tempLongNoteObject);
+
+                GameObject tempLongNoteBottomObject = longNotePool[i][0].Dequeue();
+                tempLongNoteBottomObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempLongNoteBottomObject.transform.GetChild(k).localPosition = new Vector3(k == 0 ? -1.25f : 1.25f, longNoteBottomVerticalLineYPosition, 0.0f);
+                }
+                tempLongNoteBottomObject.SetActive(false);
+                longNotePool[i][0].Enqueue(tempLongNoteBottomObject);
+            }
+        }
+    }
+
     private void CreateNotePool()
     {
         for (int i = 0; i < 5; i++)
