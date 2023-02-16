@@ -13,7 +13,7 @@ BMS File (분할 압축)
 
 <br/><br/>
 
-# License
+# Open Source License
 
 UBMS
 
