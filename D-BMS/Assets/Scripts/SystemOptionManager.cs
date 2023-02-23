@@ -55,8 +55,11 @@ public class SystemOptionManager : MonoBehaviour
         SetFrameText();
         SetDisplayModeText();
         SetAudioBufferText();
+        masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume");
         SetMasterVolumeText();
+        keySoundVolumeSlider.value = PlayerPrefs.GetFloat("KeySoundVolume");
         SetKeySoundVolumeText();
+        bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume");
         SetBGMVolumeText();
         SetAssistKeyUseText();
         for (int i = 0; i < 6; i++) { SetKeyText(i); }
@@ -195,11 +198,9 @@ public class SystemOptionManager : MonoBehaviour
         SetMasterVolumeText();
     }
 
-    public void SetMasterVolumeText()
+    private void SetMasterVolumeText()
     {
-        float volumeValue = PlayerPrefs.GetFloat("MasterVolume");
-        masterVolumeText.text = volumeValue.ToString("P0");
-        if (volumeValue != masterVolumeSlider.value) { masterVolumeSlider.value = volumeValue; }
+        masterVolumeText.text = PlayerPrefs.GetFloat("MasterVolume").ToString("P0");
     }
 
     public void KeySoundVolumeSliderValueChange(float value)
@@ -208,11 +209,9 @@ public class SystemOptionManager : MonoBehaviour
         SetKeySoundVolumeText();
     }
 
-    public void SetKeySoundVolumeText()
+    private void SetKeySoundVolumeText()
     {
-        float volumeValue = PlayerPrefs.GetFloat("KeySoundVolume");
-        keySoundVolumeText.text = (volumeValue * 0.7f + 0.3f).ToString("P0");
-        if (volumeValue != keySoundVolumeSlider.value) { keySoundVolumeSlider.value = volumeValue; }
+        keySoundVolumeText.text = (PlayerPrefs.GetFloat("KeySoundVolume") * 0.7f + 0.3f).ToString("P0");
     }
 
     public void BGMVolumeSliderValueChange(float value)
@@ -221,11 +220,9 @@ public class SystemOptionManager : MonoBehaviour
         SetBGMVolumeText();
     }
 
-    public void SetBGMVolumeText()
+    private void SetBGMVolumeText()
     {
-        float volumeValue = PlayerPrefs.GetFloat("BGMVolume");
-        bgmVolumeText.text = (volumeValue * 0.7f + 0.3f).ToString("P0");
-        if (volumeValue != bgmVolumeSlider.value) { bgmVolumeSlider.value = volumeValue; }
+        bgmVolumeText.text = (PlayerPrefs.GetFloat("BGMVolume") * 0.7f + 0.3f).ToString("P0");
     }
 
     public void AssistKeyUseButtonClick()

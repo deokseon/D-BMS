@@ -30,11 +30,13 @@ public class BMSParser : MonoBehaviour
     {
         int randomValue = -1;
 
-        if (BMSGameManager.randomEffector == RandomEffector.NONE)
+        RandomEffector effector = (RandomEffector)PlayerPrefs.GetInt("RandomEffector");
+
+        if (effector == RandomEffector.NONE)
         {
             for (int i = 0; i < 5; i++) { lineIndex.Add(i); }
         }
-        else if (BMSGameManager.randomEffector == RandomEffector.RANDOM)
+        else if (effector == RandomEffector.RANDOM)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -42,11 +44,11 @@ public class BMSParser : MonoBehaviour
                 lineIndex.Add(randomValue);
             }
         }
-        else if (BMSGameManager.randomEffector == RandomEffector.MIRROR)
+        else if (effector == RandomEffector.MIRROR)
         {
             for (int i = 4; i >= 0; i--) { lineIndex.Add(i); }
         }
-        else if (BMSGameManager.randomEffector == RandomEffector.FRANDOM)
+        else if (effector == RandomEffector.FRANDOM)
         {
             for (int i = 0; i < 4; i += 3)
             {
@@ -56,7 +58,7 @@ public class BMSParser : MonoBehaviour
                 if (!lineIndex.Contains(2)) { lineIndex.Add(2); };
             }
         }
-        else if (BMSGameManager.randomEffector == RandomEffector.MFRANDOM)
+        else if (effector == RandomEffector.MFRANDOM)
         {
             for (int i = 3; i >= 0; i -= 3)
             {

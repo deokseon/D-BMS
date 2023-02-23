@@ -84,8 +84,8 @@ public class KeyInput : MonoBehaviour
     {
         funcGameEndAction.started += ctx => { StartCoroutine(bmsGameManager.GameEnd(false)); };
         funcGameRestartAction.started += ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
-        funcSpeedUpAction.started += ctx => { bmsGameManager.ChangeSpeed(0.1f); };
-        funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-0.1f); };
+        funcSpeedUpAction.started += ctx => { bmsGameManager.ChangeSpeed(1); };
+        funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcJudgeAdjUpAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
         funcJudgeAdjDownAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
 
@@ -110,8 +110,8 @@ public class KeyInput : MonoBehaviour
     {
         funcGameEndAction.started -= ctx => { StartCoroutine(bmsGameManager.GameEnd(false)); };
         funcGameRestartAction.started -= ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
-        funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(0.1f); };
-        funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-0.1f); };
+        funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(1); };
+        funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcJudgeAdjUpAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
         funcJudgeAdjDownAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
 

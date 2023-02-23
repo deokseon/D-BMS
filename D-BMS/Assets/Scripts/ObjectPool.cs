@@ -58,6 +58,7 @@ public class ObjectPool : MonoBehaviour
     public void Init()
     {
         noteParent = GameObject.Find("Notes").transform;
+        SetVerticalLine();
     }
 
     public float GetOffset() { return longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * longNoteEdgeBottom[0].transform.localScale.y; }
@@ -74,8 +75,9 @@ public class ObjectPool : MonoBehaviour
         return len;
     }
 
-    public void SetVerticalLine()
+    private void SetVerticalLine()
     {
+        float verticalLineLength = PlayerPrefs.GetInt("NoteSpeed") * 0.1f * PlayerPrefs.GetFloat("VerticalLine");
         float normalNoteVerticalLineYPosition = note[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * 0.5f;
         float longNoteBodyVerticalLineLength = GetLontNoteBodyVerticalLineLength();
         float longNoteBottomVerticalLineYPosition = longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
@@ -89,6 +91,7 @@ public class ObjectPool : MonoBehaviour
                 for (int k = 0; k < 2; k++)
                 {
                     tempNoteObject.transform.GetChild(k).localPosition = new Vector3(k == 0 ? -1.25f : 1.25f, normalNoteVerticalLineYPosition, 0.0f);
+                    tempNoteObject.transform.GetChild(k).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
                 }
                 tempNoteObject.SetActive(false);
                 notePool[i].Enqueue(tempNoteObject);
@@ -100,7 +103,8 @@ public class ObjectPool : MonoBehaviour
                 tempLongNoteObject.SetActive(true);
                 for (int k = 0; k < 2; k++)
                 {
-                    tempLongNoteObject.transform.GetChild(k).localScale = new Vector3(longNoteBodyVerticalLineLength, 0.7f, 1.0f);
+                    tempLongNoteObject.transform.GetChild(k).localScale = 
+                        new Vector3(verticalLineLength == 0.0f ? 0.0f : longNoteBodyVerticalLineLength, 0.7f, 1.0f);
                 }
                 tempLongNoteObject.SetActive(false);
                 longNotePool[i][2].Enqueue(tempLongNoteObject);
@@ -110,9 +114,19 @@ public class ObjectPool : MonoBehaviour
                 for (int k = 0; k < 2; k++)
                 {
                     tempLongNoteBottomObject.transform.GetChild(k).localPosition = new Vector3(k == 0 ? -1.25f : 1.25f, longNoteBottomVerticalLineYPosition, 0.0f);
+                    tempLongNoteBottomObject.transform.GetChild(k).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
                 }
                 tempLongNoteBottomObject.SetActive(false);
                 longNotePool[i][0].Enqueue(tempLongNoteBottomObject);
+
+                GameObject tempLongNoteTopObject = longNotePool[i][1].Dequeue();
+                tempLongNoteTopObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempLongNoteTopObject.transform.GetChild(k).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
+                }
+                tempLongNoteTopObject.SetActive(false);
+                longNotePool[i][1].Enqueue(tempLongNoteTopObject);
             }
         }
     }

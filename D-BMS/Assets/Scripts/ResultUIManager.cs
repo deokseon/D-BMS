@@ -157,8 +157,8 @@ public class ResultUIManager : MonoBehaviour
         accuracyText.text = ((float)bmsResult.accuracy).ToString("P");
         maxComboText.text = bmsResult.maxCombo.ToString();
         scoreText.text = ((int)((float)bmsResult.score)).ToString();
-        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
-        randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+        noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+        SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
         levelText.text = header.level.ToString();
 
         DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.songRecordData.koolCount, koolDiffText, koolChangeImage);
@@ -186,6 +186,18 @@ public class ResultUIManager : MonoBehaviour
         else 
         { 
             allcoolLamp.SetActive(true);
+        }
+    }
+
+    private void SetRandomEffectorText(int index)
+    {
+        switch (index)
+        {
+            case 0: randomEffectorText.text = "NONE"; break;
+            case 1: randomEffectorText.text = "RANDOM"; break;
+            case 2: randomEffectorText.text = "MIRROR"; break;
+            case 3: randomEffectorText.text = "F-RANDOM"; break;
+            case 4: randomEffectorText.text = "MF-RANDOM"; break;
         }
     }
 

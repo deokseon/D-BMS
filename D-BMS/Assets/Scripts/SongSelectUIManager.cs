@@ -53,6 +53,8 @@ public class SongSelectUIManager : MonoBehaviour
     private Canvas optionCanvas;
     [SerializeField]
     private Animator fadeAnimator;
+    [SerializeField]
+    private GameplayOptionManager gameplayOptionManager;
 
     [SerializeField]
     private Toggle[] categoryToggles;
@@ -95,8 +97,8 @@ public class SongSelectUIManager : MonoBehaviour
         if (songRecordData == null) { songRecordData = new SaveData(); }
         loader = new BMPLoader();
 
-        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
-        randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+        noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+        SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
         randomEffectorCount = System.Enum.GetValues(typeof(RandomEffector)).Length;
 
         for (int i = categoryToggles.Length - 1; i >= 0; i--) { AddToggleListener(categoryToggles[i]); }
@@ -351,26 +353,44 @@ public class SongSelectUIManager : MonoBehaviour
         rawImage.texture = (tex ?? noImage);
     }
 
-    public void NoteSpeedClick(float value)
+    public void NoteSpeedClick(int value)
     {
-        BMSGameManager.userSpeed += value;
+        int userSpeed = PlayerPrefs.GetInt("NoteSpeed");
+        userSpeed += value;
 
-        if (BMSGameManager.userSpeed < 1.0f) { BMSGameManager.userSpeed = 1.0f; }
-        else if (BMSGameManager.userSpeed > 20.0f) { BMSGameManager.userSpeed = 20.0f; }
+        if (userSpeed < 10) { userSpeed = 10; }
+        else if (userSpeed > 200) { userSpeed = 200; }
 
-        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
+        noteSpeedText.text = (userSpeed * 0.1f).ToString("0.0");
+        PlayerPrefs.SetInt("NoteSpeed", userSpeed);
     }
 
     public void RandomEffectorClick(int value)
     {
-        BMSGameManager.randomEffector = (RandomEffector)(((int)BMSGameManager.randomEffector + value + randomEffectorCount) % randomEffectorCount);
+        //BMSGameManager.randomEffector = (RandomEffector)(((int)BMSGameManager.randomEffector + value + randomEffectorCount) % randomEffectorCount);
 
-        if (BMSGameManager.randomEffector == RandomEffector.FRANDOM)
-            randomEffectorText.text = "F-RANDOM";
-        else if (BMSGameManager.randomEffector == RandomEffector.MFRANDOM)
-            randomEffectorText.text = "MF-RANDOM";
-        else
-            randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+        //if (BMSGameManager.randomEffector == RandomEffector.FRANDOM)
+        //    randomEffectorText.text = "F-RANDOM";
+        //else if (BMSGameManager.randomEffector == RandomEffector.MFRANDOM)
+        //    randomEffectorText.text = "MF-RANDOM";
+        //else
+        //    randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+
+        int index = (PlayerPrefs.GetInt("RandomEffector") + value + randomEffectorCount) % randomEffectorCount;
+        PlayerPrefs.SetInt("RandomEffector", index);
+        SetRandomEffectorText(index);
+    }
+
+    private void SetRandomEffectorText(int index)
+    {
+        switch (index)
+        {
+            case 0: randomEffectorText.text = "NONE"; break;
+            case 1: randomEffectorText.text = "RANDOM"; break;
+            case 2: randomEffectorText.text = "MIRROR"; break;
+            case 3: randomEffectorText.text = "F-RANDOM"; break;
+            case 4: randomEffectorText.text = "MF-RANDOM"; break;
+        }
     }
 
     public void SortByClick(int value)
@@ -487,6 +507,15 @@ public class SongSelectUIManager : MonoBehaviour
     private void ToggleOptionCanvas()
     {
         optionCanvas.enabled = !optionCanvas.enabled;
+        if (optionCanvas.enabled)
+        {
+            gameplayOptionManager.SetGameplayOption();
+        }
+        else
+        {
+            noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+            SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
+        }
     }
 
     public void SetSongRecord()

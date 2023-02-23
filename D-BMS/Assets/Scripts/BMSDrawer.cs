@@ -12,7 +12,7 @@ public class BMSDrawer : MonoBehaviour
 
     public void DrawNotes()
     {
-        float speed = BMSGameManager.gameSpeed;
+        float speed = GetComponent<BMSGameManager>().CalulateSpeed();
         float offset = GetComponent<BMSGameManager>().GetLongNoteOffset();
         float longNoteLen = GetComponent<BMSGameManager>().GetLongNoteLength();
 

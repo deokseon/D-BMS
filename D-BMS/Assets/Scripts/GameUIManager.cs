@@ -11,7 +11,7 @@ public class GameUIManager : MonoBehaviour
     public bool isPrepared { get; set; } = false;
     public RawImage bga;
     public Dictionary<string, string> bgImageTable { get; set; }
-    public Dictionary<string, Texture2D> bgSprites { get; set; }
+    private Dictionary<string, Texture2D> bgSprites;
 
     [SerializeField]
     private Slider hpBar;
@@ -157,6 +157,7 @@ public class GameUIManager : MonoBehaviour
     private void Awake()
     {
         SetNoteBombPosition();
+        SetKeyFeedback();
 
         maxCombo = 0;
         earlyCount = 0;
@@ -190,6 +191,16 @@ public class GameUIManager : MonoBehaviour
         {
             GameObject tempObject = GameObject.Find($"NoteBomb{i}");
             tempObject.transform.localPosition = new Vector3(tempObject.transform.localPosition.x, yPos, tempObject.transform.localPosition.z);
+        }
+    }
+
+    private void SetKeyFeedback()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            SpriteRenderer tempSpriteRenderer = keyFeedback[i].GetComponent<SpriteRenderer>();
+            tempSpriteRenderer.color = 
+                new Color(tempSpriteRenderer.color.r, tempSpriteRenderer.color.g, tempSpriteRenderer.color.b, PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
         }
     }
 
@@ -359,7 +370,7 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateFSText(double diff, int idx)
     {
-        int earlylate = 0;
+        int earlylate;
         if (diff < 0)
         {
             earlylate = 0;
@@ -370,10 +381,9 @@ public class GameUIManager : MonoBehaviour
             earlylate = 1;
             lateCount++;
         }
-        int index = (idx < 2) ? 0 : 1;
 
-        earlyLateSprite[index].sprite = earlyLateImageArray[earlylate];
-        earlyLateEffectAnimator[index].SetTrigger(hashEarlyLateEffect);
+        earlyLateSprite[idx].sprite = earlyLateImageArray[earlylate];
+        earlyLateEffectAnimator[idx].SetTrigger(hashEarlyLateEffect);
     }
 
     public void UpdateSongEndText(int koolCount, int coolCount, int goodCount, bool isActive)
@@ -400,7 +410,8 @@ public class GameUIManager : MonoBehaviour
 
     public IEnumerator UpdateJudgeAdjValueText()
     {
-        judgeAdjValueText.text = "JudgeAdjustValue : " + BMSGameManager.judgeAdjValue.ToString() + " ms";
+        int value = PlayerPrefs.GetInt("DisplayDelayCorrection");
+        judgeAdjValueText.text = "JudgeAdjustValue : " + (value > 0 ? "+" : "") + value.ToString() + "ms";
         judgeAdjValueText.gameObject.SetActive(true);
         yield return wait1sec;
         judgeAdjValueText.gameObject.SetActive(false);
@@ -409,12 +420,24 @@ public class GameUIManager : MonoBehaviour
     public void UpdateInfoText()
     {
         levelText.text = BMSGameManager.header.level.ToString();
-        randomEffectorText.text = BMSGameManager.randomEffector.ToString();
+        SetRandomEffectorText(randomEffectorText, PlayerPrefs.GetInt("RandomEffector"));
+    }
+
+    private void SetRandomEffectorText(TextMeshProUGUI randomText, int index)
+    {
+        switch (index)
+        {
+            case 0: randomText.text = "NONE"; break;
+            case 1: randomText.text = "RANDOM"; break;
+            case 2: randomText.text = "MIRROR"; break;
+            case 3: randomText.text = "F-RANDOM"; break;
+            case 4: randomText.text = "MF-RANDOM"; break;
+        }
     }
 
     public void UpdateSpeedText()
     {
-        noteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
+        noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
     }
 
     public void UpdateBPMText(double bpm)
@@ -427,8 +450,8 @@ public class GameUIManager : MonoBehaviour
         StartCoroutine(LoadRawImage(stageImage, BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
         StartCoroutine(StageImageFade());
         loadingTitleText.text = BMSGameManager.header.title;
-        loadingNoteSpeedText.text = BMSGameManager.userSpeed.ToString("0.0");
-        loadingRandomEffetorText.text = BMSGameManager.randomEffector.ToString();
+        loadingNoteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+        SetRandomEffectorText(loadingRandomEffetorText, PlayerPrefs.GetInt("RandomEffector"));
     }
 
     private IEnumerator StageImageFade()

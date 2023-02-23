@@ -22,6 +22,7 @@ public class StartSceneManager : MonoBehaviour
     private void Awake()
     {
         InitializeSystemOption();
+        InitializeGamePlayOption();
         SetSystemOption();
 
         isLoadScene = false;
@@ -60,6 +61,21 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetString("Key4", "K");
             PlayerPrefs.SetString("Key5", "L");
             PlayerPrefs.SetString("Key6", "G");
+        }
+    }
+
+    private void InitializeGamePlayOption()
+    {
+        if (PlayerPrefs.GetInt("GamePlayOption") == 0)
+        {
+            PlayerPrefs.SetInt("GamePlayOption", 1);
+
+            PlayerPrefs.SetInt("NoteSpeed", 50);
+            PlayerPrefs.SetInt("RandomEffector", 0);
+            PlayerPrefs.SetInt("DisplayDelayCorrection", 0);
+            PlayerPrefs.SetInt("EarlyLateThreshold", 22);
+            PlayerPrefs.SetFloat("VerticalLine", 0.0f);
+            PlayerPrefs.SetFloat("KeyFeedbackOpacity", 0.7f);
         }
     }
 

@@ -6,12 +6,16 @@ using UnityEngine.Video;
 public class BMSGameManager : MonoBehaviour
 {
     public static BMSResult bmsResult;
-    public static float userSpeed = 7.2f;
-    public static float gameSpeed = 0.65f;
-    public static RandomEffector randomEffector = RandomEffector.NONE;
-    public static int judgeAdjValue = 0;
     public static bool isClear;
     public static bool isPaused;
+
+    private float longNoteOffset;
+    private float longNoteLength;
+    private float verticalLine;
+    private int userSpeed;
+    private float gameSpeed;
+    private int displayDelayCorrectionValue;
+    private int earlyLateThreshold;
 
     [SerializeField]
     private BMSDrawer bmsDrawer;
@@ -26,9 +30,6 @@ public class BMSGameManager : MonoBehaviour
     [SerializeField]
     private Transform noteParent;
 
-    private float longNoteOffset;
-    private float longNoteLength;
-
     private System.Diagnostics.Stopwatch stopwatch;
     private double currentBeat = 0;
     private double currentScrollTime = 0;
@@ -39,7 +40,7 @@ public class BMSGameManager : MonoBehaviour
     private int totalLoading = 0;
     private bool isFadeEnd = false;
     private float divideTotalLoading;
-    private double judgeAdjBeat;
+    private double displayDelayCorrectionBeat;
     public static int currentLoading = 0;
     private Coroutine coSongEndCheck;
 
@@ -89,9 +90,9 @@ public class BMSGameManager : MonoBehaviour
     private List<Note>[] normalNoteList;
     private List<Note> barList;
 
-    public void CalulateSpeed()
+    public float CalulateSpeed()
     {
-        gameSpeed = (userSpeed * 133.5f * divideBPM);
+        return (userSpeed * 13.35f * divideBPM);
     }
 
     private IEnumerator PreLoad(bool isRestart)
@@ -131,10 +132,10 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < bgSoundsListCount; i++) { bgSoundsList[i].timing *= 1000.0d; }
 
         divideBPM = (float)(1.0f / header.bpm);
-        CalulateSpeed();
+        gameSpeed = CalulateSpeed();
         bmsDrawer.DrawNotes();
 
-        judgeAdjBeat = judgeAdjValue * 0.001d * header.bpm * divide60;
+        displayDelayCorrectionBeat = displayDelayCorrectionValue * 0.001d * header.bpm * divide60;
         
         currentBPM = bpmsList[bpmsListCount - 1].bpm;
         --bpmsListCount;
@@ -318,6 +319,10 @@ public class BMSGameManager : MonoBehaviour
     {
         QualitySettings.vSyncCount = PlayerPrefs.GetInt("SyncCount");
         Application.targetFrameRate = PlayerPrefs.GetInt("FrameRate");
+        userSpeed = PlayerPrefs.GetInt("NoteSpeed");
+        displayDelayCorrectionValue = PlayerPrefs.GetInt("DisplayDelayCorrection");
+        earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold");
+        verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.1f;
 
         stopwatch = new System.Diagnostics.Stopwatch();
         isPaused = true;
@@ -347,8 +352,6 @@ public class BMSGameManager : MonoBehaviour
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
-
-        ObjectPool.poolInstance.SetVerticalLine();
 
         wait3Sec = new WaitForSeconds(3.0f);
         wait1Sec = new WaitForSeconds(1.5f);
@@ -414,7 +417,7 @@ public class BMSGameManager : MonoBehaviour
         avg *= divide60;
         currentBeat += avg;
         currentScrollTime += frameTime;
-        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + judgeAdjBeat) * gameSpeed), 0.0f);
+        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed), 0.0f);
     }
 
     private void FixedUpdate()
@@ -473,7 +476,7 @@ public class BMSGameManager : MonoBehaviour
         if (result <= JudgeType.MISS) { combo = -1; }
         else { bmsResult.judgeList[currentCount] = diff; }
 
-        if (result != JudgeType.FAIL && result != JudgeType.KOOL) { gameUIManager.UpdateFSText((float)diff, idx); }
+        if (result != JudgeType.FAIL && (diff > earlyLateThreshold || diff < -earlyLateThreshold)) { gameUIManager.UpdateFSText((float)diff, idx < 2 ? 0 : 1); }
 
         UpdateResult(result);
         gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
@@ -722,15 +725,18 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.MakeStringTable();
     }
 
-    public void ChangeSpeed(float value)
+    public void ChangeSpeed(int value)
     {
         if (isPaused || isClear) { return; }
 
         userSpeed += value;
-        if (userSpeed > 20.0f) { userSpeed = 20.0f; }
-        else if (userSpeed < 1.0f) { userSpeed = 1.0f; }
+        if (userSpeed > 200) { userSpeed = 200; }
+        else if (userSpeed < 10) { userSpeed = 10; }
+        PlayerPrefs.SetInt("NoteSpeed", userSpeed);
         gameUIManager.UpdateSpeedText();
-        CalulateSpeed();
+        gameSpeed = CalulateSpeed();
+
+        float verticalLineLength = verticalLine * userSpeed;
 
         for (int i = 0; i < 5; i++)
         {
@@ -739,6 +745,8 @@ public class BMSGameManager : MonoBehaviour
                 if (normalNoteList[i][j].model == null) { break; }
 
                 normalNoteList[i][j].modelTransform.localPosition = new Vector3(xPosition[i], (float)(normalNoteList[i][j].beat * gameSpeed), 0.0f);
+                normalNoteList[i][j].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
+                normalNoteList[i][j].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
             }
 
             bool isCurrent = true;
@@ -765,6 +773,11 @@ public class BMSGameManager : MonoBehaviour
                         else { scale = ((float)longNoteList[i][j - 1].beat * gameSpeed - longNoteOffset) * longNoteLength; }
                         longNoteList[i][j - k].modelTransform.localScale = new Vector3(0.3f, scale, 1.0f);
                     }
+                    else
+                    {
+                        longNoteList[i][j - k].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
+                        longNoteList[i][j - k].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
+                    }
                 }
                 isCurrent = false;
             }
@@ -782,11 +795,13 @@ public class BMSGameManager : MonoBehaviour
     {
         if (isPaused || isClear) { return; }
 
-        judgeAdjValue += value;
-        if (judgeAdjValue > 80) { judgeAdjValue = 80; }
-        else if (judgeAdjValue < -80) { judgeAdjValue = -80; }
+        displayDelayCorrectionValue += value;
+        if (displayDelayCorrectionValue > 80) { displayDelayCorrectionValue = 80; }
+        else if (displayDelayCorrectionValue < -80) { displayDelayCorrectionValue = -80; }
 
-        judgeAdjBeat = judgeAdjValue * 0.001d * header.bpm * divide60;
+        displayDelayCorrectionBeat = displayDelayCorrectionValue * 0.001d * header.bpm * divide60;
+
+        PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
 
         StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
     }

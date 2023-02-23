@@ -14,7 +14,7 @@ public class UIMouseClick : MonoBehaviour, IPointerClickHandler
         {
             if (this.gameObject.name[0] == 'N')
             {
-                selectUIManager.NoteSpeedClick(0.1f);
+                selectUIManager.NoteSpeedClick(1);
             }
             else if (this.gameObject.name[0] == 'R')
             {
@@ -29,7 +29,7 @@ public class UIMouseClick : MonoBehaviour, IPointerClickHandler
         {
             if (this.gameObject.name[0] == 'N')
             {
-                selectUIManager.NoteSpeedClick(-0.1f);
+                selectUIManager.NoteSpeedClick(-1);
             }
             else if (this.gameObject.name[0] == 'R')
             {
