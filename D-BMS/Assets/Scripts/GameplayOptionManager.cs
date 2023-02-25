@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using HSVPicker;
 
 public class GameplayOptionManager : MonoBehaviour
 {
@@ -30,12 +31,35 @@ public class GameplayOptionManager : MonoBehaviour
     private TextMeshProUGUI keyFeedbackOpacityValueText;
     [SerializeField]
     private Slider keyFeedbackOpacitySlider;
+    [SerializeField]
+    private Image oddKeyFeedbackColorPreviewImage;
+    [SerializeField]
+    private ColorPicker oddKeyFeedbackColorPicker;
+    [SerializeField]
+    private Image evenKeyFeedbackColorPreviewImage;
+    [SerializeField]
+    private ColorPicker evenKeyFeedbackColorPicker;
 
     private int randomEffectorCount;
 
     private void Awake()
     {
         randomEffectorCount = System.Enum.GetValues(typeof(RandomEffector)).Length;
+
+        oddKeyFeedbackColorPicker.onValueChanged.AddListener(color =>
+        {
+            oddKeyFeedbackColorPreviewImage.color = color;
+            PlayerPrefs.SetFloat("OddKeyFeedbackColorR", color.r);
+            PlayerPrefs.SetFloat("OddKeyFeedbackColorG", color.g);
+            PlayerPrefs.SetFloat("OddKeyFeedbackColorB", color.b);
+        });
+        evenKeyFeedbackColorPicker.onValueChanged.AddListener(color =>
+        {
+            evenKeyFeedbackColorPreviewImage.color = color;
+            PlayerPrefs.SetFloat("EvenKeyFeedbackColorR", color.r);
+            PlayerPrefs.SetFloat("EvenKeyFeedbackColorG", color.g);
+            PlayerPrefs.SetFloat("EvenKeyFeedbackColorB", color.b);
+        });
     }
 
     public void SetGameplayOption()
@@ -50,6 +74,12 @@ public class GameplayOptionManager : MonoBehaviour
         SetVerticalLineValueText();
         keyFeedbackOpacitySlider.value = PlayerPrefs.GetFloat("KeyFeedbackOpacity");
         SetKeyFeedbackOpacityValueText();
+        oddKeyFeedbackColorPicker.CurrentColor = new Color(PlayerPrefs.GetFloat("OddKeyFeedbackColorR"), 
+                                                           PlayerPrefs.GetFloat("OddKeyFeedbackColorG"), 
+                                                           PlayerPrefs.GetFloat("OddKeyFeedbackColorB"));
+        evenKeyFeedbackColorPicker.CurrentColor = new Color(PlayerPrefs.GetFloat("EvenKeyFeedbackColorR"), 
+                                                            PlayerPrefs.GetFloat("EvenKeyFeedbackColorG"), 
+                                                            PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"));
         SetRandomEffector(PlayerPrefs.GetInt("RandomEffector"));
     }
 

@@ -76,6 +76,12 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("EarlyLateThreshold", 22);
             PlayerPrefs.SetFloat("VerticalLine", 0.0f);
             PlayerPrefs.SetFloat("KeyFeedbackOpacity", 0.7f);
+            PlayerPrefs.SetFloat("OddKeyFeedbackColorR", 1.0f);
+            PlayerPrefs.SetFloat("OddKeyFeedbackColorG", 1.0f);
+            PlayerPrefs.SetFloat("OddKeyFeedbackColorB", 1.0f);
+            PlayerPrefs.SetFloat("EvenKeyFeedbackColorR", 1.0f);
+            PlayerPrefs.SetFloat("EvenKeyFeedbackColorG", 0.0f);
+            PlayerPrefs.SetFloat("EvenKeyFeedbackColorB", 0.0f);
         }
     }
 

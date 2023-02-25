@@ -746,9 +746,17 @@
       <Project>{0529CCEC-E2EF-BB97-3B97-0E3AA18FFB70}</Project>
       <Name>LoopScrollRect.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="HSVPicker.csproj">
+      <Project>{8CBD8F0F-6378-47F9-8A68-B03CDFDA79B8}</Project>
+      <Name>HSVPicker</Name>
+    </ProjectReference>
     <ProjectReference Include="LoopScrollRect.Runtime.csproj">
       <Project>{DCD066F6-EBEE-4138-E781-A523D02B30C8}</Project>
       <Name>LoopScrollRect.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="HSVPicker.Editors.csproj">
+      <Project>{F539D721-35B4-7E6E-C508-1E997FE48ED0}</Project>
+      <Name>HSVPicker.Editors</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

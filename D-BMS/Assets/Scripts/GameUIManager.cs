@@ -196,11 +196,14 @@ public class GameUIManager : MonoBehaviour
 
     private void SetKeyFeedback()
     {
+        Color oddColor = new Color(PlayerPrefs.GetFloat("OddKeyFeedbackColorR"), PlayerPrefs.GetFloat("OddKeyFeedbackColorG"),
+                                   PlayerPrefs.GetFloat("OddKeyFeedbackColorB"), PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
+        Color evenColor = new Color(PlayerPrefs.GetFloat("EvenKeyFeedbackColorR"), PlayerPrefs.GetFloat("EvenKeyFeedbackColorG"),
+                                    PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"), PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
         for (int i = 0; i < 5; i++)
         {
             SpriteRenderer tempSpriteRenderer = keyFeedback[i].GetComponent<SpriteRenderer>();
-            tempSpriteRenderer.color = 
-                new Color(tempSpriteRenderer.color.r, tempSpriteRenderer.color.g, tempSpriteRenderer.color.b, PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
+            tempSpriteRenderer.color = i % 2 == 0 ? oddColor : evenColor;
         }
     }
 
