@@ -13,11 +13,28 @@ public class ObjectPool : MonoBehaviour
     public int maxBarCount;
 
     [SerializeField]
+    private Sprite[] noteSprites1;
+    [SerializeField]
+    private Sprite[] noteSprites2;
+    [SerializeField]
+    private Sprite[] longNoteBodySprites1;
+    [SerializeField]
+    private Sprite[] longNoteBodySprites2;
+    [SerializeField]
+    private Sprite[] longNoteBottomSprites1;
+    [SerializeField]
+    private Sprite[] longNoteBottomSprites2;
+    [SerializeField]
+    private Sprite[] longNoteTopSprites1;
+    [SerializeField]
+    private Sprite[] longNoteTopSprites2;
+
+    [SerializeField]
     private GameObject[] note;
     [SerializeField]
-    private GameObject[] longNoteEdgeBottom;
+    private GameObject[] longNoteBottom;
     [SerializeField]
-    private GameObject[] longNoteEdgeTop;
+    private GameObject[] longNoteTop;
     [SerializeField]
     private GameObject[] longNoteBody;
     [SerializeField]
@@ -61,8 +78,39 @@ public class ObjectPool : MonoBehaviour
         SetVerticalLine();
     }
 
-    public float GetOffset() { return longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * longNoteEdgeBottom[0].transform.localScale.y; }
-    public float GetLength() { return 1.0f / longNoteBody[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y; }
+    public void SetNoteSprite()
+    {
+        int index = PlayerPrefs.GetInt("NoteSkin");
+
+        for (int i = 0; i < 5; i++)
+        {
+            int isOddEven = i % 2;
+            for (int j = 0; j < maxNoteCount; j++)
+            {
+                GameObject tempNoteObject = notePool[i].Dequeue();
+                tempNoteObject.GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? noteSprites1[index] : noteSprites2[index]);
+                notePool[i].Enqueue(tempNoteObject);
+            }
+
+            for (int j = 0; j < maxLongNoteCount; j++)
+            {
+                GameObject tempLongNoteObject = longNotePool[i][2].Dequeue();
+                tempLongNoteObject.GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? longNoteBodySprites1[index] : longNoteBodySprites2[index]);
+                longNotePool[i][2].Enqueue(tempLongNoteObject);
+
+                GameObject tempLongNoteBottomObject = longNotePool[i][0].Dequeue();
+                tempLongNoteBottomObject.GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? longNoteBottomSprites1[index] : longNoteBottomSprites2[index]);
+                longNotePool[i][0].Enqueue(tempLongNoteBottomObject);
+
+                GameObject tempLongNoteTopObject = longNotePool[i][1].Dequeue();
+                tempLongNoteTopObject.GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? longNoteTopSprites1[index] : longNoteTopSprites2[index]);
+                longNotePool[i][1].Enqueue(tempLongNoteTopObject);
+            }
+        }
+    }
+
+    public float GetOffset() { return longNoteBottomSprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y * longNoteBottom[0].transform.localScale.y; }
+    public float GetLength() { return 1.0f / longNoteBodySprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y; }
 
     private float GetLontNoteBodyVerticalLineLength()
     {
@@ -77,10 +125,10 @@ public class ObjectPool : MonoBehaviour
 
     private void SetVerticalLine()
     {
-        float verticalLineLength = PlayerPrefs.GetInt("NoteSpeed") * 0.1f * PlayerPrefs.GetFloat("VerticalLine");
+        float verticalLineLength = PlayerPrefs.GetInt("NoteSpeed") * 0.06f * PlayerPrefs.GetFloat("VerticalLine");
         float normalNoteVerticalLineYPosition = note[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * 0.5f;
         float longNoteBodyVerticalLineLength = GetLontNoteBodyVerticalLineLength();
-        float longNoteBottomVerticalLineYPosition = longNoteEdgeBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
+        float longNoteBottomVerticalLineYPosition = longNoteBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
                                                 
         for (int i = 0; i < 5; i++)
         {
@@ -146,7 +194,7 @@ public class ObjectPool : MonoBehaviour
         {
             for (int j = 0; j < 3; j++)
             {
-                GameObject temp = (j == 2 ? longNoteBody[i % 2] : (j == 1 ? longNoteEdgeTop[i % 2] : longNoteEdgeBottom[i % 2]));
+                GameObject temp = (j == 2 ? longNoteBody[i % 2] : (j == 1 ? longNoteTop[i % 2] : longNoteBottom[i % 2]));
                 while (longNotePool[i][j].Count < maxLongNoteCount)
                 {
                     GameObject tempObject = Instantiate(temp, notePoolParent);

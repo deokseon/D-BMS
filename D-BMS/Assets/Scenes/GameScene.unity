@@ -771,7 +771,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3907,7 +3907,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4298,13 +4298,37 @@ MonoBehaviour:
   maxNoteCount: 16
   maxLongNoteCount: 5
   maxBarCount: 15
+  noteSprites1:
+  - {fileID: 21300000, guid: b6472e781e71aa94196c9f502c3ac38e, type: 3}
+  - {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
+  noteSprites2:
+  - {fileID: 21300000, guid: b69ff56982f3a5c40a6cad44d355cff3, type: 3}
+  - {fileID: 21300000, guid: 9ecbc7164853f1b479186ee53bfd28a8, type: 3}
+  longNoteBodySprites1:
+  - {fileID: 21300000, guid: fd5d77fb7ffe46745b938577cebebeb0, type: 3}
+  - {fileID: 21300000, guid: 946bf93c0faf6674095967a8d001ee2c, type: 3}
+  longNoteBodySprites2:
+  - {fileID: 21300000, guid: 122f1ffa87cb88745a329db07a4b9520, type: 3}
+  - {fileID: 21300000, guid: 5c1ec6c04b25efd409e43ec79ed55c81, type: 3}
+  longNoteBottomSprites1:
+  - {fileID: 21300000, guid: 5abda6f2512191246a2a93c117561ecc, type: 3}
+  - {fileID: 21300000, guid: 24812d8b1072094499d9754f1b97a0c3, type: 3}
+  longNoteBottomSprites2:
+  - {fileID: 21300000, guid: 3c70ef11583c6d948adf9802142c43f7, type: 3}
+  - {fileID: 21300000, guid: f4e49939226a43b40be98f4dbc948222, type: 3}
+  longNoteTopSprites1:
+  - {fileID: 21300000, guid: 014502b24d202b14dbb91f72211b86bd, type: 3}
+  - {fileID: 21300000, guid: 5ab5d981a4b061449a76adb2f923cca0, type: 3}
+  longNoteTopSprites2:
+  - {fileID: 21300000, guid: 8d3741647c6538740b0b8ec9bf2e07a1, type: 3}
+  - {fileID: 21300000, guid: 13686d6b01f5aa34a9b4a6663c6a37b0, type: 3}
   note:
   - {fileID: 6205310033563348572, guid: 5d15b30613ac086488379cb1ec656e5a, type: 3}
   - {fileID: 3806860626001265297, guid: 206dff2f0e661194c9d13f7cb86a8f4d, type: 3}
-  longNoteEdgeBottom:
+  longNoteBottom:
   - {fileID: 3632937990542755929, guid: d2d0ba3074b6e8d4ebb531ab4f93ae5d, type: 3}
   - {fileID: 7111122549692653503, guid: 8812e24566e64224a918a6a1e014d835, type: 3}
-  longNoteEdgeTop:
+  longNoteTop:
   - {fileID: 4296726658009871657, guid: 42ac1d05f95d9b748b6842925d4e1b83, type: 3}
   - {fileID: 5382265382769915984, guid: fecffa8cb5f99d747abefd1cefb1cfd7, type: 3}
   longNoteBody:
@@ -5474,7 +5498,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -9128,6 +9152,9 @@ MonoBehaviour:
   endInfo: {fileID: 9427965}
   fadeinAnimator: {fileID: 1949911354}
   fadeinObject: {fileID: 1949911352}
+  judgeLineSprites:
+  - {fileID: 21300000, guid: bc4e80f41a23e844481b8fed64cb2eb0, type: 3}
+  - {fileID: 21300000, guid: 0bb7283b0decf8b49baeeaa1b1955551, type: 3}
   maxCombo: 0
   earlyCount: 0
   lateCount: 0
@@ -9287,7 +9314,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -10516,11 +10543,11 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.5, y: 2.5}
+  m_Size: {x: 2.509804, y: 0.78431374}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

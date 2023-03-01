@@ -322,7 +322,7 @@ public class BMSGameManager : MonoBehaviour
         userSpeed = PlayerPrefs.GetInt("NoteSpeed");
         displayDelayCorrectionValue = PlayerPrefs.GetInt("DisplayDelayCorrection");
         earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold");
-        verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.1f;
+        verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.06f;
 
         stopwatch = new System.Diagnostics.Stopwatch();
         isPaused = true;
@@ -346,6 +346,7 @@ public class BMSGameManager : MonoBehaviour
 
         currentLoading = 0;
 
+        ObjectPool.poolInstance.SetNoteSprite();
         longNoteOffset = ObjectPool.poolInstance.GetOffset();
         longNoteLength = ObjectPool.poolInstance.GetLength();
 

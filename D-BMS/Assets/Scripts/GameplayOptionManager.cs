@@ -39,6 +39,8 @@ public class GameplayOptionManager : MonoBehaviour
     private Image evenKeyFeedbackColorPreviewImage;
     [SerializeField]
     private ColorPicker evenKeyFeedbackColorPicker;
+    [SerializeField]
+    private Toggle[] noteSkinToggles;
 
     private int randomEffectorCount;
 
@@ -81,6 +83,7 @@ public class GameplayOptionManager : MonoBehaviour
                                                             PlayerPrefs.GetFloat("EvenKeyFeedbackColorG"), 
                                                             PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"));
         SetRandomEffector(PlayerPrefs.GetInt("RandomEffector"));
+        noteSkinToggles[PlayerPrefs.GetInt("NoteSkin")].isOn = true;
     }
 
     public void NoteSpeedSliderValueChange(float value)
@@ -157,5 +160,10 @@ public class GameplayOptionManager : MonoBehaviour
     private void SetKeyFeedbackOpacityValueText()
     {
         keyFeedbackOpacityValueText.text = PlayerPrefs.GetFloat("KeyFeedbackOpacity").ToString("P0");
+    }
+
+    public void SetNoteSkin(int index)
+    {
+        PlayerPrefs.SetInt("NoteSkin", index);
     }
 }

@@ -125,6 +125,9 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private GameObject fadeinObject;
 
+    [SerializeField]
+    private Sprite[] judgeLineSprites;
+
     [HideInInspector]
     public int maxCombo;
     [HideInInspector]
@@ -156,6 +159,7 @@ public class GameUIManager : MonoBehaviour
 
     private void Awake()
     {
+        SetJudgeLineSprite();
         SetNoteBombPosition();
         SetKeyFeedback();
 
@@ -182,6 +186,15 @@ public class GameUIManager : MonoBehaviour
 
         scoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
+    }
+
+    private void SetJudgeLineSprite()
+    {
+        int index = PlayerPrefs.GetInt("NoteSkin");
+        for (int i = 1; i < 6; i++)
+        {
+            GameObject.Find($"JudgeLine{i}").GetComponent<SpriteRenderer>().sprite = judgeLineSprites[index];
+        }
     }
 
     private void SetNoteBombPosition()

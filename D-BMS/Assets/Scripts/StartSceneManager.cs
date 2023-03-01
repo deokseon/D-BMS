@@ -82,6 +82,7 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorR", 1.0f);
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorG", 0.0f);
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorB", 0.0f);
+            PlayerPrefs.SetInt("NoteSkin", 0);
         }
     }
 
