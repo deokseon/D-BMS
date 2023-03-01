@@ -32,3 +32,13 @@ Copyright (c) 2017 Kanglai Qian
 [Show License](https://github.com/qiankanglai/LoopScrollRect/blob/master/LICENSE)
 
 MIT License
+<br/><br/>
+### HSV-Color-Picker-Unity
+
+Copyright (c) 2016 Judah Perez
+
+[Homepage](https://github.com/judah4/HSV-Color-Picker-Unity)
+
+[Show License](https://github.com/judah4/HSV-Color-Picker-Unity/blob/master/LICENSE)
+
+MIT License
