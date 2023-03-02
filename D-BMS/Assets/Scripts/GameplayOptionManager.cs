@@ -41,6 +41,8 @@ public class GameplayOptionManager : MonoBehaviour
     private ColorPicker evenKeyFeedbackColorPicker;
     [SerializeField]
     private Toggle[] noteSkinToggles;
+    [SerializeField]
+    private Toggle[] judgeLineToggles;
 
     private int randomEffectorCount;
 
@@ -84,6 +86,7 @@ public class GameplayOptionManager : MonoBehaviour
                                                             PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"));
         SetRandomEffector(PlayerPrefs.GetInt("RandomEffector"));
         noteSkinToggles[PlayerPrefs.GetInt("NoteSkin")].isOn = true;
+        judgeLineToggles[PlayerPrefs.GetInt("JudgeLine")].isOn = true;
     }
 
     public void NoteSpeedSliderValueChange(float value)
@@ -165,5 +168,10 @@ public class GameplayOptionManager : MonoBehaviour
     public void SetNoteSkin(int index)
     {
         PlayerPrefs.SetInt("NoteSkin", index);
+    }
+
+    public void SetJudgeLine(int index)
+    {
+        PlayerPrefs.SetInt("JudgeLine", index);
     }
 }

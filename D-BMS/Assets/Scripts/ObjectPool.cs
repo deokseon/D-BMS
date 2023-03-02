@@ -116,7 +116,7 @@ public class ObjectPool : MonoBehaviour
     {
         GameObject temp = longNotePool[0][2].Dequeue();
         temp.SetActive(true);
-        float len = longNoteBody[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y /
+        float len = longNoteBodySprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y /
                     temp.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
         temp.SetActive(false);
         longNotePool[0][2].Enqueue(temp);
@@ -126,9 +126,9 @@ public class ObjectPool : MonoBehaviour
     private void SetVerticalLine()
     {
         float verticalLineLength = PlayerPrefs.GetInt("NoteSpeed") * 0.06f * PlayerPrefs.GetFloat("VerticalLine");
-        float normalNoteVerticalLineYPosition = note[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y * 0.5f;
+        float normalNoteVerticalLineYPosition = noteSprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y * 0.5f;
         float longNoteBodyVerticalLineLength = GetLontNoteBodyVerticalLineLength();
-        float longNoteBottomVerticalLineYPosition = longNoteBottom[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
+        float longNoteBottomVerticalLineYPosition = longNoteBottomSprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y;
                                                 
         for (int i = 0; i < 5; i++)
         {

@@ -16,8 +16,6 @@ public class BMSDrawer : MonoBehaviour
         float offset = GetComponent<BMSGameManager>().GetLongNoteOffset();
         float longNoteLen = GetComponent<BMSGameManager>().GetLongNoteLength();
 
-        noteParent.position = Vector3.zero;
-
         pattern = BMSParser.instance.pattern;
 
         for (int i = 0; i < 5; i++)
@@ -29,7 +27,7 @@ public class BMSDrawer : MonoBehaviour
                 if (note == null) { break; }
 
                 note.SetActive(true);
-                note.transform.position = new Vector3(xPosition[i], (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
+                note.transform.localPosition = new Vector3(xPosition[i], (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
 
                 pattern.normalNote[i][j].model = note;
                 pattern.normalNote[i][j].modelTransform = note.transform;
@@ -66,7 +64,7 @@ public class BMSDrawer : MonoBehaviour
             bar.model = ObjectPool.poolInstance.GetBarInPool();
             bar.modelTransform = bar.model.transform;
             bar.model.SetActive(true);
-            bar.model.transform.position = new Vector3(-6.111f, (float)(bar.beat * speed), 0.0f);
+            bar.model.transform.localPosition = new Vector3(-6.111f, (float)(bar.beat * speed), 0.0f);
         }
     }
 }

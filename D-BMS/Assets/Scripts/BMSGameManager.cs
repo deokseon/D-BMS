@@ -16,6 +16,7 @@ public class BMSGameManager : MonoBehaviour
     private float gameSpeed;
     private int displayDelayCorrectionValue;
     private int earlyLateThreshold;
+    private float judgeLineYPosition;
 
     [SerializeField]
     private BMSDrawer bmsDrawer;
@@ -133,10 +134,12 @@ public class BMSGameManager : MonoBehaviour
 
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
-        bmsDrawer.DrawNotes();
 
         displayDelayCorrectionBeat = displayDelayCorrectionValue * 0.001d * header.bpm * divide60;
-        
+        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed) + judgeLineYPosition, 0.0f);
+
+        bmsDrawer.DrawNotes();
+
         currentBPM = bpmsList[bpmsListCount - 1].bpm;
         --bpmsListCount;
 
@@ -323,6 +326,7 @@ public class BMSGameManager : MonoBehaviour
         displayDelayCorrectionValue = PlayerPrefs.GetInt("DisplayDelayCorrection");
         earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold");
         verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.06f;
+        judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
 
         stopwatch = new System.Diagnostics.Stopwatch();
         isPaused = true;
@@ -418,7 +422,7 @@ public class BMSGameManager : MonoBehaviour
         avg *= divide60;
         currentBeat += avg;
         currentScrollTime += frameTime;
-        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed), 0.0f);
+        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed) + judgeLineYPosition, 0.0f);
     }
 
     private void FixedUpdate()

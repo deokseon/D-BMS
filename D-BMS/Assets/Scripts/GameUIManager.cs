@@ -159,7 +159,7 @@ public class GameUIManager : MonoBehaviour
 
     private void Awake()
     {
-        SetJudgeLineSprite();
+        SetJudgeLine();
         SetNoteBombPosition();
         SetKeyFeedback();
 
@@ -188,18 +188,22 @@ public class GameUIManager : MonoBehaviour
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
     }
 
-    private void SetJudgeLineSprite()
+    private void SetJudgeLine()
     {
         int index = PlayerPrefs.GetInt("NoteSkin");
+        float judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
         for (int i = 1; i < 6; i++)
         {
-            GameObject.Find($"JudgeLine{i}").GetComponent<SpriteRenderer>().sprite = judgeLineSprites[index];
+            GameObject tempObject = GameObject.Find($"JudgeLine{i}");
+            tempObject.GetComponent<SpriteRenderer>().sprite = judgeLineSprites[index];
+            tempObject.transform.localPosition = new Vector3(tempObject.transform.localPosition.x, judgeLineYPosition, tempObject.transform.localPosition.z);
         }
     }
 
     private void SetNoteBombPosition()
     {
-        float yPos = GameObject.Find("JudgeLine1").GetComponent<SpriteRenderer>().sprite.bounds.size.y * GameObject.Find("JudgeLine1").transform.localScale.y * 0.5f;
+        float yPos = GameObject.Find("JudgeLine1").GetComponent<SpriteRenderer>().sprite.bounds.size.y * 
+                     GameObject.Find("JudgeLine1").transform.localScale.y * 0.5f + (PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f);
         for (int i = 1; i < 6; i++)
         {
             GameObject tempObject = GameObject.Find($"NoteBomb{i}");

@@ -83,6 +83,7 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorG", 0.0f);
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorB", 0.0f);
             PlayerPrefs.SetInt("NoteSkin", 0);
+            PlayerPrefs.SetInt("JudgeLine", 0);
         }
     }
 
