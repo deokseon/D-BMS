@@ -14,8 +14,6 @@ public class GameUIManager : MonoBehaviour
     private Dictionary<string, Texture2D> bgSprites;
 
     [SerializeField]
-    private Slider hpBar;
-    [SerializeField]
     private TextMeshProUGUI frontScoreText;
     [SerializeField]
     private TextMeshProUGUI backScoreText;
@@ -44,6 +42,16 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI backAccuracyText;
 
+    [SerializeField]
+    private SpriteRenderer leftPanel;
+    [SerializeField]
+    private SpriteRenderer rightPanel;
+    [SerializeField]
+    private SpriteRenderer panelBackground;
+    [SerializeField]
+    private SpriteRenderer hpBarBackground;
+    [SerializeField]
+    private Transform hpBarMask;
     [SerializeField]
     private GameObject[] keyFeedback;
     [SerializeField]
@@ -159,6 +167,7 @@ public class GameUIManager : MonoBehaviour
 
     private void Awake()
     {
+        SetGamePanel();
         SetJudgeLine();
         SetNoteBombPosition();
         SetKeyFeedback();
@@ -166,8 +175,6 @@ public class GameUIManager : MonoBehaviour
         maxCombo = 0;
         earlyCount = 0;
         lateCount = 0;
-
-        hpBar.value = 1.0f;
 
         maxComboText.text = maxCombo.ToString("D4");
 
@@ -186,6 +193,25 @@ public class GameUIManager : MonoBehaviour
 
         scoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
+    }
+
+    private void SetGamePanel()
+    {
+        float cameraSize = Camera.main.orthographicSize;
+        leftPanel.transform.localPosition = new Vector3((-1.25f * 0.3f) - 7.63f, 2.5f, 0.0f);
+        leftPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / leftPanel.sprite.bounds.size.y, 1.0f);
+        rightPanel.transform.localPosition = new Vector3((1.25f * 0.3f) - 4.592f, 2.5f, 0.0f);
+        rightPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / rightPanel.sprite.bounds.size.y, 1.0f);
+
+        panelBackground.transform.localScale = new Vector3(3.8f / panelBackground.sprite.bounds.size.x,
+                                                           (cameraSize + 2.74f) / panelBackground.sprite.bounds.size.y, 1.0f);
+
+        hpBarBackground.transform.localPosition = new Vector3(rightPanel.transform.localPosition.x + rightPanel.sprite.bounds.size.x + hpBarBackground.sprite.bounds.size.x * 0.5f,
+                                                              -0.24f + hpBarBackground.sprite.bounds.size.y * 0.5f, 0.0f);
+
+        float keyboardWidth = 0.76f / keyboard[0].sprite.bounds.size.x;
+        float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / keyboard[0].sprite.bounds.size.y;
+        for (int i = 0; i < 5; i++) { keyboard[i].transform.localScale = new Vector3(keyboardWidth, keyboardHeight, 1.0f); }
     }
 
     private void SetJudgeLine()
@@ -344,7 +370,8 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateScore(BMSResult res, int currentCount, float hp, float accuracy, float score, float maxScore)
     {
-        hpBar.value = hp;
+        //hpBar.value = hp;
+        hpBarMask.localScale = new Vector3(1.0f, hp, 1.0f);
 
         int frontAC = (int)(accuracy);
         int backAC = (int)((accuracy - frontAC) * 100.0d);

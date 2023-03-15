@@ -47,7 +47,6 @@ SpriteAtlas:
     - {fileID: 102900000, guid: 45f2a7d7a6f45d943a001b0f382fd274, type: 3}
     - {fileID: 102900000, guid: 1c04f9b710502c24099f216a781bf3f1, type: 3}
     - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
-    - {fileID: 102900000, guid: e54e7b004fc05144db11457c087d3c04, type: 3}
     - {fileID: 102900000, guid: 642d449083ad00d469ac511b0a1c0c2a, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
@@ -59,7 +58,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4981cf60478401c4bbee6d03b07b4a46, type: 3}
   - {fileID: 21300000, guid: 5c1ec6c04b25efd409e43ec79ed55c81, type: 3}
   - {fileID: 21300000, guid: 0a16a0f0c4f622049a7c241c2eefc4f2, type: 3}
-  - {fileID: 21300000, guid: 5bc74f117bf46f7459740d6b825eab4c, type: 3}
   - {fileID: 21300000, guid: 3c70ef11583c6d948adf9802142c43f7, type: 3}
   - {fileID: 21300000, guid: 42a43821e0bc50242bdc7241b60b5ecf, type: 3}
   - {fileID: 21300000, guid: 390c2831c9b1a1844b30c218fd7e612c, type: 3}
@@ -69,7 +67,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3de2d8e1ff27f0b44b2c39e6ec075512, type: 3}
   - {fileID: 21300000, guid: cc158d12bdb4a02419b60a90a795156e, type: 3}
   - {fileID: 21300000, guid: 9a50613200fe30a42ab1e6b168d22f2c, type: 3}
-  - {fileID: 21300000, guid: 8497aa92934755c47abba80aea694434, type: 3}
   - {fileID: 21300000, guid: 014502b24d202b14dbb91f72211b86bd, type: 3}
   - {fileID: 21300000, guid: 5abda6f2512191246a2a93c117561ecc, type: 3}
   - {fileID: 21300000, guid: 72816e03182158f4da24eadf236d0e93, type: 3}
@@ -114,16 +111,18 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fd5d77fb7ffe46745b938577cebebeb0, type: 3}
   - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
   - {fileID: 21300000, guid: 946bf93c0faf6674095967a8d001ee2c, type: 3}
+  - {fileID: 21300000, guid: 5215cb5c15c13b14f81a56fb244ba4f4, type: 3}
   - {fileID: 21300000, guid: 4a5ecc6cec6861d40a26bec97547410f, type: 3}
   - {fileID: 21300000, guid: 8c43f1ec34f818847b2a62b3d7e6730c, type: 3}
   - {fileID: 21300000, guid: 509e7addc2d6d7443ad55d949fc1e260, type: 3}
   - {fileID: 21300000, guid: a582042e7b9451046942cb622f1164a1, type: 3}
   - {fileID: 21300000, guid: 0170ccaeac3eca648bb9a306f19876f7, type: 3}
-  - {fileID: 21300000, guid: 5c975cbe888874542826b715a7834909, type: 3}
   - {fileID: 21300000, guid: 1272b6ee88088494ea59a1589a13a2d2, type: 3}
-  - {fileID: 21300000, guid: be2d310f2a32465428f312a3811bde50, type: 3}
+  - {fileID: 21300000, guid: 1d8c132fe62cc4e4196eb0b28875af55, type: 3}
   - {fileID: 21300000, guid: 6ed8364ffe5dbf14da6a01c2cfed51a3, type: 3}
   - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
+  - {fileID: 21300000, guid: 9655636f75982b143acb1ae7c734ebfb, type: 3}
+  - {fileID: 21300000, guid: 230b599f31f4beb4cacf449e4561ff27, type: 3}
   m_PackedSpriteNamesToIndex:
   - A
   - S+++
@@ -132,7 +131,6 @@ SpriteAtlas:
   - NoteBomb-17
   - CircleLongNoteBody2
   - NoteBomb-8
-  - HPbar_bg
   - BlockLongNoteBottom2
   - VerticalLine
   - NoteBomb-0
@@ -142,7 +140,6 @@ SpriteAtlas:
   - EARLY
   - kool_2
   - NoteBomb-5
-  - Panel_Left
   - BlockLongNoteTop1
   - BlockLongNoteBottom1
   - NoteBomb-3
@@ -187,15 +184,17 @@ SpriteAtlas:
   - BlockLongNoteBody1
   - S
   - CircleLongNoteBody1
+  - HPbar4
   - NoteBomb-10
   - BarLine
   - NoteBomb-7
   - key1_Init
   - C
-  - Panel_Right
   - Fail_0
-  - judgeLine
+  - Panel_Left
   - BGA_Frame
   - E
+  - Panel_Right
+  - HPbar_bg4
   m_Tag: GameSceneAtlas
   m_IsVariant: 0
