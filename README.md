@@ -23,6 +23,16 @@ Copyright (c) 2019 Unengine
 
 MIT License
 <br/><br/>
+### fmod-for-unity
+
+Copyright (c) 2016
+
+[Homepage](https://github.com/fmod/fmod-for-unity)
+
+[Show License](https://github.com/fmod/fmod-for-unity/blob/2.02/LICENSE)
+
+MIT License
+<br/><br/>
 ### LoopScrollRect
 
 Copyright (c) 2017 Kanglai Qian
@@ -40,15 +50,5 @@ Copyright (c) 2016 Judah Perez
 [Homepage](https://github.com/judah4/HSV-Color-Picker-Unity)
 
 [Show License](https://github.com/judah4/HSV-Color-Picker-Unity/blob/master/LICENSE)
-
-MIT License
-<br/><br/>
-### fmod-for-unity
-
-Copyright (c) 2016
-
-[Homepage](https://github.com/fmod/fmod-for-unity)
-
-[Show License](https://github.com/fmod/fmod-for-unity/blob/2.02/LICENSE)
 
 MIT License
