@@ -1,7 +1,7 @@
 Unity RhythmGame(only 5 key, bms).
 공부용으로 만든 프로그램입니다.
 
-게임 시스템과 UI는 ez2on을 참고했는데 문제가 된다면 내리고 변경하겠습니다.
+게임 시스템과 UI는 ez2on을 참고했는데 문제가 된다면 내리겠습니다.
 
 BMS File (분할 압축)
 1) https://drive.google.com/file/d/1zPiAg2gfI2FFOD8rXqoE91DwVGHalcvD/view?usp=sharing
@@ -40,5 +40,15 @@ Copyright (c) 2016 Judah Perez
 [Homepage](https://github.com/judah4/HSV-Color-Picker-Unity)
 
 [Show License](https://github.com/judah4/HSV-Color-Picker-Unity/blob/master/LICENSE)
+
+MIT License
+<br/><br/>
+### fmod-for-unity
+
+Copyright (c) 2016
+
+[Homepage](https://github.com/fmod/fmod-for-unity)
+
+[Show License](https://github.com/fmod/fmod-for-unity/blob/2.02/LICENSE)
 
 MIT License
