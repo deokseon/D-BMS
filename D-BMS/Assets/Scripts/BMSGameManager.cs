@@ -194,7 +194,7 @@ public class BMSGameManager : MonoBehaviour
                 }
             }
             yield return new WaitUntil(() => gameUIManager.isPrepared);
-            yield return new WaitUntil(() => soundManager.isPrepared);
+            yield return new WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
             yield return new WaitUntil(() => isFadeEnd);
             yield return wait3Sec;
         }
@@ -430,7 +430,7 @@ public class BMSGameManager : MonoBehaviour
         if (isPaused) { return; }
         while (bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= stopwatch.ElapsedMilliseconds)  // 배경음 재생
         {
-            soundManager.PlayBGSound(bgSoundsList[bgSoundsListCount - 1].keySound);
+            soundManager.PlayBGM(bgSoundsList[bgSoundsListCount - 1].keySound);
             --bgSoundsListCount;
         }
     }
@@ -598,7 +598,8 @@ public class BMSGameManager : MonoBehaviour
     public void KeyDown(int index)
     {
         long keyDownTime = stopwatch.ElapsedMilliseconds;
-        soundManager.PlayKeySound(currentNote[index]);
+        if (isClear) { soundManager.PlayKeySoundEnd(currentNote[index]); }
+        else { soundManager.PlayKeySound(currentNote[index]); }
         currentButtonPressed[index] = true;
         gameUIManager.KeyInputImageSetActive(true, index);
         if (notesListCount[index] <= 0 || notesList[index][notesListCount[index] - 1].extra == 2) { return; }
@@ -668,9 +669,8 @@ public class BMSGameManager : MonoBehaviour
 
         if (isClear)
         {
-            soundManager.DividePlayingAudio();
             int maxWaitTime = 0;
-            while (soundManager.IsPlayingAudioClip()) 
+            while (soundManager.IsPlayingAudio()) 
             {
                 maxWaitTime++;
                 if (maxWaitTime >= 10) { break; }

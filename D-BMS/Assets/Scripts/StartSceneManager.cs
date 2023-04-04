@@ -49,7 +49,7 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("FrameRate", -1);
             PlayerPrefs.SetInt("SyncCount", 1);
 
-            PlayerPrefs.SetInt("AudioBufferSize", 256);
+            PlayerPrefs.SetInt("AudioBufferSize", 64);
             PlayerPrefs.SetFloat("MasterVolume", 1.0f);
             PlayerPrefs.SetFloat("KeySoundVolume", 1.0f);
             PlayerPrefs.SetFloat("BGMVolume", 0.8f);
@@ -94,12 +94,6 @@ public class StartSceneManager : MonoBehaviour
 
         Screen.SetResolution(1920, 1080, true);
         Screen.fullScreenMode = (FullScreenMode)(PlayerPrefs.GetInt("DisplayMode"));
-
-        AudioConfiguration audioConfig = AudioSettings.GetConfiguration();
-        audioConfig.dspBufferSize = PlayerPrefs.GetInt("AudioBufferSize");
-        AudioSettings.Reset(audioConfig);
-
-        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume");
     }
 
     private IEnumerator PrepareVideo()

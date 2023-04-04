@@ -742,9 +742,17 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="FMODUnity.csproj">
+      <Project>{83FEAF7C-699C-3950-22D5-4CD75A8CF9AF}</Project>
+      <Name>FMODUnity</Name>
+    </ProjectReference>
     <ProjectReference Include="LoopScrollRect.Editor.csproj">
       <Project>{0529CCEC-E2EF-BB97-3B97-0E3AA18FFB70}</Project>
       <Name>LoopScrollRect.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="FMODUnityResonance.csproj">
+      <Project>{93904650-5113-324B-4AAE-3C24AF2592ED}</Project>
+      <Name>FMODUnityResonance</Name>
     </ProjectReference>
     <ProjectReference Include="HSVPicker.csproj">
       <Project>{8CBD8F0F-6378-47F9-8A68-B03CDFDA79B8}</Project>
@@ -757,6 +765,14 @@
     <ProjectReference Include="HSVPicker.Editors.csproj">
       <Project>{F539D721-35B4-7E6E-C508-1E997FE48ED0}</Project>
       <Name>HSVPicker.Editors</Name>
+    </ProjectReference>
+    <ProjectReference Include="FMODUnityResonanceEditor.csproj">
+      <Project>{B40A3B4B-E296-B4C0-D85B-63C44160846A}</Project>
+      <Name>FMODUnityResonanceEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="FMODUnityEditor.csproj">
+      <Project>{D2BB31A1-9D9B-0399-9918-4282AFABB33B}</Project>
+      <Name>FMODUnityEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

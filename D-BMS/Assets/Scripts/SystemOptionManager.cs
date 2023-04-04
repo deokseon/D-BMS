@@ -159,6 +159,10 @@ public class SystemOptionManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("AudioBufferSize", value);
         SetAudioBufferText();
+        foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
+        {
+            DestroyImmediate(manager.gameObject);
+        }
         audioBufferSelectPanel.SetActive(false);
     }
 
@@ -186,9 +190,13 @@ public class SystemOptionManager : MonoBehaviour
     {
         switch (PlayerPrefs.GetInt("AudioBufferSize"))
         {
-            case 256: audioBufferText.text = "Best Latency (256)"; break;
-            case 512: audioBufferText.text = "Good Latency (512)"; break;
-            case 1024: audioBufferText.text = "Best Performance (1024)"; break;
+            case 16: audioBufferText.text = "Extreme (32)"; break;
+            case 32: audioBufferText.text = "Ultra Low (64)"; break;
+            case 64: audioBufferText.text = "Very Low (128)"; break;
+            case 128: audioBufferText.text = "Low (256)"; break;
+            case 256: audioBufferText.text = "Medium (512)"; break;
+            case 384: audioBufferText.text = "High (768)"; break;
+            case 512: audioBufferText.text = "Very High (1024)"; break;
         }
     }
 

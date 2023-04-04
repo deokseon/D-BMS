@@ -2,183 +2,127 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Networking;
+using System.Threading.Tasks;
+using FMODUnity;
 
 public class SoundManager : MonoBehaviour
 {
-    public bool isPrepared { get; set; } = false;
-    public List<KeyValuePair<int, string>> pathes { get; set; }
-    public Dictionary<int, AudioClip> clips { get; set; }
-
-
-    private static string[] soundFileExtensions;
-
-    private const int channelCount = 300;
+    private readonly object threadLock = new object();
+    public int isPrepared;
+    private const int keySoundMaxCount = 1300;
+    public int threadCount;
+    private float divideThreadCount;
 
     private float keySoundVolume;
     private float bgmVolume;
 
-    private AudioClip bgSoundClip;
-    private List<AudioSource> bgSoundAudioList;
-    private int bgSoundAudioListCount;
-    private AudioClip keySoundClip;
-    private List<AudioSource> keySoundAudioList;
-    private int keySoundAudioListCount;
+    private FMOD.System coreSystem;
+    private FMOD.ChannelGroup channelGroup;
+    private FMOD.Channel endChannel;
+    private FMOD.Channel keySoundChannel;
+    private FMOD.Channel bgmChannel;
 
-    private List<AudioSource> playingAudioList;
+    public List<KeyValuePair<int, string>> pathes;
+    public FMOD.Sound[] keySoundArray;
 
-    private int maxBGSoundIndex;
-    private int maxKeySoundIndex;
-    private int currentBGSoundIndex;
-    private int currentKeySoundIndex;
+    private readonly string[] soundFileExtension = { ".ogg", ".mp3", ".wav" };
 
     private void Awake()
     {
+        isPrepared = 0;
+        threadCount = Mathf.Max(SystemInfo.processorCount - 2, 1);
+        divideThreadCount = 1.0f / threadCount;
+
         keySoundVolume = PlayerPrefs.GetFloat("KeySoundVolume") * 0.7f + 0.3f;
         bgmVolume = PlayerPrefs.GetFloat("BGMVolume") * 0.7f + 0.3f;
 
-        pathes = new List<KeyValuePair<int, string>>();
-        clips = new Dictionary<int, AudioClip>();
+        coreSystem = RuntimeManager.CoreSystem;
+        coreSystem.getMasterChannelGroup(out channelGroup);
+        channelGroup.setVolume(PlayerPrefs.GetFloat("MasterVolume"));
 
-        if (soundFileExtensions == null)
-            soundFileExtensions = new string[] { ".ogg", ".wav", ".mp3" };
-
-        currentBGSoundIndex = 0;
-        currentKeySoundIndex = 0;
-
-        bgSoundAudioList = new List<AudioSource>(channelCount);
-        keySoundAudioList = new List<AudioSource>(channelCount);
-        playingAudioList = new List<AudioSource>(channelCount);
-        for (int i = 0; i < channelCount; i++)
-        {
-            bgSoundAudioList.Add(gameObject.AddComponent<AudioSource>());
-            bgSoundAudioList[i].loop = false;
-            bgSoundAudioList[i].playOnAwake = false;
-            bgSoundAudioList[i].dopplerLevel = 0.0f;
-            bgSoundAudioList[i].reverbZoneMix = 0.0f;
-
-            keySoundAudioList.Add(gameObject.AddComponent<AudioSource>());
-            keySoundAudioList[i].loop = false;
-            keySoundAudioList[i].playOnAwake = false;
-            keySoundAudioList[i].dopplerLevel = 0.0f;
-            keySoundAudioList[i].reverbZoneMix = 0.0f;
-        }
-        bgSoundAudioListCount = bgSoundAudioList.Count;
-        keySoundAudioListCount = keySoundAudioList.Count;
-        maxBGSoundIndex = bgSoundAudioListCount - 2;
-        maxKeySoundIndex = keySoundAudioListCount - 2;
+        pathes = new List<KeyValuePair<int, string>>(keySoundMaxCount);
+        keySoundArray = new FMOD.Sound[keySoundMaxCount];
     }
 
     public void AddAudioClips()
     {
-        StartCoroutine(CAddAudioClips());
-    }
-
-    private IEnumerator CAddAudioClips()
-    {
-        int extensionFailCount;
-        string musicFolderPath = BMSGameManager.header.musicFolderPath;
-        int len = pathes.Count;
-        for (int i = 0; i < len; i++)
+        for (int i = 0; i < threadCount; i++)
         {
-            UnityWebRequest uwr = null;
-            extensionFailCount = 0;
-            AudioType type = AudioType.OGGVORBIS;
-            do
-            {
-                if (File.Exists(musicFolderPath + pathes[i].Value + soundFileExtensions[extensionFailCount])) break;
-                extensionFailCount++;
-            } while (extensionFailCount < 2);
-
-            if (soundFileExtensions[extensionFailCount].CompareTo(".wav") == 0) { type = AudioType.WAV; }
-            else if (soundFileExtensions[extensionFailCount].CompareTo(".mp3") == 0) { type = AudioType.MPEG; }
-
-            uwr = UnityWebRequestMultimedia.GetAudioClip(
-                @"file:\\" + musicFolderPath +
-                UnityWebRequest.EscapeURL(pathes[i].Value + soundFileExtensions[extensionFailCount]).Replace('+', ' '), type);
-
-            ((DownloadHandlerAudioClip)uwr.downloadHandler).streamAudio = false;
-            ((DownloadHandlerAudioClip)uwr.downloadHandler).compressed = false;
-            yield return uwr.SendWebRequest();
-
-            if (uwr.downloadHandler.data.Length != 0)
-            {
-                AudioClip ac = DownloadHandlerAudioClip.GetContent(uwr);
-                ac.LoadAudioData();
-                clips.Add(pathes[i].Key, ac);
-            }
-            BMSGameManager.currentLoading++;
-            //Debug.Log(pathes[i].Key);
-        }
-
-        isPrepared = true;
-    }
-
-    public void PlayKeySound(int key)
-    {
-        if (key == 0 || !clips.TryGetValue(key, out keySoundClip)) { return; }
-        //Debug.Log(key);
-
-        for (int i = keySoundAudioListCount; i > 0; i--)
-        {
-            currentKeySoundIndex = currentKeySoundIndex > maxKeySoundIndex ? 0 : currentKeySoundIndex + 1;
-            if (!keySoundAudioList[currentKeySoundIndex].isPlaying)
-            {
-                keySoundAudioList[currentKeySoundIndex].PlayOneShot(keySoundClip, keySoundVolume);
-                return;
-            }
+            AddAudioClipsAsync(i);
         }
     }
 
-    public void PlayBGSound(int key)
+    async private void AddAudioClipsAsync(int value)
     {
-        if (key == 0 || !clips.TryGetValue(key, out bgSoundClip)) { return; }
-
-        for (int i = bgSoundAudioListCount; i > 0; i--)
+        await Task.Run(() =>
         {
-            currentBGSoundIndex = currentBGSoundIndex > maxBGSoundIndex ? 0 : currentBGSoundIndex + 1;
-            if (!bgSoundAudioList[currentBGSoundIndex].isPlaying)
+            int soundFileExtensionLength = soundFileExtension.Length;
+            int start = (int)(value * divideThreadCount * pathes.Count);
+            int end = (int)((value + 1) * divideThreadCount * pathes.Count);
+            for (int i = start; i < end; i++)
             {
-                bgSoundAudioList[currentBGSoundIndex].PlayOneShot(bgSoundClip, bgmVolume);
-                return;
+                string keySoundFilePath = BMSGameManager.header.musicFolderPath + pathes[i].Value;
+                for (int j = 0; j < soundFileExtensionLength; j++)
+                {
+                    if (!File.Exists(keySoundFilePath + soundFileExtension[j])) { continue; }
+                    var keySound = new FMOD.Sound();
+                    coreSystem.createSound(keySoundFilePath + soundFileExtension[j], FMOD.MODE.CREATESAMPLE | FMOD.MODE._2D, out keySound);
+                    keySoundArray[pathes[i].Key] = keySound;
+                    break;
+                }
+                lock (threadLock)
+                {
+                    BMSGameManager.currentLoading++;
+                }
             }
-        }
+            lock (threadLock)
+            {
+                isPrepared++;
+            }
+        });
     }
 
-    public void DividePlayingAudio()
+    public void PlayKeySound(int keyIndex)
     {
-        for (int i = channelCount - 1; i >= 0; i--)
-        {
-            if (keySoundAudioList[i].isPlaying)
-            {
-                playingAudioList.Add(keySoundAudioList[i]);
-                keySoundAudioList.RemoveAt(i);
-                keySoundAudioListCount--;
-                maxKeySoundIndex--;
-            }
-            if (bgSoundAudioList[i].isPlaying)
-            {
-                playingAudioList.Add(bgSoundAudioList[i]);
-                bgSoundAudioList.RemoveAt(i);
-                bgSoundAudioListCount--;
-                maxBGSoundIndex--;
-            }
-        }
+        coreSystem.playSound(keySoundArray[keyIndex], channelGroup, true, out keySoundChannel);
+        keySoundChannel.setVolume(keySoundVolume);
+        keySoundChannel.setPaused(false);
     }
 
-    public bool IsPlayingAudioClip()
+    public void PlayKeySoundEnd(int keyIndex)
     {
-        int audioListCount = playingAudioList.Count;
-        for (int i = 0; i < audioListCount; i++)
-        {
-            if (playingAudioList[i].isPlaying) { return true; }
-        }
-        return false;
+        coreSystem.playSound(keySoundArray[keyIndex], channelGroup, true, out endChannel);
+        endChannel.setVolume(keySoundVolume);
+        endChannel.setPaused(false);
+    }
+
+    public void PlayBGM(int keyIndex)
+    {
+        coreSystem.playSound(keySoundArray[keyIndex], channelGroup, true, out bgmChannel);
+        bgmChannel.setVolume(bgmVolume);
+        bgmChannel.setPaused(false);
+    }
+
+    public bool IsPlayingAudio()
+    {
+        bool isKeySoundChannelPlaying, isBGMChannelPlaying;
+        keySoundChannel.isPlaying(out isKeySoundChannelPlaying);
+        bgmChannel.isPlaying(out isBGMChannelPlaying);
+        if (isKeySoundChannelPlaying || isBGMChannelPlaying) { return true; }
+        else { return false; }
     }
 
     public void AudioAllStop()
     {
-        for (int i = 0; i < keySoundAudioListCount; i++) { keySoundAudioList[i].Stop(); }
-        for (int i = 0; i < bgSoundAudioListCount; i++) { bgSoundAudioList[i].Stop(); }
+        channelGroup.stop();
+    }
+
+    private void OnDestroy()
+    {
+        for (int i = pathes.Count - 1; i >= 0; i--)
+        {
+            keySoundArray[pathes[i].Key].release();
+        }
+        channelGroup.release();
     }
 }
