@@ -20,6 +20,8 @@ public class KeyInput : MonoBehaviour
     private InputAction funcGameRestartAction;
     private InputAction funcSpeedUpAction;
     private InputAction funcSpeedDownAction;
+    private InputAction funcSpeedUp2Action;
+    private InputAction funcSpeedDown2Action;
     private InputAction funcJudgeAdjUpAction;
     private InputAction funcJudgeAdjDownAction;
 
@@ -38,8 +40,10 @@ public class KeyInput : MonoBehaviour
 
         funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
         funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");
-        funcSpeedUpAction = new InputAction("FuncSpeedUp", InputActionType.Button, "<Keyboard>/F2");
-        funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, "<Keyboard>/F1");
+        funcSpeedUpAction = new InputAction("FuncSpeedUp", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedUp1")}");
+        funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedDown1")}");
+        funcSpeedUp2Action = new InputAction("FuncSpeedUp2", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedUp2")}");
+        funcSpeedDown2Action = new InputAction("FuncSpeedDown2", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedDown2")}");
         funcJudgeAdjUpAction = new InputAction("FuncJudgeAdjUp", InputActionType.Button, "<Keyboard>/F8");
         funcJudgeAdjDownAction = new InputAction("FuncJudgeAdjDown", InputActionType.Button, "<Keyboard>/F7");
     }
@@ -86,6 +90,8 @@ public class KeyInput : MonoBehaviour
         funcGameRestartAction.started += ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started += ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-1); };
+        funcSpeedUp2Action.started += ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };
+        funcSpeedDown2Action.started += ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
         funcJudgeAdjUpAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
         funcJudgeAdjDownAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
 
@@ -93,6 +99,8 @@ public class KeyInput : MonoBehaviour
         funcGameRestartAction.Enable();
         funcSpeedUpAction.Enable();
         funcSpeedDownAction.Enable();
+        funcSpeedUp2Action.Enable();
+        funcSpeedDown2Action.Enable();
         funcJudgeAdjUpAction.Enable();
         funcJudgeAdjDownAction.Enable();
     }
@@ -112,19 +120,25 @@ public class KeyInput : MonoBehaviour
         funcGameRestartAction.started -= ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };
-        funcJudgeAdjUpAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
-        funcJudgeAdjDownAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
+        funcSpeedUp2Action.started -= ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };
+        funcSpeedDown2Action.started -= ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
+        funcJudgeAdjUpAction.started -= ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
+        funcJudgeAdjDownAction.started -= ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
 
         funcGameEndAction.Disable();
         funcGameRestartAction.Disable();
         funcSpeedUpAction.Disable();
         funcSpeedDownAction.Disable();
+        funcSpeedUp2Action.Disable();
+        funcSpeedDown2Action.Disable();
         funcJudgeAdjUpAction.Disable();
         funcJudgeAdjDownAction.Disable();
         funcGameEndAction = null;
         funcGameRestartAction = null;
         funcSpeedUpAction = null;
         funcSpeedDownAction = null;
+        funcSpeedUp2Action = null;
+        funcSpeedDown2Action = null;
         funcJudgeAdjUpAction = null;
         funcJudgeAdjDownAction = null;
     }

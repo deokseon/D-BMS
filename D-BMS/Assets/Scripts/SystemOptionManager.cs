@@ -46,6 +46,7 @@ public class SystemOptionManager : MonoBehaviour
     [SerializeField]
     private GameObject waitKeyInputPanel;
 
+    private readonly string[] keySettingString = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "SpeedUp1", "SpeedDown1", "SpeedUp2", "SpeedDown2" };
     bool isChanging;
 
     private void Awake()
@@ -62,7 +63,7 @@ public class SystemOptionManager : MonoBehaviour
         bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume");
         SetBGMVolumeText();
         SetAssistKeyUseText();
-        for (int i = 0; i < 6; i++) { SetKeyText(i); }
+        for (int i = 0; i < keyText.Length; i++) { SetKeyText(i); }
         StartCoroutine(PrepareVideo());
     }
 
@@ -257,7 +258,7 @@ public class SystemOptionManager : MonoBehaviour
         isChanging = true;
         waitKeyInputPanel.SetActive(true);
 
-        string key = PlayerPrefs.GetString($"Key{index + 1}");
+        string key = PlayerPrefs.GetString(keySettingString[index]);
 
         float timer = 0.0f;
         while (isChanging)
@@ -300,6 +301,15 @@ public class SystemOptionManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.KeypadMultiply)) { key = "NumpadMultiply"; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.KeypadPeriod)) { key = "NumpadPeriod"; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.KeypadPlus)) { key = "NumpadPlus"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F1)) { key = "F1"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F2)) { key = "F2"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F3)) { key = "F3"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F4)) { key = "F4"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F6)) { key = "F6"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F9)) { key = "F9"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F10)) { key = "F10"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F11)) { key = "F11"; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F12)) { key = "F12"; isChanging = false; }
             else if (Input.anyKeyDown)
             {
                 for (int i = 0; i < 26; i++)
@@ -340,9 +350,9 @@ public class SystemOptionManager : MonoBehaviour
         if (timer < 10.0f)
         {
             bool isDuplicate = false;
-            for (int i = 1; i < 7; i++)
+            for (int i = 0; i < keyText.Length; i++)
             {
-                if (key.CompareTo(PlayerPrefs.GetString($"Key{i}")) == 0)
+                if (key.CompareTo(PlayerPrefs.GetString(keySettingString[i])) == 0)
                 {
                     isDuplicate = true;
                     break;
@@ -350,7 +360,7 @@ public class SystemOptionManager : MonoBehaviour
             }
             if (!isDuplicate)
             {
-                PlayerPrefs.SetString($"Key{index + 1}", key);
+                PlayerPrefs.SetString(keySettingString[index], key);
             }
         }
 
@@ -360,6 +370,6 @@ public class SystemOptionManager : MonoBehaviour
 
     private void SetKeyText(int index)
     {
-        keyText[index].text = PlayerPrefs.GetString($"Key{index + 1}");
+        keyText[index].text = PlayerPrefs.GetString(keySettingString[index]);
     }
 }

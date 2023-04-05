@@ -61,6 +61,10 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetString("Key4", "K");
             PlayerPrefs.SetString("Key5", "L");
             PlayerPrefs.SetString("Key6", "G");
+            PlayerPrefs.SetString("SpeedUp1", "F2");
+            PlayerPrefs.SetString("SpeedDown1", "F1");
+            PlayerPrefs.SetString("SpeedUp2", "F10");
+            PlayerPrefs.SetString("SpeedDown2", "F9");
         }
     }
 

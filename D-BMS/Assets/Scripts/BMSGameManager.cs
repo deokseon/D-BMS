@@ -791,7 +791,7 @@ public class BMSGameManager : MonoBehaviour
         {
             if (barList[i].model == null) { break; }
 
-            barList[i].modelTransform.localPosition = new Vector3(-6.56f, (float)(barList[i].beat * gameSpeed), 0.0f);
+            barList[i].modelTransform.localPosition = new Vector3(-6.111f, (float)(barList[i].beat * gameSpeed), 0.0f);
         }
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed), 0.0f);
     }
