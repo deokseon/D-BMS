@@ -225,15 +225,20 @@ public class BMSGameManager : MonoBehaviour
         if (isPaused || isClear) { yield break; }
 
         stopwatch.Stop();
+        videoPlayer.Pause();
         isPaused = true;
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
         StopCoroutine(coSongEndCheck);
-        if (videoPlayer.isPlaying) { videoPlayer.Pause(); videoPlayer.time = 0.0d; }
         yield return wait1Sec;
 
+        if (isBGAVideoSupported)
+        {
+            videoPlayer.Stop();
+            videoPlayer.Prepare();
+            yield return new WaitUntil(() => videoPlayer.isPrepared);
+        }
         ReturnAllNotes();
-        gameUIManager.bga.texture = null;
         gameUIManager.UpdateSongEndText(0, 0, 0, false);
         bmsResult = null;
         pattern = null;
@@ -370,8 +375,14 @@ public class BMSGameManager : MonoBehaviour
 
         while (bgaChangeListCount > 0 && bgaChangeList[bgaChangeListCount - 1].timing - ((!bgaChangeList[bgaChangeListCount - 1].isPic) ? 0.4 : 0) <= currentTime)
         {
-            if (isBGAVideoSupported && !bgaChangeList[bgaChangeListCount - 1].isPic) { videoPlayer.Play(); }
-            else { gameUIManager.ChangeBGA(bgaChangeList[bgaChangeListCount - 1].key); }
+            if (isBGAVideoSupported && !bgaChangeList[bgaChangeListCount - 1].isPic) 
+            { 
+                videoPlayer.Play();
+            }
+            else 
+            {
+                gameUIManager.ChangeBGA(bgaChangeList[bgaChangeListCount - 1].key);
+            }
             --bgaChangeListCount;
         }
 
