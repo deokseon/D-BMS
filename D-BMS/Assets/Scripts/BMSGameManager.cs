@@ -145,7 +145,7 @@ public class BMSGameManager : MonoBehaviour
 
         bmsResult.noteCount = pattern.noteCount;
         bmsResult.judgeList = new double[bmsResult.noteCount + 1];
-        bmsResult.scoreBarArray = new float[bmsResult.noteCount + 1]; bmsResult.scoreBarArray[0] = 0.0f;
+        bmsResult.scoreBarArray = new float[bmsResult.noteCount + 2]; bmsResult.scoreBarArray[0] = 0.0f;
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] = 200.0d; }
 
         coSongEndCheck = StartCoroutine(SongEndCheck());
@@ -662,7 +662,14 @@ public class BMSGameManager : MonoBehaviour
                                     (float)currentScore, maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
+        {
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount, true);
+            bmsResult.maxCombo = gameUIManager.maxCombo;
+            bmsResult.score = currentScore + bmsResult.maxCombo;
+            gameUIManager.UpdateScore(bmsResult, currentCount + 1, gauge.hp, (float)(accuracySum * divideTable[currentCount]),
+                                        (float)bmsResult.score, maxScoreTable[currentCount + 1]);
+            bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
+        }
     }
 
     private IEnumerator TimerStart()
@@ -696,10 +703,6 @@ public class BMSGameManager : MonoBehaviour
 
         keyInput.KeyDisable();
 
-        bmsResult.maxCombo = gameUIManager.maxCombo;
-        bmsResult.score = currentScore + bmsResult.maxCombo;
-        bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
-
         if (isClear) { yield return wait3Sec; }
         else { yield return new WaitForSeconds(1.0f); }
         gameUIManager.FadeIn();
@@ -728,7 +731,7 @@ public class BMSGameManager : MonoBehaviour
         divideTable = new double[len];
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
 
-        maxScoreTable = new float[len];
+        /*maxScoreTable = new float[len];
         if (SongSelectUIManager.songRecordData.rankIndex == 11)
         {
             for (int i = 1; i < len; i++) { maxScoreTable[i] = 0; }
@@ -736,6 +739,15 @@ public class BMSGameManager : MonoBehaviour
         else
         {
             for (int i = 1; i < len; i++) { maxScoreTable[i] = SongSelectUIManager.songRecordData.scoreBarList[i]; }
+        }*/
+        maxScoreTable = new float[len + 1];
+        if (SongSelectUIManager.songRecordData.rankIndex == 11)
+        {
+            for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = 0; }
+        }
+        else
+        {
+            for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = SongSelectUIManager.songRecordData.scoreBarList[i]; }
         }
 
         gameUIManager.MakeStringTable();
