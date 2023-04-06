@@ -155,7 +155,7 @@ public class BMSGameManager : MonoBehaviour
         {
             keyInput.KeySetting();
 
-            koolAddScore = 1100000.0d / pattern.noteCount * 1000.0d;
+            koolAddScore = 1100000.0d / pattern.noteCount;
             coolAddScore = koolAddScore * 0.7d;
             goodAddScore = koolAddScore * 0.2d;
 
@@ -659,7 +659,7 @@ public class BMSGameManager : MonoBehaviour
         else if (gauge.hp <= 0.0f) { StartCoroutine(GameEnd(false)); }
 
         gameUIManager.UpdateScore(bmsResult, currentCount, gauge.hp, (float)(accuracySum * divideTable[currentCount]), 
-                                    (float)(currentScore * 0.001d), maxScoreTable[currentCount]);
+                                    (float)currentScore, maxScoreTable[currentCount]);
 
         if (currentCount >= pattern.noteCount)
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount, true);
@@ -696,9 +696,9 @@ public class BMSGameManager : MonoBehaviour
 
         keyInput.KeyDisable();
 
-        bmsResult.accuracy = accuracySum * divideTable[currentCount] * 0.01f;
-        bmsResult.score = currentScore * 0.001f;
         bmsResult.maxCombo = gameUIManager.maxCombo;
+        bmsResult.score = currentScore + bmsResult.maxCombo;
+        bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
 
         if (isClear) { yield return wait3Sec; }
         else { yield return new WaitForSeconds(1.0f); }

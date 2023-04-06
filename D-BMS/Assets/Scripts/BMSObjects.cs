@@ -114,9 +114,9 @@ public class Gauge
     public Gauge()
     {
         hp = 1.0f;
-        koolHealAmount = 0.003f;
-        coolHealAmount = 0.002f;
-        goodHealAmount = 0.001f;
+        koolHealAmount = 0.002f;
+        coolHealAmount = 0.0014f;
+        goodHealAmount = 0.0004f;
         missDamage = 0.02f;
         failDamage = 0.05f;
     }

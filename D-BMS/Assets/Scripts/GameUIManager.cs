@@ -75,7 +75,7 @@ public class GameUIManager : MonoBehaviour
     private Animator[] earlyLateEffectAnimator;
 
     private int currentIdx;
-    private float[] yPos;
+    private readonly float[] yPos = { -90.0f, 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
     [SerializeField]
     private Sprite[] rank;
     [SerializeField]
@@ -180,7 +180,6 @@ public class GameUIManager : MonoBehaviour
 
         currentIdx = -1;
         rankImageTransform = rankImage.transform;
-        yPos = new float[11] { -90.0f, 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
 
         endInfo.SetActive(false);
 
@@ -370,7 +369,6 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateScore(BMSResult res, int currentCount, float hp, float accuracy, float score, float maxScore)
     {
-        //hpBar.value = hp;
         hpBarMask.localScale = new Vector3(1.0f, hp, 1.0f);
 
         int frontAC = (int)(accuracy);
