@@ -8972,8 +8972,9 @@ MonoBehaviour:
   frontScoreText: {fileID: 1190213295}
   backScoreText: {fileID: 1668032310}
   currentComboText: {fileID: 1167930028}
+  currentComboObject: {fileID: 1167930025}
   comboTextAnimator: {fileID: 1167930027}
-  comboText: {fileID: 1167930028}
+  comboText: {fileID: 499761236}
   comboAnimator: {fileID: 499761238}
   maxComboText: {fileID: 255952285}
   koolText: {fileID: 1754182989}

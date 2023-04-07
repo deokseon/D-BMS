@@ -20,9 +20,11 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI currentComboText;
     [SerializeField]
+    private GameObject currentComboObject;
+    [SerializeField]
     private Animator comboTextAnimator;
     [SerializeField]
-    private TextMeshProUGUI comboText;
+    private GameObject comboText;
     [SerializeField]
     private Animator comboAnimator;
     [SerializeField]
@@ -317,14 +319,19 @@ public class GameUIManager : MonoBehaviour
     {
         if (combo != 0)
         {
+            if (combo == 1)
+            {
+                currentComboObject.SetActive(true);
+                comboText.SetActive(true);
+            }
             currentComboText.text = (combo < 1000 ? str0to999Table[combo] : str0000to9999Table[combo]);
             comboTextAnimator.SetTrigger(hashComboText);
             comboAnimator.SetTrigger(hashCombo);
         }
         else
         {
-            currentComboText.enabled = false;
-            comboText.enabled = false;
+            currentComboObject.SetActive(false);
+            comboText.SetActive(false);
         }
 
         if (combo >= maxCombo)
