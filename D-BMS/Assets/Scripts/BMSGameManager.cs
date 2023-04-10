@@ -492,10 +492,15 @@ public class BMSGameManager : MonoBehaviour
         if (result <= JudgeType.MISS) { combo = -1; }
         else { bmsResult.judgeList[currentCount] = diff; }
 
-        if (result != JudgeType.FAIL && (diff > earlyLateThreshold || diff < -earlyLateThreshold)) { gameUIManager.UpdateFSText((float)diff, idx < 2 ? 0 : 1); }
-
         UpdateResult(result);
         gameUIManager.TextUpdate(bmsResult, ++combo, result, idx);
+
+        if (result == JudgeType.FAIL) { return; }
+
+        if ((earlyLateThreshold == 22 && result != JudgeType.KOOL) || (earlyLateThreshold < 22 && (diff > earlyLateThreshold || diff < -earlyLateThreshold)))
+        { 
+            gameUIManager.UpdateFSText((float)diff, idx < 2 ? 0 : 1);
+        }
     }
 
     private void HandleLongNoteTick(List<Note> noteList, int idx)
