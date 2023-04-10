@@ -7,7 +7,7 @@ BMS File (Split compression)<br/>
 [split 2](https://drive.google.com/file/d/1Y1n4U-R1A3rIdqpTvkPS4_PCTtNCN4fJ/view?usp=sharing)
 
 Please receive both files and extract them.<br/><br/>
-[Additional music and pattern 1](https://drive.google.com/file/d/1hgrlDbFu2_czRKCDzIPxmnvHVYytRTSN/view?usp=sharing)
+[Additional BMS File 1](https://drive.google.com/file/d/1hgrlDbFu2_czRKCDzIPxmnvHVYytRTSN/view?usp=sharing)
 
 <br/><br/>
 
