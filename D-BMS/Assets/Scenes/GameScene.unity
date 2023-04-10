@@ -4116,7 +4116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxNoteCount: 16
   maxLongNoteCount: 5
-  maxBarCount: 15
+  maxBarCount: 30
   noteSprites1:
   - {fileID: 21300000, guid: b6472e781e71aa94196c9f502c3ac38e, type: 3}
   - {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
