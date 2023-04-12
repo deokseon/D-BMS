@@ -1,6 +1,6 @@
-Unity RhythmGame(only 5 key, bms).<br/><br/>
+Unity RhythmGame ( EZ2ON REBOOT:R Clone Project, only 5key mode ).<br/><br/>
 This program is made for studying.<br/><br/>
-Most of this game referred to EZ2ON. But I used the music of BMS.<br/><br/>
+I used the music of BMS.<br/><br/>
 BMS File (Split compression)<br/>
 
 [split 1](https://drive.google.com/file/d/1zPiAg2gfI2FFOD8rXqoE91DwVGHalcvD/view?usp=sharing)<br/>
