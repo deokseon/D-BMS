@@ -9,8 +9,6 @@ BMS File (Split compression)<br/>
 Please receive both files and extract them.<br/><br/>
 [Additional BMS File 1](https://drive.google.com/file/d/1hgrlDbFu2_czRKCDzIPxmnvHVYytRTSN/view?usp=sharing)
 
-https://drive.google.com/file/d/1Yeavmd7bdzc4EwpBgSUwlz9feiEakCIF/view?usp=sharing
-
 <br/><br/>
 
 # Open source licenses
