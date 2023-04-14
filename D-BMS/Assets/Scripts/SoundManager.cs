@@ -11,7 +11,6 @@ public class SoundManager : MonoBehaviour
     public int isPrepared;
     private const int keySoundMaxCount = 1300;
     public int threadCount;
-    private float divideThreadCount;
 
     private float keySoundVolume;
     private float bgmVolume;
@@ -31,7 +30,6 @@ public class SoundManager : MonoBehaviour
     {
         isPrepared = 0;
         threadCount = Mathf.Max(SystemInfo.processorCount - 2, 1);
-        divideThreadCount = 1.0f / threadCount;
 
         keySoundVolume = PlayerPrefs.GetFloat("KeySoundVolume") * 0.7f + 0.3f;
         bgmVolume = PlayerPrefs.GetFloat("BGMVolume") * 0.7f + 0.3f;
@@ -57,8 +55,8 @@ public class SoundManager : MonoBehaviour
         await Task.Run(() =>
         {
             int soundFileExtensionLength = soundFileExtension.Length;
-            int start = (int)(value * divideThreadCount * pathes.Count);
-            int end = (int)((value + 1) * divideThreadCount * pathes.Count);
+            int start = (int)(value / (double)threadCount * pathes.Count);
+            int end = (int)((value + 1) / (double)threadCount * pathes.Count);
             for (int i = start; i < end; i++)
             {
                 string keySoundFilePath = BMSGameManager.header.musicFolderPath + pathes[i].Value;

@@ -75,8 +75,8 @@ public class BMSParser : MonoBehaviour
         exBpms = null;
         lineIndex = null;
         pattern = null;
-        exBpms = new Dictionary<string, double>();
-        lineIndex = new List<int>();
+        exBpms = new Dictionary<string, double>(50);
+        lineIndex = new List<int>(5);
         pattern = new BMSPattern();
         SetLineIndex();
         GetFile();

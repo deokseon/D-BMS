@@ -998,7 +998,6 @@ GameObject:
   - component: {fileID: 1269568473}
   - component: {fileID: 1269568472}
   - component: {fileID: 1269568474}
-  - component: {fileID: 1269568475}
   - component: {fileID: 1269568471}
   m_Layer: 0
   m_Name: Main Camera
@@ -1094,18 +1093,6 @@ MonoBehaviour:
   screen: {fileID: 419897}
   videoPlayer: {fileID: 829899010}
   startButton: {fileID: 897017517}
---- !u!114 &1269568475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1269568470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d894072e3677d544ea86c88b3e285c87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1596302470
 GameObject:
   m_ObjectHideFlags: 0

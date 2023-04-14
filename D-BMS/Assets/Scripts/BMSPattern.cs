@@ -16,19 +16,19 @@ public class BMSPattern
 
     public BMSPattern()
     {
-        bgSounds = new List<Note>();
-        bpms = new List<BPM>() { Capacity = 5 };
-        beatCTable = new Dictionary<int, double>();
-        bgVideoTable = new Dictionary<string, string>();
-        bgaChanges = new List<BGChange>() { Capacity = 10 };
+        bgSounds = new List<Note>(5000);
+        bpms = new List<BPM>(50);
+        beatCTable = new Dictionary<int, double>(100);
+        bgVideoTable = new Dictionary<string, string>(5);
+        bgaChanges = new List<BGChange>(1000);
         lines = new Line[5];
         for (int i = 0; i < 5; i++) { lines[i] = new Line(); }
 
         barLine = new Line();
         longNote = new List<Note>[5];
-        for (int i = 0; i < 5; i++) { longNote[i] = new List<Note>(); }
+        for (int i = 0; i < 5; i++) { longNote[i] = new List<Note>(500); }
         normalNote = new List<Note>[5];
-        for (int i = 0; i < 5; i++) { normalNote[i] = new List<Note>(); }
+        for (int i = 0; i < 5; i++) { normalNote[i] = new List<Note>(1000); }
     }
 
     public void AddBGAChange(int bar, double beat, double beatLength, string key, bool isPic = false)

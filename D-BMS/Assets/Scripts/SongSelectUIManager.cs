@@ -120,6 +120,8 @@ public class SongSelectUIManager : MonoBehaviour
         categoryToggles[currentCategoryIndex].isOn = true;
         categoryToggleGroup.allowSwitchOff = false;
 
+        StartCoroutine(CoSongSelectInit());
+
         wait100ms = new WaitForSeconds(0.1f);
         isUpArrowPressed = false;
         isDownArrowPressed = false;
@@ -127,6 +129,13 @@ public class SongSelectUIManager : MonoBehaviour
         findSequence = 0;
 
         StartCoroutine(CoFadeOut());
+    }
+
+    private IEnumerator CoSongSelectInit()
+    {
+        MoveCurrentIndex(currentIndex + 1);
+        yield return null;
+        MoveCurrentIndex(currentIndex - 1);
     }
 
     private IEnumerator CoFadeOut()

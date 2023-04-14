@@ -60,7 +60,7 @@ public class SaveData
         rankIndex = 0;
         score = 0;
         accuracy = 0;
-        scoreBarList = new List<float>();
+        scoreBarList = new List<float>(4000);
     }
 }
 

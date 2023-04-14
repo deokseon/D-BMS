@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 using UnityEngine.Video;
 
 public class BMSGameManager : MonoBehaviour
@@ -91,6 +92,8 @@ public class BMSGameManager : MonoBehaviour
     private List<Note>[] normalNoteList;
     private List<Note> barList;
 
+    Thread bgmThread;
+
     public float CalulateSpeed()
     {
         return (userSpeed * 13.35f * divideBPM);
@@ -163,7 +166,7 @@ public class BMSGameManager : MonoBehaviour
 
             gauge = new Gauge();
 
-            Time.fixedDeltaTime = 0.001f;
+            //Time.fixedDeltaTime = 0.001f;
 
             gameUIManager.SetLoading();
             totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count;
@@ -366,6 +369,9 @@ public class BMSGameManager : MonoBehaviour
         wait3Sec = new WaitForSeconds(3.0f);
         wait1Sec = new WaitForSeconds(1.5f);
 
+        bgmThread = new Thread(BGMPlayThread);
+        bgmThread.Start();
+
         StartCoroutine(PreLoad(false));
     }
 
@@ -385,8 +391,6 @@ public class BMSGameManager : MonoBehaviour
             }
             --bgaChangeListCount;
         }
-
-        PlayNotes();
 
         long tempMilliSeconds = stopwatch.ElapsedMilliseconds;
         double frameTime = (tempMilliSeconds - currentMilliSeconds) * 0.001d;
@@ -433,16 +437,22 @@ public class BMSGameManager : MonoBehaviour
         avg *= divide60;
         currentBeat += avg;
         currentScrollTime += frameTime;
+
+        PlayNotes();
+
         noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed) + judgeLineYPosition, 0.0f);
     }
 
-    private void FixedUpdate()
+    private void BGMPlayThread()
     {
-        if (isPaused) { return; }
-        while (bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= stopwatch.ElapsedMilliseconds)  // 배경음 재생
+        while (true)
         {
-            soundManager.PlayBGM(bgSoundsList[bgSoundsListCount - 1].keySound);
-            --bgSoundsListCount;
+            while (!isPaused && bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= stopwatch.ElapsedMilliseconds)  // 배경음 재생
+            {
+                soundManager.PlayBGM(bgSoundsList[bgSoundsListCount - 1].keySound);
+                --bgSoundsListCount;
+            }
+            Thread.Sleep(1);
         }
     }
 
@@ -527,10 +537,11 @@ public class BMSGameManager : MonoBehaviour
         {
             if (!isCurrentLongNote[i]) { continue; }
 
-            float longNoteNextYscale = ((float)(longNoteList[i][longNoteListCount[i] - 1].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength;
+            float longNoteNextYscale = ((float)(longNoteList[i][longNoteListCount[i] - 1].beat - (currentBeat + displayDelayCorrectionBeat)) * gameSpeed - longNoteOffset) * longNoteLength;
             if (longNoteNextYscale > 0)
             {
-                longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition = new Vector3(xPosition[i], (float)currentBeat * gameSpeed, 0.0f);
+                longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition = 
+                    new Vector3(xPosition[i], (float)(currentBeat + displayDelayCorrectionBeat) * gameSpeed, 0.0f);
                 longNoteList[i][longNoteListCount[i] - 2].modelTransform.localScale = new Vector3(0.3f, longNoteNextYscale, 1.0f);
             }
             else
@@ -837,6 +848,11 @@ public class BMSGameManager : MonoBehaviour
         PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
 
         StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
+    }
+
+    private void OnDestroy()
+    {
+        bgmThread.Abort();
     }
 
     public float GetLongNoteOffset() { return longNoteOffset; }

@@ -189,8 +189,8 @@ public class GameUIManager : MonoBehaviour
         wait1sec = new WaitForSecondsRealtime(1.0f);
         wait10ms = new WaitForSecondsRealtime(0.01f);
 
-        bgImageTable = new Dictionary<string, string>();
-        bgSprites = new Dictionary<string, Texture2D>();
+        bgImageTable = new Dictionary<string, string>(500);
+        bgSprites = new Dictionary<string, Texture2D>(500);
 
         scoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
         maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);

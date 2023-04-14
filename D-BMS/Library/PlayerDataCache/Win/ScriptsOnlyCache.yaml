@@ -6,7 +6,6 @@ ScriptsOnlyBuild:
     - BMSGameManager
     - BMSParser
     - Demo.InitOnStart
-    - FrameChecker
     - GameUIManager
     - GameplayOptionManager
     - KeyInput
@@ -18,6 +17,23 @@ ScriptsOnlyBuild:
     - StartSceneManager
     - SystemOptionManager
     - UIMouseClick
+    FMODUnity.dll:
+    - FMODUnity.PlatformAndroid
+    - FMODUnity.PlatformAppleTV
+    - FMODUnity.PlatformDefault
+    - FMODUnity.PlatformIOS
+    - FMODUnity.PlatformLinux
+    - FMODUnity.PlatformMac
+    - FMODUnity.PlatformMobileHigh
+    - FMODUnity.PlatformMobileLow
+    - FMODUnity.PlatformPlayInEditor
+    - FMODUnity.PlatformWebGL
+    - FMODUnity.PlatformWindows
+    - FMODUnity.Settings
+    - FMODUnity.StudioListener
+    FMODUnityEditor.dll:
+    - FMODUnity.EditorBankRef
+    - FMODUnity.EventCache
     HSVPicker.dll:
     - HSVPicker.BoxSlider
     - HSVPicker.ColorImage
@@ -103,8 +119,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 74
       Script: {instanceID: 0}
-    - Class: 81
-      Script: {instanceID: 0}
     - Class: 91
       Script: {instanceID: 0}
     - Class: 95
@@ -112,41 +126,41 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11350}
+      Script: {instanceID: 11470}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11498}
     - Class: 114
-      Script: {instanceID: 11590}
+      Script: {instanceID: 11738}
     - Class: 114
-      Script: {instanceID: 12026}
+      Script: {instanceID: 12196}
     - Class: 114
-      Script: {instanceID: 12476}
+      Script: {instanceID: 12682}
     - Class: 114
-      Script: {instanceID: 12506}
+      Script: {instanceID: 12712}
     - Class: 114
-      Script: {instanceID: 12624}
+      Script: {instanceID: 12844}
     - Class: 114
-      Script: {instanceID: 12726}
+      Script: {instanceID: 12948}
     - Class: 114
-      Script: {instanceID: 12982}
+      Script: {instanceID: 13226}
     - Class: 114
-      Script: {instanceID: 13084}
+      Script: {instanceID: 13336}
     - Class: 114
-      Script: {instanceID: 13558}
+      Script: {instanceID: 13494}
     - Class: 114
-      Script: {instanceID: 13746}
+      Script: {instanceID: 13842}
     - Class: 114
-      Script: {instanceID: 13942}
+      Script: {instanceID: 14042}
     - Class: 114
-      Script: {instanceID: 14276}
+      Script: {instanceID: 14248}
     - Class: 114
-      Script: {instanceID: 14326}
+      Script: {instanceID: 14610}
     - Class: 114
-      Script: {instanceID: 14902}
+      Script: {instanceID: 14662}
     - Class: 114
-      Script: {instanceID: 15044}
+      Script: {instanceID: 15414}
     - Class: 114
-      Script: {instanceID: 15234}
+      Script: {instanceID: 15610}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -167,6 +181,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 328
       Script: {instanceID: 0}
+    - Class: 331
+      Script: {instanceID: 0}
     - Class: 687078895
       Script: {instanceID: 0}
     Assets/Scenes/OptionScene.unity:
@@ -184,8 +200,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 74
       Script: {instanceID: 0}
-    - Class: 81
-      Script: {instanceID: 0}
     - Class: 91
       Script: {instanceID: 0}
     - Class: 95
@@ -193,33 +207,35 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11468}
     - Class: 114
-      Script: {instanceID: 11350}
+      Script: {instanceID: 11470}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11498}
     - Class: 114
-      Script: {instanceID: 11738}
+      Script: {instanceID: 11896}
     - Class: 114
-      Script: {instanceID: 12386}
+      Script: {instanceID: 12590}
     - Class: 114
-      Script: {instanceID: 12624}
+      Script: {instanceID: 12844}
     - Class: 114
-      Script: {instanceID: 13074}
+      Script: {instanceID: 13326}
     - Class: 114
-      Script: {instanceID: 13558}
+      Script: {instanceID: 13494}
     - Class: 114
-      Script: {instanceID: 13942}
+      Script: {instanceID: 13842}
     - Class: 114
-      Script: {instanceID: 14326}
+      Script: {instanceID: 14248}
     - Class: 114
-      Script: {instanceID: 14448}
+      Script: {instanceID: 14662}
     - Class: 114
-      Script: {instanceID: 14998}
+      Script: {instanceID: 14784}
     - Class: 114
-      Script: {instanceID: 15176}
+      Script: {instanceID: 15366}
     - Class: 114
-      Script: {instanceID: 15234}
+      Script: {instanceID: 15550}
+    - Class: 114
+      Script: {instanceID: 15610}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -257,8 +273,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 74
       Script: {instanceID: 0}
-    - Class: 81
-      Script: {instanceID: 0}
     - Class: 91
       Script: {instanceID: 0}
     - Class: 95
@@ -266,23 +280,23 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11350}
+      Script: {instanceID: 11470}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11498}
     - Class: 114
-      Script: {instanceID: 11652}
+      Script: {instanceID: 11804}
     - Class: 114
-      Script: {instanceID: 12624}
+      Script: {instanceID: 12844}
     - Class: 114
-      Script: {instanceID: 13558}
+      Script: {instanceID: 13494}
     - Class: 114
-      Script: {instanceID: 13942}
+      Script: {instanceID: 13842}
     - Class: 114
-      Script: {instanceID: 14326}
+      Script: {instanceID: 14248}
     - Class: 114
-      Script: {instanceID: 14902}
+      Script: {instanceID: 14662}
     - Class: 114
-      Script: {instanceID: 15176}
+      Script: {instanceID: 15550}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -316,8 +330,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 74
       Script: {instanceID: 0}
-    - Class: 81
-      Script: {instanceID: 0}
     - Class: 91
       Script: {instanceID: 0}
     - Class: 95
@@ -325,85 +337,85 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11346}
+      Script: {instanceID: 11466}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11468}
     - Class: 114
-      Script: {instanceID: 11350}
+      Script: {instanceID: 11470}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11498}
     - Class: 114
-      Script: {instanceID: 11598}
+      Script: {instanceID: 11746}
     - Class: 114
-      Script: {instanceID: 11730}
+      Script: {instanceID: 11888}
     - Class: 114
-      Script: {instanceID: 11738}
+      Script: {instanceID: 11896}
     - Class: 114
-      Script: {instanceID: 11858}
+      Script: {instanceID: 12018}
     - Class: 114
-      Script: {instanceID: 11894}
+      Script: {instanceID: 12054}
     - Class: 114
-      Script: {instanceID: 11898}
+      Script: {instanceID: 12060}
     - Class: 114
-      Script: {instanceID: 12002}
+      Script: {instanceID: 12172}
     - Class: 114
-      Script: {instanceID: 12030}
+      Script: {instanceID: 12200}
     - Class: 114
-      Script: {instanceID: 12144}
+      Script: {instanceID: 12328}
     - Class: 114
-      Script: {instanceID: 12196}
+      Script: {instanceID: 12382}
     - Class: 114
-      Script: {instanceID: 12624}
+      Script: {instanceID: 12844}
     - Class: 114
-      Script: {instanceID: 13242}
+      Script: {instanceID: 13494}
     - Class: 114
-      Script: {instanceID: 13522}
+      Script: {instanceID: 13510}
     - Class: 114
-      Script: {instanceID: 13558}
+      Script: {instanceID: 13806}
     - Class: 114
-      Script: {instanceID: 13700}
+      Script: {instanceID: 13842}
     - Class: 114
-      Script: {instanceID: 13708}
+      Script: {instanceID: 13996}
     - Class: 114
-      Script: {instanceID: 13824}
+      Script: {instanceID: 14004}
     - Class: 114
-      Script: {instanceID: 13846}
+      Script: {instanceID: 14126}
     - Class: 114
-      Script: {instanceID: 13938}
+      Script: {instanceID: 14148}
     - Class: 114
-      Script: {instanceID: 13942}
+      Script: {instanceID: 14244}
     - Class: 114
-      Script: {instanceID: 13984}
+      Script: {instanceID: 14248}
     - Class: 114
-      Script: {instanceID: 14172}
+      Script: {instanceID: 14292}
     - Class: 114
-      Script: {instanceID: 14326}
+      Script: {instanceID: 14502}
     - Class: 114
-      Script: {instanceID: 14332}
+      Script: {instanceID: 14662}
     - Class: 114
-      Script: {instanceID: 14410}
+      Script: {instanceID: 14668}
     - Class: 114
-      Script: {instanceID: 14448}
+      Script: {instanceID: 14746}
     - Class: 114
-      Script: {instanceID: 14902}
+      Script: {instanceID: 14784}
     - Class: 114
-      Script: {instanceID: 14910}
+      Script: {instanceID: 15276}
     - Class: 114
-      Script: {instanceID: 14918}
+      Script: {instanceID: 15284}
     - Class: 114
-      Script: {instanceID: 15052}
+      Script: {instanceID: 15422}
     - Class: 114
-      Script: {instanceID: 15094}
+      Script: {instanceID: 15468}
     - Class: 114
-      Script: {instanceID: 15176}
+      Script: {instanceID: 15550}
     - Class: 114
-      Script: {instanceID: 15196}
+      Script: {instanceID: 15572}
     - Class: 114
-      Script: {instanceID: 15234}
+      Script: {instanceID: 15610}
     - Class: 114
-      Script: {instanceID: 15270}
+      Script: {instanceID: 15652}
     - Class: 114
-      Script: {instanceID: 15320}
+      Script: {instanceID: 15702}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -439,8 +451,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 74
       Script: {instanceID: 0}
-    - Class: 81
-      Script: {instanceID: 0}
     - Class: 91
       Script: {instanceID: 0}
     - Class: 95
@@ -448,33 +458,57 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11468}
     - Class: 114
-      Script: {instanceID: 11350}
+      Script: {instanceID: 11470}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11498}
     - Class: 114
-      Script: {instanceID: 12624}
+      Script: {instanceID: 12072}
     - Class: 114
-      Script: {instanceID: 12686}
+      Script: {instanceID: 12212}
     - Class: 114
-      Script: {instanceID: 12752}
+      Script: {instanceID: 12464}
     - Class: 114
-      Script: {instanceID: 13558}
+      Script: {instanceID: 12612}
     - Class: 114
-      Script: {instanceID: 13942}
+      Script: {instanceID: 12732}
     - Class: 114
-      Script: {instanceID: 13962}
+      Script: {instanceID: 12844}
     - Class: 114
-      Script: {instanceID: 14326}
+      Script: {instanceID: 12908}
     - Class: 114
-      Script: {instanceID: 14448}
+      Script: {instanceID: 12974}
     - Class: 114
-      Script: {instanceID: 14772}
+      Script: {instanceID: 13032}
     - Class: 114
-      Script: {instanceID: 14902}
+      Script: {instanceID: 13494}
     - Class: 114
-      Script: {instanceID: 15176}
+      Script: {instanceID: 13676}
+    - Class: 114
+      Script: {instanceID: 13842}
+    - Class: 114
+      Script: {instanceID: 14248}
+    - Class: 114
+      Script: {instanceID: 14268}
+    - Class: 114
+      Script: {instanceID: 14512}
+    - Class: 114
+      Script: {instanceID: 14662}
+    - Class: 114
+      Script: {instanceID: 14784}
+    - Class: 114
+      Script: {instanceID: 14862}
+    - Class: 114
+      Script: {instanceID: 14876}
+    - Class: 114
+      Script: {instanceID: 14998}
+    - Class: 114
+      Script: {instanceID: 15132}
+    - Class: 114
+      Script: {instanceID: 15550}
+    - Class: 114
+      Script: {instanceID: 15634}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -540,6 +574,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_Dropdown
+  - hash:
+      serializedVersion: 2
+      Hash: 8eac8adc610440bd9452016244dbc800
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformGroup
   - hash:
       serializedVersion: 2
       Hash: e7a73f5f78ba6445195ec23b74a1ce2d
@@ -644,7 +684,7 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: 21b90d457a9a028ba484aaf185c18be9
+      Hash: a8d7ebd8e9eb93b34411071170c27b9b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameplayOptionManager
@@ -654,6 +694,12 @@ ScriptsOnlyBuild:
     assemblyName: HSVPicker.dll
     namespaceName: HSVPicker
     className: ColorLabel
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformMobileLow
   - hash:
       serializedVersion: 2
       Hash: 7ab0e790220bdca831fdd886b339039d
@@ -686,7 +732,7 @@ ScriptsOnlyBuild:
     className: SignalAsset
   - hash:
       serializedVersion: 2
-      Hash: b9720a8fe178124461cf89929b913a36
+      Hash: ffe24ab27443e2e127b2f4e184f22901
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameUIManager
@@ -710,10 +756,28 @@ ScriptsOnlyBuild:
     className: PhysicsRaycaster
   - hash:
       serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformAndroid
+  - hash:
+      serializedVersion: 2
       Hash: 295831406da5907d41f58d84acd55d8d
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem.Editor
     className: InputActionEditorWindow
+  - hash:
+      serializedVersion: 2
+      Hash: 572954c73e9d2fe9da89a3413a43c19f
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: StudioEventEmitter
+  - hash:
+      serializedVersion: 2
+      Hash: d6bd3e3da428605ac1913dea0926b4a1
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: StudioGlobalParameterTrigger
   - hash:
       serializedVersion: 2
       Hash: 751bb3c35e1fb4d144cb7fa1f88573ea
@@ -752,6 +816,12 @@ ScriptsOnlyBuild:
     className: CinemachinePixelPerfect
   - hash:
       serializedVersion: 2
+      Hash: 5675c23c6654d1b9bee1eef9394b2571
+    assemblyName: FMODUnityResonance.dll
+    namespaceName: FMODUnityResonance
+    className: FmodResonanceAudioRoom
+  - hash:
+      serializedVersion: 2
       Hash: ef5c43f921427d03730f6ea4c848f07d
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
@@ -776,6 +846,12 @@ ScriptsOnlyBuild:
     className: TrackedDeviceRaycaster
   - hash:
       serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformWebGL
+  - hash:
+      serializedVersion: 2
       Hash: 5ab533713adae59372fb3e10a585c186
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -794,6 +870,12 @@ ScriptsOnlyBuild:
     className: Mask
   - hash:
       serializedVersion: 2
+      Hash: 3b2e06681ae90d397c7bb251b54e3ca7
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: Settings
+  - hash:
+      serializedVersion: 2
       Hash: caa533b001ae39b864ba8425019e2268
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
@@ -806,10 +888,22 @@ ScriptsOnlyBuild:
     className: InputSystemUIInputModule
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 0ab8465b2701ca566b61ead253a19f7e
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SoundManager
+  - hash:
+      serializedVersion: 2
+      Hash: d454849c27750c3b204d5a340b2b0bb9
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: FMODEventPlayable
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformLinux
   - hash:
       serializedVersion: 2
       Hash: 927b86349956b8b257393f77d0a14fed
@@ -866,7 +960,7 @@ ScriptsOnlyBuild:
     className: PlayerInputManager
   - hash:
       serializedVersion: 2
-      Hash: 0b2155f20369849e149a1e55548daccd
+      Hash: 4757313b7f86478546d1d9aed834c5be
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ObjectPool
@@ -890,10 +984,22 @@ ScriptsOnlyBuild:
     className: PlayerInput
   - hash:
       serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformAppleTV
+  - hash:
+      serializedVersion: 2
       Hash: 6be939d6f0aad748aa63a8815400aaa2
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem
     className: InputSettings
+  - hash:
+      serializedVersion: 2
+      Hash: d04e7f67e2d538deb017e7ab282a80dc
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: FMODEventTrack
   - hash:
       serializedVersion: 2
       Hash: cd0ecdca0166232906c6f2df9dddc3d3
@@ -956,6 +1062,12 @@ ScriptsOnlyBuild:
     className: SpriteSkinEntity
   - hash:
       serializedVersion: 2
+      Hash: ee68e3bff30f0a885ee58541a50a1bf0
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: StudioListener
+  - hash:
+      serializedVersion: 2
       Hash: bfeb96683d3796cadaab890bfdfe92be
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem.Editor
@@ -990,6 +1102,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem.UI
     className: BaseInputOverride
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformMobileHigh
   - hash:
       serializedVersion: 2
       Hash: c1f5356fcd27668ddc25078e27f9828d
@@ -1172,6 +1290,12 @@ ScriptsOnlyBuild:
     className: HexColorField
   - hash:
       serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformPlayInEditor
+  - hash:
+      serializedVersion: 2
       Hash: 76aef43e801605d1829c8805eeee135c
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem
@@ -1220,10 +1344,40 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
+      Hash: af18424ab4310bab8befde4fcb8b8ca8
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: StudioParameterTrigger
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformDefault
+  - hash:
+      serializedVersion: 2
+      Hash: 4680db657a09772d677eb34657f979a8
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: FMODRuntimeManagerOnGUIHelper
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformIOS
+  - hash:
+      serializedVersion: 2
       Hash: 5c68abe52614ec50be1d2f58fc896342
     assemblyName: Assembly-CSharp.dll
     namespaceName: Demo
     className: SizeHelper
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformWindows
   - hash:
       serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
@@ -1298,6 +1452,12 @@ ScriptsOnlyBuild:
     className: BaseInput
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: RuntimeManager
+  - hash:
+      serializedVersion: 2
       Hash: c924172b4c01568aec39cc057a3153c4
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
@@ -1352,6 +1512,12 @@ ScriptsOnlyBuild:
     className: StandaloneInputModule
   - hash:
       serializedVersion: 2
+      Hash: 7d11e17b0323c2d01abce64d39203eb6
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: StudioBankLoader
+  - hash:
+      serializedVersion: 2
       Hash: 4bab63575944e3b9e24a182790c6bf89
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
@@ -1368,6 +1534,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Slider
+  - hash:
+      serializedVersion: 2
+      Hash: 9c9b7924bcf778b4455ca1e0b5aa2c2c
+    assemblyName: FMODUnity.dll
+    namespaceName: FMODUnity
+    className: PlatformMac
   - hash:
       serializedVersion: 2
       Hash: 880d064aa7bf32abd8295b0fe07bcc13
