@@ -43,6 +43,7 @@ public class BMSGameManager : MonoBehaviour
     private bool isFadeEnd = false;
     private float divideTotalLoading;
     private double displayDelayCorrectionBeat;
+    private float longNoteEndOffset;
     public static int currentLoading = 0;
     private Coroutine coSongEndCheck;
 
@@ -138,8 +139,10 @@ public class BMSGameManager : MonoBehaviour
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
 
-        displayDelayCorrectionBeat = displayDelayCorrectionValue * 0.001d * header.bpm * divide60;
-        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed) + judgeLineYPosition, 0.0f);
+        displayDelayCorrectionBeat = 0.001d * header.bpm * divide60;
+        longNoteEndOffset = Mathf.Max((float)(displayDelayCorrectionBeat * -displayDelayCorrectionValue), 0.0f);
+        currentBeat += (displayDelayCorrectionBeat * displayDelayCorrectionValue);
+        noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
 
         bmsDrawer.DrawNotes();
 
@@ -440,7 +443,7 @@ public class BMSGameManager : MonoBehaviour
 
         PlayNotes();
 
-        noteParent.position = new Vector3(0.0f, (float)(-(currentBeat + displayDelayCorrectionBeat) * gameSpeed) + judgeLineYPosition, 0.0f);
+        noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
     }
 
     private void BGMPlayThread()
@@ -537,11 +540,10 @@ public class BMSGameManager : MonoBehaviour
         {
             if (!isCurrentLongNote[i]) { continue; }
 
-            float longNoteNextYscale = ((float)(longNoteList[i][longNoteListCount[i] - 1].beat - (currentBeat + displayDelayCorrectionBeat)) * gameSpeed - longNoteOffset) * longNoteLength;
-            if (longNoteNextYscale > 0)
+            float longNoteNextYscale = ((float)(longNoteList[i][longNoteListCount[i] - 1].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength;
+            if (longNoteNextYscale > longNoteEndOffset)
             {
-                longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition = 
-                    new Vector3(xPosition[i], (float)(currentBeat + displayDelayCorrectionBeat) * gameSpeed, 0.0f);
+                longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition = new Vector3(xPosition[i], (float)currentBeat * gameSpeed, 0.0f);
                 longNoteList[i][longNoteListCount[i] - 2].modelTransform.localScale = new Vector3(0.3f, longNoteNextYscale, 1.0f);
             }
             else
@@ -840,10 +842,19 @@ public class BMSGameManager : MonoBehaviour
         if (isPaused || isClear) { return; }
 
         displayDelayCorrectionValue += value;
-        if (displayDelayCorrectionValue > 80) { displayDelayCorrectionValue = 80; }
-        else if (displayDelayCorrectionValue < -80) { displayDelayCorrectionValue = -80; }
+        if (displayDelayCorrectionValue > 80) 
+        { 
+            displayDelayCorrectionValue = 80; 
+            value = 0;
+        }
+        else if (displayDelayCorrectionValue < -80) 
+        {
+            displayDelayCorrectionValue = -80;
+            value = 0;
+        }
 
-        displayDelayCorrectionBeat = displayDelayCorrectionValue * 0.001d * header.bpm * divide60;
+        currentBeat += (displayDelayCorrectionBeat * value);
+        longNoteEndOffset = Mathf.Max((float)(displayDelayCorrectionBeat * -displayDelayCorrectionValue), 0.0f);
 
         PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
 
@@ -853,6 +864,7 @@ public class BMSGameManager : MonoBehaviour
     private void OnDestroy()
     {
         bgmThread.Abort();
+        soundManager.SoundAndChannelRelease();
     }
 
     public float GetLongNoteOffset() { return longNoteOffset; }

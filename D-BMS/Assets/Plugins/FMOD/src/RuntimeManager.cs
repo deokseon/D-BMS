@@ -253,8 +253,7 @@ namespace FMODUnity
             //int virtualChannels = currentPlatform.VirtualChannelCount;
             //uint dspBufferLength = (uint)currentPlatform.DSPBufferLength;
             //int dspBufferCount = currentPlatform.DSPBufferCount;
-            //int sampleRate = currentPlatform.SampleRate;
-            int sampleRate = 44100;
+            int sampleRate = 48000;
             int realChannels = 256;
             int virtualChannels = 1024;
             uint dspBufferLength = (uint)PlayerPrefs.GetInt("AudioBufferSize");

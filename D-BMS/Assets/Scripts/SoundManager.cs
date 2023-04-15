@@ -115,7 +115,7 @@ public class SoundManager : MonoBehaviour
         channelGroup.stop();
     }
 
-    private void OnDestroy()
+    public void SoundAndChannelRelease()
     {
         for (int i = pathes.Count - 1; i >= 0; i--)
         {

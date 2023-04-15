@@ -338,7 +338,7 @@ public class BMSParser : MonoBehaviour
                 break;
             }
         }
-        double endBeat = beat - (0.125d / pattern.GetBeatC(bar));
+        double endBeat = beat - (0.25d / pattern.GetBeatC(bar));
         if (endBeat < 0.0d)  { bar--; endBeat += 4.0d; }
 
         double beat16Count = 16 * pattern.GetBeatC(currentBar);
