@@ -2290,6 +2290,12 @@ MonoBehaviour:
   videoPlayer: {fileID: 710365260}
   keyInput: {fileID: 519420036}
   noteParent: {fileID: 375916320}
+  accuracySum: 0
+  currentCount: 0
+  endCount: 0
+  divideTable: []
+  maxScoreTable: []
+  currentScore: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -2373,6 +2379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a660b1103b18164b96e91c72e4d7dab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prevKeyState: 
   bmsGameManager: {fileID: 519420030}
 --- !u!114 &519420037
 MonoBehaviour:
@@ -9055,9 +9062,7 @@ MonoBehaviour:
   judgeLineSprites:
   - {fileID: 21300000, guid: bc4e80f41a23e844481b8fed64cb2eb0, type: 3}
   - {fileID: 21300000, guid: 0bb7283b0decf8b49baeeaa1b1955551, type: 3}
-  maxCombo: 0
-  earlyCount: 0
-  lateCount: 0
+  bmsGameManager: {fileID: 519420030}
 --- !u!1 &1831003517
 GameObject:
   m_ObjectHideFlags: 0

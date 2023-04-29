@@ -133,8 +133,9 @@ public class SongSelectUIManager : MonoBehaviour
 
     private IEnumerator CoSongSelectInit()
     {
+        yield return new WaitForSeconds(0.2f);
         MoveCurrentIndex(currentIndex + 1);
-        yield return null;
+        yield return new WaitForSeconds(0.2f);
         MoveCurrentIndex(currentIndex - 1);
     }
 

@@ -253,7 +253,7 @@ public class SystemOptionManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitKeyChange(int index)
+    /*private IEnumerator WaitKeyChange(int index)
     {
         isChanging = true;
         waitKeyInputPanel.SetActive(true);
@@ -366,10 +366,223 @@ public class SystemOptionManager : MonoBehaviour
 
         SetKeyText(index);
         waitKeyInputPanel.SetActive(false);
+    }*/
+
+    private IEnumerator WaitKeyChange(int index)
+    {
+        isChanging = true;
+        waitKeyInputPanel.SetActive(true);
+
+        int key = PlayerPrefs.GetInt(keySettingString[index]);
+
+        float timer = 0.0f;
+        while (isChanging)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape)) { isChanging = false; }
+            #region keyinput
+            else if (Input.GetKeyDown(KeyCode.BackQuote)) { key = 0xC0; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Backslash)) { key = 0xDC; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Equals)) { key = 0xBB; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftBracket)) { key = 0xDB; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightBracket)) { key = 0xDD; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Minus)) { key = 0xBD; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Semicolon)) { key = 0xBA; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Quote)) { key = 0xDE; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Comma)) { key = 0xBC; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Period)) { key = 0xBE; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Slash)) { key = 0xBF; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftShift)) { key = 0xA0; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightShift)) { key = 0xA1; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftAlt)) { key = 0xA4; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightAlt)) { key = 0xA5; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftControl)) { key = 0xA2; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightControl)) { key = 0xA3; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Space)) { key = 0x20; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Return)) { key = 0x0D; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Delete)) { key = 0x2E; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.End)) { key = 0x23; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Home)) { key = 0x24; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Insert)) { key = 0x2D; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.PageDown)) { key = 0x22; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.PageUp)) { key = 0x21; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow)) { key = 0x25; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.RightArrow)) { key = 0x27; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.UpArrow)) { key = 0x26; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.DownArrow)) { key = 0x28; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadDivide)) { key = 0x6F; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadEnter)) { key = 0x6C; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadMinus)) { key = 0x6D; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadMultiply)) { key = 0x6A; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadPeriod)) { key = 0x6E; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.KeypadPlus)) { key = 0x6B; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F1)) { key = 0x70; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F2)) { key = 0x71; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F3)) { key = 0x72; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F4)) { key = 0x73; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F6)) { key = 0x75; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F9)) { key = 0x78; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F10)) { key = 0x79; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F11)) { key = 0x7A; isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.F12)) { key = 0x7B; isChanging = false; }
+            else if (Input.anyKeyDown)
+            {
+                for (int i = 0; i < 26; i++)
+                {
+                    if (Input.GetKeyDown((KeyCode)(i + 'a')))
+                    {
+                        key = 0x41 + ((int)(KeyCode)(i + 'a') - (int)KeyCode.A);
+                        isChanging = false;
+                        break;
+                    }
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    if (Input.GetKeyDown((KeyCode)(i + 48)))
+                    {
+                        key = 0x30 + ((int)(KeyCode)(i + 48) - (int)KeyCode.Alpha0);
+                        isChanging = false;
+                        break;
+                    }
+                    else if (Input.GetKeyDown((KeyCode)(i + 256)))
+                    {
+                        key = 0x60 + ((int)(KeyCode)(i + 256) - (int)KeyCode.Keypad0);
+                        isChanging = false;
+                        break;
+                    }
+                }
+            }
+            #endregion
+
+            timer += Time.deltaTime;
+            if (timer >= 10.0f)
+            {
+                isChanging = false;
+            }
+            yield return null;
+        }
+
+        if (timer < 10.0f)
+        {
+            bool isDuplicate = false;
+            for (int i = 0; i < keyText.Length; i++)
+            {
+                if (key.CompareTo(PlayerPrefs.GetInt(keySettingString[i])) == 0)
+                {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate)
+            {
+                PlayerPrefs.SetInt(keySettingString[index], key);
+            }
+        }
+
+        SetKeyText(index);
+        waitKeyInputPanel.SetActive(false);
     }
 
     private void SetKeyText(int index)
     {
-        keyText[index].text = PlayerPrefs.GetString(keySettingString[index]);
+        keyText[index].text = KeyCodeToString(PlayerPrefs.GetInt(keySettingString[index]));
+    }
+
+    private string KeyCodeToString(int key)
+    {
+        string value = "";
+        switch (key)
+        {
+            case 0x0D: value = "Enter"; break;
+            case 0x20: value = "Space"; break;
+            case 0x21: value = "PageUp"; break;
+            case 0x22: value = "PageDown"; break;
+            case 0x23: value = "End"; break;
+            case 0x24: value = "Home"; break;
+            case 0x25: value = "LeftArrow"; break;
+            case 0x26: value = "UpArrow"; break;
+            case 0x27: value = "RightArrow"; break;
+            case 0x28: value = "DownArrow"; break;
+            case 0x2D: value = "Insert"; break;
+            case 0x2E: value = "Delete"; break;
+            case 0x30: value = "0"; break;
+            case 0x31: value = "1"; break;
+            case 0x32: value = "2"; break;
+            case 0x33: value = "3"; break;
+            case 0x34: value = "4"; break;
+            case 0x35: value = "5"; break;
+            case 0x36: value = "6"; break;
+            case 0x37: value = "7"; break;
+            case 0x38: value = "8"; break;
+            case 0x39: value = "9"; break;
+            case 0x41: value = "A"; break;
+            case 0x42: value = "B"; break;
+            case 0x43: value = "C"; break;
+            case 0x44: value = "D"; break;
+            case 0x45: value = "E"; break;
+            case 0x46: value = "F"; break;
+            case 0x47: value = "G"; break;
+            case 0x48: value = "H"; break;
+            case 0x49: value = "I"; break;
+            case 0x4A: value = "J"; break;
+            case 0x4B: value = "K"; break;
+            case 0x4C: value = "L"; break;
+            case 0x4D: value = "M"; break;
+            case 0x4E: value = "N"; break;
+            case 0x4F: value = "O"; break;
+            case 0x50: value = "P"; break;
+            case 0x51: value = "Q"; break;
+            case 0x52: value = "R"; break;
+            case 0x53: value = "S"; break;
+            case 0x54: value = "T"; break;
+            case 0x55: value = "U"; break;
+            case 0x56: value = "V"; break;
+            case 0x57: value = "W"; break;
+            case 0x58: value = "X"; break;
+            case 0x59: value = "Y"; break;
+            case 0x5A: value = "Z"; break;
+            case 0x60: value = "NumPad0"; break;
+            case 0x61: value = "NumPad1"; break;
+            case 0x62: value = "NumPad2"; break;
+            case 0x63: value = "NumPad3"; break;
+            case 0x64: value = "NumPad4"; break;
+            case 0x65: value = "NumPad5"; break;
+            case 0x66: value = "NumPad6"; break;
+            case 0x67: value = "NumPad7"; break;
+            case 0x68: value = "NumPad8"; break;
+            case 0x69: value = "NumPad9"; break;
+            case 0x6A: value = "NumPadMultiply"; break;
+            case 0x6B: value = "NumpadPlus"; break;
+            case 0x6C: value = "NumpadEnter"; break;
+            case 0x6D: value = "NumpadMinus"; break;
+            case 0x6E: value = "NumpadPeriod"; break;
+            case 0x6F: value = "NumpadDivide"; break;
+            case 0x70: value = "F1"; break;
+            case 0x71: value = "F2"; break;
+            case 0x72: value = "F3"; break;
+            case 0x73: value = "F4"; break;
+            case 0x75: value = "F6"; break;
+            case 0x78: value = "F9"; break;
+            case 0x79: value = "F10"; break;
+            case 0x7A: value = "F11"; break;
+            case 0x7B: value = "F12"; break;
+            case 0xA0: value = "LeftShift"; break;
+            case 0xA1: value = "RightShift"; break;
+            case 0xA2: value = "LeftCtrl"; break;
+            case 0xA3: value = "RightCtrl"; break;
+            case 0xA4: value = "LeftAlt"; break;
+            case 0xA5: value = "RightAlt"; break;
+            case 0xBA: value = "Semicolon"; break;
+            case 0xBB: value = "Equals"; break;
+            case 0xBC: value = "Comma"; break;
+            case 0xBD: value = "Minus"; break;
+            case 0xBE: value = "Period"; break;
+            case 0xBF: value = "Slash"; break;
+            case 0xC0: value = "Backquote"; break;
+            case 0xDB: value = "LeftBracket"; break;
+            case 0xDC: value = "Backslash"; break;
+            case 0xDD: value = "RightBracket"; break;
+            case 0xDE: value = "Quote"; break;
+        }
+        return value;
     }
 }

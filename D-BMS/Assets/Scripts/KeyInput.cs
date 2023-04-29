@@ -1,20 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 public class KeyInput : MonoBehaviour
 {
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+    private static extern int GetAsyncKeyState(int keyCode);
+    public bool[] prevKeyState;
+
     bool isAssistKeyUse;
-    // 1번키부터 5번키까지 입력액션
-    private InputAction keyInputAction1;
-    private InputAction keyInputAction2;
-    private InputAction keyInputAction3;
-    private InputAction keyInputAction4;
-    private InputAction keyInputAction5;
-    private InputAction keyInputAction6;  // 3번 보조키
+    private int[] keyCodeArray;
 
     private InputAction funcGameEndAction;
     private InputAction funcGameRestartAction;
@@ -28,60 +26,191 @@ public class KeyInput : MonoBehaviour
     [SerializeField]
     private BMSGameManager bmsGameManager;
 
+    private Thread inputThread;
+
     void Awake()
     {
+        prevKeyState = new bool[5];
+        for (int i = 0; i < 5; i++)
+        {
+            prevKeyState[i] = true;
+        }
+
         isAssistKeyUse = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? true : false;
-        keyInputAction1 = new InputAction("KeyInput1", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key1")}");
-        keyInputAction2 = new InputAction("KeyInput2", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key2")}");
-        keyInputAction3 = new InputAction("KeyInput3", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key3")}");
-        keyInputAction4 = new InputAction("KeyInput4", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key4")}");
-        keyInputAction5 = new InputAction("KeyInput5", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key5")}");
-        if (isAssistKeyUse) { keyInputAction6 = new InputAction("KeyInput6", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("Key6")}"); }
+        keyCodeArray = new int[6];
+        for (int i = 0; i < 6; i++)
+        {
+            keyCodeArray[i] = PlayerPrefs.GetInt($"Key{i + 1}");
+        }
 
         funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
         funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");
-        funcSpeedUpAction = new InputAction("FuncSpeedUp", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedUp1")}");
-        funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedDown1")}");
-        funcSpeedUp2Action = new InputAction("FuncSpeedUp2", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedUp2")}");
-        funcSpeedDown2Action = new InputAction("FuncSpeedDown2", InputActionType.Button, $"<Keyboard>/{PlayerPrefs.GetString("SpeedDown2")}");
+        funcSpeedUpAction = new InputAction("FuncSpeedUp", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedUp1"))}");
+        funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown1"))}");
+        funcSpeedUp2Action = new InputAction("FuncSpeedUp2", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedUp2"))}");
+        funcSpeedDown2Action = new InputAction("FuncSpeedDown2", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown2"))}");
         funcJudgeAdjUpAction = new InputAction("FuncJudgeAdjUp", InputActionType.Button, "<Keyboard>/F8");
         funcJudgeAdjDownAction = new InputAction("FuncJudgeAdjDown", InputActionType.Button, "<Keyboard>/F7");
     }
 
+    public void InputThreadStart()
+    {
+        inputThread = new Thread(KeyInputThread);
+        inputThread.Start();
+    }
+
+    private void KeyInputThread()
+    {
+        while (true)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                int result = KeyState(i);
+                switch (result)
+                {
+                    case 1:
+                        bmsGameManager.KeyDown(i);
+                        break;
+                    case 2:
+                        bmsGameManager.KeyUp(i);
+                        break;
+                }
+            }
+            Thread.Sleep(1);
+        }
+    }
+
+    private int KeyState(int index)
+    {
+        int result = 0;
+        int state = GetAsyncKeyState(keyCodeArray[index]);
+        if (state <= 1)
+        {
+            if (prevKeyState[index])
+            {
+                result = 2;
+                prevKeyState[index] = false;
+            }
+        }
+        else
+        {
+            if (!prevKeyState[index])
+            {
+                result = 1;
+                prevKeyState[index] = true;
+            }
+        }
+        return result;
+    }
+
+    private string KeyCodeToString(int key)
+    {
+        string value = "";
+        switch (key)
+        {
+            case 0x0D: value = "Enter"; break;
+            case 0x20: value = "Space"; break;
+            case 0x21: value = "PageUp"; break;
+            case 0x22: value = "PageDown"; break;
+            case 0x23: value = "End"; break;
+            case 0x24: value = "Home"; break;
+            case 0x25: value = "LeftArrow"; break;
+            case 0x26: value = "UpArrow"; break;
+            case 0x27: value = "RightArrow"; break;
+            case 0x28: value = "DownArrow"; break;
+            case 0x2D: value = "Insert"; break;
+            case 0x2E: value = "Delete"; break;
+            case 0x30: value = "0"; break;
+            case 0x31: value = "1"; break;
+            case 0x32: value = "2"; break;
+            case 0x33: value = "3"; break;
+            case 0x34: value = "4"; break;
+            case 0x35: value = "5"; break;
+            case 0x36: value = "6"; break;
+            case 0x37: value = "7"; break;
+            case 0x38: value = "8"; break;
+            case 0x39: value = "9"; break;
+            case 0x41: value = "A"; break;
+            case 0x42: value = "B"; break;
+            case 0x43: value = "C"; break;
+            case 0x44: value = "D"; break;
+            case 0x45: value = "E"; break;
+            case 0x46: value = "F"; break;
+            case 0x47: value = "G"; break;
+            case 0x48: value = "H"; break;
+            case 0x49: value = "I"; break;
+            case 0x4A: value = "J"; break;
+            case 0x4B: value = "K"; break;
+            case 0x4C: value = "L"; break;
+            case 0x4D: value = "M"; break;
+            case 0x4E: value = "N"; break;
+            case 0x4F: value = "O"; break;
+            case 0x50: value = "P"; break;
+            case 0x51: value = "Q"; break;
+            case 0x52: value = "R"; break;
+            case 0x53: value = "S"; break;
+            case 0x54: value = "T"; break;
+            case 0x55: value = "U"; break;
+            case 0x56: value = "V"; break;
+            case 0x57: value = "W"; break;
+            case 0x58: value = "X"; break;
+            case 0x59: value = "Y"; break;
+            case 0x5A: value = "Z"; break;
+            case 0x60: value = "NumPad0"; break;
+            case 0x61: value = "NumPad1"; break;
+            case 0x62: value = "NumPad2"; break;
+            case 0x63: value = "NumPad3"; break;
+            case 0x64: value = "NumPad4"; break;
+            case 0x65: value = "NumPad5"; break;
+            case 0x66: value = "NumPad6"; break;
+            case 0x67: value = "NumPad7"; break;
+            case 0x68: value = "NumPad8"; break;
+            case 0x69: value = "NumPad9"; break;
+            case 0x6A: value = "NumPadMultiply"; break;
+            case 0x6B: value = "NumpadPlus"; break;
+            case 0x6C: value = "NumpadEnter"; break;
+            case 0x6D: value = "NumpadMinus"; break;
+            case 0x6E: value = "NumpadPeriod"; break;
+            case 0x6F: value = "NumpadDivide"; break;
+            case 0x70: value = "F1"; break;
+            case 0x71: value = "F2"; break;
+            case 0x72: value = "F3"; break;
+            case 0x73: value = "F4"; break;
+            case 0x75: value = "F6"; break;
+            case 0x78: value = "F9"; break;
+            case 0x79: value = "F10"; break;
+            case 0x7A: value = "F11"; break;
+            case 0x7B: value = "F12"; break;
+            case 0xA0: value = "LeftShift"; break;
+            case 0xA1: value = "RightShift"; break;
+            case 0xA2: value = "LeftCtrl"; break;
+            case 0xA3: value = "RightCtrl"; break;
+            case 0xA4: value = "LeftAlt"; break;
+            case 0xA5: value = "RightAlt"; break;
+            case 0xBA: value = "Semicolon"; break;
+            case 0xBB: value = "Equals"; break;
+            case 0xBC: value = "Comma"; break;
+            case 0xBD: value = "Minus"; break;
+            case 0xBE: value = "Period"; break;
+            case 0xBF: value = "Slash"; break;
+            case 0xC0: value = "Backquote"; break;
+            case 0xDB: value = "LeftBracket"; break;
+            case 0xDC: value = "Backslash"; break;
+            case 0xDD: value = "RightBracket"; break;
+            case 0xDE: value = "Quote"; break;
+        }
+        return value;
+    }
+
     public void KeySetting()
     {
-        MakeKeyAction(keyInputAction1, 0);
-        MakeKeyAction(keyInputAction2, 1);
-        MakeKeyAction(keyInputAction3, 2);
-        MakeKeyAction(keyInputAction4, 3);
-        MakeKeyAction(keyInputAction5, 4);
-        if(isAssistKeyUse) { MakeKeyAction(keyInputAction6, 2); }
-
         MakeFunctionKeyAction();
-
-        InputSystem.pollingFrequency = 1000.0f;
     }
 
     public void KeyDisable()
     {
-        DeleteKeyAction(keyInputAction1, 0);
-        DeleteKeyAction(keyInputAction2, 1);
-        DeleteKeyAction(keyInputAction3, 2);
-        DeleteKeyAction(keyInputAction4, 3);
-        DeleteKeyAction(keyInputAction5, 4);
-        if (isAssistKeyUse) { DeleteKeyAction(keyInputAction6, 2); }
-
         DeleteFunctionKeyAction();
-    }
-
-    private void MakeKeyAction(InputAction action, int index)
-    {
-        // 액션 이벤트 연결
-        action.started += ctx => { bmsGameManager.KeyDown(index); };  // 눌렀을 때
-        action.canceled += ctx => { bmsGameManager.KeyUp(index); };  // 뗐을 때
-
-        // 액션 활성화
-        action.Enable();
+        inputThread.Abort();
     }
 
     private void MakeFunctionKeyAction()
@@ -103,15 +232,6 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.Enable();
         funcJudgeAdjUpAction.Enable();
         funcJudgeAdjDownAction.Enable();
-    }
-
-    private void DeleteKeyAction(InputAction action, int index)
-    {
-        action.started -= ctx => { bmsGameManager.KeyDown(index); };  // 눌렀을 때
-        action.canceled -= ctx => { bmsGameManager.KeyUp(index); };  // 뗐을 때
-
-        action.Disable();
-        action = null;
     }
 
     private void DeleteFunctionKeyAction()

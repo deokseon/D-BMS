@@ -76,7 +76,6 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private Animator[] earlyLateEffectAnimator;
 
-    private int currentIdx;
     private readonly float[] yPos = { -90.0f, 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
     [SerializeField]
     private Sprite[] rank;
@@ -138,12 +137,8 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private Sprite[] judgeLineSprites;
 
-    [HideInInspector]
-    public int maxCombo;
-    [HideInInspector]
-    public int earlyCount;
-    [HideInInspector]
-    public int lateCount;
+    [SerializeField]
+    private BMSGameManager bmsGameManager;
 
     private BMPLoader loader;
     private WaitForSecondsRealtime wait1sec;
@@ -159,9 +154,6 @@ public class GameUIManager : MonoBehaviour
     private readonly int hashNoteBombEffect = Animator.StringToHash("NoteBomb");
     private readonly int hashEarlyLateEffect = Animator.StringToHash("EarlyLateEffect");
 
-    private const double divide20000 = 1.0d / 20000.0d;
-    private const double height60 = 600000.0d * divide20000;
-    private const double divide6250 = 1.0d / 6250.0d;
     private string[] str0000to9999Table;
     private string[] str0to999Table;
     private string[] str00to100Table;
@@ -174,13 +166,6 @@ public class GameUIManager : MonoBehaviour
         SetNoteBombPosition();
         SetKeyFeedback();
 
-        maxCombo = 0;
-        earlyCount = 0;
-        lateCount = 0;
-
-        maxComboText.text = maxCombo.ToString("D4");
-
-        currentIdx = -1;
         rankImageTransform = rankImage.transform;
 
         endInfo.SetActive(false);
@@ -315,11 +300,16 @@ public class GameUIManager : MonoBehaviour
         keyboard[index].sprite = active ? keyPressedImage[index] : keyInitImage[index];
     }
 
-    public void TextUpdate(BMSResult res, int combo, JudgeType judge, int index)
+    public void NoteBombActive(int index)
+    {
+        noteBombEffect[index].SetTrigger(hashNoteBombEffect);
+    }
+
+    public void TextUpdate(BMSResult res, int combo, JudgeType judge)
     {
         if (combo != 0)
         {
-            if (combo == 1)
+            if (!currentComboObject.activeSelf)
             {
                 currentComboObject.SetActive(true);
                 comboText.SetActive(true);
@@ -334,111 +324,68 @@ public class GameUIManager : MonoBehaviour
             comboText.SetActive(false);
         }
 
-        if (combo >= maxCombo)
-        {
-            maxCombo = combo;
-            maxComboText.text = str0000to9999Table[maxCombo];
-        }
+        maxComboText.text = str0000to9999Table[res.maxCombo];
+        koolText.text = str0000to9999Table[res.koolCount];
+        coolText.text = str0000to9999Table[res.coolCount];
+        goodText.text = str0000to9999Table[res.goodCount];
+        missText.text = str0000to9999Table[res.missCount];
+        failText.text = str0000to9999Table[res.failCount];
 
         switch (judge)
         {
             case JudgeType.KOOL:
-                koolText.text = str0000to9999Table[res.koolCount];
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectKOOL);
-                noteBombEffect[index].SetTrigger(hashNoteBombEffect);
                 break;
             case JudgeType.COOL:
-                coolText.text = str0000to9999Table[res.coolCount];
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectCOOL);
-                noteBombEffect[index].SetTrigger(hashNoteBombEffect);
                 break;
             case JudgeType.GOOD:
-                goodText.text = str0000to9999Table[res.goodCount];
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectGOOD);
                 break;
             case JudgeType.MISS:
-                missText.text = str0000to9999Table[res.missCount];
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectMISS);
                 break;
             case JudgeType.FAIL:
-                failText.text = str0000to9999Table[res.failCount];
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectFAIL);
-                break;
-            case JudgeType.IGNORE:
-                koolText.text = str0000to9999Table[res.koolCount];
-                coolText.text = str0000to9999Table[res.coolCount];
-                goodText.text = str0000to9999Table[res.goodCount];
-                missText.text = str0000to9999Table[res.missCount];
-                failText.text = str0000to9999Table[res.failCount];
                 break;
         }
     }
 
-    public void UpdateScore(BMSResult res, int currentCount, float hp, float accuracy, float score, float maxScore)
+    public void UpdateScore()
     {
-        hpBarMask.localScale = new Vector3(1.0f, hp, 1.0f);
+        hpBarMask.localScale = new Vector3(1.0f, bmsGameManager.gauge.hp, 1.0f);
 
+        int currentCount = bmsGameManager.currentCount;
+        float accuracy = (float)(bmsGameManager.accuracySum * bmsGameManager.divideTable[currentCount]);
         int frontAC = (int)(accuracy);
         int backAC = (int)((accuracy - frontAC) * 100.0d);
         frontAccuracyText.text = str00to100Table[frontAC];
         backAccuracyText.text = str00to100Table[backAC];
 
+        float score = (float)(bmsGameManager.currentScore);
         int frontSC = (int)(score * 0.0001d);
         int backSC = (int)(score - (frontSC * 10000));
         frontScoreText.text = str000to110Table[frontSC];
         backScoreText.text = str0000to9999Table[backSC];
 
-        double under60 = height60;
-        double up60 = 0.0d;
-        if (score <= 600000.0d) { under60 = score * divide20000; }
-        else { up60 = (score - 600000.0d) * divide6250; }
-        float scoreStickHeight = (float)(under60 + up60);
-        scoreStick.SetSizeWithCurrentAnchors(vertical, scoreStickHeight);
-        maxScoreStick.SetSizeWithCurrentAnchors(vertical, maxScore);
-
-        res.scoreBarArray[currentCount] = scoreStickHeight;
-
-        switch (score)
-        {
-            case float n when (n >= 0.0f && n < 550000.0f): res.rankIndex = 0; break;
-            case float n when (n >= 550000.0f && n < 650000.0f): res.rankIndex = 1; break;
-            case float n when (n >= 650000.0f && n < 750000.0f): res.rankIndex = 2; break;
-            case float n when (n >= 750000.0f && n < 850000.0f): res.rankIndex = 3; break;
-            case float n when (n >= 850000.0f && n < 900000.0f): res.rankIndex = 4; break;
-            case float n when (n >= 900000.0f && n < 950000.0f): res.rankIndex = 5; break;
-            case float n when (n >= 950000.0f && n < 1000000.0f): res.rankIndex = 6; break;
-            case float n when (n >= 1000000.0f && n < 1025000.0f): res.rankIndex = 7; break;
-            case float n when (n >= 1025000.0f && n < 1050000.0f): res.rankIndex = 8; break;
-            case float n when (n >= 1050000.0f && n < 1090000.0f): res.rankIndex = 9; break;
-            case float n when (n >= 1090000.0f): res.rankIndex = 10; break;
-        }
-        if (currentIdx != res.rankIndex)
-        {
-            rankImage.sprite = rank[res.rankIndex];
-            rankImageTransform.localPosition = new Vector3(-244.0f, yPos[res.rankIndex], 0.0f);
-            currentIdx = res.rankIndex;
-        }
+        currentCount += bmsGameManager.endCount;
+        scoreStick.SetSizeWithCurrentAnchors(vertical, BMSGameManager.bmsResult.scoreBarArray[currentCount]);
+        maxScoreStick.SetSizeWithCurrentAnchors(vertical, bmsGameManager.maxScoreTable[currentCount]);
     }
 
-    public void UpdateFSText(double diff, int idx)
+    public void ChangeRankImage()
     {
-        int earlylate;
-        if (diff < 0)
-        {
-            earlylate = 0;
-            earlyCount++;
-        }
-        else
-        {
-            earlylate = 1;
-            lateCount++;
-        }
+        rankImage.sprite = rank[BMSGameManager.bmsResult.rankIndex];
+        rankImageTransform.localPosition = new Vector3(-244.0f, yPos[BMSGameManager.bmsResult.rankIndex], 0.0f);
+    }
 
-        earlyLateSprite[idx].sprite = earlyLateImageArray[earlylate];
+    public void UpdateFSText(int idx, int state)
+    {
+        earlyLateSprite[idx].sprite = earlyLateImageArray[state];
         earlyLateEffectAnimator[idx].SetTrigger(hashEarlyLateEffect);
     }
 
-    public void UpdateSongEndText(int koolCount, int coolCount, int goodCount, bool isActive)
+    public void UpdateSongEndText(int koolCount, int coolCount, int goodCount, int earlyCount, int lateCount, bool isActive)
     {
         earlyCountText.text = earlyCount.ToString();
         lateCountText.text = lateCount.ToString();
@@ -448,6 +395,7 @@ public class GameUIManager : MonoBehaviour
 
         endInfo.SetActive(isActive);
     }
+
     public void FadeIn()
     {
         fadeinObject.SetActive(true);

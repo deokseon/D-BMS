@@ -55,16 +55,16 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetFloat("BGMVolume", 0.8f);
 
             PlayerPrefs.SetInt("AssistKeyUse", 1);
-            PlayerPrefs.SetString("Key1", "D");
-            PlayerPrefs.SetString("Key2", "F");
-            PlayerPrefs.SetString("Key3", "J");
-            PlayerPrefs.SetString("Key4", "K");
-            PlayerPrefs.SetString("Key5", "L");
-            PlayerPrefs.SetString("Key6", "G");
-            PlayerPrefs.SetString("SpeedUp1", "F2");
-            PlayerPrefs.SetString("SpeedDown1", "F1");
-            PlayerPrefs.SetString("SpeedUp2", "F10");
-            PlayerPrefs.SetString("SpeedDown2", "F9");
+            PlayerPrefs.SetInt("Key1", 0x44);
+            PlayerPrefs.SetInt("Key2", 0x46);
+            PlayerPrefs.SetInt("Key3", 0x4A);
+            PlayerPrefs.SetInt("Key4", 0x4B);
+            PlayerPrefs.SetInt("Key5", 0x4C);
+            PlayerPrefs.SetInt("Key6", 0x47);
+            PlayerPrefs.SetInt("SpeedUp1", 0x71);
+            PlayerPrefs.SetInt("SpeedDown1", 0x70);
+            PlayerPrefs.SetInt("SpeedUp2", 0x79);
+            PlayerPrefs.SetInt("SpeedDown2", 0x78);
         }
     }
 
