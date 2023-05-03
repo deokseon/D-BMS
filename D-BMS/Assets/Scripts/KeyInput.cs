@@ -30,10 +30,10 @@ public class KeyInput : MonoBehaviour
 
     void Awake()
     {
-        prevKeyState = new bool[5];
-        for (int i = 0; i < 5; i++)
+        prevKeyState = new bool[6];
+        for (int i = 0; i < 6; i++)
         {
-            prevKeyState[i] = true;
+            prevKeyState[i] = false;
         }
 
         isAssistKeyUse = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? true : false;
@@ -55,33 +55,186 @@ public class KeyInput : MonoBehaviour
 
     public void InputThreadStart()
     {
-        inputThread = new Thread(KeyInputThread);
+        if (isAssistKeyUse)
+        {
+            inputThread = new Thread(KeyInputThread_Assist);
+        }
+        else
+        {
+            inputThread = new Thread(KeyInputThread_NotAssist);
+        }
+        
         inputThread.Start();
     }
 
-    private void KeyInputThread()
+    private void KeyInputThread_NotAssist()
     {
         while (true)
         {
-            for (int i = 0; i < 5; i++)
+            #region Key Input Check
+            int result = KeyState(0);
+            switch (result)
             {
-                int result = KeyState(i);
-                switch (result)
-                {
-                    case 1:
-                        bmsGameManager.KeyDown(i);
-                        break;
-                    case 2:
-                        bmsGameManager.KeyUp(i);
-                        break;
-                }
+                case 1:
+                    bmsGameManager.KeyDown(0);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(0);
+                    break;
             }
+
+            result = KeyState(1);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(1);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(1);
+                    break;
+            }
+
+            result = KeyState_Assist(2);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(2);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(2);
+                    break;
+            }
+
+            result = KeyState(3);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(3);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(3);
+                    break;
+            }
+
+            result = KeyState(4);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(4);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(4);
+                    break;
+            }
+            #endregion
+
+            Thread.Sleep(1);
+        }
+    }
+
+    private void KeyInputThread_Assist()
+    {
+        while (true)
+        {
+            #region Key Input Check
+            int result = KeyState(0);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(0);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(0);
+                    break;
+            }
+
+            result = KeyState(1);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(1);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(1);
+                    break;
+            }
+
+            result = KeyState_Assist(2);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(2);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(2);
+                    break;
+            }
+
+            result = KeyState_Assist(5);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(2);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(2);
+                    break;
+            }
+
+            result = KeyState(3);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(3);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(3);
+                    break;
+            }
+
+            result = KeyState(4);
+            switch (result)
+            {
+                case 1:
+                    bmsGameManager.KeyDown(4);
+                    break;
+                case 2:
+                    bmsGameManager.KeyUp(4);
+                    break;
+            }
+            #endregion
+
             Thread.Sleep(1);
         }
     }
 
     private int KeyState(int index)
     {
+        int result = 0;
+        int state = GetAsyncKeyState(keyCodeArray[index]);
+        if (state <= 1)
+        {
+            if (prevKeyState[index])
+            {
+                result = 2;
+                prevKeyState[index] = false;
+            }
+        }
+        else
+        {
+            if (!prevKeyState[index])
+            {
+                result = 1;
+                prevKeyState[index] = true;
+            }
+        }
+        return result;
+    }
+
+    private int KeyState_Assist(int index)
+    {
+        if (prevKeyState[index == 2 ? 5 : 2]) { return 0; }
+
         int result = 0;
         int state = GetAsyncKeyState(keyCodeArray[index]);
         if (state <= 1)

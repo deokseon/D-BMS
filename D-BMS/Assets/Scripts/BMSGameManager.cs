@@ -479,9 +479,11 @@ public class BMSGameManager : MonoBehaviour
         currentBeat += avg;
         currentScrollTime += frameTime;
 
-        PlayNotes();
-
-        lock (inputHandleLock) { ChangeUI(); }
+        lock (inputHandleLock) 
+        { 
+            PlayNotes();
+            ChangeUI();
+        }
 
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
     }
@@ -501,20 +503,61 @@ public class BMSGameManager : MonoBehaviour
 
     private void ChangeUI()
     {
-        for (int i = 0; i < 5; i++)
+        #region Key Feedback Check
+        if (isKeyDown[0])
         {
-            if (isKeyDown[i])
-            {
-                gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[i], i);
-                isKeyDown[i] = false;
-            }
-
-            if (isNoteBombActive[i])
-            {
-                gameUIManager.NoteBombActive(i);
-                isNoteBombActive[i] = false;
-            }
+            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[0], 0);
+            isKeyDown[0] = false;
         }
+        if (isKeyDown[1])
+        {
+            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[1], 1);
+            isKeyDown[1] = false;
+        }
+        if (isKeyDown[2])
+        {
+            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[2] || keyInput.prevKeyState[5], 2);
+            isKeyDown[2] = false;
+        }
+        if (isKeyDown[3])
+        {
+            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[3], 3);
+            isKeyDown[3] = false;
+        }
+        if (isKeyDown[4])
+        {
+            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[4], 4);
+            isKeyDown[4] = false;
+        }
+        #endregion
+
+        #region Notebomb Check
+        if (isNoteBombActive[0])
+        {
+            gameUIManager.NoteBombActive(0);
+            isNoteBombActive[0] = false;
+        }
+        if (isNoteBombActive[1])
+        {
+            gameUIManager.NoteBombActive(1);
+            isNoteBombActive[1] = false;
+        }
+        if (isNoteBombActive[2])
+        {
+            gameUIManager.NoteBombActive(2);
+            isNoteBombActive[2] = false;
+        }
+        if (isNoteBombActive[3])
+        {
+            gameUIManager.NoteBombActive(3);
+            isNoteBombActive[3] = false;
+        }
+        if (isNoteBombActive[4])
+        {
+            gameUIManager.NoteBombActive(4);
+            isNoteBombActive[4] = false;
+        }
+        #endregion
 
         if (isUpdateScore)
         {
@@ -534,14 +577,18 @@ public class BMSGameManager : MonoBehaviour
             isChangeRankImage = false;
         }
 
-        for (int i = 0; i < 2; i++)
+        #region Early Late Check
+        if (fsUpdate[0])
         {
-            if (fsUpdate[i])
-            {
-                gameUIManager.UpdateFSText(i, fsStates[i]);
-                fsUpdate[i] = false;
-            }
+            gameUIManager.UpdateFSText(0, fsStates[0]);
+            fsUpdate[0] = false;
         }
+        if (fsUpdate[1])
+        {
+            gameUIManager.UpdateFSText(1, fsStates[1]);
+            fsUpdate[1] = false;
+        }
+        #endregion
 
         if (isGameEnd)
         {
@@ -577,6 +624,7 @@ public class BMSGameManager : MonoBehaviour
         }
         else
         {
+            Debug.Log(idx);
             if (result == JudgeType.COOL) { result = JudgeType.KOOL; }
             currentLongNoteJudge[idx] = result;
             isCurrentLongNote[idx] = true;
@@ -661,13 +709,13 @@ public class BMSGameManager : MonoBehaviour
 
             while (notesListCount[i] > 0 && judge.Judge(notesList[i][notesListCount[i] - 1], currentTime) == JudgeType.FAIL)
             {
-                lock (inputHandleLock) { HandleNote(notesList[i], i, currentMilliSeconds); }
+                HandleNote(notesList[i], i, currentMilliSeconds);
             }
 
             while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra == 2 &&
                     notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
-                lock (inputHandleLock) { HandleLongNoteTick(notesList[i], i); }
+                HandleLongNoteTick(notesList[i], i);
             }
 
             if (!isCurrentLongNote[i]) { continue; }
