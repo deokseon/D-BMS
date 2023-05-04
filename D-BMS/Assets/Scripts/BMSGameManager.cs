@@ -618,13 +618,12 @@ public class BMSGameManager : MonoBehaviour
             currentNote[idx] = noteList[notesListCount[idx] - 1].keySound;
         }
 
-        if (normalNoteListCount[idx] > 0 && n.beat == normalNoteList[idx][normalNoteListCount[idx] - 1].beat)
+        if (normalNoteListCount[idx] > 0 && n.beat == normalNoteList[idx][normalNoteListCount[idx] - normalNoteHandleCount[idx] - 1].beat)
         {
             normalNoteHandleCount[idx]++;
         }
         else
         {
-            Debug.Log(idx);
             if (result == JudgeType.COOL) { result = JudgeType.KOOL; }
             currentLongNoteJudge[idx] = result;
             isCurrentLongNote[idx] = true;
