@@ -35,7 +35,7 @@ public class BMSGameManager : MonoBehaviour
     private System.Diagnostics.Stopwatch stopwatch;
     private double currentBeat = 0;
     private double currentScrollTime = 0;
-    private long currentMilliSeconds = 0;
+    private long currentTicks = 0;
     private double currentTime = 0;
     public int accuracySum = 0;
     public int currentCount = 0;
@@ -152,7 +152,7 @@ public class BMSGameManager : MonoBehaviour
         bpmsListCount = bpmsList.Count;
         barListCount = barList.Count;
 
-        for (int i = 0; i < bgSoundsListCount; i++) { bgSoundsList[i].timing *= 1000.0d; }
+        for (int i = 0; i < bgSoundsListCount; i++) { bgSoundsList[i].timing *= 10000000.0d; }
 
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
@@ -281,7 +281,7 @@ public class BMSGameManager : MonoBehaviour
         isClear = false;
         currentBeat = 0;
         currentScrollTime = 0;
-        currentMilliSeconds = 0;
+        currentTicks = 0;
         currentTime = 0;
         accuracySum = 0;
         currentCount = 0;
@@ -433,10 +433,10 @@ public class BMSGameManager : MonoBehaviour
             --bgaChangeListCount;
         }
 
-        long tempMilliSeconds = stopwatch.ElapsedMilliseconds;
-        double frameTime = (tempMilliSeconds - currentMilliSeconds) * 0.001d;
-        currentMilliSeconds = tempMilliSeconds;
-        currentTime = currentMilliSeconds * 0.001d;
+        long tempTicks = stopwatch.ElapsedTicks;
+        double frameTime = (tempTicks - currentTicks) * 0.0000001d;
+        currentTicks = tempTicks;
+        currentTime = currentTicks * 0.0000001d;
 
         double avg = currentBPM * frameTime;
 
@@ -492,7 +492,7 @@ public class BMSGameManager : MonoBehaviour
     {
         while (true)
         {
-            while (!isPaused && bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= stopwatch.ElapsedMilliseconds)  // 배경음 재생
+            while (!isPaused && bgSoundsListCount > 0 && bgSoundsList[bgSoundsListCount - 1].timing <= stopwatch.ElapsedTicks)
             {
                 soundManager.PlayBGM(bgSoundsList[bgSoundsListCount - 1].keySound);
                 --bgSoundsListCount;
@@ -603,7 +603,7 @@ public class BMSGameManager : MonoBehaviour
         }
     }
 
-    private void HandleNote(List<Note> noteList, int idx, long time)
+    private void HandleNote(List<Note> noteList, int idx, double time)
     {
         Note n = noteList[notesListCount[idx] - 1];
         double diff = time - (n.timing * 1000.0d);
@@ -708,7 +708,7 @@ public class BMSGameManager : MonoBehaviour
 
             while (notesListCount[i] > 0 && judge.Judge(notesList[i][notesListCount[i] - 1], currentTime) == JudgeType.FAIL)
             {
-                HandleNote(notesList[i], i, currentMilliSeconds);
+                HandleNote(notesList[i], i, currentTicks * 0.0001d);
             }
 
             while (notesListCount[i] > 0 && notesList[i][notesListCount[i] - 1].extra == 2 &&
@@ -780,19 +780,19 @@ public class BMSGameManager : MonoBehaviour
                 notesList[i][notesListCount[i] - 1].timing <= currentTime)
             {
                 soundManager.PlayKeySound(notesList[i][notesListCount[i] - 1].keySound);
-                HandleNote(notesList[i], i, currentMilliSeconds);
+                HandleNote(notesList[i], i, currentTicks);
             }
         }*/
     }
 
     public void KeyDown(int index)
     {
-        long keyDownTime = stopwatch.ElapsedMilliseconds;
+        long keyDownTime = stopwatch.ElapsedTicks;
         if (isClear) { soundManager.PlayKeySoundEnd(currentNote[index]); }
         else { soundManager.PlayKeySound(currentNote[index]); }
         isKeyDown[index] = true;
         if (notesListCount[index] <= 0 || notesList[index][notesListCount[index] - 1].extra == 2) { return; }
-        lock (inputHandleLock) { HandleNote(notesList[index], index, keyDownTime); }
+        lock (inputHandleLock) { HandleNote(notesList[index], index, keyDownTime * 0.0001d); }
     }
 
     public void KeyUp(int index)
