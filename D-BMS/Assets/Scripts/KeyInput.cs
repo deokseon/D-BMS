@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System;
 
 public class KeyInput : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class KeyInput : MonoBehaviour
     private BMSGameManager bmsGameManager;
 
     private Thread inputThread;
+    private TimeSpan threadFrequency;
 
     void Awake()
     {
@@ -42,6 +44,8 @@ public class KeyInput : MonoBehaviour
         {
             keyCodeArray[i] = PlayerPrefs.GetInt($"Key{i + 1}");
         }
+
+        threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
 
         funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
         funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");
@@ -128,7 +132,7 @@ public class KeyInput : MonoBehaviour
             }
             #endregion
 
-            Thread.Sleep(1);
+            Thread.Sleep(threadFrequency);
         }
     }
 
@@ -204,7 +208,7 @@ public class KeyInput : MonoBehaviour
             }
             #endregion
 
-            Thread.Sleep(1);
+            Thread.Sleep(threadFrequency);
         }
     }
 

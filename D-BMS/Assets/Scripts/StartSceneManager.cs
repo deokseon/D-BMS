@@ -55,6 +55,7 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetFloat("BGMVolume", 0.8f);
 
             PlayerPrefs.SetInt("AssistKeyUse", 1);
+            PlayerPrefs.SetInt("PollingRate", 1000);
             PlayerPrefs.SetInt("Key1", 0x44);
             PlayerPrefs.SetInt("Key2", 0x46);
             PlayerPrefs.SetInt("Key3", 0x4A);

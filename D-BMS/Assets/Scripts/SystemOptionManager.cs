@@ -45,6 +45,10 @@ public class SystemOptionManager : MonoBehaviour
     private TextMeshProUGUI[] keyText;
     [SerializeField]
     private GameObject waitKeyInputPanel;
+    [SerializeField]
+    private TextMeshProUGUI pollingRateValueText;
+    [SerializeField]
+    private GameObject pollingRateSelectPanel;
 
     private readonly string[] keySettingString = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "SpeedUp1", "SpeedDown1", "SpeedUp2", "SpeedDown2" };
     bool isChanging;
@@ -63,6 +67,7 @@ public class SystemOptionManager : MonoBehaviour
         bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume");
         SetBGMVolumeText();
         SetAssistKeyUseText();
+        SetPollingRateText();
         for (int i = 0; i < keyText.Length; i++) { SetKeyText(i); }
         StartCoroutine(PrepareVideo());
     }
@@ -122,6 +127,10 @@ public class SystemOptionManager : MonoBehaviour
     {
         audioBufferSelectPanel.SetActive(true);
     }
+    public void PollingRateButtonClick()
+    {
+        pollingRateSelectPanel.SetActive(true);
+    }
 
     public void FrameValueButtonClick(int value)
     {
@@ -165,6 +174,13 @@ public class SystemOptionManager : MonoBehaviour
             DestroyImmediate(manager.gameObject);
         }
         audioBufferSelectPanel.SetActive(false);
+    }
+
+    public void PollingRateValueButtonClick(int value)
+    {
+        PlayerPrefs.SetInt("PollingRate", value);
+        SetPollingRateText();
+        pollingRateSelectPanel.SetActive(false);
     }
 
     private void SetFrameText()
@@ -243,6 +259,11 @@ public class SystemOptionManager : MonoBehaviour
     private void SetAssistKeyUseText()
     {
         assistKeyUseText.text = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? "Enabled" : "Disabled";
+    }
+
+    private void SetPollingRateText()
+    {
+        pollingRateValueText.text = PlayerPrefs.GetInt("PollingRate") + "Hz";
     }
 
     public void ChangeKey(int index)

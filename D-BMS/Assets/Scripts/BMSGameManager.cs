@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using UnityEngine.Video;
+using System;
 
 public class BMSGameManager : MonoBehaviour
 {
@@ -98,7 +99,8 @@ public class BMSGameManager : MonoBehaviour
     private List<Note>[] normalNoteList;
     private List<Note> barList;
 
-    Thread bgmThread;
+    private Thread bgmThread;
+    private TimeSpan threadFrequency;
     private object inputHandleLock = new object();
     private bool[] isKeyDown;
     private bool[] isNoteBombActive;
@@ -410,6 +412,7 @@ public class BMSGameManager : MonoBehaviour
         fsStates = new int[2] { 0, 0 };
         fsCount = new int[2] { 0, 0 };
         bgmThread = new Thread(BGMPlayThread);
+        threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
         bgmThread.Start();
         keyInput.InputThreadStart();
 
@@ -497,7 +500,7 @@ public class BMSGameManager : MonoBehaviour
                 soundManager.PlayBGM(bgSoundsList[bgSoundsListCount - 1].keySound);
                 --bgSoundsListCount;
             }
-            Thread.Sleep(1);
+            Thread.Sleep(threadFrequency);
         }
     }
 
