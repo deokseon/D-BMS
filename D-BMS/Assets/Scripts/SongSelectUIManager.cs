@@ -60,18 +60,15 @@ public class SongSelectUIManager : MonoBehaviour
     private Toggle[] categoryToggles;
     [SerializeField]
     private ToggleGroup categoryToggleGroup;
-    private static int currentCategoryIndex = 0;
     private int categoryCount;
     [SerializeField]
     private TextMeshProUGUI sortByText;
-    private static SortBy currentSortBy;
     private int sortByCount;
 
     public LoopVerticalScrollRect lvScrollRect;
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
-    private static int[] savedIndex;
     private int convertedIndex = 0;
     private int currentHeaderListCount;
     public Sprite seoriToggleSprite;
@@ -106,21 +103,13 @@ public class SongSelectUIManager : MonoBehaviour
         sortByCount = System.Enum.GetValues(typeof(SortBy)).Length;
         currentHeaderListCount = BMSFileSystem.selectedCategoryHeaderList.Count;
 
-        if (savedIndex == null) 
-        { 
-            savedIndex = new int[categoryCount];
-            for (int i = 0; i < categoryCount; i++) { savedIndex[i] = 0; }
-        }
-
         SongIndexUpdate();
         ScrollbarSetting();
 
         categoryToggleGroup.allowSwitchOff = true;
         categoryToggleGroup.SetAllTogglesOff(false);
-        categoryToggles[currentCategoryIndex].isOn = true;
+        categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
         categoryToggleGroup.allowSwitchOff = false;
-
-        StartCoroutine(CoSongSelectInit());
 
         wait100ms = new WaitForSeconds(0.1f);
         isUpArrowPressed = false;
@@ -129,14 +118,6 @@ public class SongSelectUIManager : MonoBehaviour
         findSequence = 0;
 
         StartCoroutine(CoFadeOut());
-    }
-
-    private IEnumerator CoSongSelectInit()
-    {
-        yield return new WaitForSeconds(0.2f);
-        MoveCurrentIndex(currentIndex + 1);
-        yield return new WaitForSeconds(0.2f);
-        MoveCurrentIndex(currentIndex - 1);
     }
 
     private IEnumerator CoFadeOut()
@@ -200,15 +181,15 @@ public class SongSelectUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            savedIndex[currentCategoryIndex] = currentIndex;
-            currentCategoryIndex = (currentCategoryIndex - 1 + categoryCount) % categoryCount;
-            categoryToggles[currentCategoryIndex].isOn = true;
+            PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
+            PlayerPrefs.SetInt("Category", (PlayerPrefs.GetInt("Category") - 1 + categoryCount) % categoryCount);
+            categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
         }
         else if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            savedIndex[currentCategoryIndex] = currentIndex;
-            currentCategoryIndex = (currentCategoryIndex + 1) % categoryCount;
-            categoryToggles[currentCategoryIndex].isOn = true;
+            PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
+            PlayerPrefs.SetInt("Category", (PlayerPrefs.GetInt("Category") + 1) % categoryCount);
+            categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
         }
         else if (Input.anyKeyDown)
         {
@@ -220,8 +201,15 @@ public class SongSelectUIManager : MonoBehaviour
 
             if (index == -1) { return; }
 
-            MoveCurrentIndex(index);
+            StartCoroutine(CoMoveIndex(index));
         }
+    }
+
+    private IEnumerator CoMoveIndex(int index)
+    {
+        MoveCurrentIndex(index - 1);
+        yield return new WaitForSeconds(0.05f);
+        MoveCurrentIndex(index);
     }
 
     private bool CheckKeyCode(out int code)
@@ -305,7 +293,7 @@ public class SongSelectUIManager : MonoBehaviour
         if (isReady)
         {
             isStart = true;
-            savedIndex[currentCategoryIndex] = currentIndex;
+            PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
             UnityEngine.SceneManagement.SceneManager.LoadScene(2);
         }
     }
@@ -377,15 +365,6 @@ public class SongSelectUIManager : MonoBehaviour
 
     public void RandomEffectorClick(int value)
     {
-        //BMSGameManager.randomEffector = (RandomEffector)(((int)BMSGameManager.randomEffector + value + randomEffectorCount) % randomEffectorCount);
-
-        //if (BMSGameManager.randomEffector == RandomEffector.FRANDOM)
-        //    randomEffectorText.text = "F-RANDOM";
-        //else if (BMSGameManager.randomEffector == RandomEffector.MFRANDOM)
-        //    randomEffectorText.text = "MF-RANDOM";
-        //else
-        //    randomEffectorText.text = BMSGameManager.randomEffector.ToString();
-
         int index = (PlayerPrefs.GetInt("RandomEffector") + value + randomEffectorCount) % randomEffectorCount;
         PlayerPrefs.SetInt("RandomEffector", index);
         SetRandomEffectorText(index);
@@ -405,10 +384,24 @@ public class SongSelectUIManager : MonoBehaviour
 
     public void SortByClick(int value)
     {
-        savedIndex[currentCategoryIndex] = currentIndex;
-        currentSortBy = (SortBy)(((int)currentSortBy + value + sortByCount) % sortByCount);
+        string currentTitle = BMSFileSystem.selectedHeader.title;
+        int currentLevel = BMSFileSystem.selectedHeader.level;
+        PlayerPrefs.SetInt("SortBy", (PlayerPrefs.GetInt("SortBy") + value + sortByCount) % sortByCount);
         SortHeaderList();
-        MoveCurrentIndex(savedIndex[currentCategoryIndex]);
+        PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", FindCurrentSongIndex(currentTitle, currentLevel));
+        StartCoroutine(CoMoveIndex(PlayerPrefs.GetInt($"Category{PlayerPrefs.GetInt("Category")}Index")));
+    }
+
+    private int FindCurrentSongIndex(string title, int level)
+    {
+        for (int i = 0; i < currentHeaderListCount; i++)
+        {
+            if (BMSFileSystem.selectedCategoryHeaderList[i].title.CompareTo(title) == 0 && BMSFileSystem.selectedCategoryHeaderList[i].level == level)
+            {
+                return i;
+            }
+        }
+        return 0;
     }
 
     private void AddToggleListener(Toggle toggle)
@@ -418,15 +411,15 @@ public class SongSelectUIManager : MonoBehaviour
         {
             if (value)
             {
-                int curCategory = currentCategoryIndex;
+                int curCategory = PlayerPrefs.GetInt("Category");
                 int nextCategory = 0;
                 switch (toggle.tag)
                 {
-                    case "Category_All": currentCategoryIndex = 0; nextCategory = 0; break;
-                    case "Category_Aery": currentCategoryIndex = 1; nextCategory = 1; break;
-                    case "Category_SeoRi": currentCategoryIndex = 2; nextCategory = 2; break;
+                    case "Category_All": PlayerPrefs.SetInt("Category", 0); nextCategory = 0; break;
+                    case "Category_Aery": PlayerPrefs.SetInt("Category", 1); nextCategory = 1; break;
+                    case "Category_SeoRi": PlayerPrefs.SetInt("Category", 2); nextCategory = 2; break;
                 }
-                if (curCategory != nextCategory) { savedIndex[curCategory] = currentIndex; }
+                if (curCategory != nextCategory) { PlayerPrefs.SetInt($"Category{curCategory}Index", currentIndex); }
                 ChangeCategory();
                 StartCoroutine(CheckUpDownArrowPress());
             }
@@ -450,7 +443,7 @@ public class SongSelectUIManager : MonoBehaviour
         StopAllCoroutines();
         BMSFileSystem.selectedCategoryHeaderList.Clear();
 
-        Category currentCategory = (Category)(currentCategoryIndex);
+        Category currentCategory = (Category)PlayerPrefs.GetInt("Category");
 
         int headerCount = BMSFileSystem.headers.Length;
         for (int i = 0; i < headerCount; i++)
@@ -463,12 +456,12 @@ public class SongSelectUIManager : MonoBehaviour
 
         SortHeaderList();
         ScrollbarSetting();
-        MoveCurrentIndex(savedIndex[currentCategoryIndex]);
+        StartCoroutine(CoMoveIndex(PlayerPrefs.GetInt($"Category{PlayerPrefs.GetInt("Category")}Index")));
     }
 
     private void SortHeaderList()
     {
-        switch (currentSortBy)
+        switch((SortBy)PlayerPrefs.GetInt("SortBy"))
         {
             case SortBy.LEVEL:
                 sortByText.text = "Sort by Level";

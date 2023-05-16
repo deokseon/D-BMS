@@ -255,6 +255,10 @@ public class BMSGameManager : MonoBehaviour
         }
         else { gameUIManager.bga.color = Color.white; }
 
+        for (int i = 0; i < 5; i++)
+        {
+            gameUIManager.KeyInputImageSetActive(false, i);
+        }
         gameUIManager.UpdateBPMText(currentBPM);
         gameUIManager.TextUpdate(bmsResult, 0, JudgeType.IGNORE);
         gameUIManager.UpdateScore();
@@ -268,6 +272,7 @@ public class BMSGameManager : MonoBehaviour
         }
 
         isPaused = false;
+        keyInput.InputThreadStart();
     }
 
     public IEnumerator GameRestart()
@@ -275,6 +280,7 @@ public class BMSGameManager : MonoBehaviour
         if (isPaused || isClear) { yield break; }
 
         bgmThread.Abort();
+        keyInput.InputThreadAbort();
         stopwatch.Stop();
         videoPlayer.Pause();
         isPaused = true;
@@ -441,7 +447,6 @@ public class BMSGameManager : MonoBehaviour
         fsStates = new int[2] { 0, 0 };
         fsCount = new int[2] { 0, 0 };
         threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
-        keyInput.InputThreadStart();
 
         StartCoroutine(PreLoad(false));
     }
@@ -1101,6 +1106,7 @@ public class BMSGameManager : MonoBehaviour
     private void OnDestroy()
     {
         keyInput.KeyDisable();
+        keyInput.InputThreadAbort();
         if (bgmThread.IsAlive)
         {
             bgmThread.Abort();

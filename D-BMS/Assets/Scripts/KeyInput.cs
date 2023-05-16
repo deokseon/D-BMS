@@ -367,7 +367,14 @@ public class KeyInput : MonoBehaviour
     public void KeyDisable()
     {
         DeleteFunctionKeyAction();
-        inputThread.Abort();
+    }
+
+    public void InputThreadAbort()
+    {
+        if (inputThread.IsAlive)
+        {
+            inputThread.Abort();
+        }
     }
 
     private void MakeFunctionKeyAction()

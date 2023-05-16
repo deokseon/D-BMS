@@ -75,6 +75,11 @@ public class StartSceneManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("GamePlayOption", 1);
 
+            PlayerPrefs.SetInt("SortBy", 0);
+            PlayerPrefs.SetInt("Category", 0);
+            PlayerPrefs.SetInt("Category0Index", 0);
+            PlayerPrefs.SetInt("Category1Index", 0);
+            PlayerPrefs.SetInt("Category2Index", 0);
             PlayerPrefs.SetInt("NoteSpeed", 50);
             PlayerPrefs.SetInt("RandomEffector", 0);
             PlayerPrefs.SetInt("DisplayDelayCorrection", 0);
