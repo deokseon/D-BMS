@@ -131,6 +131,7 @@ public class SongSelectUIManager : MonoBehaviour
     private IEnumerator CoLoadStartScene()
     {
         isExit = true;
+        PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
         fadeAnimator.SetTrigger("FadeIn");
 
         yield return new WaitForSecondsRealtime(1.0f);

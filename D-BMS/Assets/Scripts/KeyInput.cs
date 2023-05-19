@@ -371,7 +371,7 @@ public class KeyInput : MonoBehaviour
 
     public void InputThreadAbort()
     {
-        if (inputThread.IsAlive)
+        if (inputThread != null && inputThread.IsAlive)
         {
             inputThread.Abort();
         }
