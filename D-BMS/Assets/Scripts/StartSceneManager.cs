@@ -49,6 +49,8 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("FrameRate", -1);
             PlayerPrefs.SetInt("SyncCount", 1);
 
+            PlayerPrefs.SetString("OutputType", "WASAPI");
+            PlayerPrefs.SetString("DriverName", "None");
             PlayerPrefs.SetInt("AudioBufferSize", 64);
             PlayerPrefs.SetFloat("MasterVolume", 1.0f);
             PlayerPrefs.SetFloat("KeySoundVolume", 1.0f);

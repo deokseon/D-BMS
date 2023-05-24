@@ -253,13 +253,14 @@ namespace FMODUnity
             //int virtualChannels = currentPlatform.VirtualChannelCount;
             //uint dspBufferLength = (uint)currentPlatform.DSPBufferLength;
             //int dspBufferCount = currentPlatform.DSPBufferCount;
+            //FMOD.OUTPUTTYPE outputType = currentPlatform.GetOutputType();
             int sampleRate = 48000;
             int realChannels = 256;
             int virtualChannels = 1024;
             uint dspBufferLength = (uint)PlayerPrefs.GetInt("AudioBufferSize");
             int dspBufferCount = 2;
             FMOD.SPEAKERMODE speakerMode = currentPlatform.SpeakerMode;
-            FMOD.OUTPUTTYPE outputType = currentPlatform.GetOutputType();
+            FMOD.OUTPUTTYPE outputType = (FMOD.OUTPUTTYPE)Enum.Parse(typeof(FMOD.OUTPUTTYPE), PlayerPrefs.GetString("OutputType"));
 
             FMOD.ADVANCEDSETTINGS advancedSettings = new FMOD.ADVANCEDSETTINGS();
             advancedSettings.randomSeed = (uint)DateTime.UtcNow.Ticks;
@@ -302,7 +303,39 @@ retry:
 
             result = coreSystem.setOutput(outputType);
             CheckInitResult(result, "FMOD.System.setOutput");
+            FMOD.OUTPUTTYPE currentOutputType;
+            coreSystem.getOutput(out currentOutputType);
+            if (currentOutputType == FMOD.OUTPUTTYPE.NOSOUND && outputType == FMOD.OUTPUTTYPE.ASIO)
+            {
+                result = coreSystem.setOutput(FMOD.OUTPUTTYPE.WASAPI);
+                CheckInitResult(result, "FMOD.System.setOutput");
+                PlayerPrefs.SetString("OutputType", "WASAPI");
+            }
 
+            FMOD.SPEAKERMODE tempspeakerMode;
+            int channels, systemrate;
+            Guid guid;
+            string name = "";
+            int driverId = -1;
+            int driverCount;
+            coreSystem.getNumDrivers(out driverCount);
+            for (int i = 0; i < driverCount; i++)
+            {
+                coreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out tempspeakerMode, out channels);
+                if (name.CompareTo(PlayerPrefs.GetString("DriverName")) == 0) { driverId = i; break; }
+            }
+
+            if (driverId == -1)
+            {
+                coreSystem.getDriverInfo(0, out name, 50, out guid, out systemrate, out tempspeakerMode, out channels);
+                coreSystem.setDriver(0);
+            }
+            else
+            {
+                coreSystem.setDriver(driverId);
+            }
+            PlayerPrefs.SetString("DriverName", name);
+           
             result = coreSystem.setSoftwareChannels(realChannels);
             CheckInitResult(result, "FMOD.System.setSoftwareChannels");
 

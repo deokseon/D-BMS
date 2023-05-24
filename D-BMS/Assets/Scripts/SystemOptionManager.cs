@@ -49,6 +49,14 @@ public class SystemOptionManager : MonoBehaviour
     private TextMeshProUGUI pollingRateValueText;
     [SerializeField]
     private GameObject pollingRateSelectPanel;
+    [SerializeField]
+    private GameObject[] audioOutputDeviceButton;
+    [SerializeField]
+    private GameObject audioOutputDeviceSelectPanel;
+    [SerializeField]
+    private TextMeshProUGUI audioOutputDeviceText;
+    private int wasapiCount;
+    private int asioCount;
 
     private readonly string[] keySettingString = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "SpeedUp1", "SpeedDown1", "SpeedUp2", "SpeedDown2" };
     bool isChanging;
@@ -59,6 +67,8 @@ public class SystemOptionManager : MonoBehaviour
 
         SetFrameText();
         SetDisplayModeText();
+        SetAudioOutputDevice();
+        SetAudioOutputDeviceText();
         SetAudioBufferText();
         masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume");
         SetMasterVolumeText();
@@ -70,6 +80,61 @@ public class SystemOptionManager : MonoBehaviour
         SetPollingRateText();
         for (int i = 0; i < keyText.Length; i++) { SetKeyText(i); }
         StartCoroutine(PrepareVideo());
+    }
+
+    private void SetAudioOutputDevice()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            audioOutputDeviceButton[i].SetActive(false);
+        }
+        string originalOutputType = PlayerPrefs.GetString("OutputType");
+        PlayerPrefs.SetString("OutputType", "WASAPI");
+        foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
+        {
+            DestroyImmediate(manager.gameObject);
+        }
+        FMODUnity.RuntimeManager.CoreSystem.getNumDrivers(out wasapiCount);
+        for (int i = 0; i < wasapiCount; i++)
+        {
+            if (i > 7) { break; }
+            string name;
+            FMOD.SPEAKERMODE speakerMode;
+            int channels, systemrate;
+            System.Guid guid;
+            FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
+            audioOutputDeviceButton[i].SetActive(true);
+            audioOutputDeviceButton[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = name;
+        }
+
+        PlayerPrefs.SetString("OutputType", "ASIO");
+        foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
+        {
+            DestroyImmediate(manager.gameObject);
+        }
+        FMOD.OUTPUTTYPE currentOutputType;
+        FMODUnity.RuntimeManager.CoreSystem.getOutput(out currentOutputType);
+        if (currentOutputType == FMOD.OUTPUTTYPE.ASIO)
+        {
+            FMODUnity.RuntimeManager.CoreSystem.getNumDrivers(out asioCount);
+            for (int i = 0; i < asioCount; i++)
+            {
+                if (i + wasapiCount > 7) { break; }
+                string name;
+                FMOD.SPEAKERMODE speakerMode;
+                int channels, systemrate;
+                System.Guid guid;
+                FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
+                audioOutputDeviceButton[i + wasapiCount].SetActive(true);
+                audioOutputDeviceButton[i + wasapiCount].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
+            }
+        }
+
+        PlayerPrefs.SetString("OutputType", originalOutputType);
+        foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
+        {
+            DestroyImmediate(manager.gameObject);
+        }
     }
 
     private IEnumerator PrepareVideo()
@@ -110,7 +175,9 @@ public class SystemOptionManager : MonoBehaviour
         {
             if (frameSelectPanel.activeSelf) { frameSelectPanel.SetActive(false); }
             else if (displayModeSelectPanel.activeSelf) { displayModeSelectPanel.SetActive(false); }
+            else if (audioOutputDeviceSelectPanel.activeSelf) { audioOutputDeviceSelectPanel.SetActive(false); }
             else if (audioBufferSelectPanel.activeSelf) { audioBufferSelectPanel.SetActive(false); }
+            else if (pollingRateSelectPanel.activeSelf) { pollingRateSelectPanel.SetActive(false); }
             else { StartCoroutine(CoLoadScene(0)); }
         }
     }
@@ -122,6 +189,10 @@ public class SystemOptionManager : MonoBehaviour
     public void DisplayModeButtonClick()
     {
         displayModeSelectPanel.SetActive(true);
+    }
+    public void AudioOutputDeviceButtonClick()
+    {
+        audioOutputDeviceSelectPanel.SetActive(true);
     }
     public void AudioBufferButtonClick()
     {
@@ -165,6 +236,27 @@ public class SystemOptionManager : MonoBehaviour
         Screen.fullScreenMode = (FullScreenMode)value;
     }
 
+    public void AudioOutputDeviceValueButtonClick(int index)
+    {
+        string buttonText = audioOutputDeviceButton[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text;
+        if (buttonText.Substring(0, 7).CompareTo("ASIO : ") == 0)
+        {
+            PlayerPrefs.SetString("OutputType", "ASIO");
+            PlayerPrefs.SetString("DriverName", buttonText.Substring(7));
+        }
+        else
+        {
+            PlayerPrefs.SetString("OutputType", "WASAPI");
+            PlayerPrefs.SetString("DriverName", buttonText.Substring(0));
+        }
+        SetAudioOutputDeviceText();
+        foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
+        {
+            DestroyImmediate(manager.gameObject);
+        }
+        audioOutputDeviceSelectPanel.SetActive(false);
+    }
+
     public void AudioBufferValueButtonClick(int value)
     {
         PlayerPrefs.SetInt("AudioBufferSize", value);
@@ -202,6 +294,11 @@ public class SystemOptionManager : MonoBehaviour
             case 1: displayModeText.text = "Fullscreen Window"; break;
             case 3: displayModeText.text = "Windowed"; break;
         }
+    }
+    private void SetAudioOutputDeviceText()
+    {
+        audioOutputDeviceText.text = PlayerPrefs.GetString("OutputType").CompareTo("ASIO") == 0 ? "ASIO : " + PlayerPrefs.GetString("DriverName") :
+                                                                                                    PlayerPrefs.GetString("DriverName");
     }
     private void SetAudioBufferText()
     {
