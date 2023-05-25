@@ -77,6 +77,7 @@ public class BMSGameManager : MonoBehaviour
 
     private JudgeType[] currentLongNoteJudge = { JudgeType.KOOL, JudgeType.KOOL, JudgeType.KOOL, JudgeType.KOOL, JudgeType.KOOL };
     private bool[] isCurrentLongNote = { false, false, false, false, false };
+    private int[] longNoteHandleCount = { 0, 0, 0, 0, 0 };
     private int[] normalNoteHandleCount = { 0, 0, 0, 0, 0 };
 
     private int notePoolMaxCount;
@@ -337,6 +338,9 @@ public class BMSGameManager : MonoBehaviour
         {
             isKeyDown[i] = false;
             isNoteBombActive[i] = false;
+            isCurrentLongNote[i] = false;
+            longNoteHandleCount[i] = 0;
+            normalNoteHandleCount[i] = 0;
         }
         isTextUpdate = false;
         isChangeRankImage = false;
@@ -673,7 +677,14 @@ public class BMSGameManager : MonoBehaviour
         {
             if (result == JudgeType.COOL) { result = JudgeType.KOOL; }
             currentLongNoteJudge[idx] = result;
-            isCurrentLongNote[idx] = true;
+            if (isCurrentLongNote[idx])
+            {
+                longNoteHandleCount[idx]++;
+            }
+            else
+            {
+                isCurrentLongNote[idx] = true;
+            }
         }
 
         if (result <= JudgeType.MISS) { combo = -1; }
@@ -753,6 +764,35 @@ public class BMSGameManager : MonoBehaviour
                 }
             }
 
+            while (longNoteHandleCount[i] > 0)
+            {
+                longNoteHandleCount[i]--;
+                for (int j = 0; j < 3; j++)
+                {
+                    Note tempNote = longNoteList[i][longNoteListCount[i] - 1];
+                    longNoteListCount[i]--;
+
+                    int len = longNoteListCount[i] - (3 * longNotePoolMaxCount);
+                    if (len >= 0)
+                    {
+                        float yPos = (j == 1 ? (float)longNoteList[i][len + 1].beat : (float)longNoteList[i][len].beat) * gameSpeed;
+                        tempNote.modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
+                        longNoteList[i][len].model = tempNote.model;
+                        longNoteList[i][len].modelTransform = tempNote.modelTransform;
+                        if (j == 1)
+                        {
+                            longNoteList[i][len].modelTransform.localScale =
+                                new Vector3(0.3f, ((float)pattern.longNote[i][len].beat * gameSpeed - longNoteOffset) * longNoteLength, 1.0f);
+                        }
+                    }
+                    else
+                    {
+                        tempNote.model.SetActive(false);
+                        ObjectPool.poolInstance.ReturnLongNoteInPool(i, (j == 2 ? 0 : j + 1), tempNote.model);
+                    }
+                }
+            }
+
             while (notesListCount[i] >= 0 && notesList[i][notesListCount[i]].timing + 1750000.0d < currentTicks)
             {
                 HandleNote(notesList[i], i, currentTicks);
@@ -774,30 +814,7 @@ public class BMSGameManager : MonoBehaviour
             else
             {
                 isCurrentLongNote[i] = false;
-                for (int j = 0; j < 3; j++)
-                {
-                    Note tempNote = longNoteList[i][longNoteListCount[i] - 1];
-                    --longNoteListCount[i];
-
-                    int len = longNoteListCount[i] - (3 * longNotePoolMaxCount);
-                    if (len >= 0)
-                    {
-                        float yPos = (j == 1 ? (float)longNoteList[i][len + 1].beat : (float)longNoteList[i][len].beat) * gameSpeed;
-                        tempNote.modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
-                        longNoteList[i][len].model = tempNote.model;
-                        longNoteList[i][len].modelTransform = tempNote.modelTransform;
-                        if (j == 1)
-                        {
-                            longNoteList[i][len].modelTransform.localScale =
-                                new Vector3(0.3f, ((float)pattern.longNote[i][len].beat * gameSpeed - longNoteOffset) * longNoteLength, 1.0f);
-                        }
-                    }
-                    else
-                    {
-                        tempNote.model.SetActive(false);
-                        ObjectPool.poolInstance.ReturnLongNoteInPool(i, (j == 2 ? 0 : j + 1), tempNote.model);
-                    }
-                }
+                longNoteHandleCount[i]++;
             }
         }
 
