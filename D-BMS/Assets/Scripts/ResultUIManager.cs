@@ -94,6 +94,8 @@ public class ResultUIManager : MonoBehaviour
     private TextMeshProUGUI bpmText;
     [SerializeField]
     private Animator fadeAnimator;
+    [SerializeField]
+    private Image fadeImage;
 
     private BMPLoader loader;
 
@@ -142,6 +144,7 @@ public class ResultUIManager : MonoBehaviour
     {
         if (Input.anyKeyDown)
         {
+            if (fadeImage.IsActive()) { return; }
             StartCoroutine(CoLoadSelectScene());
         }
     }

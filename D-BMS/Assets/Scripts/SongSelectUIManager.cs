@@ -54,6 +54,8 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private Animator fadeAnimator;
     [SerializeField]
+    private Image fadeImage;
+    [SerializeField]
     private GameplayOptionManager gameplayOptionManager;
 
     [SerializeField]
@@ -80,10 +82,6 @@ public class SongSelectUIManager : MonoBehaviour
 
     private char prevFindAlphabet;
     private int findSequence;
-
-    private bool isReady = false;
-    private static bool isStart = false;
-    private bool isExit = false;
 
     public static SaveData songRecordData;
 
@@ -124,13 +122,10 @@ public class SongSelectUIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         fadeAnimator.SetTrigger("FadeOut");
-        yield return new WaitForSeconds(0.5f);
-        isStart = false;
     }
 
     private IEnumerator CoLoadStartScene()
     {
-        isExit = true;
         PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
         fadeAnimator.SetTrigger("FadeIn");
 
@@ -141,18 +136,26 @@ public class SongSelectUIManager : MonoBehaviour
 
     void Update()
     {
-        if (isStart || isExit) { return; }
+        if (fadeImage.IsActive()) { return; }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ToggleOptionCanvas();
         }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (optionCanvas.enabled)
+            {
+                ToggleOptionCanvas();
+            }
+            else
+            {
+                StartCoroutine(CoLoadStartScene());
+            }
+        }
         if (optionCanvas.enabled) { return; }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            StartCoroutine(CoLoadStartScene());
-        }
-        else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
+
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
         {
             GameStart();
         }
@@ -208,6 +211,8 @@ public class SongSelectUIManager : MonoBehaviour
 
     private IEnumerator CoMoveIndex(int index)
     {
+        MoveCurrentIndex(index - 2);
+        yield return new WaitForSeconds(0.05f);
         MoveCurrentIndex(index - 1);
         yield return new WaitForSeconds(0.05f);
         MoveCurrentIndex(index);
@@ -291,9 +296,8 @@ public class SongSelectUIManager : MonoBehaviour
 
     public void GameStart()
     {
-        if (isReady)
+        if (BMSFileSystem.selectedHeader != null)
         {
-            isStart = true;
             PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
             UnityEngine.SceneManagement.SceneManager.LoadScene(2);
         }
@@ -322,8 +326,6 @@ public class SongSelectUIManager : MonoBehaviour
             else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
             levelText.text = header.level.ToString();
         }
-
-        isReady = true;
     }
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)

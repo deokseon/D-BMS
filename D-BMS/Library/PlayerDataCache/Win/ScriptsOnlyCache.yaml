@@ -10,6 +10,8 @@ ScriptsOnlyBuild:
     - GameplayOptionManager
     - KeyInput
     - ObjectPool
+    - Reporter
+    - ReporterMessageReceiver
     - ResultUIManager
     - ScrollIndexCallback1
     - SongSelectUIManager
@@ -458,6 +460,8 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
+      Script: {instanceID: 806}
+    - Class: 114
       Script: {instanceID: 11468}
     - Class: 114
       Script: {instanceID: 11470}
@@ -509,6 +513,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 15550}
     - Class: 114
       Script: {instanceID: 15634}
+    - Class: 114
+      Script: {instanceID: 16694}
+    - Class: 114
+      Script: {instanceID: 16696}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -588,7 +596,7 @@ ScriptsOnlyBuild:
     className: TMP_ScrollbarEventHandler
   - hash:
       serializedVersion: 2
-      Hash: 96c1875c5cbb374b62464fe9ad1d002a
+      Hash: 3991059eadea958c3df4825b65ce386a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: KeyInput
@@ -732,7 +740,7 @@ ScriptsOnlyBuild:
     className: SignalAsset
   - hash:
       serializedVersion: 2
-      Hash: ffe24ab27443e2e127b2f4e184f22901
+      Hash: ebb956ad1d6a2d8c6c74c782c3596bb3
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameUIManager
@@ -1026,7 +1034,7 @@ ScriptsOnlyBuild:
     className: CustomListBank
   - hash:
       serializedVersion: 2
-      Hash: 5870faf5e2179750b755876a876a1701
+      Hash: f063e1375d811bee967002b1393a742a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSGameManager
@@ -1434,7 +1442,7 @@ ScriptsOnlyBuild:
     className: TMP_ColorGradient
   - hash:
       serializedVersion: 2
-      Hash: 79e68fd345629f60fb69f59bce57518b
+      Hash: 82502506ab450a0f6e9fc87fc5554546
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SystemOptionManager
@@ -1570,6 +1578,36 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UIMouseClick
+  - hash:
+      serializedVersion: 2
+      Hash: 5d694fb001503417d2bb4a27eeab8ac5
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TestReporter
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ReporterGUI
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ReporterMessageReceiver
+  - hash:
+      serializedVersion: 2
+      Hash: e78cd16ebf9601c38819cd2a88afbf1d
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Reporter
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Rotate
   platform: 5
   scenePathNames:
   - Assets/Scenes/StartScene.unity
@@ -1577,4 +1615,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/GameScene.unity
   - Assets/Scenes/ResultScene.unity
   - Assets/Scenes/OptionScene.unity
-  playerPath: C:/Users/user/BMS/D-BMS.exe
+  playerPath: C:/Users/user/BMS2/D-BMS.exe

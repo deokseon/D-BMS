@@ -46,7 +46,6 @@ public class BMSGameManager : MonoBehaviour
     private double displayDelayCorrectionBeat;
     private float longNoteEndOffset;
     public static int currentLoading = 0;
-    private Coroutine coSongEndCheck;
     private int currentRankIndex;
     public int endCount;
 
@@ -195,7 +194,6 @@ public class BMSGameManager : MonoBehaviour
         bmsResult.scoreBarArray = new float[bmsResult.noteCount + 2]; bmsResult.scoreBarArray[0] = 0.0f;
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] = 2000000.0d; }
 
-        coSongEndCheck = StartCoroutine(SongEndCheck());
         StartCoroutine(TimerStart());
 
         if (!isRestart)
@@ -287,7 +285,6 @@ public class BMSGameManager : MonoBehaviour
         isPaused = true;
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
-        StopCoroutine(coSongEndCheck);
         yield return wait1Sec;
 
         if (isBGAVideoSupported)
@@ -643,6 +640,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (isGameEnd)
         {
+            StartCoroutine(SongEndCheck());
             gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount, fsCount[0], fsCount[1], true);
             isGameEnd = false;
         }
@@ -962,6 +960,7 @@ public class BMSGameManager : MonoBehaviour
     public IEnumerator GameEnd(bool clear)
     {
         if (isPaused) { yield break; }
+        keyInput.KeyDisable();
         isPaused = !clear;
         isClear = clear;
 
@@ -997,14 +996,12 @@ public class BMSGameManager : MonoBehaviour
     {
         while (true)
         {
-            if (currentCount >= pattern.noteCount && 
-                ((!isBGAVideoSupported && bgaChangeListCount == 0) || 
-                (isBGAVideoSupported && !videoPlayer.isPlaying)))
+            if (((!isBGAVideoSupported && bgaChangeListCount == 0) || (isBGAVideoSupported && !videoPlayer.isPlaying)))
             {
                 StartCoroutine(GameEnd(true));
                 yield break;
             }
-            yield return wait3Sec;
+            yield return null;
         }
     }
 

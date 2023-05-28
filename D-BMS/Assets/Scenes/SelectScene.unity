@@ -410,6 +410,7 @@ MonoBehaviour:
   scrollbar: {fileID: 2077520285}
   optionCanvas: {fileID: 1028672606}
   fadeAnimator: {fileID: 195616650}
+  fadeImage: {fileID: 195616651}
   gameplayOptionManager: {fileID: 1028672607}
   categoryToggles:
   - {fileID: 1885647525}

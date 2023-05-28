@@ -8,7 +8,8 @@ using System;
 
 public class KeyInput : MonoBehaviour
 {
-    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+    //[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+    [DllImport("user32.dll")]
     private static extern int GetAsyncKeyState(int keyCode);
     public bool[] prevKeyState;
 
@@ -400,6 +401,8 @@ public class KeyInput : MonoBehaviour
 
     private void DeleteFunctionKeyAction()
     {
+        if (funcGameEndAction == null) { return; }
+
         funcGameEndAction.started -= ctx => { StartCoroutine(bmsGameManager.GameEnd(false)); };
         funcGameRestartAction.started -= ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(1); };

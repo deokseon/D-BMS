@@ -17,15 +17,11 @@ public class StartSceneManager : MonoBehaviour
     [SerializeField]
     private Button startButton;
 
-    private bool isLoadScene;
-
     private void Awake()
     {
         InitializeSystemOption();
         InitializeGamePlayOption();
         SetSystemOption();
-
-        isLoadScene = false;
 
         StartCoroutine(PrepareVideo());
     }
@@ -118,7 +114,6 @@ public class StartSceneManager : MonoBehaviour
 
         videoPlayer.Play();
 
-        isLoadScene = true;
         StartCoroutine(CoFadeOut());
         startButton.Select();
     }
@@ -127,21 +122,16 @@ public class StartSceneManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         fadeAnimator.SetTrigger("FadeOut");
-        yield return new WaitForSecondsRealtime(1.0f);
-        fadeImage.gameObject.SetActive(false);
-        isLoadScene = false;
     }
 
     public void ButtonClick(int scene)
     {
-        if (isLoadScene) { return; }
-        isLoadScene = true;
+        if (fadeImage.IsActive()) { return; }
         StartCoroutine(CoLoadScene(scene));
     }
 
     private IEnumerator CoLoadScene(int scene)
     {
-        fadeAnimator.gameObject.SetActive(true);
         fadeAnimator.SetTrigger("FadeIn");
 
         yield return new WaitForSecondsRealtime(1.0f);
@@ -151,8 +141,7 @@ public class StartSceneManager : MonoBehaviour
 
     public void ExitButtonClick()
     {
-        if (isLoadScene) { return; }
-        isLoadScene = true;
+        if (fadeImage.IsActive()) { return; }
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

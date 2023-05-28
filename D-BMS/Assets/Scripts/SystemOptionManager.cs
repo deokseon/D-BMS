@@ -89,6 +89,7 @@ public class SystemOptionManager : MonoBehaviour
             audioOutputDeviceButton[i].SetActive(false);
         }
         string originalOutputType = PlayerPrefs.GetString("OutputType");
+        string originalDriverName = PlayerPrefs.GetString("DriverName");
         PlayerPrefs.SetString("OutputType", "WASAPI");
         foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
         {
@@ -131,6 +132,7 @@ public class SystemOptionManager : MonoBehaviour
         }
 
         PlayerPrefs.SetString("OutputType", originalOutputType);
+        PlayerPrefs.SetString("DriverName", originalDriverName);
         foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
         {
             DestroyImmediate(manager.gameObject);
@@ -154,13 +156,10 @@ public class SystemOptionManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         fadeAnimator.SetTrigger("FadeOut");
-        yield return new WaitForSecondsRealtime(1.0f);
-        fadeImage.gameObject.SetActive(false);
     }
 
     private IEnumerator CoLoadScene(int scene)
     {
-        fadeAnimator.gameObject.SetActive(true);
         fadeAnimator.SetTrigger("FadeIn");
 
         yield return new WaitForSecondsRealtime(1.0f);
@@ -178,7 +177,11 @@ public class SystemOptionManager : MonoBehaviour
             else if (audioOutputDeviceSelectPanel.activeSelf) { audioOutputDeviceSelectPanel.SetActive(false); }
             else if (audioBufferSelectPanel.activeSelf) { audioBufferSelectPanel.SetActive(false); }
             else if (pollingRateSelectPanel.activeSelf) { pollingRateSelectPanel.SetActive(false); }
-            else { StartCoroutine(CoLoadScene(0)); }
+            else 
+            {
+                if (fadeImage.IsActive()) { return; }
+                StartCoroutine(CoLoadScene(0));
+            }
         }
     }
 

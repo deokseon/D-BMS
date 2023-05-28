@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSVPicker", "HSVPicker.csproj", "{8CBD8F0F-6378-47F9-8A68-B03CDFDA79B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMODUnityResonance", "FMODUnityResonance.csproj", "{93904650-5113-324B-4AAE-3C24AF2592ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMODUnity", "FMODUnity.csproj", "{83FEAF7C-699C-3950-22D5-4CD75A8CF9AF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopScrollRect.Runtime", "LoopScrollRect.Runtime.csproj", "{DCD066F6-EBEE-4138-E781-A523D02B30C8}"
 EndProject
@@ -19,12 +19,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSVPicker.Editors", "HSVPic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMODUnityResonanceEditor", "FMODUnityResonanceEditor.csproj", "{B40A3B4B-E296-B4C0-D85B-63C44160846A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{4D8526B2-1172-4E0F-C705-F2DFD2227A72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8CBD8F0F-6378-47F9-8A68-B03CDFDA79B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8CBD8F0F-6378-47F9-8A68-B03CDFDA79B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CBD8F0F-6378-47F9-8A68-B03CDFDA79B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,10 +43,6 @@ Global
 		{83FEAF7C-699C-3950-22D5-4CD75A8CF9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83FEAF7C-699C-3950-22D5-4CD75A8CF9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83FEAF7C-699C-3950-22D5-4CD75A8CF9AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA125C2C-E4F7-167B-2C6A-5B27F7E14FBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DCD066F6-EBEE-4138-E781-A523D02B30C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DCD066F6-EBEE-4138-E781-A523D02B30C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCD066F6-EBEE-4138-E781-A523D02B30C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,6 +63,10 @@ Global
 		{B40A3B4B-E296-B4C0-D85B-63C44160846A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B40A3B4B-E296-B4C0-D85B-63C44160846A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B40A3B4B-E296-B4C0-D85B-63C44160846A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D8526B2-1172-4E0F-C705-F2DFD2227A72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D8526B2-1172-4E0F-C705-F2DFD2227A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D8526B2-1172-4E0F-C705-F2DFD2227A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D8526B2-1172-4E0F-C705-F2DFD2227A72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
