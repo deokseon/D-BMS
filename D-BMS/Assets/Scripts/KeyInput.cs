@@ -8,8 +8,7 @@ using System;
 
 public class KeyInput : MonoBehaviour
 {
-    //[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
     private static extern int GetAsyncKeyState(int keyCode);
     public bool[] prevKeyState;
 
@@ -99,7 +98,7 @@ public class KeyInput : MonoBehaviour
                     break;
             }
 
-            result = KeyState_Assist(2);
+            result = KeyState(2);
             switch (result)
             {
                 case 1:
@@ -217,7 +216,7 @@ public class KeyInput : MonoBehaviour
     {
         int result = 0;
         int state = GetAsyncKeyState(keyCodeArray[index]);
-        if (state <= 1)
+        if (state == 0 || state == 1)
         {
             if (prevKeyState[index])
             {

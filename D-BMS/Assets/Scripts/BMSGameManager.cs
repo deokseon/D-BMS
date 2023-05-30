@@ -156,26 +156,6 @@ public class BMSGameManager : MonoBehaviour
         bpmsListCount = bpmsList.Count;
         barListCount = barList.Count - 1;
 
-        for (int i = 0; i <= barListCount; i++)
-        {
-            barList[i].timing += 0.175d;
-        }
-        for (int i = 0; i <= bgaChangeListCount; i++)
-        {
-            if (!bgaChangeList[i].isPic)
-            {
-                bgaChangeList[i].timing -= 0.4d;
-            }
-        }
-        for (int i = 0; i <= bgSoundsListCount; i++) { bgSoundsList[i].timing *= 10000000.0d; }
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j <= notesListCount[i]; j++)
-            {
-                notesList[i][j].timing *= 10000000.0d;
-            } 
-        }
-
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
 

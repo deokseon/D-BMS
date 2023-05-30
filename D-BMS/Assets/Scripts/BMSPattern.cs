@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class BMSPattern
 {
@@ -86,15 +87,35 @@ public class BMSPattern
             bgaChanges[i].timing = GetTimingInSecond(bgaChanges[i]);
         }
         bgaChanges.Sort();
+        for (int i = bgaChanges.Count - 1; i >= 0; i--)
+        {
+            if (!bgaChanges[i].isPic)
+            {
+                bgaChanges[i].timing -= 0.4d;
+            }
+        }
 
         // GET BGSOUND
         CalculateTimingsInListExtension(bgSounds);
+        for (int i = bgSounds.Count - 1; i >= 0; i--) { bgSounds[i].timing *= 10000000.0d; }
 
         // GET NOTES
         for (int i = 0; i < 5; i++) { CalculateTimingsInListExtension(lines[i].noteList); }
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = lines[i].noteList.Count - 1; j >= 0; j--)
+            {
+                lines[i].noteList[j].timing *= 10000000.0d;
+            }
+        }
         NoteDivideSave();
 
         CalculateTimingsInListExtension(barLine.noteList);
+        barLine.noteList.RemoveAt(barLine.noteList.Count - 1);
+        for (int i = barLine.noteList.Count - 1; i >= 0; i--)
+        {
+            barLine.noteList[i].timing += 0.175d;
+        }
     }
 
     public void NoteDivideSave()
@@ -159,6 +180,18 @@ public class BMSPattern
         }
         timing += (obj.beat - bpms[i].beat) / bpms[i].bpm * 60;
         return timing;
+    }
+
+    private double GetBeatFromTiming(BMSObject obj)  // 리플레이용
+    {
+        double beat = 0;
+        int i;
+        for (i = bpms.Count - 1; i > 0 && obj.timing > bpms[i - 1].timing; i--)
+        {
+            beat += (bpms[i - 1].timing - bpms[i].timing) * bpms[i].bpm / 60;
+        }
+        beat += (obj.timing - bpms[i].timing) * bpms[i].bpm / 60;
+        return beat;
     }
 
     public double GetPreviousBarBeatSum(int bar)
