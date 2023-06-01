@@ -15,10 +15,12 @@ public class StartSceneManager : MonoBehaviour
     [SerializeField]
     private VideoPlayer videoPlayer;
     [SerializeField]
-    private Button startButton;
+    private Toggle[] toggleArray;
+    private int currentIndex;
 
     private void Awake()
     {
+        currentIndex = 0;
         InitializeSystemOption();
         InitializeGamePlayOption();
         SetSystemOption();
@@ -32,6 +34,18 @@ public class StartSceneManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ExitButtonClick();
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            ToggleExecute();
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            ToggleChange(currentIndex + 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            ToggleChange(currentIndex - 1);
         }
     }
 
@@ -115,7 +129,6 @@ public class StartSceneManager : MonoBehaviour
         videoPlayer.Play();
 
         StartCoroutine(CoFadeOut());
-        startButton.Select();
     }
 
     private IEnumerator CoFadeOut()
@@ -124,10 +137,31 @@ public class StartSceneManager : MonoBehaviour
         fadeAnimator.SetTrigger("FadeOut");
     }
 
-    public void ButtonClick(int scene)
+    public void ToggleChange(int index)
     {
         if (fadeImage.IsActive()) { return; }
-        StartCoroutine(CoLoadScene(scene));
+        if (index >= 0 && index < toggleArray.Length)
+        {
+            currentIndex = index;
+            toggleArray[currentIndex].isOn = true;
+        }
+    }
+
+    public void ToggleExecute()
+    {
+        if (fadeImage.IsActive()) { return; }
+        if (currentIndex == 0)
+        {
+            StartCoroutine(CoLoadScene(1));
+        }
+        else if (currentIndex == 1)
+        {
+            StartCoroutine(CoLoadScene(4));
+        }
+        else
+        {
+            ExitButtonClick();
+        }
     }
 
     private IEnumerator CoLoadScene(int scene)

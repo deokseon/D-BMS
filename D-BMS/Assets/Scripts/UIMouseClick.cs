@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UIMouseClick : MonoBehaviour, IPointerClickHandler
+public class UIMouseClick : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField]
     private SongSelectUIManager selectUIManager;
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {

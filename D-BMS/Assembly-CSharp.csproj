@@ -90,6 +90,7 @@
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\StartSceneManager.cs" />
      <Compile Include="Assets\Scripts\SystemOptionManager.cs" />
+     <Compile Include="Assets\Scripts\ToggleMouseEvent.cs" />
      <Compile Include="Assets\Scripts\UIMouseClick.cs" />
      <Compile Include="Assets\Unity-Logs-Viewer\Reporter\MultiKeyDictionary.cs" />
      <Compile Include="Assets\Unity-Logs-Viewer\Reporter\Reporter.cs" />
