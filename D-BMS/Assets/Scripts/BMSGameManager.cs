@@ -647,7 +647,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (isGameOver)
         {
-            StartCoroutine(GameEnd(false));
+            GamePause(1);
             isGameOver = false;
         }
     }
@@ -930,7 +930,7 @@ public class BMSGameManager : MonoBehaviour
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
         else if (gauge.hp <= 0.0f) { isGameOver = true; }
 
-        if (currentCount >= pattern.noteCount)
+        if (currentCount >= pattern.noteCount && gauge.hp > 0.0f)
         {
             isGameEnd = true;
             bmsResult.score = currentScore + bmsResult.maxCombo;
@@ -941,12 +941,11 @@ public class BMSGameManager : MonoBehaviour
             scoreStickHeight = (float)(under60 + up60);
             bmsResult.scoreBarArray[currentCount + 1] = scoreStickHeight;
             endCount++;
-            bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
         }
         isUpdateScore = true;
     }
 
-    public void GamePause()
+    public void GamePause(int set)
     {
         lock (inputHandleLock)
         {
@@ -955,9 +954,13 @@ public class BMSGameManager : MonoBehaviour
             stopwatch.Stop();
             soundManager.AudioPause(true);
             keyInput.InputThreadAbort();
-            bgmThread.Abort();
+            if (bgmThread.IsAlive)
+            {
+                bgmThread.Abort();
+            }
             if (isBGAVideoSupported) { videoPlayer.Pause(); }
             combo = 0;
+            pauseManager.PausePanelSetting(set);
             pauseManager.Pause_SetActive(true);
             gameUIManager.SetPausePanelNoteSpeedText();
         }
@@ -965,6 +968,7 @@ public class BMSGameManager : MonoBehaviour
 
     public IEnumerator GameEnd(bool clear)
     {
+        pauseManager.Pause_SetActive(false);
         keyInput.KeyDisable();
         isPaused = true;
         isClear = clear;
@@ -981,25 +985,27 @@ public class BMSGameManager : MonoBehaviour
         }
         else
         {
-            bgmThread.Abort();
+            if (bgmThread.IsAlive)
+            {
+                bgmThread.Abort();
+            }
         }
         soundManager.AudioAllStop();
 
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] *= 0.0001d; }
-
-        noteParent.gameObject.SetActive(clear);
+        bmsResult.score = currentScore + bmsResult.maxCombo;
+        bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
 
         if (isClear) { yield return wait3Sec; }
-        else { yield return new WaitForSeconds(1.0f); }
         StartCoroutine(CoLoadScene(3));
     }
 
     public IEnumerator CoLoadScene(int scene)
     {
         pauseManager.Pause_SetActive(false);
-        ReturnAllNotes();
         gameUIManager.FadeIn();
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSecondsRealtime(1.0f);
+        ReturnAllNotes();
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }
 

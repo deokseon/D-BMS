@@ -379,7 +379,7 @@ public class KeyInput : MonoBehaviour
 
     private void MakeFunctionKeyAction()
     {
-        funcGamePauseAction.started += ctx => { bmsGameManager.GamePause(); };
+        funcGamePauseAction.started += ctx => { bmsGameManager.GamePause(0); };
         funcGameRestartAction.started += ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started += ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-1); };
@@ -402,7 +402,7 @@ public class KeyInput : MonoBehaviour
     {
         if (funcGamePauseAction == null) { return; }
 
-        funcGamePauseAction.started -= ctx => { bmsGameManager.GamePause(); };
+        funcGamePauseAction.started -= ctx => { bmsGameManager.GamePause(0); };
         funcGameRestartAction.started -= ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };

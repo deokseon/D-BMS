@@ -12031,7 +12031,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: b784b3022aebdf74ab7f520210286257, type: 2}
-  m_Color: {r: 0, g: 0.9551997, b: 1, a: 0.78431374}
+  m_Color: {r: 0, g: 0.95686275, b: 1, a: 0.78431374}
   m_RaycastTarget: 0
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -12086,6 +12086,8 @@ MonoBehaviour:
   - {fileID: 504048483}
   - {fileID: 1498205967}
   toggleGroup: {fileID: 2113995516}
+  panelImage: {fileID: 2113995514}
+  titleText: {fileID: 202896570}
 --- !u!1 &2138226985
 GameObject:
   m_ObjectHideFlags: 0

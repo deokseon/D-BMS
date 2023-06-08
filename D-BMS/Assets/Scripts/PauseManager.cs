@@ -12,6 +12,10 @@ public class PauseManager : MonoBehaviour
     private Toggle[] toggleArray;
     [SerializeField]
     private ToggleGroup toggleGroup;
+    [SerializeField]
+    private Image panelImage;
+    [SerializeField]
+    private TextMeshProUGUI titleText;
     private TextMeshProUGUI[] toggleText;
     private int currentIndex;
     private PauseManager pauseManager;
@@ -34,6 +38,24 @@ public class PauseManager : MonoBehaviour
         ToggleChange(0);
         toggleGroup.allowSwitchOff = false;
         pauseManager.Pause_SetActive(false);
+    }
+
+    public void PausePanelSetting(int set)
+    {
+        if (set == 0)
+        {
+            titleText.text = "PAUSE";
+            titleText.color = new Color(215.0f / 255.0f, 215.0f / 255.0f, 215.0f / 255.0f);
+            toggleText[0].text = "RESUME";
+            panelImage.color = new Color(0.0f, 244.0f / 255.0f, 255.0f / 255.0f, 200.0f / 255.0f);
+        }
+        else
+        {
+            titleText.text = "GAME OVER";
+            titleText.color = new Color(170.0f / 255.0f, 0.0f, 0.0f);
+            toggleText[0].text = "RESULT";
+            panelImage.color = new Color(255.0f / 255.0f, 0.0f, 0.0f, 200.0f / 255.0f);
+        }
     }
 
     public void Pause_SetActive(bool isActive)
@@ -87,7 +109,14 @@ public class PauseManager : MonoBehaviour
     {
         if (currentIndex == 0)
         {
-            bmsGameManager.GameResume();
+            if (toggleText[0].text.CompareTo("RESUME") == 0)
+            {
+                bmsGameManager.GameResume();
+            }
+            else
+            {
+                StartCoroutine(bmsGameManager.GameEnd(false));
+            }
         }
         else if (currentIndex == 1)
         {
