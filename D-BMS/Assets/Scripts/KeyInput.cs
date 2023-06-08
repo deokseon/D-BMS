@@ -15,7 +15,7 @@ public class KeyInput : MonoBehaviour
     bool isAssistKeyUse;
     private int[] keyCodeArray;
 
-    private InputAction funcGameEndAction;
+    private InputAction funcGamePauseAction;
     private InputAction funcGameRestartAction;
     private InputAction funcSpeedUpAction;
     private InputAction funcSpeedDownAction;
@@ -47,7 +47,7 @@ public class KeyInput : MonoBehaviour
 
         threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
 
-        funcGameEndAction = new InputAction("FuncGameEnd", InputActionType.Button, "<Keyboard>/Escape");
+        funcGamePauseAction = new InputAction("FuncGamePause", InputActionType.Button, "<Keyboard>/Escape");
         funcGameRestartAction = new InputAction("FuncGameRestart", InputActionType.Button, "<Keyboard>/F5");
         funcSpeedUpAction = new InputAction("FuncSpeedUp", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedUp1"))}");
         funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown1"))}");
@@ -241,7 +241,7 @@ public class KeyInput : MonoBehaviour
 
         int result = 0;
         int state = GetAsyncKeyState(keyCodeArray[index]);
-        if (state <= 1)
+        if (state == 0 || state == 1)
         {
             if (prevKeyState[index])
             {
@@ -379,7 +379,7 @@ public class KeyInput : MonoBehaviour
 
     private void MakeFunctionKeyAction()
     {
-        funcGameEndAction.started += ctx => { StartCoroutine(bmsGameManager.GameEnd(false)); };
+        funcGamePauseAction.started += ctx => { bmsGameManager.GamePause(); };
         funcGameRestartAction.started += ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started += ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-1); };
@@ -388,7 +388,7 @@ public class KeyInput : MonoBehaviour
         funcJudgeAdjUpAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
         funcJudgeAdjDownAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
 
-        funcGameEndAction.Enable();
+        funcGamePauseAction.Enable();
         funcGameRestartAction.Enable();
         funcSpeedUpAction.Enable();
         funcSpeedDownAction.Enable();
@@ -400,9 +400,9 @@ public class KeyInput : MonoBehaviour
 
     private void DeleteFunctionKeyAction()
     {
-        if (funcGameEndAction == null) { return; }
+        if (funcGamePauseAction == null) { return; }
 
-        funcGameEndAction.started -= ctx => { StartCoroutine(bmsGameManager.GameEnd(false)); };
+        funcGamePauseAction.started -= ctx => { bmsGameManager.GamePause(); };
         funcGameRestartAction.started -= ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
         funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };
@@ -411,7 +411,7 @@ public class KeyInput : MonoBehaviour
         funcJudgeAdjUpAction.started -= ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
         funcJudgeAdjDownAction.started -= ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
 
-        funcGameEndAction.Disable();
+        funcGamePauseAction.Disable();
         funcGameRestartAction.Disable();
         funcSpeedUpAction.Disable();
         funcSpeedDownAction.Disable();
@@ -419,7 +419,7 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.Disable();
         funcJudgeAdjUpAction.Disable();
         funcJudgeAdjDownAction.Disable();
-        funcGameEndAction = null;
+        funcGamePauseAction = null;
         funcGameRestartAction = null;
         funcSpeedUpAction = null;
         funcSpeedDownAction = null;

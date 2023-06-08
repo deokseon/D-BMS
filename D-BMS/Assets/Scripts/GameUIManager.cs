@@ -126,6 +126,12 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI sliderValueText;
     [SerializeField]
     private Slider loadingSlider;
+    [SerializeField]
+    private Image countdownCircle;
+    [SerializeField]
+    private TextMeshProUGUI countdownText;
+    [SerializeField]
+    private TextMeshProUGUI pausePanelNoteSpeedText;
 
     [SerializeField]
     private GameObject endInfo;
@@ -500,5 +506,22 @@ public class GameUIManager : MonoBehaviour
     public void CloseLoading()
     {
         loadingPanel.SetActive(false);
+    }
+
+    public void SetCountdown(float amount, int second)
+    {
+        countdownCircle.fillAmount = amount;
+        countdownText.text = str0to999Table[second == 3 ? second : second + 1];
+    }
+
+    public void SetActiveCountdown(bool isActive)
+    {
+        countdownCircle.gameObject.SetActive(isActive);
+        countdownText.gameObject.SetActive(isActive);
+    }
+
+    public void SetPausePanelNoteSpeedText()
+    {
+        pausePanelNoteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
     }
 }

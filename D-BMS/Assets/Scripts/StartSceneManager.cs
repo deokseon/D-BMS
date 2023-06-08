@@ -140,11 +140,8 @@ public class StartSceneManager : MonoBehaviour
     public void ToggleChange(int index)
     {
         if (fadeImage.IsActive()) { return; }
-        if (index >= 0 && index < toggleArray.Length)
-        {
-            currentIndex = index;
-            toggleArray[currentIndex].isOn = true;
-        }
+        currentIndex = (index + toggleArray.Length) % toggleArray.Length;
+        toggleArray[currentIndex].isOn = true;
     }
 
     public void ToggleExecute()

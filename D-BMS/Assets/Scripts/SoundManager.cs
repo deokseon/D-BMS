@@ -110,6 +110,11 @@ public class SoundManager : MonoBehaviour
         else { return false; }
     }
 
+    public void AudioPause(bool isPause)
+    {
+        channelGroup.setPaused(isPause);
+    }
+
     public void AudioAllStop()
     {
         channelGroup.stop();
