@@ -233,7 +233,7 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++) { if (notesListCount[i] >= 0) { currentNote[i] = notesList[i][notesListCount[i]].keySound; } }
 
         gameUIManager.bga.texture = videoPlayer.texture;
-        if (bgaChangeListCount == -1) 
+        if (bgaChangeListCount == -1 || (!string.IsNullOrEmpty(videoPlayer.url) && !isBGAVideoSupported)) 
         {
             gameUIManager.bga.color = Color.black;
             bgaChangeList.Add(new BGChange(0, "00", 0, 0, true));

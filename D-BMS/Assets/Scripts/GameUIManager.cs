@@ -144,6 +144,9 @@ public class GameUIManager : MonoBehaviour
     private Sprite[] judgeLineSprites;
 
     [SerializeField]
+    private SpriteMask panelFade;
+
+    [SerializeField]
     private BMSGameManager bmsGameManager;
 
     private BMPLoader loader;
@@ -200,6 +203,17 @@ public class GameUIManager : MonoBehaviour
 
         hpBarBackground.transform.localPosition = new Vector3(rightPanel.transform.localPosition.x + rightPanel.sprite.bounds.size.x + hpBarBackground.sprite.bounds.size.x * 0.5f,
                                                               -0.24f + hpBarBackground.sprite.bounds.size.y * 0.5f, 0.0f);
+
+        float fadeInSize = PlayerPrefs.GetFloat("FadeIn");
+        if (fadeInSize == 0.0f)
+        {
+            panelFade.gameObject.SetActive(false);
+        }
+        else 
+        {
+            panelFade.transform.localPosition = new Vector3(-6.111f, 2.5f + cameraSize, 0.0f);
+            panelFade.transform.localScale = new Vector3(3.8f / panelFade.sprite.bounds.size.x, 8.0f * fadeInSize, 1.0f);
+        }
 
         float keyboardWidth = 0.76f / keyboard[0].sprite.bounds.size.x;
         float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / keyboard[0].sprite.bounds.size.y;

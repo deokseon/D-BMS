@@ -40,6 +40,10 @@ public class GameplayOptionManager : MonoBehaviour
     [SerializeField]
     private ColorPicker evenKeyFeedbackColorPicker;
     [SerializeField]
+    private TextMeshProUGUI fadeInValueText;
+    [SerializeField]
+    private Slider fadeInSlider;
+    [SerializeField]
     private Toggle[] noteSkinToggles;
     [SerializeField]
     private Toggle[] judgeLineToggles;
@@ -85,6 +89,8 @@ public class GameplayOptionManager : MonoBehaviour
                                                             PlayerPrefs.GetFloat("EvenKeyFeedbackColorG"), 
                                                             PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"));
         SetRandomEffector(PlayerPrefs.GetInt("RandomEffector"));
+        fadeInSlider.value = PlayerPrefs.GetFloat("FadeIn");
+        SetFadeInValueText();
         noteSkinToggles[PlayerPrefs.GetInt("NoteSkin")].isOn = true;
         judgeLineToggles[PlayerPrefs.GetInt("JudgeLine")].isOn = true;
     }
@@ -163,6 +169,16 @@ public class GameplayOptionManager : MonoBehaviour
     private void SetKeyFeedbackOpacityValueText()
     {
         keyFeedbackOpacityValueText.text = PlayerPrefs.GetFloat("KeyFeedbackOpacity").ToString("P0");
+    }
+
+    public void FadeInSliderValueChange(float value)
+    {
+        PlayerPrefs.SetFloat("FadeIn", value);
+        SetFadeInValueText();
+    }
+    private void SetFadeInValueText()
+    {
+        fadeInValueText.text = PlayerPrefs.GetFloat("FadeIn").ToString("P0");
     }
 
     public void SetNoteSkin(int index)
