@@ -107,6 +107,9 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("NoteSkin", 0);
             PlayerPrefs.SetInt("JudgeLine", 0);
             PlayerPrefs.SetFloat("FadeIn", 0.0f);
+            PlayerPrefs.SetInt("JudgementTracker", 1);
+            PlayerPrefs.SetInt("ScoreGraph", 1);
+            PlayerPrefs.SetInt("EarlyLate", 1);
         }
     }
 

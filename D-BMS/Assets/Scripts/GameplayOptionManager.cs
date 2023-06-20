@@ -45,8 +45,6 @@ public class GameplayOptionManager : MonoBehaviour
     private Slider fadeInSlider;
     [SerializeField]
     private Toggle[] noteSkinToggles;
-    [SerializeField]
-    private Toggle[] judgeLineToggles;
 
     private int randomEffectorCount;
 
@@ -92,7 +90,6 @@ public class GameplayOptionManager : MonoBehaviour
         fadeInSlider.value = PlayerPrefs.GetFloat("FadeIn");
         SetFadeInValueText();
         noteSkinToggles[PlayerPrefs.GetInt("NoteSkin")].isOn = true;
-        judgeLineToggles[PlayerPrefs.GetInt("JudgeLine")].isOn = true;
     }
 
     public void NoteSpeedSliderValueChange(float value)
@@ -184,10 +181,5 @@ public class GameplayOptionManager : MonoBehaviour
     public void SetNoteSkin(int index)
     {
         PlayerPrefs.SetInt("NoteSkin", index);
-    }
-
-    public void SetJudgeLine(int index)
-    {
-        PlayerPrefs.SetInt("JudgeLine", index);
     }
 }

@@ -29,20 +29,6 @@ public class GameUIManager : MonoBehaviour
     private Animator comboAnimator;
     [SerializeField]
     private TextMeshProUGUI maxComboText;
-    [SerializeField]
-    private TextMeshProUGUI koolText;
-    [SerializeField]
-    private TextMeshProUGUI coolText;
-    [SerializeField]
-    private TextMeshProUGUI goodText;
-    [SerializeField]
-    private TextMeshProUGUI missText;
-    [SerializeField]
-    private TextMeshProUGUI failText;
-    [SerializeField]
-    private TextMeshProUGUI frontAccuracyText;
-    [SerializeField]
-    private TextMeshProUGUI backAccuracyText;
 
     [SerializeField]
     private SpriteRenderer leftPanel;
@@ -68,36 +54,6 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private Animator judgeEffectAnimator;
-
-    [SerializeField]
-    private Sprite[] earlyLateImageArray;
-    [SerializeField]
-    private SpriteRenderer[] earlyLateSprite;
-    [SerializeField]
-    private Animator[] earlyLateEffectAnimator;
-
-    private readonly float[] yPos = { -90.0f, 19.5f, 71.5f, 151.5f, 231.5f, 271.5f, 311.5f, 351.5f, 371.5f, 391.5f, 423.5f };
-    [SerializeField]
-    private Sprite[] rank;
-    [SerializeField]
-    private Image rankImage;
-    private Transform rankImageTransform;
-    [SerializeField]
-    private RectTransform scoreStick;
-    [SerializeField]
-    private RectTransform maxScoreStick;
-    private readonly RectTransform.Axis vertical = RectTransform.Axis.Vertical;
-
-    [SerializeField]
-    private TextMeshProUGUI earlyCountText;
-    [SerializeField]
-    private TextMeshProUGUI lateCountText;
-    [SerializeField]
-    private TextMeshProUGUI koolCountText;
-    [SerializeField]
-    private TextMeshProUGUI coolCountText;
-    [SerializeField]
-    private TextMeshProUGUI goodCountText;
 
     [SerializeField]
     private TextMeshProUGUI bpmText;
@@ -134,8 +90,6 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI pausePanelNoteSpeedText;
 
     [SerializeField]
-    private GameObject endInfo;
-    [SerializeField]
     private Animator fadeinAnimator;
     [SerializeField]
     private GameObject fadeinObject;
@@ -161,11 +115,10 @@ public class GameUIManager : MonoBehaviour
     private readonly int hashJudgeEffectMISS = Animator.StringToHash("JudgeEffectMISS");
     private readonly int hashJudgeEffectFAIL = Animator.StringToHash("JudgeEffectFAIL");
     private readonly int hashNoteBombEffect = Animator.StringToHash("NoteBomb");
-    private readonly int hashEarlyLateEffect = Animator.StringToHash("EarlyLateEffect");
 
-    private string[] str0000to9999Table;
+    [HideInInspector] public string[] str0000to9999Table;
     private string[] str0to999Table;
-    private string[] str00to100Table;
+    [HideInInspector] public string[] str00to100Table;
     private string[] str000to110Table;
 
     private void Awake()
@@ -175,19 +128,12 @@ public class GameUIManager : MonoBehaviour
         SetNoteBombPosition();
         SetKeyFeedback();
 
-        rankImageTransform = rankImage.transform;
-
-        endInfo.SetActive(false);
-
         loader = new BMPLoader();
         wait1sec = new WaitForSecondsRealtime(1.0f);
         wait10ms = new WaitForSecondsRealtime(0.01f);
 
         bgImageTable = new Dictionary<string, string>(500);
         bgSprites = new Dictionary<string, Texture2D>(500);
-
-        scoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
-        maxScoreStick.SetSizeWithCurrentAnchors(vertical, 0.0f);
     }
 
     private void SetGamePanel()
@@ -325,7 +271,7 @@ public class GameUIManager : MonoBehaviour
         noteBombEffect[index].SetTrigger(hashNoteBombEffect);
     }
 
-    public void TextUpdate(BMSResult res, int combo, JudgeType judge)
+    public void GameUIUpdate(int combo, JudgeType judge)
     {
         if (combo != 0)
         {
@@ -344,12 +290,15 @@ public class GameUIManager : MonoBehaviour
             comboText.SetActive(false);
         }
 
-        maxComboText.text = str0000to9999Table[res.maxCombo];
-        koolText.text = str0000to9999Table[res.koolCount];
-        coolText.text = str0000to9999Table[res.coolCount];
-        goodText.text = str0000to9999Table[res.goodCount];
-        missText.text = str0000to9999Table[res.missCount];
-        failText.text = str0000to9999Table[res.failCount];
+        maxComboText.text = str0000to9999Table[BMSGameManager.bmsResult.maxCombo];
+
+        hpBarMask.localScale = new Vector3(1.0f, bmsGameManager.gauge.hp, 1.0f);
+
+        float score = (float)(bmsGameManager.currentScore);
+        int frontSC = (int)(score * 0.0001d);
+        int backSC = (int)(score - (frontSC * 10000));
+        frontScoreText.text = str000to110Table[frontSC];
+        backScoreText.text = str0000to9999Table[backSC];
 
         switch (judge)
         {
@@ -369,51 +318,6 @@ public class GameUIManager : MonoBehaviour
                 judgeEffectAnimator.SetTrigger(hashJudgeEffectFAIL);
                 break;
         }
-    }
-
-    public void UpdateScore()
-    {
-        hpBarMask.localScale = new Vector3(1.0f, bmsGameManager.gauge.hp, 1.0f);
-
-        int currentCount = bmsGameManager.currentCount;
-        float accuracy = (float)(bmsGameManager.accuracySum * bmsGameManager.divideTable[currentCount]);
-        int frontAC = (int)(accuracy);
-        int backAC = (int)((accuracy - frontAC) * 100.0d);
-        frontAccuracyText.text = str00to100Table[frontAC];
-        backAccuracyText.text = str00to100Table[backAC];
-
-        float score = (float)(bmsGameManager.currentScore);
-        int frontSC = (int)(score * 0.0001d);
-        int backSC = (int)(score - (frontSC * 10000));
-        frontScoreText.text = str000to110Table[frontSC];
-        backScoreText.text = str0000to9999Table[backSC];
-
-        currentCount += bmsGameManager.endCount;
-        scoreStick.SetSizeWithCurrentAnchors(vertical, BMSGameManager.bmsResult.scoreBarArray[currentCount]);
-        maxScoreStick.SetSizeWithCurrentAnchors(vertical, bmsGameManager.maxScoreTable[currentCount]);
-    }
-
-    public void ChangeRankImage()
-    {
-        rankImage.sprite = rank[BMSGameManager.bmsResult.rankIndex];
-        rankImageTransform.localPosition = new Vector3(-244.0f, yPos[BMSGameManager.bmsResult.rankIndex], 0.0f);
-    }
-
-    public void UpdateFSText(int idx, int state)
-    {
-        earlyLateSprite[idx].sprite = earlyLateImageArray[state];
-        earlyLateEffectAnimator[idx].SetTrigger(hashEarlyLateEffect);
-    }
-
-    public void UpdateSongEndText(int koolCount, int coolCount, int goodCount, int earlyCount, int lateCount, bool isActive)
-    {
-        earlyCountText.text = earlyCount.ToString();
-        lateCountText.text = lateCount.ToString();
-        koolCountText.text = koolCount.ToString();
-        coolCountText.text = coolCount.ToString();
-        goodCountText.text = goodCount.ToString();
-
-        endInfo.SetActive(isActive);
     }
 
     public void FadeIn()

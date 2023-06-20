@@ -74,6 +74,7 @@ public class BMSGameManager : MonoBehaviour
     private double currentBPM;
     private int combo = 0;
     private bool isBGAVideoSupported = false;
+    private Coroutine songEndCheckCoroutine;
 
     private int[] currentNote;
 
@@ -109,17 +110,19 @@ public class BMSGameManager : MonoBehaviour
 
     private Thread bgmThread;
     private TimeSpan threadFrequency;
-    private object inputHandleLock = new object();
+    [HideInInspector] public object inputHandleLock = new object();
     private bool[] isKeyDown;
     private bool[] isNoteBombActive;
-    private bool isUpdateScore = false;
-    private bool isChangeRankImage = false;
-    private bool isTextUpdate = false;
+    [HideInInspector] public bool isChangeRankImage = false;
+    [HideInInspector] public bool isJudgementTrackerUpdate = false;
+    [HideInInspector] public bool isScoreGraphUpdate = false;
+    [HideInInspector] public bool[] fsUpdate;
+    [HideInInspector] public int[] fsStates;
+    [HideInInspector] public int[] fsCount;
+    private bool isGameUIUpdate = false;
     private bool isGameEnd = false;
+    [HideInInspector] public int isEndJudgeInfoUpdate = 0;
     private bool isGameOver = false;
-    private bool[] fsUpdate;
-    private int[] fsStates;
-    private int[] fsCount;
     private JudgeType currentJudge;
 
     public float CalulateSpeed()
@@ -247,10 +250,12 @@ public class BMSGameManager : MonoBehaviour
             gameUIManager.KeyInputImageSetActive(false, i);
         }
         gameUIManager.UpdateBPMText(currentBPM);
-        gameUIManager.TextUpdate(bmsResult, 0, JudgeType.IGNORE);
-        gameUIManager.UpdateScore();
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
+        isJudgementTrackerUpdate = true;
+        isScoreGraphUpdate = true;
+        isChangeRankImage = true;
 
-        System.GC.Collect();
+        GC.Collect();
 
         if (isRestart)
         {
@@ -260,18 +265,19 @@ public class BMSGameManager : MonoBehaviour
 
         isStarted = true;
         isPaused = false;
-        stopwatch.Start();
         if (bgSoundsListCount >= 0)
         {
             bgmThread.Start();
         }
         keyInput.InputThreadStart();
+        stopwatch.Start();
     }
 
     public IEnumerator GameRestart()
     {
         if (isCountdown || isClear || !isStarted) { yield break; }
 
+        StopCoroutine(songEndCheckCoroutine);
         pauseManager.Pause_SetActive(false);
         bgmThread.Abort();
         keyInput.InputThreadAbort();
@@ -290,8 +296,6 @@ public class BMSGameManager : MonoBehaviour
             yield return new WaitUntil(() => videoPlayer.isPrepared);
         }
         ReturnAllNotes();
-        gameUIManager.UpdateSongEndText(0, 0, 0, 0, 0, false);
-        bmsResult = null;
         pattern = null;
         bgaChangeList = null;
         bgSoundsList = null;
@@ -322,9 +326,15 @@ public class BMSGameManager : MonoBehaviour
         currentRankIndex = 0;
         endCount = 0;
 
-        bmsResult = new BMSResult();
+        bmsResult.koolCount = 0;
+        bmsResult.coolCount = 0;
+        bmsResult.goodCount = 0;
+        bmsResult.missCount = 0;
+        bmsResult.failCount = 0;
+        bmsResult.maxCombo = 0;
         bmsResult.rankIndex = 0;
-        gameUIManager.ChangeRankImage();
+        bmsResult.score = 0.0d;
+        bmsResult.accuracy = 0.0d;
         notesList = new List<Note>[5];
         longNoteList = new List<Note>[5];
         normalNoteList = new List<Note>[5];
@@ -337,9 +347,11 @@ public class BMSGameManager : MonoBehaviour
             longNoteHandleCount[i] = 0;
             normalNoteHandleCount[i] = 0;
         }
-        isTextUpdate = false;
+        isEndJudgeInfoUpdate = 1;
+        isGameUIUpdate = false;
+        isJudgementTrackerUpdate = false;
+        isScoreGraphUpdate = false;
         isChangeRankImage = false;
-        isUpdateScore = false;
         isGameEnd = false;
         isGameOver = false;
         for (int i = 0; i < 2; i++)
@@ -607,41 +619,16 @@ public class BMSGameManager : MonoBehaviour
         }
         #endregion
 
-        if (isUpdateScore)
+        if (isGameUIUpdate)
         {
-            gameUIManager.UpdateScore();
-            isUpdateScore = false;
+            gameUIManager.GameUIUpdate(combo, currentJudge);
+            isGameUIUpdate = false;
         }
-
-        if (isTextUpdate)
-        {
-            gameUIManager.TextUpdate(bmsResult, combo, currentJudge);
-            isTextUpdate = false;
-        }
-
-        if (isChangeRankImage)
-        {
-            gameUIManager.ChangeRankImage();
-            isChangeRankImage = false;
-        }
-
-        #region Early Late Check
-        if (fsUpdate[0])
-        {
-            gameUIManager.UpdateFSText(0, fsStates[0]);
-            fsUpdate[0] = false;
-        }
-        if (fsUpdate[1])
-        {
-            gameUIManager.UpdateFSText(1, fsStates[1]);
-            fsUpdate[1] = false;
-        }
-        #endregion
 
         if (isGameEnd)
         {
-            StartCoroutine(SongEndCheck());
-            gameUIManager.UpdateSongEndText(bmsResult.koolCount, bmsResult.coolCount, bmsResult.goodCount, fsCount[0], fsCount[1], true);
+            songEndCheckCoroutine = StartCoroutine(SongEndCheck());
+            isEndJudgeInfoUpdate = 2;
             isGameEnd = false;
         }
 
@@ -700,7 +687,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bmsResult.maxCombo = combo;
         }
-        isTextUpdate = true;
+        isGameUIUpdate = true;
 
         if (result == JudgeType.FAIL) { return; }
 
@@ -737,7 +724,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bmsResult.maxCombo = combo;
         }
-        isTextUpdate = true;
+        isGameUIUpdate = true;
     }
 
     private void PlayNotes()
@@ -899,6 +886,7 @@ public class BMSGameManager : MonoBehaviour
                 gauge.hp -= gauge.failDamage;
                 break;
         }
+        isJudgementTrackerUpdate = true;
 
         double under60 = height60;
         double up60 = 0.0d;
@@ -923,8 +911,8 @@ public class BMSGameManager : MonoBehaviour
         }
         if (currentRankIndex != bmsResult.rankIndex) 
         { 
-            isChangeRankImage = true;
             currentRankIndex = bmsResult.rankIndex;
+            isChangeRankImage = true;
         }
 
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
@@ -933,6 +921,7 @@ public class BMSGameManager : MonoBehaviour
         if (currentCount >= pattern.noteCount && gauge.hp > 0.0f)
         {
             isGameEnd = true;
+            isPaused = true;
             bmsResult.score = currentScore + bmsResult.maxCombo;
             under60 = height60;
             up60 = 0.0d;
@@ -942,7 +931,7 @@ public class BMSGameManager : MonoBehaviour
             bmsResult.scoreBarArray[currentCount + 1] = scoreStickHeight;
             endCount++;
         }
-        isUpdateScore = true;
+        isScoreGraphUpdate = true;
     }
 
     public void GamePause(int set)
