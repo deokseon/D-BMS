@@ -2283,8 +2283,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TITLE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 60e0bbfdc22119b43b97df114502b725, type: 2}
-  m_sharedMaterial: {fileID: 7608970455007247789, guid: 60e0bbfdc22119b43b97df114502b725,
+  m_fontAsset: {fileID: 11400000, guid: 291bf4c088ad9044287c246637764303, type: 2}
+  m_sharedMaterial: {fileID: 2156974358934072787, guid: 291bf4c088ad9044287c246637764303,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -10506,11 +10506,6 @@ MonoBehaviour:
   - {fileID: 1019801034}
   - {fileID: 1137633514}
   judgeEffectAnimator: {fileID: 1316305698}
-  earlyCountText: {fileID: 1476829185}
-  lateCountText: {fileID: 627712617}
-  koolCountText: {fileID: 110905628}
-  coolCountText: {fileID: 573391803}
-  goodCountText: {fileID: 1045093407}
   bpmText: {fileID: 689833376}
   levelText: {fileID: 1517724312}
   noteSpeedText: {fileID: 329628103}
@@ -10527,7 +10522,6 @@ MonoBehaviour:
   countdownCircle: {fileID: 1718645307}
   countdownText: {fileID: 1840411605}
   pausePanelNoteSpeedText: {fileID: 502843351}
-  endInfo: {fileID: 9427965}
   fadeinAnimator: {fileID: 1949911354}
   fadeinObject: {fileID: 1949911352}
   judgeLineSprites:
