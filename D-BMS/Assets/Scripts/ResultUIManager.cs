@@ -240,7 +240,11 @@ public class ResultUIManager : MonoBehaviour
 
     private IEnumerator DrawSongInfo()
     {
-        if (string.IsNullOrEmpty(header.bannerPath)) { banner.texture = noBannerTexture; }
+        if (string.IsNullOrEmpty(header.bannerPath)) 
+        { 
+            banner.texture = noBannerTexture;
+            banner.color = new Color32(0, 0, 0, 180);
+        }
         else
         {
             string imagePath = $@"file:\\{header.musicFolderPath}{header.bannerPath}";
@@ -262,16 +266,32 @@ public class ResultUIManager : MonoBehaviour
                 tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
             }
 
-            banner.texture = (tex ?? noBannerTexture);
+            if (tex == null)
+            {
+                banner.texture = noBannerTexture;
+                banner.color = new Color32(0, 0, 0, 180);
+            }
+            else
+            {
+                banner.texture = tex;
+                banner.color = new Color32(255, 255, 255, 255);
+            }
         }
 
-        if (header.title.Length > 30) { titleText.fontSize = 15; }
-        else if (header.title.Length <= 30 && header.title.Length >= 15) { titleText.fontSize = 25; }
-        else { titleText.fontSize = 50; }
         titleText.text = header.title;
-        if (header.artist.Length >= 30) { artistText.fontSize = 15; }
-        else { artistText.fontSize = 25; }
+        titleText.fontSize = 50;
+        while (titleText.preferredWidth > 550.0f)
+        {
+            titleText.fontSize--;
+        }
+
         artistText.text = header.artist;
+        artistText.fontSize = 30;
+        while (artistText.preferredWidth > 550.0f)
+        {
+            artistText.fontSize--;
+        }
+
         if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }
         else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
     }

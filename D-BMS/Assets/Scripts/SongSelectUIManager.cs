@@ -315,22 +315,35 @@ public class SongSelectUIManager : MonoBehaviour
 
         if (titleText.text.CompareTo(header.title) != 0 || levelText.text.CompareTo(header.level.ToString()) != 0)
         {
-            if (header.title.Length > 30) { titleText.fontSize = 20; }
-            else if (header.title.Length <= 30 && header.title.Length >= 15) { titleText.fontSize = 30; }
-            else { titleText.fontSize = 60; }
             titleText.text = header.title;
-            if (header.artist.Length >= 30) { artistText.fontSize = 20; }
-            else { artistText.fontSize = 35; }
+            titleText.fontSize = 50;
+            while (titleText.preferredWidth > 670.0f)
+            {
+                titleText.fontSize--;
+            }
+
             artistText.text = header.artist;
-            if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }
-            else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
+            artistText.fontSize = 30;
+            while (artistText.preferredWidth > 670.0f)
+            {
+                artistText.fontSize--;
+            }
+
+            if (header.minBPM == header.maxBPM) { bpmText.text = "BPM " + header.bpm.ToString(); }
+            else { bpmText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
+
             levelText.text = header.level.ToString();
         }
     }
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
     {
-        if (string.IsNullOrEmpty(path)) { rawImage.texture = noImage; yield break; }
+        if (string.IsNullOrEmpty(path)) 
+        {
+            rawImage.texture = noImage;
+            rawImage.color = new Color32(0, 0, 0, 180);
+            yield break;
+        }
 
         string imagePath = $@"file:\\{musicFolderPath}{path}";
 
@@ -351,7 +364,17 @@ public class SongSelectUIManager : MonoBehaviour
             tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
         }
 
-        rawImage.texture = (tex ?? noImage);
+        if (tex == null)
+        {
+            rawImage.texture = noImage;
+            rawImage.color = new Color32(0, 0, 0, 180);
+        }
+        else
+        {
+            rawImage.texture = tex;
+            rawImage.color = new Color32(255, 255, 255, 255);
+        }
+
     }
 
     public void NoteSpeedClick(int value)
