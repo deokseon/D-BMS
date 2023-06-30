@@ -155,7 +155,8 @@ public class GameplayOptionManager : MonoBehaviour
     }
     private void SetVerticalLineValueText()
     {
-        verticalLineValueText.text = PlayerPrefs.GetFloat("VerticalLine").ToString("P0");
+        //verticalLineValueText.text = PlayerPrefs.GetFloat("VerticalLine").ToString("P0");
+        verticalLineValueText.text = $"{(int)(PlayerPrefs.GetFloat("VerticalLine") * 100.0f)}%";
     }
 
     public void KeyFeedbackOpacitySliderValueChange(float value)
@@ -165,7 +166,8 @@ public class GameplayOptionManager : MonoBehaviour
     }
     private void SetKeyFeedbackOpacityValueText()
     {
-        keyFeedbackOpacityValueText.text = PlayerPrefs.GetFloat("KeyFeedbackOpacity").ToString("P0");
+        //keyFeedbackOpacityValueText.text = PlayerPrefs.GetFloat("KeyFeedbackOpacity").ToString("P0");
+        keyFeedbackOpacityValueText.text = $"{(int)(PlayerPrefs.GetFloat("KeyFeedbackOpacity") * 100.0f)}%";
     }
 
     public void FadeInSliderValueChange(float value)
@@ -175,7 +177,8 @@ public class GameplayOptionManager : MonoBehaviour
     }
     private void SetFadeInValueText()
     {
-        fadeInValueText.text = PlayerPrefs.GetFloat("FadeIn").ToString("P0");
+        //fadeInValueText.text = PlayerPrefs.GetFloat("FadeIn").ToString("P0");
+        fadeInValueText.text = $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
     }
 
     public void SetNoteSkin(int index)

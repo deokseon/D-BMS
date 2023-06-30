@@ -50,29 +50,39 @@ SpriteAtlas:
     - {fileID: 102900000, guid: 642d449083ad00d469ac511b0a1c0c2a, type: 3}
     - {fileID: 21300000, guid: f1999246067b8574a9986422668e40d1, type: 3}
     - {fileID: 21300000, guid: 244516bc6e44d9b478f24f3f68b17f6c, type: 3}
+    - {fileID: 102900000, guid: 53e3ec0b32540824fab0ac20ecbed34a, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 921e2500a2f76e24bbf7cee71eb6fd36, type: 3}
   - {fileID: 21300000, guid: d3680d208586ac74b98a0e4bd8245589, type: 3}
   - {fileID: 21300000, guid: e396734090368f94098f85a096ffee05, type: 3}
+  - {fileID: 21300000, guid: 7a6ce34019936e346948305e4c6744e8, type: 3}
   - {fileID: 21300000, guid: 0a8a2f60ab98db84da48242a77c34c03, type: 3}
   - {fileID: 21300000, guid: 4981cf60478401c4bbee6d03b07b4a46, type: 3}
+  - {fileID: 21300000, guid: 86669070dbe416549b8d6c0ed3e85752, type: 3}
   - {fileID: 21300000, guid: 5c1ec6c04b25efd409e43ec79ed55c81, type: 3}
   - {fileID: 21300000, guid: 0a16a0f0c4f622049a7c241c2eefc4f2, type: 3}
+  - {fileID: 21300000, guid: 664cd511d8204ac449eb3be3d42ece97, type: 3}
   - {fileID: 21300000, guid: 3c70ef11583c6d948adf9802142c43f7, type: 3}
   - {fileID: 21300000, guid: 42a43821e0bc50242bdc7241b60b5ecf, type: 3}
   - {fileID: 21300000, guid: 390c2831c9b1a1844b30c218fd7e612c, type: 3}
+  - {fileID: 21300000, guid: 9487ed319d5c04841b1b9f0332de4c79, type: 3}
   - {fileID: 21300000, guid: 5ab5d981a4b061449a76adb2f923cca0, type: 3}
   - {fileID: 21300000, guid: e64fb0a1edf763545aa76157423b1dc1, type: 3}
+  - {fileID: 21300000, guid: cd7ec5b1bc9552746bf1d4beebae392f, type: 3}
   - {fileID: 21300000, guid: 025829c1d1a560e499020beecae600da, type: 3}
   - {fileID: 21300000, guid: 3de2d8e1ff27f0b44b2c39e6ec075512, type: 3}
   - {fileID: 21300000, guid: cc158d12bdb4a02419b60a90a795156e, type: 3}
   - {fileID: 21300000, guid: 9a50613200fe30a42ab1e6b168d22f2c, type: 3}
+  - {fileID: 21300000, guid: 6a000362c5e63734286da6f074764441, type: 3}
   - {fileID: 21300000, guid: 014502b24d202b14dbb91f72211b86bd, type: 3}
   - {fileID: 21300000, guid: 5abda6f2512191246a2a93c117561ecc, type: 3}
+  - {fileID: 21300000, guid: aeaa770380e7a084d82bd065d4cc7044, type: 3}
   - {fileID: 21300000, guid: 72816e03182158f4da24eadf236d0e93, type: 3}
+  - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: d3c521d3b4dd36c4193df6d5e2b2a1b2, type: 3}
+  - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
   - {fileID: 21300000, guid: 7910b844f6de9a34fb7219f4f0de5a8b, type: 3}
   - {fileID: 21300000, guid: 8d3741647c6538740b0b8ec9bf2e07a1, type: 3}
   - {fileID: 21300000, guid: 3c5c2b846c568d64bbfacebdf192ab57, type: 3}
@@ -80,6 +90,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bd7a2fb4c9a4bda438af9e6c53feb562, type: 3}
   - {fileID: 21300000, guid: bc4e80f41a23e844481b8fed64cb2eb0, type: 3}
   - {fileID: 21300000, guid: 75ce4ef4455276b479a847b4dc8ab1e1, type: 3}
+  - {fileID: 21300000, guid: bdf61205d51885e489c1b48885f847f0, type: 3}
   - {fileID: 21300000, guid: 1ce33175f1861664e8b7347c6027db55, type: 3}
   - {fileID: 21300000, guid: 13398ac5b488cda48a6ffd506ff27159, type: 3}
   - {fileID: 21300000, guid: a368edf524bf93f4ba4d1bce2be8e89b, type: 3}
@@ -90,6 +101,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ef5c8d972715e2643987e2016a9acce0, type: 3}
   - {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
   - {fileID: 21300000, guid: 718896f729600284084c5e1b02f83e95, type: 3}
+  - {fileID: 21300000, guid: 1952b718dc091054b84bd73855a109ac, type: 3}
   - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
   - {fileID: 21300000, guid: 3ee4bf68b9684a540bc4ec8389733d65, type: 3}
   - {fileID: 21300000, guid: b6472e781e71aa94196c9f502c3ac38e, type: 3}
@@ -101,8 +113,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ca284bd9495be2c408002d38867d45a6, type: 3}
   - {fileID: 21300000, guid: 28a5fdd9049e5b74fa85f96334bc62e0, type: 3}
   - {fileID: 21300000, guid: 479bd4e95512f0f4f8cdad63b721f784, type: 3}
+  - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 55ae37e9457aa4944998b1e48c727d8f, type: 3}
   - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
+  - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
+  - {fileID: 21300000, guid: 8175c07aebecb4c4aa284d6648c3409b, type: 3}
   - {fileID: 21300000, guid: 5e65efaaec21749478e46678e99f9f74, type: 3}
   - {fileID: 21300000, guid: 122f1ffa87cb88745a329db07a4b9520, type: 3}
   - {fileID: 21300000, guid: 0bb7283b0decf8b49baeeaa1b1955551, type: 3}
@@ -110,10 +125,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 13686d6b01f5aa34a9b4a6663c6a37b0, type: 3}
   - {fileID: 21300000, guid: 24812d8b1072094499d9754f1b97a0c3, type: 3}
   - {fileID: 21300000, guid: 898ec89b045fb9b4692854b030a45193, type: 3}
+  - {fileID: 21300000, guid: fa95eaebf10aa48c1b9a954b7fd6e9b4, type: 3}
   - {fileID: 21300000, guid: a2bda4fb202c2c84781267442df03e86, type: 3}
   - {fileID: 21300000, guid: fd5d77fb7ffe46745b938577cebebeb0, type: 3}
   - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
   - {fileID: 21300000, guid: 946bf93c0faf6674095967a8d001ee2c, type: 3}
+  - {fileID: 21300000, guid: 75717c3cd8ff71c4db83b5ed7c238f9b, type: 3}
+  - {fileID: 21300000, guid: 680a354cbfae55a49a43a840be1da93a, type: 3}
   - {fileID: 21300000, guid: 5215cb5c15c13b14f81a56fb244ba4f4, type: 3}
   - {fileID: 21300000, guid: 4a5ecc6cec6861d40a26bec97547410f, type: 3}
   - {fileID: 21300000, guid: 244516bc6e44d9b478f24f3f68b17f6c, type: 3}
@@ -131,23 +149,32 @@ SpriteAtlas:
   - A
   - S+++
   - kool_0
+  - RoundRect
   - Good_0
   - NoteBomb-17
+  - Button
   - CircleLongNoteBody2
   - NoteBomb-8
+  - PlayButton
   - BlockLongNoteBottom2
   - VerticalLine
   - NoteBomb-0
+  - toggleHandle
   - CircleLongNoteTop1
   - NoteBomb-9
+  - NoChange
   - Cool_0
   - EARLY
   - kool_2
   - NoteBomb-5
+  - ToggleGradient_SeoRi
   - BlockLongNoteTop1
   - BlockLongNoteBottom1
+  - circle_mask
   - NoteBomb-3
+  - StageImageFrame
   - kool_1
+  - ToggleFrame
   - NoteBomb-11
   - BlockLongNoteTop2
   - S++
@@ -155,6 +182,7 @@ SpriteAtlas:
   - NoteBomb-18
   - BlockJudgeLine
   - A+
+  - SongToggleFrame
   - B
   - LATE
   - NoteBomb-6
@@ -165,6 +193,7 @@ SpriteAtlas:
   - NoteBomb-14
   - KeyPress
   - key2_Init
+  - Gear
   - D
   - S+
   - BlockNote1
@@ -176,8 +205,11 @@ SpriteAtlas:
   - key2_Pressed
   - CircleNote1
   - Miss_0
+  - Triangle
   - kool_3
   - F
+  - PersonIcon
+  - ToggleGradient_Aery
   - NoteBomb-4
   - BlockLongNoteBody2
   - CircleJudgeLine
@@ -185,10 +217,13 @@ SpriteAtlas:
   - CircleLongNoteTop2
   - CircleLongNoteBottom1
   - HPbar
+  - toggleBG
   - NoteBomb-16
   - BlockLongNoteBody1
   - S
   - CircleLongNoteBody1
+  - RoundRect2
+  - ToggleGradient_All
   - HPbar4
   - NoteBomb-10
   - InputBlockLine

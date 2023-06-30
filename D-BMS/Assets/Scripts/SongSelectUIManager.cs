@@ -29,15 +29,11 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private Sprite[] rankImageArray;
     [SerializeField]
-    private RawImage banner;
+    private RawImage stageImage;
     [SerializeField]
-    private Texture noBannerTexture;
+    private Animator stageImageAnimator;
     [SerializeField]
-    private TextMeshProUGUI titleText;
-    [SerializeField]
-    private TextMeshProUGUI artistText;
-    [SerializeField]
-    private TextMeshProUGUI bpmText;
+    private Texture noneTexture;
     [SerializeField]
     private TextMeshProUGUI noteSpeedText;
     [SerializeField]
@@ -67,14 +63,15 @@ public class SongSelectUIManager : MonoBehaviour
     private TextMeshProUGUI sortByText;
     private int sortByCount;
 
+    private readonly int hashRightRotate = Animator.StringToHash("RightRotate");
+    private readonly int hashLeftRotate = Animator.StringToHash("LeftRotate");
+
     public LoopVerticalScrollRect lvScrollRect;
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;
     public int currentIndex = 0;
     private int convertedIndex = 0;
     private int currentHeaderListCount;
-    public Sprite seoriToggleSprite;
-    public Sprite aeryToggleSprite;
 
     private WaitForSeconds wait100ms;
     private bool isUpArrowPressed;
@@ -185,15 +182,15 @@ public class SongSelectUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
-            PlayerPrefs.SetInt("Category", (PlayerPrefs.GetInt("Category") - 1 + categoryCount) % categoryCount);
-            categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
+            CategoryChangeButtonClick(-1);
         }
         else if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
-            PlayerPrefs.SetInt("Category", (PlayerPrefs.GetInt("Category") + 1) % categoryCount);
-            categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
+            CategoryChangeButtonClick(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.F6))
+        {
+            SongRandomSelect();
         }
         else if (Input.anyKeyDown)
         {
@@ -209,10 +206,15 @@ public class SongSelectUIManager : MonoBehaviour
         }
     }
 
+    public void CategoryChangeButtonClick(int value)
+    {
+        PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
+        PlayerPrefs.SetInt("Category", (PlayerPrefs.GetInt("Category") + value + categoryCount) % categoryCount);
+        categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
+    }
+
     private IEnumerator CoMoveIndex(int index)
     {
-        MoveCurrentIndex(index - 2);
-        yield return new WaitForSeconds(0.05f);
         MoveCurrentIndex(index - 1);
         yield return new WaitForSeconds(0.05f);
         MoveCurrentIndex(index);
@@ -266,7 +268,8 @@ public class SongSelectUIManager : MonoBehaviour
         int currentSequence = 0;
         for (int i = 0; i < currentHeaderListCount; i++)
         {
-            if (BMSFileSystem.selectedCategoryHeaderList[i].title.ToLower()[0] != findTitleChar) { continue; }
+            if (BMSFileSystem.selectedCategoryHeaderList[i].title.Length == 0 || 
+                BMSFileSystem.selectedCategoryHeaderList[i].title.ToLower()[0] != findTitleChar) { continue; }
             if (currentSequence == findSequence)
             {
                 index = i;
@@ -305,35 +308,15 @@ public class SongSelectUIManager : MonoBehaviour
 
     public void DrawSongInfoUI(BMSHeader header)
     {
-        if (BMSFileSystem.selectedHeader == null || banner.texture == null ||
+        if (BMSFileSystem.selectedHeader == null || stageImage.texture == null ||
             BMSFileSystem.selectedHeader.textFolderPath.CompareTo(header.textFolderPath) != 0)
         {
-            StartCoroutine(LoadRawImage(banner, header.musicFolderPath, header.bannerPath, noBannerTexture));
+            StartCoroutine(LoadRawImage(stageImage, header.musicFolderPath, header.stageFilePath, noneTexture));
         }
 
         BMSFileSystem.selectedHeader = header;
 
-        if (titleText.text.CompareTo(header.title) != 0 || levelText.text.CompareTo(header.level.ToString()) != 0)
-        {
-            titleText.text = header.title;
-            titleText.fontSize = 50;
-            while (titleText.preferredWidth > 670.0f)
-            {
-                titleText.fontSize--;
-            }
-
-            artistText.text = header.artist;
-            artistText.fontSize = 30;
-            while (artistText.preferredWidth > 670.0f)
-            {
-                artistText.fontSize--;
-            }
-
-            if (header.minBPM == header.maxBPM) { bpmText.text = "BPM " + header.bpm.ToString(); }
-            else { bpmText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
-
-            levelText.text = header.level.ToString();
-        }
+        levelText.text = header.level.ToString();
     }
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
@@ -341,7 +324,7 @@ public class SongSelectUIManager : MonoBehaviour
         if (string.IsNullOrEmpty(path)) 
         {
             rawImage.texture = noImage;
-            rawImage.color = new Color32(0, 0, 0, 180);
+            rawImage.color = new Color32(0, 0, 0, 230);
             yield break;
         }
 
@@ -367,7 +350,7 @@ public class SongSelectUIManager : MonoBehaviour
         if (tex == null)
         {
             rawImage.texture = noImage;
-            rawImage.color = new Color32(0, 0, 0, 180);
+            rawImage.color = new Color32(0, 0, 0, 230);
         }
         else
         {
@@ -375,6 +358,7 @@ public class SongSelectUIManager : MonoBehaviour
             rawImage.color = new Color32(255, 255, 255, 255);
         }
 
+        stageImageAnimator.SetTrigger(Random.Range(0, 2) == 0 ? hashLeftRotate : hashRightRotate);
     }
 
     public void NoteSpeedClick(int value)
@@ -435,6 +419,7 @@ public class SongSelectUIManager : MonoBehaviour
         toggle.onValueChanged.RemoveAllListeners();
         toggle.onValueChanged.AddListener((bool value) =>
         {
+            TextMeshProUGUI toggleText = toggle.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
             if (value)
             {
                 int curCategory = PlayerPrefs.GetInt("Category");
@@ -446,8 +431,15 @@ public class SongSelectUIManager : MonoBehaviour
                     case "Category_SeoRi": PlayerPrefs.SetInt("Category", 2); nextCategory = 2; break;
                 }
                 if (curCategory != nextCategory) { PlayerPrefs.SetInt($"Category{curCategory}Index", currentIndex); }
+                toggleText.fontSize = 25;
+                toggleText.color = Color.white;
                 ChangeCategory();
                 StartCoroutine(CheckUpDownArrowPress());
+            }
+            else
+            {
+                toggleText.fontSize = 20;
+                toggleText.color = new Color32(180, 180, 180, 255);
             }
         });
     }
@@ -533,7 +525,7 @@ public class SongSelectUIManager : MonoBehaviour
         convertedIndex %= currentHeaderListCount;
     }
 
-    private void ToggleOptionCanvas()
+    public void ToggleOptionCanvas()
     {
         optionCanvas.enabled = !optionCanvas.enabled;
         if (optionCanvas.enabled)
@@ -558,5 +550,10 @@ public class SongSelectUIManager : MonoBehaviour
         maxComboText.text = songRecordData.maxCombo.ToString();
         scoreText.text = ((int)((float)songRecordData.score)).ToString();
         rankImage.sprite = rankImageArray[songRecordData.rankIndex];
+    }
+
+    private void SongRandomSelect()
+    {
+        StartCoroutine(CoMoveIndex(Random.Range(0, currentHeaderListCount)));
     }
 }

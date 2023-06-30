@@ -82,6 +82,7 @@
      <Compile Include="Assets\Scripts\FrameChecker.cs" />
      <Compile Include="Assets\Scripts\GameUIManager.cs" />
      <Compile Include="Assets\Scripts\GameplayOptionManager.cs" />
+     <Compile Include="Assets\Scripts\ImageRotate.cs" />
      <Compile Include="Assets\Scripts\JudgeManager.cs" />
      <Compile Include="Assets\Scripts\JudgementTracker.cs" />
      <Compile Include="Assets\Scripts\KeyInput.cs" />

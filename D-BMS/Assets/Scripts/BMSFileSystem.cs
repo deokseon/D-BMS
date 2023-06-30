@@ -92,6 +92,11 @@ public class BMSFileSystem : MonoBehaviour
                             {
                                 header.subTitle = header.title.Substring(idx).Trim('[', ']');
                                 header.title = header.title.Remove(idx);
+                                if (header.title == null || header.title.Length == 0)
+                                {
+                                    header.title = "[" + header.subTitle + "]";
+                                    header.subTitle = null;
+                                }
                             }
                         } break;
                     case "#BPM":  // BPM

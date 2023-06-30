@@ -19,8 +19,13 @@ public class ScrollIndexCallback1 : MonoBehaviour
     private TextMeshProUGUI toggleBPMText;
     [SerializeField]
     private TextMeshProUGUI toggleLevelText;
-    [SerializeField]
-    private Image checkmark;
+
+    private Color32 normalTextColor;
+
+    void Awake()
+    {
+        normalTextColor = new Color32(180, 180, 180, 255);
+    }
 
     void Start()
     {
@@ -56,25 +61,18 @@ public class ScrollIndexCallback1 : MonoBehaviour
 
         toggleArtistText.text = header.artist;
         toggleArtistText.fontSize = 15;
-        toggleBPMText.rectTransform.localPosition = new Vector3(-445.0f + toggleArtistText.preferredWidth, -20.0f, 0.0f);
+        toggleBPMText.rectTransform.localPosition = new Vector3(-420.0f + toggleArtistText.preferredWidth, -20.0f, 0.0f);
         if (header.maxBPM == header.minBPM) { toggleBPMText.text = "BPM " + header.bpm.ToString(); }
         else { toggleBPMText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
         toggleBPMText.fontSize = 15;
         while (toggleArtistText.preferredWidth + toggleBPMText.preferredWidth > 835.0f)
         {
             toggleArtistText.fontSize--;
-            toggleBPMText.rectTransform.localPosition = new Vector3(-445.0f + toggleArtistText.preferredWidth, -20.0f, 0.0f);
+            toggleBPMText.rectTransform.localPosition = new Vector3(-420.0f + toggleArtistText.preferredWidth, -20.0f, 0.0f);
             toggleBPMText.fontSize--;
         }
 
         toggleLevelText.text = header.level.ToString();
-
-        switch (header.songCategory)
-        {
-            case Category.AERY: checkmark.sprite = songSelectUIManager.aeryToggleSprite; break;
-            case Category.SEORI: checkmark.sprite = songSelectUIManager.seoriToggleSprite; break;
-            default: checkmark.sprite = songSelectUIManager.seoriToggleSprite; break;
-        }
 
         if (gameObject.CompareTag("CurrentContent")) { songSelectUIManager.songToggleGroup.allowSwitchOff = (idx != songSelectUIManager.currentIndex); }
 
@@ -93,6 +91,11 @@ public class ScrollIndexCallback1 : MonoBehaviour
                 if (songSelectUIManager.currentContent != null) { songSelectUIManager.currentContent.tag = "Untagged"; }
                 gameObject.tag = "CurrentContent";
                 songSelectUIManager.currentContent = gameObject;
+                toggleLevelText.color = Color.white;
+            }
+            else
+            {
+                toggleLevelText.color = normalTextColor;
             }
         });
 
