@@ -873,7 +873,7 @@ namespace UnityEngine.UI
             }
             StopMovement();
             UpdatePrevData();
-            GameObject.Find(index.ToString()).GetComponent<Toggle>().isOn = true;
+            GameObject.Find(index.ToString()).transform.GetChild(0).GetComponent<Toggle>().isOn = true;
         }
 
         protected abstract void ProvideData(Transform transform, int index);

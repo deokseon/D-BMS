@@ -69,9 +69,7 @@ public class BMSFileSystem : MonoBehaviour
                 switch (temp)
                 {
                     case "#STA": header.stageFilePath = line.Substring(11); break;   // STAGEFILE
-                    case "#BAC": header.backBMPPath = line.Substring(9); break;      // BACKBMP
                     case "#ART": header.artist = line.Substring(8); break;           // ARTIST
-                    case "#BAN": header.bannerPath = line.Substring(8); break;       // BANNER
                     case "#LNT": header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
                     case "#SUB":  // SUBTITLE
                         if (line[4] == 'T') { header.subTitle = line.Substring(10).Trim('[', ']'); }

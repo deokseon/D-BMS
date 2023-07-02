@@ -19,8 +19,6 @@ public class BMSHeader
     public int lnobj { get; set; }
     public int level { get; set; }
     public string stageFilePath { get; set; }
-    public string backBMPPath { get; set; }
-    public string bannerPath { get; set; }
     public string artist { get; set; }
     public string title { get; set; }
     public string subTitle { get; set; }

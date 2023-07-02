@@ -63,7 +63,7 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI randomEffectorText;
     [SerializeField]
-    private TextMeshProUGUI levelText;
+    private TextMeshProUGUI faderText;
     [SerializeField]
     private Image rankImage;
     [SerializeField]
@@ -89,9 +89,13 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI titleText;
     [SerializeField]
+    private TextMeshProUGUI subtitleText;
+    [SerializeField]
     private TextMeshProUGUI artistText;
     [SerializeField]
     private TextMeshProUGUI bpmText;
+    [SerializeField]
+    private TextMeshProUGUI levelText;
     [SerializeField]
     private Animator fadeAnimator;
     [SerializeField]
@@ -151,6 +155,32 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawStatisticsResult()
     {
+        titleText.text = header.title;
+        titleText.fontSize = 28;
+        subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
+        subtitleText.text = header.subTitle;
+        subtitleText.fontSize = 17;
+        while (titleText.preferredWidth + subtitleText.preferredWidth > 835.0f)
+        {
+            titleText.fontSize--;
+            subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
+            subtitleText.fontSize--;
+        }
+
+        artistText.text = header.artist;
+        artistText.fontSize = 15;
+        bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
+        if (header.maxBPM == header.minBPM) { bpmText.text = "BPM " + header.bpm.ToString(); }
+        else { bpmText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
+        bpmText.fontSize = 15;
+        while (artistText.preferredWidth + bpmText.preferredWidth > 835.0f)
+        {
+            artistText.fontSize--;
+            bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
+            bpmText.fontSize--;
+        }
+        levelText.text = header.level.ToString();
+
         totalnotesText.text = bmsResult.noteCount.ToString();
         koolText.text = bmsResult.koolCount.ToString();
         coolText.text = bmsResult.coolCount.ToString();
@@ -162,7 +192,7 @@ public class ResultUIManager : MonoBehaviour
         scoreText.text = ((int)((float)bmsResult.score)).ToString();
         noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
         SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
-        levelText.text = header.level.ToString();
+        faderText.text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
 
         DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.songRecordData.koolCount, koolDiffText, koolChangeImage);
         DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.songRecordData.coolCount, coolDiffText, coolChangeImage);
@@ -240,14 +270,14 @@ public class ResultUIManager : MonoBehaviour
 
     private IEnumerator DrawSongInfo()
     {
-        if (string.IsNullOrEmpty(header.bannerPath)) 
+        if (string.IsNullOrEmpty(header.stageFilePath)) 
         { 
             banner.texture = noBannerTexture;
-            banner.color = new Color32(0, 0, 0, 180);
+            banner.color = new Color32(0, 0, 0, 230);
         }
         else
         {
-            string imagePath = $@"file:\\{header.musicFolderPath}{header.bannerPath}";
+            string imagePath = $@"file:\\{header.musicFolderPath}{header.stageFilePath}";
 
             Texture tex = null;
             if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
@@ -269,7 +299,7 @@ public class ResultUIManager : MonoBehaviour
             if (tex == null)
             {
                 banner.texture = noBannerTexture;
-                banner.color = new Color32(0, 0, 0, 180);
+                banner.color = new Color32(0, 0, 0, 230);
             }
             else
             {
@@ -277,22 +307,5 @@ public class ResultUIManager : MonoBehaviour
                 banner.color = new Color32(255, 255, 255, 255);
             }
         }
-
-        titleText.text = header.title;
-        titleText.fontSize = 50;
-        while (titleText.preferredWidth > 550.0f)
-        {
-            titleText.fontSize--;
-        }
-
-        artistText.text = header.artist;
-        artistText.fontSize = 30;
-        while (artistText.preferredWidth > 550.0f)
-        {
-            artistText.fontSize--;
-        }
-
-        if (header.minBPM == header.maxBPM) { bpmText.text = "BPM: " + header.bpm.ToString(); }
-        else { bpmText.text = "BPM: " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
     }
 }
