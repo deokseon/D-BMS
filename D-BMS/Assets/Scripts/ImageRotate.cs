@@ -9,12 +9,12 @@ public class ImageRotate : MonoBehaviour
     private RotateDirection direction;
     [SerializeField]
     private float rotateSpeed;
-    [SerializeField]
     private RectTransform rotateImage;
 
     
     void Awake()
     {
+        rotateImage = gameObject.GetComponent<RectTransform>();
         rotateSpeed *= (direction == RotateDirection.clockwise ? -1 : 1);
     }
 

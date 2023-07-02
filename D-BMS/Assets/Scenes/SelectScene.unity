@@ -934,7 +934,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: b784b3022aebdf74ab7f520210286257, type: 2}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.92156863}
   m_RaycastTarget: 1
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -13239,7 +13239,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: 1
   rotateSpeed: 36
-  rotateImage: {fileID: 1057986555}
 --- !u!1 &1091114268
 GameObject:
   m_ObjectHideFlags: 0

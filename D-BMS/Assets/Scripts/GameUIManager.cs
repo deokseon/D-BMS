@@ -75,9 +75,13 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI loadingTitleText;
     [SerializeField]
+    private TextMeshProUGUI loadingArtistText;
+    [SerializeField]
     private TextMeshProUGUI loadingNoteSpeedText;
     [SerializeField]
     private TextMeshProUGUI loadingRandomEffetorText;
+    [SerializeField]
+    private TextMeshProUGUI loadingFaderText;
     [SerializeField]
     private TextMeshProUGUI sliderValueText;
     [SerializeField]
@@ -372,10 +376,12 @@ public class GameUIManager : MonoBehaviour
     public void SetLoading()
     {
         StartCoroutine(LoadRawImage(stageImage, BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
-        StartCoroutine(StageImageFade());
+        //StartCoroutine(StageImageFade());
         loadingTitleText.text = BMSGameManager.header.title;
+        loadingArtistText.text = BMSGameManager.header.artist;
         loadingNoteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
         SetRandomEffectorText(loadingRandomEffetorText, PlayerPrefs.GetInt("RandomEffector"));
+        loadingFaderText.text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
     }
 
     private IEnumerator StageImageFade()
@@ -391,7 +397,12 @@ public class GameUIManager : MonoBehaviour
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
     {
-        if (string.IsNullOrEmpty(path)) { rawImage.texture = noImage; yield break; }
+        if (string.IsNullOrEmpty(path))
+        {
+            rawImage.texture = noImage;
+            rawImage.color = new Color32(0, 0, 0, 230);
+            yield break; 
+        }
 
         string imagePath = $@"file:\\{musicFolderPath}{path}";
 
@@ -412,7 +423,16 @@ public class GameUIManager : MonoBehaviour
             tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
         }
 
-        rawImage.texture = (tex ?? noImage);
+        if (tex == null)
+        {
+            rawImage.texture = noImage;
+            rawImage.color = new Color32(0, 0, 0, 230);
+        }
+        else
+        {
+            rawImage.texture = tex;
+            rawImage.color = new Color32(255, 255, 255, 255);
+        }
     }
 
     public void SetLoadingSlider(float loadingValue)
@@ -423,6 +443,7 @@ public class GameUIManager : MonoBehaviour
 
     public void CloseLoading()
     {
+        hpBarMask.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         loadingPanel.SetActive(false);
     }
 
