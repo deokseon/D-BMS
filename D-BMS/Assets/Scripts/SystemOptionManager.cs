@@ -105,7 +105,7 @@ public class SystemOptionManager : MonoBehaviour
             System.Guid guid;
             FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
             audioOutputDeviceButton[i].SetActive(true);
-            audioOutputDeviceButton[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = name;
+            audioOutputDeviceButton[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = name;
         }
 
         PlayerPrefs.SetString("OutputType", "ASIO");
@@ -127,7 +127,7 @@ public class SystemOptionManager : MonoBehaviour
                 System.Guid guid;
                 FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
                 audioOutputDeviceButton[i + wasapiCount].SetActive(true);
-                audioOutputDeviceButton[i + wasapiCount].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
+                audioOutputDeviceButton[i + wasapiCount].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
             }
         }
 
@@ -241,7 +241,7 @@ public class SystemOptionManager : MonoBehaviour
 
     public void AudioOutputDeviceValueButtonClick(int index)
     {
-        string buttonText = audioOutputDeviceButton[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text;
+        string buttonText = audioOutputDeviceButton[index].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text;
         if (buttonText.Substring(0, 7).CompareTo("ASIO : ") == 0)
         {
             PlayerPrefs.SetString("OutputType", "ASIO");
@@ -619,10 +619,10 @@ public class SystemOptionManager : MonoBehaviour
             case 0x22: value = "PageDown"; break;
             case 0x23: value = "End"; break;
             case 0x24: value = "Home"; break;
-            case 0x25: value = "LeftArrow"; break;
-            case 0x26: value = "UpArrow"; break;
-            case 0x27: value = "RightArrow"; break;
-            case 0x28: value = "DownArrow"; break;
+            case 0x25: value = "←"; break;
+            case 0x26: value = "↑"; break;
+            case 0x27: value = "→"; break;
+            case 0x28: value = "↓"; break;
             case 0x2D: value = "Insert"; break;
             case 0x2E: value = "Delete"; break;
             case 0x30: value = "0"; break;
@@ -661,22 +661,22 @@ public class SystemOptionManager : MonoBehaviour
             case 0x58: value = "X"; break;
             case 0x59: value = "Y"; break;
             case 0x5A: value = "Z"; break;
-            case 0x60: value = "NumPad0"; break;
-            case 0x61: value = "NumPad1"; break;
-            case 0x62: value = "NumPad2"; break;
-            case 0x63: value = "NumPad3"; break;
-            case 0x64: value = "NumPad4"; break;
-            case 0x65: value = "NumPad5"; break;
-            case 0x66: value = "NumPad6"; break;
-            case 0x67: value = "NumPad7"; break;
-            case 0x68: value = "NumPad8"; break;
-            case 0x69: value = "NumPad9"; break;
-            case 0x6A: value = "NumPadMultiply"; break;
-            case 0x6B: value = "NumpadPlus"; break;
-            case 0x6C: value = "NumpadEnter"; break;
-            case 0x6D: value = "NumpadMinus"; break;
-            case 0x6E: value = "NumpadPeriod"; break;
-            case 0x6F: value = "NumpadDivide"; break;
+            case 0x60: value = "NumPad 0"; break;
+            case 0x61: value = "NumPad 1"; break;
+            case 0x62: value = "NumPad 2"; break;
+            case 0x63: value = "NumPad 3"; break;
+            case 0x64: value = "NumPad 4"; break;
+            case 0x65: value = "NumPad 5"; break;
+            case 0x66: value = "NumPad 6"; break;
+            case 0x67: value = "NumPad 7"; break;
+            case 0x68: value = "NumPad 8"; break;
+            case 0x69: value = "NumPad 9"; break;
+            case 0x6A: value = "NumPad *"; break;
+            case 0x6B: value = "Numpad +"; break;
+            case 0x6C: value = "Numpad Enter"; break;
+            case 0x6D: value = "Numpad -"; break;
+            case 0x6E: value = "Numpad ."; break;
+            case 0x6F: value = "Numpad /"; break;
             case 0x70: value = "F1"; break;
             case 0x71: value = "F2"; break;
             case 0x72: value = "F3"; break;
@@ -692,17 +692,17 @@ public class SystemOptionManager : MonoBehaviour
             case 0xA3: value = "RightCtrl"; break;
             case 0xA4: value = "LeftAlt"; break;
             case 0xA5: value = "RightAlt"; break;
-            case 0xBA: value = "Semicolon"; break;
-            case 0xBB: value = "Equals"; break;
-            case 0xBC: value = "Comma"; break;
-            case 0xBD: value = "Minus"; break;
-            case 0xBE: value = "Period"; break;
-            case 0xBF: value = "Slash"; break;
-            case 0xC0: value = "Backquote"; break;
-            case 0xDB: value = "LeftBracket"; break;
-            case 0xDC: value = "Backslash"; break;
-            case 0xDD: value = "RightBracket"; break;
-            case 0xDE: value = "Quote"; break;
+            case 0xBA: value = ";"; break;
+            case 0xBB: value = "="; break;
+            case 0xBC: value = ","; break;
+            case 0xBD: value = "-"; break;
+            case 0xBE: value = "."; break;
+            case 0xBF: value = "/"; break;
+            case 0xC0: value = "`"; break;
+            case 0xDB: value = "["; break;
+            case 0xDC: value = "\\"; break;
+            case 0xDD: value = "]"; break;
+            case 0xDE: value = "'"; break;
         }
         return value;
     }
