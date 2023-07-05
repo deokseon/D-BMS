@@ -11,12 +11,15 @@ public class PauseManager : MonoBehaviour
     [SerializeField]
     private Toggle[] toggleArray;
     [SerializeField]
+    private Image[] checkMarkArray;
+    [SerializeField]
+    private TextMeshProUGUI[] toggleText;
+    [SerializeField]
     private ToggleGroup toggleGroup;
     [SerializeField]
     private Image panelImage;
     [SerializeField]
     private TextMeshProUGUI titleText;
-    private TextMeshProUGUI[] toggleText;
     private int currentIndex;
     private PauseManager pauseManager;
     private BMSGameManager bmsGameManager;
@@ -27,16 +30,11 @@ public class PauseManager : MonoBehaviour
         bmsGameManager = FindObjectOfType<BMSGameManager>();
         currentIndex = 0;
 
-        toggleText = new TextMeshProUGUI[toggleArray.Length];
-
         for (int i = toggleArray.Length - 1; i >= 0; i--)
         {
-            toggleText[i] = toggleArray[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>();
             AddToggleListener(toggleArray[i], toggleText[i]);
         }
 
-        ToggleChange(0);
-        toggleGroup.allowSwitchOff = false;
         pauseManager.Pause_SetActive(false);
     }
 
@@ -45,16 +43,24 @@ public class PauseManager : MonoBehaviour
         if (set == 0)
         {
             titleText.text = "PAUSE";
-            titleText.color = new Color(215.0f / 255.0f, 215.0f / 255.0f, 215.0f / 255.0f);
+            titleText.color = new Color32(215, 215, 215, 255);
             toggleText[0].text = "RESUME";
-            panelImage.color = new Color(0.0f, 244.0f / 255.0f, 255.0f / 255.0f, 200.0f / 255.0f);
+            panelImage.color = new Color32(0, 255, 255, 200);
+            for (int i = checkMarkArray.Length - 1; i >= 0; i--)
+            {
+                checkMarkArray[i].color = new Color32(0, 255, 255, 255);
+            }
         }
         else
         {
             titleText.text = "GAME OVER";
-            titleText.color = new Color(170.0f / 255.0f, 0.0f, 0.0f);
+            titleText.color = new Color32(170, 0, 0, 255);
             toggleText[0].text = "RESULT";
-            panelImage.color = new Color(255.0f / 255.0f, 0.0f, 0.0f, 200.0f / 255.0f);
+            panelImage.color = new Color32(255, 0, 0, 200);
+            for (int i = checkMarkArray.Length - 1; i >= 0; i--)
+            {
+                checkMarkArray[i].color = new Color32(255, 0, 0, 255);
+            }
         }
     }
 
@@ -62,6 +68,7 @@ public class PauseManager : MonoBehaviour
     {
         pauseCanvas.enabled = isActive;
         pauseManager.enabled = isActive;
+        ToggleChange(2);
         ToggleChange(0);
     }
 
@@ -72,12 +79,12 @@ public class PauseManager : MonoBehaviour
         {
             if (value)
             {
-                toggleText.color = Color.black;
+                toggleText.color = checkMarkArray[0].color;
                 toggleText.fontSize = 35;
             }
             else
             {
-                toggleText.color = Color.white;
+                toggleText.color = new Color32(215, 215, 215, 255);
                 toggleText.fontSize = 30;
             }
         });

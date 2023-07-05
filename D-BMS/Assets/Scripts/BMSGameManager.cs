@@ -277,7 +277,10 @@ public class BMSGameManager : MonoBehaviour
     {
         if (isCountdown || isClear || !isStarted) { yield break; }
 
-        StopCoroutine(songEndCheckCoroutine);
+        if (songEndCheckCoroutine != null)
+        {
+            StopCoroutine(songEndCheckCoroutine);
+        }
         pauseManager.Pause_SetActive(false);
         bgmThread.Abort();
         keyInput.InputThreadAbort();
@@ -1062,6 +1065,7 @@ public class BMSGameManager : MonoBehaviour
             if (((!isBGAVideoSupported && bgaChangeListCount == 0) || (isBGAVideoSupported && !videoPlayer.isPlaying)))
             {
                 StartCoroutine(GameEnd(true));
+                songEndCheckCoroutine = null;
                 yield break;
             }
             yield return null;
