@@ -288,6 +288,7 @@ public class BMSGameManager : MonoBehaviour
         videoPlayer.Pause();
         isPaused = true;
         isStarted = false;
+        gameUIManager.AnimationPause(false);
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
         yield return wait1Sec;
@@ -943,6 +944,7 @@ public class BMSGameManager : MonoBehaviour
         {
             if (isPaused) { return; }
             isPaused = true;
+            gameUIManager.AnimationPause(true);
             stopwatch.Stop();
             soundManager.AudioPause(true);
             keyInput.InputThreadAbort();
@@ -1033,6 +1035,7 @@ public class BMSGameManager : MonoBehaviour
             if (countdown <= 0)
             {
                 gameUIManager.SetActiveCountdown(false);
+                gameUIManager.AnimationPause(false);
                 keyInput.InputThreadStart();
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
@@ -1178,7 +1181,8 @@ public class BMSGameManager : MonoBehaviour
 
         PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
 
-        StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
+        //StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
+        gameUIManager.CoUpdateJudgeAdjText();
     }
 
     private void OnDestroy()

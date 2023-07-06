@@ -84,7 +84,7 @@ public class ScrollIndexCallback1 : MonoBehaviour
                 songSelectUIManager.DrawSongInfoUI(header);
                 if (idx != songSelectUIManager.currentIndex) 
                 { 
-                    songSelectUIManager.MoveCurrentIndex(idx);
+                    songSelectUIManager.MoveToIndex(idx);
                     DataSaveManager.LoadResultData(header.fileName);
                     songSelectUIManager.SetSongRecord();
                 }

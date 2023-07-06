@@ -11578,6 +11578,9 @@ MonoBehaviour:
   - {fileID: 644467237}
   - {fileID: 1019801034}
   - {fileID: 1137633514}
+  earlyLateAnimator:
+  - {fileID: 60749191}
+  - {fileID: 2040985582}
   judgeEffectAnimator: {fileID: 1316305698}
   bpmText: {fileID: 689833376}
   levelText: {fileID: 1517724312}

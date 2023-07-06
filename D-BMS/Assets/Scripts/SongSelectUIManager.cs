@@ -174,11 +174,11 @@ public class SongSelectUIManager : MonoBehaviour
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
-            MoveCurrentIndex(currentIndex + 1);
+            MoveToIndex(currentIndex + 1);
         }
         else if (Input.GetAxis("Mouse ScrollWheel") > 0)
         {
-            MoveCurrentIndex(currentIndex - 1);
+            MoveToIndex(currentIndex - 1);
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -202,7 +202,7 @@ public class SongSelectUIManager : MonoBehaviour
 
             if (index == -1) { return; }
 
-            StartCoroutine(CoMoveIndex(index));
+            MoveToIndex(index);
         }
     }
 
@@ -211,13 +211,6 @@ public class SongSelectUIManager : MonoBehaviour
         PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
         PlayerPrefs.SetInt("Category", (PlayerPrefs.GetInt("Category") + value + categoryCount) % categoryCount);
         categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
-    }
-
-    private IEnumerator CoMoveIndex(int index)
-    {
-        MoveCurrentIndex(index - 1);
-        yield return new WaitForSeconds(0.05f);
-        MoveCurrentIndex(index);
     }
 
     private bool CheckKeyCode(out int code)
@@ -247,12 +240,12 @@ public class SongSelectUIManager : MonoBehaviour
         {
             while (isDownArrowPressed)
             {
-                MoveCurrentIndex(currentIndex + 1);
+                MoveToIndex(currentIndex + 1);
                 yield return wait100ms;
             }
             while (isUpArrowPressed)
             {
-                MoveCurrentIndex(currentIndex - 1);
+                MoveToIndex(currentIndex - 1);
                 yield return wait100ms;
             }
             yield return null;
@@ -286,7 +279,7 @@ public class SongSelectUIManager : MonoBehaviour
         return index;
     }
 
-    public void MoveCurrentIndex(int index)
+    public void MoveToIndex(int index)
     {
         currentIndex = index;
         lvScrollRect.ScrollToCellWithinTime(currentIndex, 0.05f);
@@ -399,7 +392,7 @@ public class SongSelectUIManager : MonoBehaviour
         PlayerPrefs.SetInt("SortBy", (PlayerPrefs.GetInt("SortBy") + value + sortByCount) % sortByCount);
         SortHeaderList();
         PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", FindCurrentSongIndex(currentTitle, currentLevel));
-        StartCoroutine(CoMoveIndex(PlayerPrefs.GetInt($"Category{PlayerPrefs.GetInt("Category")}Index")));
+        MoveToIndex(PlayerPrefs.GetInt($"Category{PlayerPrefs.GetInt("Category")}Index"));
     }
 
     private int FindCurrentSongIndex(string title, int level)
@@ -450,7 +443,7 @@ public class SongSelectUIManager : MonoBehaviour
         scrollbar.onValueChanged.AddListener((float value) =>
         {
             int tempValue = Mathf.RoundToInt(value * (currentHeaderListCount - 1));
-            if (tempValue != convertedIndex) { MoveCurrentIndex(tempValue); }
+            if (tempValue != convertedIndex) { MoveToIndex(tempValue); }
         });
         scrollbar.size = 1.0f / currentHeaderListCount;
         scrollbar.value = 0.0f;
@@ -474,7 +467,7 @@ public class SongSelectUIManager : MonoBehaviour
 
         SortHeaderList();
         ScrollbarSetting();
-        StartCoroutine(CoMoveIndex(PlayerPrefs.GetInt($"Category{PlayerPrefs.GetInt("Category")}Index")));
+        MoveToIndex(PlayerPrefs.GetInt($"Category{PlayerPrefs.GetInt("Category")}Index"));
     }
 
     private void SortHeaderList()
@@ -554,6 +547,6 @@ public class SongSelectUIManager : MonoBehaviour
 
     private void SongRandomSelect()
     {
-        StartCoroutine(CoMoveIndex(Random.Range(0, currentHeaderListCount)));
+        MoveToIndex(Random.Range(0, currentHeaderListCount));
     }
 }

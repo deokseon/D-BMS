@@ -53,6 +53,8 @@ public class GameUIManager : MonoBehaviour
     private Animator[] noteBombEffect;
 
     [SerializeField]
+    private Animator[] earlyLateAnimator;
+    [SerializeField]
     private Animator judgeEffectAnimator;
 
     [SerializeField]
@@ -124,6 +126,8 @@ public class GameUIManager : MonoBehaviour
     private string[] str0to999Table;
     [HideInInspector] public string[] str00to100Table;
     private string[] str000to110Table;
+
+    private IEnumerator judgeAdjTextCoroutine;
 
     private void Awake()
     {
@@ -336,13 +340,25 @@ public class GameUIManager : MonoBehaviour
         fadeinObject.SetActive(false);
     }
 
-    public IEnumerator UpdateJudgeAdjValueText()
+    public void CoUpdateJudgeAdjText()
+    {
+        if (judgeAdjTextCoroutine != null)
+        {
+            StopCoroutine(judgeAdjTextCoroutine);
+            judgeAdjTextCoroutine = null;
+        }
+        judgeAdjTextCoroutine = UpdateJudgeAdjValueText();
+        StartCoroutine(judgeAdjTextCoroutine);
+    }
+
+    private IEnumerator UpdateJudgeAdjValueText()
     {
         int value = PlayerPrefs.GetInt("DisplayDelayCorrection");
         judgeAdjValueText.text = "JudgeAdjustValue : " + (value > 0 ? "+" : "") + value.ToString() + "ms";
         judgeAdjValueText.gameObject.SetActive(true);
-        yield return wait1sec;
+        yield return new WaitForSecondsRealtime(1.0f);
         judgeAdjValueText.gameObject.SetActive(false);
+        judgeAdjTextCoroutine = null;
     }
 
     public void UpdateInfoText()
@@ -462,5 +478,21 @@ public class GameUIManager : MonoBehaviour
     public void SetPausePanelNoteSpeedText()
     {
         pausePanelNoteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+    }
+
+    public void AnimationPause(bool isPause)
+    {
+        float animationSpeed = isPause ? 0.0f : 1.0f;
+        comboTextAnimator.speed = animationSpeed;
+        comboAnimator.speed = animationSpeed;
+        for (int i = noteBombEffect.Length - 1; i >= 0; i--)
+        {
+            noteBombEffect[i].speed = animationSpeed;
+        }
+        for (int i = earlyLateAnimator.Length - 1; i >= 0; i--)
+        {
+            earlyLateAnimator[i].speed = animationSpeed;
+        }
+        judgeEffectAnimator.speed = animationSpeed;
     }
 }
