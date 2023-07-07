@@ -127,7 +127,7 @@ public class GameUIManager : MonoBehaviour
     [HideInInspector] public string[] str00to100Table;
     private string[] str000to110Table;
 
-    private IEnumerator judgeAdjTextCoroutine;
+    private Coroutine judgeAdjTextCoroutine;
 
     private void Awake()
     {
@@ -347,8 +347,7 @@ public class GameUIManager : MonoBehaviour
             StopCoroutine(judgeAdjTextCoroutine);
             judgeAdjTextCoroutine = null;
         }
-        judgeAdjTextCoroutine = UpdateJudgeAdjValueText();
-        StartCoroutine(judgeAdjTextCoroutine);
+        judgeAdjTextCoroutine = StartCoroutine(UpdateJudgeAdjValueText());
     }
 
     private IEnumerator UpdateJudgeAdjValueText()

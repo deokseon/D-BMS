@@ -73,9 +73,9 @@ public class SongSelectUIManager : MonoBehaviour
     private int convertedIndex = 0;
     private int currentHeaderListCount;
 
-    private WaitForSeconds wait100ms;
-    private bool isUpArrowPressed;
-    private bool isDownArrowPressed;
+    private bool isUpPressed;
+    private bool isDownPressed;
+    private Coroutine upDownCoroutine;
 
     private char prevFindAlphabet;
     private int findSequence;
@@ -106,9 +106,8 @@ public class SongSelectUIManager : MonoBehaviour
         categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
         categoryToggleGroup.allowSwitchOff = false;
 
-        wait100ms = new WaitForSeconds(0.1f);
-        isUpArrowPressed = false;
-        isDownArrowPressed = false;
+        isUpPressed = false;
+        isDownPressed = false;
         prevFindAlphabet = '.';
         findSequence = 0;
 
@@ -156,21 +155,39 @@ public class SongSelectUIManager : MonoBehaviour
         {
             GameStart();
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) && !isUpArrowPressed)
+        else if (Input.GetKeyUp(KeyCode.DownArrow) && isDownPressed)
         {
-            isDownArrowPressed = true;
+            isDownPressed = false;
+            StopCoroutine(upDownCoroutine);
+            upDownCoroutine = null;
         }
-        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && !isUpPressed)
         {
-            isDownArrowPressed = false;
+            if (upDownCoroutine != null)
+            {
+                StopCoroutine(upDownCoroutine);
+                upDownCoroutine = null;
+            }
+            MoveToIndex(currentIndex + 1);
+            upDownCoroutine = StartCoroutine(UpDownPressing(1));
+            isDownPressed = true;
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) && !isDownArrowPressed)
+        else if (Input.GetKeyUp(KeyCode.UpArrow) && isUpPressed)
         {
-            isUpArrowPressed = true;
+            isUpPressed = false;
+            StopCoroutine(upDownCoroutine);
+            upDownCoroutine = null;
         }
-        else if (Input.GetKeyUp(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.UpArrow) && !isDownPressed)
         {
-            isUpArrowPressed = false;
+            if (upDownCoroutine != null)
+            {
+                StopCoroutine(upDownCoroutine);
+                upDownCoroutine = null;
+            }
+            MoveToIndex(currentIndex - 1);
+            upDownCoroutine = StartCoroutine(UpDownPressing(-1));
+            isUpPressed = true;
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
@@ -234,21 +251,13 @@ public class SongSelectUIManager : MonoBehaviour
         return false;
     }
 
-    private IEnumerator CheckUpDownArrowPress()
+    private IEnumerator UpDownPressing(int direction)
     {
+        yield return new WaitForSecondsRealtime(0.3f);
         while (true)
         {
-            while (isDownArrowPressed)
-            {
-                MoveToIndex(currentIndex + 1);
-                yield return wait100ms;
-            }
-            while (isUpArrowPressed)
-            {
-                MoveToIndex(currentIndex - 1);
-                yield return wait100ms;
-            }
-            yield return null;
+            yield return new WaitForSecondsRealtime(0.1f);
+            MoveToIndex(currentIndex + direction);
         }
     }
 
@@ -427,7 +436,6 @@ public class SongSelectUIManager : MonoBehaviour
                 toggleText.fontSize = 25;
                 toggleText.color = Color.white;
                 ChangeCategory();
-                StartCoroutine(CheckUpDownArrowPress());
             }
             else
             {
