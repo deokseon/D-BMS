@@ -15,8 +15,6 @@ public class PauseManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI[] toggleText;
     [SerializeField]
-    private ToggleGroup toggleGroup;
-    [SerializeField]
     private Image panelImage;
     [SerializeField]
     private TextMeshProUGUI titleText;
@@ -32,7 +30,7 @@ public class PauseManager : MonoBehaviour
 
         for (int i = toggleArray.Length - 1; i >= 0; i--)
         {
-            AddToggleListener(toggleArray[i], toggleText[i]);
+            AddToggleListener(toggleArray[i], i, toggleText[i]);
         }
 
         pauseManager.Pause_SetActive(false);
@@ -72,15 +70,21 @@ public class PauseManager : MonoBehaviour
         ToggleChange(0);
     }
 
-    private void AddToggleListener(Toggle toggle, TextMeshProUGUI toggleText)
+    private void AddToggleListener(Toggle toggle, int index, TextMeshProUGUI toggleText)
     {
         toggle.onValueChanged.RemoveAllListeners();
         toggle.onValueChanged.AddListener((bool value) =>
         {
             if (value)
             {
+                currentIndex = index;
                 toggleText.color = checkMarkArray[0].color;
                 toggleText.fontSize = 35;
+                if (toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick)
+                {
+                    toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick = false;
+                    ToggleExecute();
+                }
             }
             else
             {

@@ -240,10 +240,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 137812463}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 694414afc7a89bc4c9c75351f25afa6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 4803c432887e69f4da2705f2ecbc11b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: 2
+  isClick: 0
 --- !u!114 &137812466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1094,10 +1094,15 @@ MonoBehaviour:
   fadeImage: {fileID: 870135574}
   screen: {fileID: 419897}
   videoPlayer: {fileID: 829899010}
+  toggleGroup: {fileID: 1215419175}
   toggleArray:
   - {fileID: 3030847656466551812}
   - {fileID: 1573481744}
   - {fileID: 137812466}
+  toggleTextArray:
+  - {fileID: 8497088149947581065}
+  - {fileID: 355004550}
+  - {fileID: 962713048}
 --- !u!1 &1427996257
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,10 +1225,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1573481741}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 694414afc7a89bc4c9c75351f25afa6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 4803c432887e69f4da2705f2ecbc11b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: 1
+  isClick: 0
 --- !u!114 &1573481744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1619,10 +1624,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3030847656466551808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 694414afc7a89bc4c9c75351f25afa6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 4803c432887e69f4da2705f2ecbc11b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: 0
+  isClick: 0
 --- !u!114 &3030847656466551812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1669,7 +1674,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!114 &3030847656466551813
 MonoBehaviour:
   m_ObjectHideFlags: 0

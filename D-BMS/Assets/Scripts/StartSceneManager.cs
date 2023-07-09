@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -15,7 +16,11 @@ public class StartSceneManager : MonoBehaviour
     [SerializeField]
     private VideoPlayer videoPlayer;
     [SerializeField]
+    private ToggleGroup toggleGroup;
+    [SerializeField]
     private Toggle[] toggleArray;
+    [SerializeField]
+    private TextMeshProUGUI[] toggleTextArray;
     private int currentIndex;
 
     private void Awake()
@@ -24,6 +29,14 @@ public class StartSceneManager : MonoBehaviour
         InitializeSystemOption();
         InitializeGamePlayOption();
         SetSystemOption();
+
+        for (int i = toggleArray.Length - 1; i >= 0; i--)
+        {
+            AddToggleListener(toggleArray[i], i, toggleTextArray[i]);
+        }
+
+        toggleArray[currentIndex].isOn = true;
+        toggleGroup.allowSwitchOff = false;
 
         StartCoroutine(PrepareVideo());
     }
@@ -139,6 +152,28 @@ public class StartSceneManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         fadeAnimator.SetTrigger("FadeOut");
+    }
+
+    private void AddToggleListener(Toggle toggle, int index, TextMeshProUGUI toggleText)
+    {
+        toggle.onValueChanged.RemoveAllListeners();
+        toggle.onValueChanged.AddListener((bool value) =>
+        {
+            if (value)
+            {
+                currentIndex = index;
+                toggleText.color = new Color32(0, 255, 255, 255);
+                if (toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick)
+                {
+                    toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick = false;
+                    ToggleExecute();
+                }
+            }
+            else
+            {
+                toggleText.color = new Color32(220, 220, 220, 255);
+            }
+        });
     }
 
     public void ToggleChange(int index)
