@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Video;
+using System;
 
 public class SystemOptionManager : MonoBehaviour
 {
@@ -57,9 +58,32 @@ public class SystemOptionManager : MonoBehaviour
     private TextMeshProUGUI audioOutputDeviceText;
     private int wasapiCount;
     private int asioCount;
+    private int outputDeviceCount;
+
+    [SerializeField]
+    private Scrollbar scrollbar;
+    [SerializeField]
+    private RectTransform[] optionToggleRT;
+    [SerializeField]
+    private Toggle[] optionToggleArray;
+    [SerializeField]
+    private Toggle[] frameToggleArray;
+    [SerializeField]
+    private Toggle[] displayModeToggleArray;
+    [SerializeField]
+    private Toggle[] outputDeviceToggleArray;
+    [SerializeField]
+    private Toggle[] audioBufferToggleArray;
+    [SerializeField]
+    private Toggle[] pollingRateToggleArray;
+    private List<Toggle[]> toggleArrayList;
+    private List<Action<int>> valueToggleFunctionList;
+    private int currentOptionIndex;
+    private int[] currentValueToggleIndex = { 0, 0, 0, 0, 0 };
+    private bool isUpDownPress = false;
 
     private readonly string[] keySettingString = { "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "SpeedUp1", "SpeedDown1", "SpeedUp2", "SpeedDown2" };
-    bool isChanging;
+    private bool isChanging;
 
     private void Awake()
     {
@@ -79,12 +103,114 @@ public class SystemOptionManager : MonoBehaviour
         SetAssistKeyUseText();
         SetPollingRateText();
         for (int i = 0; i < keyText.Length; i++) { SetKeyText(i); }
+
+        for (int i = optionToggleArray.Length - 1; i >= 0; i--)
+        {
+            AddOptionToggleListener(optionToggleArray[i], i);
+        }
+
+        toggleArrayList = new List<Toggle[]>(5);
+        toggleArrayList.Add(frameToggleArray);
+        toggleArrayList.Add(displayModeToggleArray);
+        toggleArrayList.Add(outputDeviceToggleArray);
+        toggleArrayList.Add(audioBufferToggleArray);
+        toggleArrayList.Add(pollingRateToggleArray);
+
+        valueToggleFunctionList = new List<Action<int>>(5);
+        valueToggleFunctionList.Add(FrameValueToggleClick);
+        valueToggleFunctionList.Add(DisplayModeValueToggleClick);
+        valueToggleFunctionList.Add(AudioOutputDeviceValueToggleClick);
+        valueToggleFunctionList.Add(AudioBufferValueToggleClick);
+        valueToggleFunctionList.Add(PollingRateValueToggleClick);
+
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = toggleArrayList[i].Length - 1; j >= 0; j--)
+            {
+                AddValueToggleListener(toggleArrayList[i][j], i, j);
+            }
+        }
+
         StartCoroutine(PrepareVideo());
+    }
+
+    private void AddOptionToggleListener(Toggle toggle, int index)
+    {
+        toggle.onValueChanged.RemoveAllListeners();
+        toggle.onValueChanged.AddListener((bool value) =>
+        {
+            if (value)
+            {
+                currentOptionIndex = index;
+                if (isUpDownPress)
+                {
+                    scrollbar.value = Mathf.Abs(optionToggleRT[optionToggleRT.Length - 1].localPosition.y - optionToggleRT[index].localPosition.y) / 1685.0f;
+                    isUpDownPress = false;
+                }
+                if (toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick)
+                {
+                    toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick = false;
+                    OptionToggleExecute();
+                }
+            }
+        });
+    }
+
+    private void OptionToggleChange(int index)
+    {
+        if (fadeImage.IsActive()) { return; }
+        currentOptionIndex = (index + optionToggleArray.Length) % optionToggleArray.Length;
+        optionToggleArray[currentOptionIndex].isOn = true;
+    }
+
+    private void OptionToggleExecute()
+    {
+        if (fadeImage.IsActive()) { return; }
+        switch (currentOptionIndex)
+        {
+            case 0: StartCoroutine(ChangeValue(frameSelectPanel, 0, frameToggleArray.Length)); break;
+            case 1: StartCoroutine(ChangeValue(displayModeSelectPanel, 1, displayModeToggleArray.Length)); break;
+            case 2: break;
+            case 3: StartCoroutine(ChangeValue(audioOutputDeviceSelectPanel, 2, outputDeviceCount)); break;
+            case 4: StartCoroutine(ChangeValue(audioBufferSelectPanel, 3, audioBufferToggleArray.Length)); break;
+            case 5: break;
+            case 6: break;
+            case 7: break;
+            case 8: AssistKeyUseToggleClick(); break;
+            case 9: StartCoroutine(ChangeValue(pollingRateSelectPanel, 4, pollingRateToggleArray.Length)); break;
+            case 10: ChangeKey(0); break;
+            case 11: ChangeKey(1); break;
+            case 12: ChangeKey(2); break;
+            case 13: ChangeKey(5); break;
+            case 14: ChangeKey(3); break;
+            case 15: ChangeKey(4); break;
+            case 16: ChangeKey(6); break;
+            case 17: ChangeKey(7); break;
+            case 18: ChangeKey(8); break;
+            case 19: ChangeKey(9); break;
+        }
+    }
+
+    private void AddValueToggleListener(Toggle toggle, int category, int index)
+    {
+        toggle.onValueChanged.RemoveAllListeners();
+        toggle.onValueChanged.AddListener((bool value) =>
+        {
+            if (value)
+            {
+                currentValueToggleIndex[category] = index;
+                if (toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick)
+                {
+                    toggle.gameObject.GetComponent<ToggleMouseHandler>().isClick = false;
+                    valueToggleFunctionList[category](index);
+                }
+            }
+        });
     }
 
     private void SetAudioOutputDevice()
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 10; i++)
         {
             audioOutputDeviceButton[i].SetActive(false);
         }
@@ -98,14 +224,14 @@ public class SystemOptionManager : MonoBehaviour
         FMODUnity.RuntimeManager.CoreSystem.getNumDrivers(out wasapiCount);
         for (int i = 0; i < wasapiCount; i++)
         {
-            if (i > 7) { break; }
+            if (i > 9) { break; }
             string name;
             FMOD.SPEAKERMODE speakerMode;
             int channels, systemrate;
             System.Guid guid;
             FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
             audioOutputDeviceButton[i].SetActive(true);
-            audioOutputDeviceButton[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = name;
+            audioOutputDeviceButton[i].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = name;
         }
 
         PlayerPrefs.SetString("OutputType", "ASIO");
@@ -120,14 +246,14 @@ public class SystemOptionManager : MonoBehaviour
             FMODUnity.RuntimeManager.CoreSystem.getNumDrivers(out asioCount);
             for (int i = 0; i < asioCount; i++)
             {
-                if (i + wasapiCount > 7) { break; }
+                if (i + wasapiCount > 9) { break; }
                 string name;
                 FMOD.SPEAKERMODE speakerMode;
                 int channels, systemrate;
                 System.Guid guid;
                 FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
                 audioOutputDeviceButton[i + wasapiCount].SetActive(true);
-                audioOutputDeviceButton[i + wasapiCount].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
+                audioOutputDeviceButton[i + wasapiCount].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
             }
         }
 
@@ -137,6 +263,8 @@ public class SystemOptionManager : MonoBehaviour
         {
             DestroyImmediate(manager.gameObject);
         }
+
+        outputDeviceCount = wasapiCount + asioCount > 10 ? 10 : wasapiCount + asioCount;
     }
 
     private IEnumerator PrepareVideo()
@@ -169,44 +297,136 @@ public class SystemOptionManager : MonoBehaviour
 
     void Update()
     {
-        if (isChanging) { return; }
+        if (isChanging || fadeImage.IsActive()) { return; }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (frameSelectPanel.activeSelf) { frameSelectPanel.SetActive(false); }
-            else if (displayModeSelectPanel.activeSelf) { displayModeSelectPanel.SetActive(false); }
-            else if (audioOutputDeviceSelectPanel.activeSelf) { audioOutputDeviceSelectPanel.SetActive(false); }
-            else if (audioBufferSelectPanel.activeSelf) { audioBufferSelectPanel.SetActive(false); }
-            else if (pollingRateSelectPanel.activeSelf) { pollingRateSelectPanel.SetActive(false); }
-            else 
-            {
-                if (fadeImage.IsActive()) { return; }
-                StartCoroutine(CoLoadScene(0));
-            }
+            StartCoroutine(CoLoadScene(0));
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            OptionToggleExecute();
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            isUpDownPress = true;
+            OptionToggleChange(currentOptionIndex + 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            isUpDownPress = true;
+            OptionToggleChange(currentOptionIndex - 1);
+        }
+
+        if (currentOptionIndex < 5 || currentOptionIndex > 7) { return; }
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            VolumeChange(-0.01f);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            VolumeChange(0.01f);
         }
     }
 
-    public void FrameButtonClick()
+    private IEnumerator ChangeValue(GameObject panel, int category, int toggleArrayLength)
     {
-        frameSelectPanel.SetActive(true);
-    }
-    public void DisplayModeButtonClick()
-    {
-        displayModeSelectPanel.SetActive(true);
-    }
-    public void AudioOutputDeviceButtonClick()
-    {
-        audioOutputDeviceSelectPanel.SetActive(true);
-    }
-    public void AudioBufferButtonClick()
-    {
-        audioBufferSelectPanel.SetActive(true);
-    }
-    public void PollingRateButtonClick()
-    {
-        pollingRateSelectPanel.SetActive(true);
+        if (isChanging) yield break;
+        isChanging = true;
+        panel.SetActive(true);
+
+        SetCurrentValueToggle(category);
+        toggleArrayList[category][currentValueToggleIndex[category]].isOn = true;
+
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        while (isChanging)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape)) { isChanging = false; }
+            else if (Input.GetKeyDown(KeyCode.Return)) { valueToggleFunctionList[category](currentValueToggleIndex[category]); }
+            else if (Input.GetKeyDown(KeyCode.DownArrow)) { ValueToggleChange(category, 1, toggleArrayLength); }
+            else if (Input.GetKeyDown(KeyCode.UpArrow)) { ValueToggleChange(category, -1, toggleArrayLength); }
+            yield return null;
+        }
+
+        panel.SetActive(false);
     }
 
-    public void FrameValueButtonClick(int value)
+    private void ValueToggleChange(int category, int value, int toggleArrayLength)
+    {
+        currentValueToggleIndex[category] = (currentValueToggleIndex[category] + value + toggleArrayLength) % toggleArrayLength;
+        toggleArrayList[category][currentValueToggleIndex[category]].isOn = true;
+    }
+
+    private void SetCurrentValueToggle(int category)
+    {
+        switch (category)
+        {
+            case 0:
+                if (PlayerPrefs.GetInt("SyncCount") == 1) { currentValueToggleIndex[category] = 0; }
+                else
+                {
+                    switch (PlayerPrefs.GetInt("FrameRate"))
+                    {
+                        case -1: currentValueToggleIndex[category] = 1; break;
+                        case 30: currentValueToggleIndex[category] = 2; break;
+                        case 60: currentValueToggleIndex[category] = 3; break;
+                        case 75: currentValueToggleIndex[category] = 4; break;
+                        case 120: currentValueToggleIndex[category] = 5; break;
+                        case 144: currentValueToggleIndex[category] = 6; break;
+                        case 180: currentValueToggleIndex[category] = 7; break;
+                        case 240: currentValueToggleIndex[category] = 8; break;
+                        case 300: currentValueToggleIndex[category] = 9; break;
+                    }
+                }
+                break;
+            case 1: 
+                currentValueToggleIndex[category] = PlayerPrefs.GetInt("DisplayMode");
+                break;
+            case 2:
+                currentValueToggleIndex[category] = 0;
+                for (int i = 0; i < outputDeviceCount; i++)
+                {
+                    string buttonText = audioOutputDeviceButton[i].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text;
+                    if (buttonText.Substring(0, 4).CompareTo(PlayerPrefs.GetString("OutputType")) == 0 &&
+                        buttonText.Substring(7).CompareTo(PlayerPrefs.GetString("DriverName")) == 0)
+                    {
+                        currentValueToggleIndex[category] = i;
+                        i = outputDeviceCount;
+                    }
+                }
+                break;
+            case 3:
+                switch (PlayerPrefs.GetInt("AudioBufferSize"))
+                {
+                    case 16: currentValueToggleIndex[category] = 0; break;
+                    case 32: currentValueToggleIndex[category] = 1; break;
+                    case 64: currentValueToggleIndex[category] = 2; break;
+                    case 128: currentValueToggleIndex[category] = 3; break;
+                    case 256: currentValueToggleIndex[category] = 4; break;
+                    case 384: currentValueToggleIndex[category] = 5; break;
+                    case 512: currentValueToggleIndex[category] = 6; break;
+                }
+                break;
+            case 4:
+                switch (PlayerPrefs.GetInt("PollingRate"))
+                {
+                    case 1000: currentValueToggleIndex[category] = 0; break;
+                    case 2000: currentValueToggleIndex[category] = 1; break;
+                    case 4000: currentValueToggleIndex[category] = 2; break;
+                    case 8000: currentValueToggleIndex[category] = 3; break;
+                }
+                break;
+        }
+    }
+
+    private void AssistKeyUseToggleClick()
+    {
+        PlayerPrefs.SetInt("AssistKeyUse", (PlayerPrefs.GetInt("AssistKeyUse") + 1) % 2);
+        SetAssistKeyUseText();
+    }
+
+    public void FrameValueToggleClick(int value)
     {
         int syncCount = 1;
         int frame = -1;
@@ -228,20 +448,20 @@ public class SystemOptionManager : MonoBehaviour
         PlayerPrefs.SetInt("SyncCount", syncCount);
         PlayerPrefs.SetInt("FrameRate", frame);
         SetFrameText();
-        frameSelectPanel.SetActive(false);
+        isChanging = false;
     }
 
-    public void DisplayModeValueButtonClick(int value)
+    public void DisplayModeValueToggleClick(int value)
     {
         PlayerPrefs.SetInt("DisplayMode", value);
         SetDisplayModeText();
-        displayModeSelectPanel.SetActive(false);
-        Screen.fullScreenMode = (FullScreenMode)value;
+        Screen.fullScreenMode = value == 2 ? FullScreenMode.Windowed : (FullScreenMode)value;
+        isChanging = false;
     }
 
-    public void AudioOutputDeviceValueButtonClick(int index)
+    public void AudioOutputDeviceValueToggleClick(int index)
     {
-        string buttonText = audioOutputDeviceButton[index].transform.GetChild(2).GetComponent<TextMeshProUGUI>().text;
+        string buttonText = audioOutputDeviceButton[index].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text;
         if (buttonText.Substring(0, 7).CompareTo("ASIO : ") == 0)
         {
             PlayerPrefs.SetString("OutputType", "ASIO");
@@ -257,25 +477,44 @@ public class SystemOptionManager : MonoBehaviour
         {
             DestroyImmediate(manager.gameObject);
         }
-        audioOutputDeviceSelectPanel.SetActive(false);
+        isChanging = false;
     }
 
-    public void AudioBufferValueButtonClick(int value)
+    public void AudioBufferValueToggleClick(int index)
     {
+        int value = 0;
+        switch (index)
+        {
+            case 0: value = 16; break;
+            case 1: value = 32; break;
+            case 2: value = 64; break;
+            case 3: value = 128; break;
+            case 4: value = 256; break;
+            case 5: value = 384; break;
+            case 6: value = 512; break;
+        }
         PlayerPrefs.SetInt("AudioBufferSize", value);
         SetAudioBufferText();
         foreach (FMODUnity.RuntimeManager manager in Resources.FindObjectsOfTypeAll<FMODUnity.RuntimeManager>())
         {
             DestroyImmediate(manager.gameObject);
         }
-        audioBufferSelectPanel.SetActive(false);
+        isChanging = false;
     }
 
-    public void PollingRateValueButtonClick(int value)
+    public void PollingRateValueToggleClick(int index)
     {
+        int value = 0;
+        switch (index)
+        {
+            case 0: value = 1000; break;
+            case 1: value = 2000; break;
+            case 2: value = 4000; break;
+            case 3: value = 8000; break;
+        }
         PlayerPrefs.SetInt("PollingRate", value);
         SetPollingRateText();
-        pollingRateSelectPanel.SetActive(false);
+        isChanging = false;
     }
 
     private void SetFrameText()
@@ -295,7 +534,7 @@ public class SystemOptionManager : MonoBehaviour
         {
             case 0: displayModeText.text = "Fullscreen"; break;
             case 1: displayModeText.text = "Fullscreen Window"; break;
-            case 3: displayModeText.text = "Windowed"; break;
+            case 2: displayModeText.text = "Windowed"; break;
         }
     }
     private void SetAudioOutputDeviceText()
@@ -314,6 +553,22 @@ public class SystemOptionManager : MonoBehaviour
             case 256: audioBufferText.text = "Medium (512)"; break;
             case 384: audioBufferText.text = "High (768)"; break;
             case 512: audioBufferText.text = "Very High (1024)"; break;
+        }
+    }
+
+    private void VolumeChange(float value)
+    {
+        switch (currentOptionIndex)
+        {
+            case 5:
+                masterVolumeSlider.value += value;
+                break;
+            case 6:
+                keySoundVolumeSlider.value += value;
+                break;
+            case 7:
+                bgmVolumeSlider.value += value;
+                break;
         }
     }
 
@@ -350,12 +605,6 @@ public class SystemOptionManager : MonoBehaviour
         bgmVolumeText.text = (PlayerPrefs.GetFloat("BGMVolume") * 0.7f + 0.3f).ToString("P0");
     }
 
-    public void AssistKeyUseButtonClick()
-    {
-        PlayerPrefs.SetInt("AssistKeyUse", (PlayerPrefs.GetInt("AssistKeyUse") + 1) % 2);
-        SetAssistKeyUseText();
-    }
-
     private void SetAssistKeyUseText()
     {
         assistKeyUseText.text = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? "Enabled" : "Disabled";
@@ -366,133 +615,21 @@ public class SystemOptionManager : MonoBehaviour
         pollingRateValueText.text = PlayerPrefs.GetInt("PollingRate") + "Hz";
     }
 
-    public void ChangeKey(int index)
+    #region KeySetting
+    private void ChangeKey(int index)
     {
-        if (!waitKeyInputPanel.activeSelf)
+        if (!isChanging)
         {
             StartCoroutine(WaitKeyChange(index));
         }
     }
 
-    /*private IEnumerator WaitKeyChange(int index)
-    {
-        isChanging = true;
-        waitKeyInputPanel.SetActive(true);
-
-        string key = PlayerPrefs.GetString(keySettingString[index]);
-
-        float timer = 0.0f;
-        while (isChanging)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape)) { isChanging = false; }
-            #region keyinput
-            else if (Input.GetKeyDown(KeyCode.BackQuote)) { key = "Backquote"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Backslash)) { key = "Backslash"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Equals)) { key = "Equals"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.LeftBracket)) { key = "LeftBracket"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.RightBracket)) { key = "RightBracket"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Minus)) { key = "Minus"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Semicolon)) { key = "Semicolon"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Quote)) { key = "Quote"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Comma)) { key = "Comma"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Period)) { key = "Period"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Slash)) { key = "Slash"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.LeftShift)) { key = "LeftShift"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.RightShift)) { key = "RightShift"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.LeftAlt)) { key = "LeftAlt"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.RightAlt)) { key = "RightAlt"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.LeftControl)) { key = "LeftCtrl"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.RightControl)) { key = "RightCtrl"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Space)) { key = "Space"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Return)) { key = "Enter"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Delete)) { key = "Delete"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.End)) { key = "End"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Home)) { key = "Home"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.Insert)) { key = "Insert"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.PageDown)) { key = "PageDown"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.PageUp)) { key = "PageUp"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow)) { key = "LeftArrow"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.RightArrow)) { key = "RightArrow"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.UpArrow)) { key = "UpArrow"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.DownArrow)) { key = "DownArrow"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadDivide)) { key = "NumpadDivide"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadEnter)) { key = "NumpadEnter"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadEquals)) { key = "NumpadEquals"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadMinus)) { key = "NumpadMinus"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadMultiply)) { key = "NumpadMultiply"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadPeriod)) { key = "NumpadPeriod"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.KeypadPlus)) { key = "NumpadPlus"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F1)) { key = "F1"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F2)) { key = "F2"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F3)) { key = "F3"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F4)) { key = "F4"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F6)) { key = "F6"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F9)) { key = "F9"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F10)) { key = "F10"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F11)) { key = "F11"; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F12)) { key = "F12"; isChanging = false; }
-            else if (Input.anyKeyDown)
-            {
-                for (int i = 0; i < 26; i++)
-                {
-                    if (Input.GetKeyDown((KeyCode)(i + 'a')))
-                    {
-                        key = $"{(char)(i + 'A')}";
-                        isChanging = false;
-                        break;
-                    }
-                }
-                for (int i = 0; i < 10; i++)
-                {
-                    if (Input.GetKeyDown((KeyCode)(i + 48)))
-                    {
-                        key = $"{i}";
-                        isChanging = false;
-                        break;
-                    }
-                    else if (Input.GetKeyDown((KeyCode)(i + 256)))
-                    {
-                        key = $"Numpad{i}";
-                        isChanging = false;
-                        break;
-                    }
-                }
-            }
-            #endregion
-
-            timer += Time.deltaTime;
-            if (timer >= 10.0f)
-            {
-                isChanging = false;
-            }
-            yield return null;
-        }
-
-        if (timer < 10.0f)
-        {
-            bool isDuplicate = false;
-            for (int i = 0; i < keyText.Length; i++)
-            {
-                if (key.CompareTo(PlayerPrefs.GetString(keySettingString[i])) == 0)
-                {
-                    isDuplicate = true;
-                    break;
-                }
-            }
-            if (!isDuplicate)
-            {
-                PlayerPrefs.SetString(keySettingString[index], key);
-            }
-        }
-
-        SetKeyText(index);
-        waitKeyInputPanel.SetActive(false);
-    }*/
-
     private IEnumerator WaitKeyChange(int index)
     {
         isChanging = true;
         waitKeyInputPanel.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(0.1f);
 
         int key = PlayerPrefs.GetInt(keySettingString[index]);
 
@@ -706,4 +843,5 @@ public class SystemOptionManager : MonoBehaviour
         }
         return value;
     }
+    #endregion
 }

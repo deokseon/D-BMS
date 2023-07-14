@@ -110,13 +110,13 @@ public class PauseManager : MonoBehaviour
         }
     }
 
-    public void ToggleChange(int index)
+    private void ToggleChange(int index)
     {
         currentIndex = (index + toggleArray.Length) % toggleArray.Length;
         toggleArray[currentIndex].isOn = true;
     }
 
-    public void ToggleExecute()
+    private void ToggleExecute()
     {
         if (currentIndex == 0)
         {

@@ -176,14 +176,14 @@ public class StartSceneManager : MonoBehaviour
         });
     }
 
-    public void ToggleChange(int index)
+    private void ToggleChange(int index)
     {
         if (fadeImage.IsActive()) { return; }
         currentIndex = (index + toggleArray.Length) % toggleArray.Length;
         toggleArray[currentIndex].isOn = true;
     }
 
-    public void ToggleExecute()
+    private void ToggleExecute()
     {
         if (fadeImage.IsActive()) { return; }
         if (currentIndex == 0)
