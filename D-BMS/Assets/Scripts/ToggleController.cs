@@ -28,7 +28,7 @@ public class ToggleController : MonoBehaviour, IPointerDownHandler
 	public float speed;
 	static float t = 0.0f;
 
-	private bool switching = false;
+	[HideInInspector] public bool switching = false;
 
 	void Awake()
 	{

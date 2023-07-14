@@ -170,12 +170,8 @@ public class SystemOptionManager : MonoBehaviour
         {
             case 0: StartCoroutine(ChangeValue(frameSelectPanel, 0, frameToggleArray.Length)); break;
             case 1: StartCoroutine(ChangeValue(displayModeSelectPanel, 1, displayModeToggleArray.Length)); break;
-            case 2: break;
             case 3: StartCoroutine(ChangeValue(audioOutputDeviceSelectPanel, 2, outputDeviceCount)); break;
             case 4: StartCoroutine(ChangeValue(audioBufferSelectPanel, 3, audioBufferToggleArray.Length)); break;
-            case 5: break;
-            case 6: break;
-            case 7: break;
             case 8: AssistKeyUseToggleClick(); break;
             case 9: StartCoroutine(ChangeValue(pollingRateSelectPanel, 4, pollingRateToggleArray.Length)); break;
             case 10: ChangeKey(0); break;

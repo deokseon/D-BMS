@@ -45,6 +45,18 @@ public class GameplayOptionManager : MonoBehaviour
     private Slider fadeInSlider;
     [SerializeField]
     private Toggle[] noteSkinToggles;
+    [SerializeField]
+    private ToggleController judgementTrackerToggle;
+    [SerializeField]
+    private ToggleController scoreGraphToggle;
+    [SerializeField]
+    private ToggleController judgeLineToggle;
+    [SerializeField]
+    private ToggleController earlyLateToggle;
+
+    [SerializeField]
+    private Toggle[] optionToggleArray;
+    private int currentOptionIndex;
 
     private int randomEffectorCount;
 
@@ -66,6 +78,78 @@ public class GameplayOptionManager : MonoBehaviour
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorG", color.g);
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorB", color.b);
         });
+
+        for (int i = optionToggleArray.Length - 1; i >= 0; i--)
+        {
+            AddOptionToggleListener(optionToggleArray[i], i);
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            OptionToggleChange(currentOptionIndex + 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            OptionToggleChange(currentOptionIndex - 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            OptionValueChange(-1);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            OptionValueChange(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            ToggleSwitching();
+        }
+    }
+
+    private void AddOptionToggleListener(Toggle toggle, int index)
+    {
+        toggle.onValueChanged.RemoveAllListeners();
+        toggle.onValueChanged.AddListener((bool value) =>
+        {
+            if (value)
+            {
+                currentOptionIndex = index;
+            }
+        });
+    }
+
+    private void OptionToggleChange(int index)
+    {
+        currentOptionIndex = (index + optionToggleArray.Length) % optionToggleArray.Length;
+        optionToggleArray[currentOptionIndex].isOn = true;
+    }
+
+    private void OptionValueChange(int value)
+    {
+        switch (currentOptionIndex)
+        {
+            case 0: noteSpeedSlider.value = (PlayerPrefs.GetInt("NoteSpeed") - 10.0f + value) / 190.0f; break;
+            case 1: displayDelayCorrectionSlider.value = (PlayerPrefs.GetInt("DisplayDelayCorrection") + 80.0f + value) / 160.0f; break;
+            case 2: earlyLateThresholdSlider.value = (PlayerPrefs.GetInt("EarlyLateThreshold") - 1.0f + value) / 21.0f; break;
+            case 3: verticalLineSlider.value += value * 0.01f; break;
+            case 4: keyFeedbackOpacitySlider.value += value * 0.01f; break;
+            case 6: ChangeRandomEffector(value); break;
+            case 7: fadeInSlider.value += value * 0.01f; break;
+        }
+    }
+
+    private void ToggleSwitching()
+    {
+        switch (currentOptionIndex)
+        {
+            case 8: judgementTrackerToggle.switching = true; break;
+            case 9: scoreGraphToggle.switching = true; break;
+            case 10: judgeLineToggle.switching = true; break;
+            case 11: earlyLateToggle.switching = true; break;
+        }
     }
 
     public void SetGameplayOption()
@@ -155,7 +239,6 @@ public class GameplayOptionManager : MonoBehaviour
     }
     private void SetVerticalLineValueText()
     {
-        //verticalLineValueText.text = PlayerPrefs.GetFloat("VerticalLine").ToString("P0");
         verticalLineValueText.text = $"{(int)(PlayerPrefs.GetFloat("VerticalLine") * 100.0f)}%";
     }
 
@@ -166,7 +249,6 @@ public class GameplayOptionManager : MonoBehaviour
     }
     private void SetKeyFeedbackOpacityValueText()
     {
-        //keyFeedbackOpacityValueText.text = PlayerPrefs.GetFloat("KeyFeedbackOpacity").ToString("P0");
         keyFeedbackOpacityValueText.text = $"{(int)(PlayerPrefs.GetFloat("KeyFeedbackOpacity") * 100.0f)}%";
     }
 
@@ -177,7 +259,6 @@ public class GameplayOptionManager : MonoBehaviour
     }
     private void SetFadeInValueText()
     {
-        //fadeInValueText.text = PlayerPrefs.GetFloat("FadeIn").ToString("P0");
         fadeInValueText.text = $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
     }
 

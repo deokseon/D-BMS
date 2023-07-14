@@ -529,6 +529,7 @@ public class SongSelectUIManager : MonoBehaviour
     public void ToggleOptionCanvas()
     {
         optionCanvas.enabled = !optionCanvas.enabled;
+        gameplayOptionManager.enabled = optionCanvas.enabled;
         if (optionCanvas.enabled)
         {
             gameplayOptionManager.SetGameplayOption();
