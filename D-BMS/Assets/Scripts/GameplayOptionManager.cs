@@ -138,6 +138,7 @@ public class GameplayOptionManager : MonoBehaviour
             case 4: keyFeedbackOpacitySlider.value += value * 0.01f; break;
             case 6: ChangeRandomEffector(value); break;
             case 7: fadeInSlider.value += value * 0.01f; break;
+            case 12: NoteSkinToggleChange(value); break;
         }
     }
 
@@ -265,5 +266,10 @@ public class GameplayOptionManager : MonoBehaviour
     public void SetNoteSkin(int index)
     {
         PlayerPrefs.SetInt("NoteSkin", index);
+    }
+
+    private void NoteSkinToggleChange(int value)
+    {
+        noteSkinToggles[(PlayerPrefs.GetInt("NoteSkin") + value + noteSkinToggles.Length) % noteSkinToggles.Length].isOn = true;
     }
 }

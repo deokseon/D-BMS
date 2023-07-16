@@ -134,6 +134,15 @@ public class SystemOptionManager : MonoBehaviour
         StartCoroutine(PrepareVideo());
     }
 
+    private void FitTextSize(TextMeshProUGUI text, int initFontSize, int maxSize)
+    {
+        text.fontSize = initFontSize;
+        while (text.preferredWidth > maxSize)
+        {
+            text.fontSize -= 0.1f;
+        }
+    }
+
     private void AddOptionToggleListener(Toggle toggle, int index)
     {
         toggle.onValueChanged.RemoveAllListeners();
@@ -228,6 +237,7 @@ public class SystemOptionManager : MonoBehaviour
             FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
             audioOutputDeviceButton[i].SetActive(true);
             audioOutputDeviceButton[i].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = name;
+            FitTextSize(audioOutputDeviceButton[i].transform.GetChild(3).GetComponent<TextMeshProUGUI>(), 20, 420);
         }
 
         PlayerPrefs.SetString("OutputType", "ASIO");
@@ -250,6 +260,7 @@ public class SystemOptionManager : MonoBehaviour
                 FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
                 audioOutputDeviceButton[i + wasapiCount].SetActive(true);
                 audioOutputDeviceButton[i + wasapiCount].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
+                FitTextSize(audioOutputDeviceButton[i + wasapiCount].transform.GetChild(3).GetComponent<TextMeshProUGUI>(), 20, 420);
             }
         }
 
@@ -537,6 +548,7 @@ public class SystemOptionManager : MonoBehaviour
     {
         audioOutputDeviceText.text = PlayerPrefs.GetString("OutputType").CompareTo("ASIO") == 0 ? "ASIO : " + PlayerPrefs.GetString("DriverName") :
                                                                                                     PlayerPrefs.GetString("DriverName");
+        FitTextSize(audioOutputDeviceText, 20, 310);
     }
     private void SetAudioBufferText()
     {

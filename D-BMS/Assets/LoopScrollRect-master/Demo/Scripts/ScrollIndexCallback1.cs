@@ -54,9 +54,9 @@ public class ScrollIndexCallback1 : MonoBehaviour
         toggleSubtitleText.fontSize = 17;
         while (toggleTitleText.preferredWidth + toggleSubtitleText.preferredWidth > 835.0f)
         {
-            toggleTitleText.fontSize--;
+            toggleTitleText.fontSize -= 0.1f;
             toggleSubtitleText.rectTransform.localPosition = new Vector3(-445.0f + toggleTitleText.preferredWidth, 13.0f, 0.0f);
-            toggleSubtitleText.fontSize--;
+            toggleSubtitleText.fontSize -= 0.1f;
         }
 
         toggleArtistText.text = header.artist;
@@ -67,9 +67,9 @@ public class ScrollIndexCallback1 : MonoBehaviour
         toggleBPMText.fontSize = 15;
         while (toggleArtistText.preferredWidth + toggleBPMText.preferredWidth > 835.0f)
         {
-            toggleArtistText.fontSize--;
+            toggleArtistText.fontSize -= 0.1f;
             toggleBPMText.rectTransform.localPosition = new Vector3(-420.0f + toggleArtistText.preferredWidth, -20.0f, 0.0f);
-            toggleBPMText.fontSize--;
+            toggleBPMText.fontSize -= 0.1f;
         }
 
         toggleLevelText.text = header.level.ToString();

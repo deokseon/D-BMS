@@ -162,9 +162,9 @@ public class ResultUIManager : MonoBehaviour
         subtitleText.fontSize = 17;
         while (titleText.preferredWidth + subtitleText.preferredWidth > 835.0f)
         {
-            titleText.fontSize--;
+            titleText.fontSize -= 0.1f;
             subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
-            subtitleText.fontSize--;
+            subtitleText.fontSize -= 0.1f;
         }
 
         artistText.text = header.artist;
@@ -175,9 +175,9 @@ public class ResultUIManager : MonoBehaviour
         bpmText.fontSize = 15;
         while (artistText.preferredWidth + bpmText.preferredWidth > 835.0f)
         {
-            artistText.fontSize--;
+            artistText.fontSize -= 0.1f;
             bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
-            bpmText.fontSize--;
+            bpmText.fontSize -= 0.1f;
         }
         levelText.text = header.level.ToString();
 
