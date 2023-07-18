@@ -123,6 +123,8 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("JudgementTracker", 1);
             PlayerPrefs.SetInt("ScoreGraph", 1);
             PlayerPrefs.SetInt("EarlyLate", 1);
+
+            PlayerPrefs.SetFloat("NoteXPosition", -7.63f);
         }
     }
 

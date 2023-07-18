@@ -131,10 +131,10 @@ public class GameUIManager : MonoBehaviour
 
     private void Awake()
     {
-        SetGamePanel();
-        SetJudgeLine();
-        SetNoteBombPosition();
-        SetKeyFeedback();
+        //SetGamePanel();
+        //SetJudgeLine();
+        //SetNoteBombPosition();
+        //SetKeyFeedback();
 
         loader = new BMPLoader();
         wait1sec = new WaitForSecondsRealtime(1.0f);
@@ -144,15 +144,17 @@ public class GameUIManager : MonoBehaviour
         bgSprites = new Dictionary<string, Texture2D>(500);
     }
 
-    private void SetGamePanel()
+    public void SetGamePanel()
     {
         float cameraSize = Camera.main.orthographicSize;
-        leftPanel.transform.localPosition = new Vector3((-1.25f * 0.3f) - 7.63f, 2.5f, 0.0f);
+        float noteWidth = ObjectPool.poolInstance.GetNoteWidth();
+        leftPanel.transform.localPosition = new Vector3(bmsGameManager.xPosition[0] - noteWidth * 0.5f, 2.5f, 0.0f);
         leftPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / leftPanel.sprite.bounds.size.y, 1.0f);
-        rightPanel.transform.localPosition = new Vector3((1.25f * 0.3f) - 4.592f, 2.5f, 0.0f);
+        rightPanel.transform.localPosition = new Vector3(bmsGameManager.xPosition[4] + noteWidth * 0.5f, 2.5f, 0.0f);
         rightPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / rightPanel.sprite.bounds.size.y, 1.0f);
 
-        panelBackground.transform.localScale = new Vector3(3.8f / panelBackground.sprite.bounds.size.x,
+        panelBackground.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], -0.24f, 0.0f);
+        panelBackground.transform.localScale = new Vector3(noteWidth * 5.0f / panelBackground.sprite.bounds.size.x,
                                                            (cameraSize + 2.74f) / panelBackground.sprite.bounds.size.y, 1.0f);
 
         hpBarBackground.transform.localPosition = new Vector3(rightPanel.transform.localPosition.x + rightPanel.sprite.bounds.size.x + hpBarBackground.sprite.bounds.size.x * 0.5f,
@@ -165,16 +167,20 @@ public class GameUIManager : MonoBehaviour
         }
         else 
         {
-            panelFade.transform.localPosition = new Vector3(-6.111f, 2.5f + cameraSize, 0.0f);
-            panelFade.transform.localScale = new Vector3(3.8f / panelFade.sprite.bounds.size.x, 8.0f * fadeInSize, 1.0f);
+            panelFade.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 2.5f + cameraSize, 0.0f);
+            panelFade.transform.localScale = new Vector3(noteWidth * 5.0f / panelFade.sprite.bounds.size.x, 8.0f * fadeInSize, 1.0f);
         }
 
-        float keyboardWidth = 0.76f / keyboard[0].sprite.bounds.size.x;
+        float keyboardWidth = noteWidth / keyboard[0].sprite.bounds.size.x;
         float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / keyboard[0].sprite.bounds.size.y;
-        for (int i = 0; i < 5; i++) { keyboard[i].transform.localScale = new Vector3(keyboardWidth, keyboardHeight, 1.0f); }
+        for (int i = 0; i < 5; i++) 
+        {
+            keyboard[i].transform.localPosition = new Vector3(bmsGameManager.xPosition[i], -0.24f, 0.0f);
+            keyboard[i].transform.localScale = new Vector3(keyboardWidth, keyboardHeight, 1.0f);
+        }
     }
 
-    private void SetJudgeLine()
+    public void SetJudgeLine()
     {
         int index = PlayerPrefs.GetInt("NoteSkin");
         float judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
@@ -182,31 +188,35 @@ public class GameUIManager : MonoBehaviour
         {
             GameObject tempObject = GameObject.Find($"JudgeLine{i}");
             tempObject.GetComponent<SpriteRenderer>().sprite = judgeLineSprites[index];
-            tempObject.transform.localPosition = new Vector3(tempObject.transform.localPosition.x, judgeLineYPosition, tempObject.transform.localPosition.z);
+            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], judgeLineYPosition, tempObject.transform.localPosition.z);
         }
     }
 
-    private void SetNoteBombPosition()
+    public void SetNoteBombPosition()
     {
         float yPos = GameObject.Find("JudgeLine1").GetComponent<SpriteRenderer>().sprite.bounds.size.y * 
                      GameObject.Find("JudgeLine1").transform.localScale.y * 0.5f + (PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f);
         for (int i = 1; i < 6; i++)
         {
             GameObject tempObject = GameObject.Find($"NoteBomb{i}");
-            tempObject.transform.localPosition = new Vector3(tempObject.transform.localPosition.x, yPos, tempObject.transform.localPosition.z);
+            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], yPos, tempObject.transform.localPosition.z);
         }
     }
 
-    private void SetKeyFeedback()
+    public void SetKeyFeedback()
     {
         Color oddColor = new Color(PlayerPrefs.GetFloat("OddKeyFeedbackColorR"), PlayerPrefs.GetFloat("OddKeyFeedbackColorG"),
                                    PlayerPrefs.GetFloat("OddKeyFeedbackColorB"), PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
         Color evenColor = new Color(PlayerPrefs.GetFloat("EvenKeyFeedbackColorR"), PlayerPrefs.GetFloat("EvenKeyFeedbackColorG"),
                                     PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"), PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
+        float xScale = ObjectPool.poolInstance.GetNoteWidth() / keyFeedback[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+        float yScale = (Camera.main.orthographicSize + 2.74f) / keyFeedback[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
         for (int i = 0; i < 5; i++)
         {
             SpriteRenderer tempSpriteRenderer = keyFeedback[i].GetComponent<SpriteRenderer>();
             tempSpriteRenderer.color = i % 2 == 0 ? oddColor : evenColor;
+            keyFeedback[i].transform.localPosition = new Vector3(bmsGameManager.xPosition[i], -0.24f, 0.0f);
+            keyFeedback[i].transform.localScale = new Vector3(xScale, yScale, 1.0f);
         }
     }
 

@@ -92,7 +92,8 @@ public class BMSGameManager : MonoBehaviour
     private int longNotePoolMaxCount;
     private int barPoolMaxCount;
 
-    private readonly float[] xPosition = { -7.63f, -6.87f, -6.111f, -5.351f, -4.592f };
+    [HideInInspector]
+    public float[] xPosition;
     private int bgaChangeListCount;
     private int bgSoundsListCount;
     private int bpmsListCount;
@@ -137,7 +138,7 @@ public class BMSGameManager : MonoBehaviour
         soundManager.AudioPause(false);
         bgmThread = new Thread(BGMPlayThread);
 
-        inputBlockLine.localPosition = new Vector3(-6.111f, -200.0f, 0.0f);
+        inputBlockLine.localPosition = new Vector3(xPosition[2], -200.0f, 0.0f);
 
         gameUIManager.bga.color = new Color(1, 1, 1, 0);
         gameUIManager.bga.texture = null;
@@ -177,7 +178,7 @@ public class BMSGameManager : MonoBehaviour
         currentBeat += (displayDelayCorrectionBeat * displayDelayCorrectionValue);
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
 
-        bmsDrawer.DrawNotes();
+        bmsDrawer.DrawNotes(xPosition);
 
         currentBPM = bpmsList[bpmsListCount - 1].bpm;
         --bpmsListCount;
@@ -418,7 +419,7 @@ public class BMSGameManager : MonoBehaviour
         userSpeed = PlayerPrefs.GetInt("NoteSpeed");
         displayDelayCorrectionValue = PlayerPrefs.GetInt("DisplayDelayCorrection");
         earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold");
-        verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.06f;
+        verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.018f;
         judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
 
         stopwatch = new System.Diagnostics.Stopwatch();
@@ -434,6 +435,18 @@ public class BMSGameManager : MonoBehaviour
 
         gameUIManager.UpdateInfoText();
         gameUIManager.UpdateSpeedText();
+
+        xPosition = new float[5];
+        float noteWidth = ObjectPool.poolInstance.GetNoteWidth();
+        for (int i = 0; i < 5; i++)
+        {
+            xPosition[i] = PlayerPrefs.GetFloat("NoteXPosition") + noteWidth * i;
+        }
+
+        gameUIManager.SetGamePanel();
+        gameUIManager.SetJudgeLine();
+        gameUIManager.SetNoteBombPosition();
+        gameUIManager.SetKeyFeedback();
 
         currentNote = new int[5] { 0, 0, 0, 0, 0 };
         notesListCount = new int[5];
@@ -771,7 +784,7 @@ public class BMSGameManager : MonoBehaviour
                         if (j == 1)
                         {
                             longNoteList[i][len].modelTransform.localScale =
-                                new Vector3(0.3f, ((float)pattern.longNote[i][len].beat * gameSpeed - longNoteOffset) * longNoteLength, 1.0f);
+                                new Vector3(1.0f, ((float)pattern.longNote[i][len].beat * gameSpeed - longNoteOffset) * longNoteLength, 1.0f);
                         }
                     }
                     else
@@ -798,7 +811,7 @@ public class BMSGameManager : MonoBehaviour
             if (longNoteNextYscale > longNoteEndOffset)
             {
                 longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition = new Vector3(xPosition[i], (float)currentBeat * gameSpeed, 0.0f);
-                longNoteList[i][longNoteListCount[i] - 2].modelTransform.localScale = new Vector3(0.3f, longNoteNextYscale, 1.0f);
+                longNoteList[i][longNoteListCount[i] - 2].modelTransform.localScale = new Vector3(1.0f, longNoteNextYscale, 1.0f);
             }
             else
             {
@@ -821,7 +834,7 @@ public class BMSGameManager : MonoBehaviour
             }
             if (len >= 0)
             {
-                bar.modelTransform.localPosition = new Vector3(-6.111f, (float)(barList[len].beat * gameSpeed), 0.0f);
+                bar.modelTransform.localPosition = new Vector3(xPosition[2], (float)(barList[len].beat * gameSpeed), 0.0f);
                 barList[len].model = bar.model;
                 barList[len].modelTransform = bar.modelTransform;
             }
@@ -1014,7 +1027,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
-        inputBlockLine.localPosition = new Vector3(-6.111f, (float)(currentBeat * gameSpeed), 0.0f);
+        inputBlockLine.localPosition = new Vector3(xPosition[2], (float)(currentBeat * gameSpeed), 0.0f);
         resumeTicks = currentTicks;
         resumeCountTicks += 30000000;
         currentTicks = stopwatch.ElapsedTicks - resumeCountTicks;
@@ -1115,8 +1128,8 @@ public class BMSGameManager : MonoBehaviour
                     if (normalNoteList[i][j].model == null) { break; }
 
                     normalNoteList[i][j].modelTransform.localPosition = new Vector3(xPosition[i], (float)(normalNoteList[i][j].beat * gameSpeed), 0.0f);
-                    normalNoteList[i][j].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
-                    normalNoteList[i][j].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
+                    normalNoteList[i][j].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
+                    normalNoteList[i][j].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
                 }
 
                 bool isCurrent = true;
@@ -1141,12 +1154,12 @@ public class BMSGameManager : MonoBehaviour
                             float scale;
                             if (isCurrentLongNote[i] && isCurrent) { scale = ((float)(longNoteList[i][j].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength; }
                             else { scale = ((float)longNoteList[i][j - 1].beat * gameSpeed - longNoteOffset) * longNoteLength; }
-                            longNoteList[i][j - k].modelTransform.localScale = new Vector3(0.3f, scale, 1.0f);
+                            longNoteList[i][j - k].modelTransform.localScale = new Vector3(1.0f, scale, 1.0f);
                         }
                         else
                         {
-                            longNoteList[i][j - k].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
-                            longNoteList[i][j - k].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 0.7f, 1.0f);
+                            longNoteList[i][j - k].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
+                            longNoteList[i][j - k].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
                         }
                     }
                     isCurrent = false;
@@ -1156,7 +1169,7 @@ public class BMSGameManager : MonoBehaviour
             {
                 if (barList[i].model == null) { break; }
 
-                barList[i].modelTransform.localPosition = new Vector3(-6.111f, (float)(barList[i].beat * gameSpeed), 0.0f);
+                barList[i].modelTransform.localPosition = new Vector3(xPosition[2], (float)(barList[i].beat * gameSpeed), 0.0f);
             }
             noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed), 0.0f);
         }
@@ -1181,7 +1194,6 @@ public class BMSGameManager : MonoBehaviour
 
         PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
 
-        //StartCoroutine(gameUIManager.UpdateJudgeAdjValueText());
         gameUIManager.CoUpdateJudgeAdjText();
     }
 

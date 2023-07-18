@@ -80,6 +80,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5abda6f2512191246a2a93c117561ecc, type: 3}
   - {fileID: 21300000, guid: aeaa770380e7a084d82bd065d4cc7044, type: 3}
   - {fileID: 21300000, guid: 72816e03182158f4da24eadf236d0e93, type: 3}
+  - {fileID: 21300000, guid: 8b2dd9431fbdfbc4689e9f490da306ed, type: 3}
   - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: d3c521d3b4dd36c4193df6d5e2b2a1b2, type: 3}
   - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
@@ -175,6 +176,7 @@ SpriteAtlas:
   - BlockLongNoteBottom1
   - circle_mask
   - NoteBomb-3
+  - KeyFeedback
   - StageImageFrame
   - kool_1
   - ToggleFrame

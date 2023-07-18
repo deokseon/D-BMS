@@ -5,12 +5,8 @@ using UnityEngine;
 public class BMSDrawer : MonoBehaviour
 {
     public BMSPattern pattern;
-    private readonly float[] xPosition = { -7.63f, -6.87f, -6.111f, -5.351f, -4.592f };
 
-    [SerializeField]
-    private Transform noteParent;
-
-    public void DrawNotes()
+    public void DrawNotes(float[] xPosition)
     {
         float speed = GetComponent<BMSGameManager>().CalulateSpeed();
         float offset = GetComponent<BMSGameManager>().GetLongNoteOffset();
@@ -48,7 +44,7 @@ public class BMSDrawer : MonoBehaviour
                     if (k == 2)
                     {
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
-                            new Vector3(0.3f, ((float)pattern.longNote[i][j - 1].beat * speed - offset) * longNoteLen, 1.0f);
+                            new Vector3(1.0f, ((float)pattern.longNote[i][j - 1].beat * speed - offset) * longNoteLen, 1.0f);
                     }
                     pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
                 }
@@ -64,7 +60,7 @@ public class BMSDrawer : MonoBehaviour
             bar.model = ObjectPool.poolInstance.GetBarInPool();
             bar.modelTransform = bar.model.transform;
             bar.model.SetActive(true);
-            bar.model.transform.localPosition = new Vector3(-6.111f, (float)(bar.beat * speed), 0.0f);
+            bar.model.transform.localPosition = new Vector3(xPosition[2], (float)(bar.beat * speed), 0.0f);
         }
     }
 }

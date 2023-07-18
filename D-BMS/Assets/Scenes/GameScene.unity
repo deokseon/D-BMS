@@ -2636,6 +2636,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4803c432887e69f4da2705f2ecbc11b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usePointerEnter: 1
+  usePointerDown: 1
   isClick: 0
 --- !u!1 &519420028
 GameObject:
@@ -2698,6 +2700,7 @@ MonoBehaviour:
   divideTable: []
   maxScoreTable: []
   currentScore: 0
+  xPosition: []
   isChangeRankImage: 0
   isJudgementTrackerUpdate: 0
   isScoreGraphUpdate: 0
@@ -2802,7 +2805,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b2e90c6e06cdaa4882775dbf592c410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noteParent: {fileID: 375916320}
 --- !u!1 &534251232
 GameObject:
   m_ObjectHideFlags: 0
@@ -3985,7 +3987,7 @@ Transform:
   m_GameObject: {fileID: 646343036}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.63, y: -0.24, z: 0}
-  m_LocalScale: {x: 0.592, y: 7, z: 1}
+  m_LocalScale: {x: 0.592, y: 6.08, z: 1}
   m_Children: []
   m_Father: {fileID: 1898766537}
   m_RootOrder: 19
@@ -4029,7 +4031,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8b2dd9431fbdfbc4689e9f490da306ed, type: 3}
   m_Color: {r: 0, g: 1, b: 0.8627451, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5155,17 +5157,17 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8d3741647c6538740b0b8ec9bf2e07a1, type: 3}
   - {fileID: 21300000, guid: 13686d6b01f5aa34a9b4a6663c6a37b0, type: 3}
   note:
-  - {fileID: 6205310033563348572, guid: 5d15b30613ac086488379cb1ec656e5a, type: 3}
-  - {fileID: 3806860626001265297, guid: 206dff2f0e661194c9d13f7cb86a8f4d, type: 3}
+  - {fileID: 1660616530319246603, guid: 5d15b30613ac086488379cb1ec656e5a, type: 3}
+  - {fileID: 2461257564141293340, guid: 206dff2f0e661194c9d13f7cb86a8f4d, type: 3}
   longNoteBottom:
-  - {fileID: 3632937990542755929, guid: d2d0ba3074b6e8d4ebb531ab4f93ae5d, type: 3}
-  - {fileID: 7111122549692653503, guid: 8812e24566e64224a918a6a1e014d835, type: 3}
+  - {fileID: 9005640507617884045, guid: d2d0ba3074b6e8d4ebb531ab4f93ae5d, type: 3}
+  - {fileID: 5325408148126020733, guid: 8812e24566e64224a918a6a1e014d835, type: 3}
   longNoteTop:
-  - {fileID: 4296726658009871657, guid: 42ac1d05f95d9b748b6842925d4e1b83, type: 3}
-  - {fileID: 5382265382769915984, guid: fecffa8cb5f99d747abefd1cefb1cfd7, type: 3}
+  - {fileID: 1049598908030650117, guid: 42ac1d05f95d9b748b6842925d4e1b83, type: 3}
+  - {fileID: 7365340617580055909, guid: fecffa8cb5f99d747abefd1cefb1cfd7, type: 3}
   longNoteBody:
-  - {fileID: 4283118663716440082, guid: 22f99bb1587d27e49bbd0fcb6ee3d4c3, type: 3}
-  - {fileID: 8707013860612000033, guid: ec05fd5ed71c23d4cb0849e19a63473b, type: 3}
+  - {fileID: 4275778878932480240, guid: 22f99bb1587d27e49bbd0fcb6ee3d4c3, type: 3}
+  - {fileID: 6111079690868019762, guid: ec05fd5ed71c23d4cb0849e19a63473b, type: 3}
   barObject: {fileID: 846833447428006079, guid: 22f167bff798ade469346ffe797e96be,
     type: 3}
 --- !u!4 &755286034
@@ -7039,7 +7041,7 @@ Transform:
   m_GameObject: {fileID: 1063431288}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.592, y: -0.24, z: 0}
-  m_LocalScale: {x: 0.592, y: 7, z: 1}
+  m_LocalScale: {x: 0.592, y: 6.08, z: 1}
   m_Children: []
   m_Father: {fileID: 1898766537}
   m_RootOrder: 23
@@ -7083,7 +7085,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8b2dd9431fbdfbc4689e9f490da306ed, type: 3}
   m_Color: {r: 0, g: 1, b: 0.8627451, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -7826,7 +7828,7 @@ Transform:
   m_GameObject: {fileID: 1188769469}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.111, y: -0.24, z: 0}
-  m_LocalScale: {x: 0.592, y: 7, z: 1}
+  m_LocalScale: {x: 0.592, y: 6.08, z: 1}
   m_Children: []
   m_Father: {fileID: 1898766537}
   m_RootOrder: 21
@@ -7870,7 +7872,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8b2dd9431fbdfbc4689e9f490da306ed, type: 3}
   m_Color: {r: 0, g: 1, b: 0.8627451, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -9527,7 +9529,7 @@ Transform:
   m_GameObject: {fileID: 1473800971}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.87, y: -0.24, z: 0}
-  m_LocalScale: {x: 0.592, y: 7, z: 1}
+  m_LocalScale: {x: 0.592, y: 6.08, z: 1}
   m_Children: []
   m_Father: {fileID: 1898766537}
   m_RootOrder: 20
@@ -9571,7 +9573,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8b2dd9431fbdfbc4689e9f490da306ed, type: 3}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -10087,6 +10089,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4803c432887e69f4da2705f2ecbc11b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usePointerEnter: 1
+  usePointerDown: 1
   isClick: 0
 --- !u!1 &1507694474
 GameObject:
@@ -12708,7 +12712,7 @@ Transform:
   m_GameObject: {fileID: 2012448061}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5.351, y: -0.24, z: 0}
-  m_LocalScale: {x: 0.592, y: 7, z: 1}
+  m_LocalScale: {x: 0.592, y: 6.08, z: 1}
   m_Children: []
   m_Father: {fileID: 1898766537}
   m_RootOrder: 22
@@ -12752,7 +12756,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2dacc5f7adcd718409182b78c012f1c4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8b2dd9431fbdfbc4689e9f490da306ed, type: 3}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -14258,6 +14262,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4803c432887e69f4da2705f2ecbc11b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usePointerEnter: 1
+  usePointerDown: 1
   isClick: 0
 --- !u!224 &8307756790563235806
 RectTransform:
