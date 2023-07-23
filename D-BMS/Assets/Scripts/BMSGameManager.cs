@@ -250,7 +250,6 @@ public class BMSGameManager : MonoBehaviour
         {
             gameUIManager.KeyInputImageSetActive(false, i);
         }
-        gameUIManager.UpdateBPMText(currentBPM);
         gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
         isJudgementTrackerUpdate = true;
         isScoreGraphUpdate = true;
@@ -270,7 +269,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
-        keyInput.InputThreadStart();
+        //keyInput.InputThreadStart();
         stopwatch.Start();
     }
 
@@ -433,9 +432,6 @@ public class BMSGameManager : MonoBehaviour
         header = BMSFileSystem.selectedHeader;
         BMSFileSystem.selectedHeader = null;
 
-        gameUIManager.UpdateInfoText();
-        gameUIManager.UpdateSpeedText();
-
         xPosition = new float[5];
         float noteWidth = ObjectPool.poolInstance.GetNoteWidth();
         for (int i = 0; i < 5; i++)
@@ -447,6 +443,7 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.SetJudgeLine();
         gameUIManager.SetNoteBombPosition();
         gameUIManager.SetKeyFeedback();
+        gameUIManager.SetCombo();
 
         currentNote = new int[5] { 0, 0, 0, 0, 0 };
         notesListCount = new int[5];
@@ -532,7 +529,6 @@ public class BMSGameManager : MonoBehaviour
             double diff = next.timing - prevTime;
             avg += currentBPM * diff;
             currentBPM = next.bpm;
-            gameUIManager.UpdateBPMText(currentBPM);
             prevTime = next.timing;
             --bpmsListCount;
 
@@ -846,7 +842,7 @@ public class BMSGameManager : MonoBehaviour
         }
 
         // auto
-        /*for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             while (notesListCount[i] >= 0 && notesList[i][notesListCount[i]].extra != 2 && 
                 notesList[i][notesListCount[i]].timing <= currentTicks)
@@ -854,7 +850,7 @@ public class BMSGameManager : MonoBehaviour
                 soundManager.PlayKeySound(notesList[i][notesListCount[i]].keySound);
                 HandleNote(notesList[i], i, currentTicks);
             }
-        }*/
+        }
     }
 
     public void KeyDown(int index)
@@ -966,7 +962,6 @@ public class BMSGameManager : MonoBehaviour
                 bgmThread.Abort();
             }
             if (isBGAVideoSupported) { videoPlayer.Pause(); }
-            combo = 0;
             pauseManager.PausePanelSetting(set);
             pauseManager.Pause_SetActive(true);
             gameUIManager.SetPausePanelNoteSpeedText();
@@ -1009,6 +1004,7 @@ public class BMSGameManager : MonoBehaviour
 
     public IEnumerator CoLoadScene(int scene)
     {
+        gameUIManager.AnimationPause(false);
         pauseManager.Pause_SetActive(false);
         gameUIManager.FadeIn();
         yield return new WaitForSecondsRealtime(1.0f);
@@ -1027,6 +1023,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
+        combo = 0;
         inputBlockLine.localPosition = new Vector3(xPosition[2], (float)(currentBeat * gameSpeed), 0.0f);
         resumeTicks = currentTicks;
         resumeCountTicks += 30000000;
@@ -1053,6 +1050,7 @@ public class BMSGameManager : MonoBehaviour
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
                 isCountdown = false;
+                gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
                 break;
             }
             else
@@ -1103,8 +1101,6 @@ public class BMSGameManager : MonoBehaviour
         {
             for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = SongSelectUIManager.songRecordData.scoreBarList[i]; }
         }
-
-        gameUIManager.MakeStringTable();
     }
 
     public void ChangeSpeed(int value)
@@ -1115,7 +1111,6 @@ public class BMSGameManager : MonoBehaviour
             if (userSpeed > 200) { userSpeed = 200; }
             else if (userSpeed < 10) { userSpeed = 10; }
             PlayerPrefs.SetInt("NoteSpeed", userSpeed);
-            gameUIManager.UpdateSpeedText();
             if (pauseManager.enabled) { gameUIManager.SetPausePanelNoteSpeedText(); }
             gameSpeed = CalulateSpeed();
 

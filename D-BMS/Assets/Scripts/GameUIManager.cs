@@ -14,21 +14,29 @@ public class GameUIManager : MonoBehaviour
     private Dictionary<string, Texture2D> bgSprites;
 
     [SerializeField]
-    private TextMeshProUGUI frontScoreText;
+    private GameObject comboTitle;
     [SerializeField]
-    private TextMeshProUGUI backScoreText;
+    private Transform comboParentTransform;
     [SerializeField]
-    private TextMeshProUGUI currentComboText;
+    private Sprite[] comboNumberArray;
     [SerializeField]
-    private GameObject currentComboObject;
+    private SpriteRenderer[] comboDigitArray;
     [SerializeField]
-    private Animator comboTextAnimator;
+    private Animator comboTitleAnimator;
     [SerializeField]
-    private GameObject comboText;
+    private Animator comboTitleBounceAnimator;
     [SerializeField]
-    private Animator comboAnimator;
+    private Animator comboBounceAnimator;
     [SerializeField]
-    private TextMeshProUGUI maxComboText;
+    private Animator[] comboAnimatorArray;
+    private float[] comboPositionX;
+
+    [SerializeField]
+    private Sprite[] defaultNumberArray;
+    [SerializeField]
+    private SpriteRenderer[] scoreDigitArray;
+    [SerializeField]
+    private SpriteRenderer[] maxcomboDigitArray;
 
     [SerializeField]
     private SpriteRenderer leftPanel;
@@ -50,21 +58,36 @@ public class GameUIManager : MonoBehaviour
     private Sprite[] keyPressedImage;
 
     [SerializeField]
-    private Animator[] noteBombEffect;
+    private SpriteRenderer[] noteBombArray;
+    [SerializeField]
+    private Sprite[] noteBombSpriteArray;
+    private int[] noteBombAnimationIndex;
+    private int noteBombSpriteArrayLength;
+    private WaitUntil[] noteBombWaitUntilArray;
+    private WaitForSeconds[] noteBombWaitSecondsArray;
 
     [SerializeField]
     private Animator[] earlyLateAnimator;
     [SerializeField]
     private Animator judgeEffectAnimator;
+    [SerializeField]
+    private SpriteRenderer judgeSpriteRenderer;
+    [SerializeField]
+    private Sprite[] koolSprite;
+    [SerializeField]
+    private Sprite[] coolSprite;
+    [SerializeField]
+    private Sprite[] goodSprite;
+    [SerializeField]
+    private Sprite[] missSprite;
+    [SerializeField]
+    private Sprite[] failSprite;
+    private Sprite[,] judgeSpriteArray;
+    private int currentJudge;
+    private int judgeEffectIndex; 
+    private WaitUntil judgeEffectWaitUntil;
+    private WaitForSeconds judgeEffectWaitSeconds;
 
-    [SerializeField]
-    private TextMeshProUGUI bpmText;
-    [SerializeField]
-    private TextMeshProUGUI levelText;
-    [SerializeField]
-    private TextMeshProUGUI noteSpeedText;
-    [SerializeField]
-    private TextMeshProUGUI randomEffectorText;
     [SerializeField]
     private TextMeshProUGUI judgeAdjValueText;
 
@@ -113,35 +136,54 @@ public class GameUIManager : MonoBehaviour
     private WaitForSecondsRealtime wait1sec;
     private WaitForSecondsRealtime wait10ms;
 
-    private readonly int hashComboText = Animator.StringToHash("ComboText");
+    private readonly int hashComboTitle = Animator.StringToHash("ComboTitle"); 
+    private readonly int hashComboTitleBounce = Animator.StringToHash("ComboTitleBounce");
+    private readonly int hashComboBounce = Animator.StringToHash("ComboBounce");
     private readonly int hashCombo = Animator.StringToHash("Combo");
-    private readonly int hashJudgeEffectKOOL = Animator.StringToHash("JudgeEffectKOOL");
-    private readonly int hashJudgeEffectCOOL = Animator.StringToHash("JudgeEffectCOOL");
-    private readonly int hashJudgeEffectGOOD = Animator.StringToHash("JudgeEffectGOOD");
-    private readonly int hashJudgeEffectMISS = Animator.StringToHash("JudgeEffectMISS");
-    private readonly int hashJudgeEffectFAIL = Animator.StringToHash("JudgeEffectFAIL");
-    private readonly int hashNoteBombEffect = Animator.StringToHash("NoteBomb");
-
-    [HideInInspector] public string[] str0000to9999Table;
-    private string[] str0to999Table;
-    [HideInInspector] public string[] str00to100Table;
-    private string[] str000to110Table;
+    private readonly int hashJudgeEffect = Animator.StringToHash("JudgeEffect");
 
     private Coroutine judgeAdjTextCoroutine;
 
     private void Awake()
     {
-        //SetGamePanel();
-        //SetJudgeLine();
-        //SetNoteBombPosition();
-        //SetKeyFeedback();
-
         loader = new BMPLoader();
         wait1sec = new WaitForSecondsRealtime(1.0f);
         wait10ms = new WaitForSecondsRealtime(0.01f);
 
+        noteBombSpriteArrayLength = noteBombSpriteArray.Length;
+        noteBombAnimationIndex = new int[5];
+        noteBombWaitUntilArray = new WaitUntil[5];
+        noteBombWaitSecondsArray = new WaitForSeconds[5];
+        for (int i = 0; i < 5; i++)
+        {
+            NoteBombAnimationSet(i);
+        }
+
+        judgeSpriteArray = new Sprite[5, 15];
+        for (int i = 0; i < 15; i++)
+        {
+            judgeSpriteArray[4, i] = koolSprite[i % koolSprite.Length];
+            judgeSpriteArray[3, i] = coolSprite[i % coolSprite.Length];
+            judgeSpriteArray[2, i] = goodSprite[i % goodSprite.Length];
+            judgeSpriteArray[1, i] = missSprite[i % missSprite.Length];
+            judgeSpriteArray[0, i] = failSprite[i % failSprite.Length];
+        }
+        currentJudge = -1;
+        judgeEffectIndex = 15;
+        judgeEffectWaitUntil = new WaitUntil(() => judgeEffectIndex == 0);
+        judgeEffectWaitSeconds = new WaitForSeconds(1.0f / 30.0f);
+        StartCoroutine(JudgeEffect());
+
         bgImageTable = new Dictionary<string, string>(500);
         bgSprites = new Dictionary<string, Texture2D>(500);
+    }
+
+    private void NoteBombAnimationSet(int line)
+    {
+        noteBombAnimationIndex[line] = noteBombSpriteArrayLength;
+        noteBombWaitUntilArray[line] = new WaitUntil(() => noteBombAnimationIndex[line] == 0);
+        noteBombWaitSecondsArray[line] = new WaitForSeconds(1.0f / 60.0f);
+        StartCoroutine(NoteBombEffect(line));
     }
 
     public void SetGamePanel()
@@ -171,6 +213,10 @@ public class GameUIManager : MonoBehaviour
             panelFade.transform.localScale = new Vector3(noteWidth * 5.0f / panelFade.sprite.bounds.size.x, 8.0f * fadeInSize, 1.0f);
         }
 
+        judgeSpriteRenderer.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 1.4f, 0.0f);
+        earlyLateAnimator[0].transform.localPosition = new Vector3(bmsGameManager.xPosition[1], 2.17f, 0.0f);
+        earlyLateAnimator[1].transform.localPosition = new Vector3(bmsGameManager.xPosition[3], 2.17f, 0.0f);
+
         float keyboardWidth = noteWidth / keyboard[0].sprite.bounds.size.x;
         float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / keyboard[0].sprite.bounds.size.y;
         for (int i = 0; i < 5; i++) 
@@ -188,7 +234,7 @@ public class GameUIManager : MonoBehaviour
         {
             GameObject tempObject = GameObject.Find($"JudgeLine{i}");
             tempObject.GetComponent<SpriteRenderer>().sprite = judgeLineSprites[index];
-            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], judgeLineYPosition, tempObject.transform.localPosition.z);
+            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], judgeLineYPosition, 0.0f);
         }
     }
 
@@ -199,7 +245,7 @@ public class GameUIManager : MonoBehaviour
         for (int i = 1; i < 6; i++)
         {
             GameObject tempObject = GameObject.Find($"NoteBomb{i}");
-            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], yPos, tempObject.transform.localPosition.z);
+            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], yPos, 0.0f);
         }
     }
 
@@ -220,20 +266,17 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void MakeStringTable()
+    public void SetCombo()
     {
-        str0000to9999Table = new string[10000];
-        for (int i = 0; i < 10000;i++) { str0000to9999Table[i] = i.ToString("D4"); }
-
-        str0to999Table = new string[1000];
-        for (int i = 0; i < 1000; i++) { str0to999Table[i] = i.ToString(); }
-
-        str00to100Table = new string[101];
-        for (int i = 0; i < 100; i++) { str00to100Table[i] = i.ToString("D2"); }
-        str00to100Table[100] = "100";
-
-        str000to110Table = new string[111];
-        for (int i = 0; i < 111; i++) { str000to110Table[i] = i.ToString("D3"); }
+        comboParentTransform.localPosition = new Vector3(bmsGameManager.xPosition[2], 5.15f, 0.0f);
+        float comboNumberSize = comboNumberArray[0].bounds.size.x * comboDigitArray[0].transform.localScale.x;
+        comboPositionX = new float[5];
+        for (int i = 0; i < 5; i++)
+        {
+            comboDigitArray[i].transform.localPosition = new Vector3((2 - i) * comboNumberSize, 0.0f, 0.0f);
+            comboPositionX[i] = bmsGameManager.xPosition[2] - ((4 - i) * comboNumberSize * 0.5f);
+        }
+        comboTitle.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 5.84f, 0.0f);
     }
 
     public void LoadImages()
@@ -286,55 +329,93 @@ public class GameUIManager : MonoBehaviour
 
     public void NoteBombActive(int index)
     {
-        noteBombEffect[index].SetTrigger(hashNoteBombEffect);
+        noteBombAnimationIndex[index] = 0;
     }
 
     public void GameUIUpdate(int combo, JudgeType judge)
     {
         if (combo != 0)
         {
-            if (!currentComboObject.activeSelf)
+            if (!comboTitle.activeSelf)
             {
-                currentComboObject.SetActive(true);
-                comboText.SetActive(true);
+                comboTitle.SetActive(true);
             }
-            currentComboText.text = (combo < 1000 ? str0to999Table[combo] : str0000to9999Table[combo]);
-            comboTextAnimator.SetTrigger(hashComboText);
-            comboAnimator.SetTrigger(hashCombo);
+            int digitCount = 0;
+            while (combo > 0)
+            {
+                int tempValue = (int)(combo * 0.1f);
+                int remainder = combo - (tempValue * 10);
+                comboDigitArray[digitCount].sprite = comboNumberArray[remainder];
+                comboAnimatorArray[digitCount++].SetTrigger(hashCombo);
+                combo = tempValue;
+            }
+            comboTitleAnimator.SetTrigger(hashComboTitle);
+            comboTitleBounceAnimator.SetTrigger(hashComboTitleBounce);
+            comboBounceAnimator.SetTrigger(hashComboBounce);
+            comboParentTransform.localPosition = new Vector3(comboPositionX[digitCount - 1], 5.15f, 0.0f);
         }
         else
         {
-            currentComboObject.SetActive(false);
-            comboText.SetActive(false);
+            for (int i = 0; i < 5; i++)
+            {
+                comboDigitArray[i].sprite = null;
+            }
+            comboTitle.SetActive(false);
         }
-
-        maxComboText.text = str0000to9999Table[BMSGameManager.bmsResult.maxCombo];
 
         hpBarMask.localScale = new Vector3(1.0f, bmsGameManager.gauge.hp, 1.0f);
 
-        float score = (float)(bmsGameManager.currentScore);
-        int frontSC = (int)(score * 0.0001d);
-        int backSC = (int)(score - (frontSC * 10000));
-        frontScoreText.text = str000to110Table[frontSC];
-        backScoreText.text = str0000to9999Table[backSC];
-
-        switch (judge)
+        int maxcombo = BMSGameManager.bmsResult.maxCombo;
+        for (int i = 0; i < 5; i++)
         {
-            case JudgeType.KOOL:
-                judgeEffectAnimator.SetTrigger(hashJudgeEffectKOOL);
-                break;
-            case JudgeType.COOL:
-                judgeEffectAnimator.SetTrigger(hashJudgeEffectCOOL);
-                break;
-            case JudgeType.GOOD:
-                judgeEffectAnimator.SetTrigger(hashJudgeEffectGOOD);
-                break;
-            case JudgeType.MISS:
-                judgeEffectAnimator.SetTrigger(hashJudgeEffectMISS);
-                break;
-            case JudgeType.FAIL:
-                judgeEffectAnimator.SetTrigger(hashJudgeEffectFAIL);
-                break;
+            int tempValue = (int)(maxcombo * 0.1f);
+            int remainder = maxcombo - (tempValue * 10);
+            maxcomboDigitArray[i].sprite = defaultNumberArray[remainder];
+            maxcombo = tempValue;
+        }
+
+        int score = (int)(float)bmsGameManager.currentScore;
+        for (int i = 0; i < 7; i++)
+        {
+            int tempValue = (int)(score * 0.1f);
+            int remainder = score - (tempValue * 10);
+            scoreDigitArray[i].sprite = defaultNumberArray[remainder];
+            score = tempValue;
+        }
+
+        if (judge != JudgeType.IGNORE)
+        {
+            currentJudge = (int)judge - 1;
+            judgeEffectIndex = 0;
+            judgeEffectAnimator.SetTrigger(hashJudgeEffect);
+        }
+    }
+
+    private IEnumerator NoteBombEffect(int line)
+    {
+        while (true)
+        {
+            yield return noteBombWaitUntilArray[line];
+            while (noteBombAnimationIndex[line] < noteBombSpriteArrayLength)
+            {
+                noteBombArray[line].sprite = noteBombSpriteArray[noteBombAnimationIndex[line]++];
+                yield return noteBombWaitSecondsArray[line];
+            }
+            noteBombArray[line].sprite = null;
+        }
+    }
+
+    private IEnumerator JudgeEffect()
+    {
+        while (true)
+        {
+            yield return judgeEffectWaitUntil;
+            while (judgeEffectIndex < 15)
+            {
+                judgeSpriteRenderer.sprite = judgeSpriteArray[currentJudge, judgeEffectIndex++];
+                yield return judgeEffectWaitSeconds;
+            }
+            judgeSpriteRenderer.sprite = null;
         }
     }
 
@@ -370,12 +451,6 @@ public class GameUIManager : MonoBehaviour
         judgeAdjTextCoroutine = null;
     }
 
-    public void UpdateInfoText()
-    {
-        levelText.text = BMSGameManager.header.level.ToString();
-        SetRandomEffectorText(randomEffectorText, PlayerPrefs.GetInt("RandomEffector"));
-    }
-
     private void SetRandomEffectorText(TextMeshProUGUI randomText, int index)
     {
         switch (index)
@@ -386,16 +461,6 @@ public class GameUIManager : MonoBehaviour
             case 3: randomText.text = "F-RANDOM"; break;
             case 4: randomText.text = "MF-RANDOM"; break;
         }
-    }
-
-    public void UpdateSpeedText()
-    {
-        noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
-    }
-
-    public void UpdateBPMText(double bpm)
-    {
-        bpmText.text = bpm.ToString();
     }
 
     public void SetLoading()
@@ -475,7 +540,7 @@ public class GameUIManager : MonoBehaviour
     public void SetCountdown(float amount, int second)
     {
         countdownCircle.fillAmount = amount;
-        countdownText.text = str0to999Table[second == 3 ? second : second + 1];
+        countdownText.text = second == 3 ? second.ToString() : (second + 1).ToString();
     }
 
     public void SetActiveCountdown(bool isActive)
@@ -491,17 +556,6 @@ public class GameUIManager : MonoBehaviour
 
     public void AnimationPause(bool isPause)
     {
-        float animationSpeed = isPause ? 0.0f : 1.0f;
-        comboTextAnimator.speed = animationSpeed;
-        comboAnimator.speed = animationSpeed;
-        for (int i = noteBombEffect.Length - 1; i >= 0; i--)
-        {
-            noteBombEffect[i].speed = animationSpeed;
-        }
-        for (int i = earlyLateAnimator.Length - 1; i >= 0; i--)
-        {
-            earlyLateAnimator[i].speed = animationSpeed;
-        }
-        judgeEffectAnimator.speed = animationSpeed;
+        Time.timeScale = isPause ? 0.0f : 1.0f;
     }
 }
