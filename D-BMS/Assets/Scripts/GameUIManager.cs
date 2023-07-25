@@ -112,9 +112,11 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private Slider loadingSlider;
     [SerializeField]
-    private Image countdownCircle;
+    private GameObject countdownObject;
     [SerializeField]
-    private TextMeshProUGUI countdownText;
+    private SpriteRenderer countdownBar;
+    [SerializeField]
+    private SpriteRenderer countdownTimeText;
     [SerializeField]
     private TextMeshProUGUI pausePanelNoteSpeedText;
 
@@ -176,6 +178,22 @@ public class GameUIManager : MonoBehaviour
 
         bgImageTable = new Dictionary<string, string>(500);
         bgSprites = new Dictionary<string, Texture2D>(500);
+
+        PopulateAtlasInfo();
+    }
+
+    void PopulateAtlasInfo()
+    {
+        Rect sprite = countdownBar.sprite.textureRect;
+
+        Vector4 spriteData = new Vector4(
+            sprite.x / countdownBar.sprite.texture.width,
+            sprite.y / countdownBar.sprite.texture.height,
+            sprite.width / countdownBar.sprite.texture.width,
+            sprite.height / countdownBar.sprite.texture.height
+            );
+
+        countdownBar.material.SetVector("_SpriteData", spriteData);
     }
 
     private void NoteBombAnimationSet(int line)
@@ -224,6 +242,8 @@ public class GameUIManager : MonoBehaviour
             keyboard[i].transform.localPosition = new Vector3(bmsGameManager.xPosition[i], -0.24f, 0.0f);
             keyboard[i].transform.localScale = new Vector3(keyboardWidth, keyboardHeight, 1.0f);
         }
+
+        countdownObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 2.2f, 0.0f);
     }
 
     public void SetJudgeLine()
@@ -539,14 +559,13 @@ public class GameUIManager : MonoBehaviour
 
     public void SetCountdown(float amount, int second)
     {
-        countdownCircle.fillAmount = amount;
-        countdownText.text = second == 3 ? second.ToString() : (second + 1).ToString();
+        countdownBar.material.SetInt("_Arc2", (int)((1.0f - amount) * 360.0f));
+        countdownTimeText.sprite = comboNumberArray[second == 3 ? second : second + 1];
     }
 
     public void SetActiveCountdown(bool isActive)
     {
-        countdownCircle.gameObject.SetActive(isActive);
-        countdownText.gameObject.SetActive(isActive);
+        countdownObject.SetActive(isActive);
     }
 
     public void SetPausePanelNoteSpeedText()
