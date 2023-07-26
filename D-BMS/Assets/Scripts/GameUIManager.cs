@@ -31,8 +31,7 @@ public class GameUIManager : MonoBehaviour
     private Animator[] comboAnimatorArray;
     private float[] comboPositionX;
 
-    [SerializeField]
-    private Sprite[] defaultNumberArray;
+    public Sprite[] defaultNumberArray;
     [SerializeField]
     private SpriteRenderer[] scoreDigitArray;
     [SerializeField]
@@ -66,8 +65,6 @@ public class GameUIManager : MonoBehaviour
     private WaitUntil[] noteBombWaitUntilArray;
     private WaitForSeconds[] noteBombWaitSecondsArray;
 
-    [SerializeField]
-    private Animator[] earlyLateAnimator;
     [SerializeField]
     private Animator judgeEffectAnimator;
     [SerializeField]
@@ -232,8 +229,6 @@ public class GameUIManager : MonoBehaviour
         }
 
         judgeSpriteRenderer.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 1.4f, 0.0f);
-        earlyLateAnimator[0].transform.localPosition = new Vector3(bmsGameManager.xPosition[1], 2.17f, 0.0f);
-        earlyLateAnimator[1].transform.localPosition = new Vector3(bmsGameManager.xPosition[3], 2.17f, 0.0f);
 
         float keyboardWidth = noteWidth / keyboard[0].sprite.bounds.size.x;
         float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / keyboard[0].sprite.bounds.size.y;
