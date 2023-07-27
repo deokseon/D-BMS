@@ -24,9 +24,13 @@ public class JudgementTracker : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI backAccuracyText;
     [SerializeField]
+    private TextMeshProUGUI dotText;
+    [SerializeField]
+    private TextMeshProUGUI percentText;
+    [SerializeField]
     private GameObject[] judgementTrackerObjects;
 
-    private string[] str0000to9999Table;
+    private string[] str0to9999Table;
     private string[] str00to100Table;
 
     void Awake()
@@ -40,8 +44,10 @@ public class JudgementTracker : MonoBehaviour
             bmsGameManager = FindObjectOfType<BMSGameManager>();
             bmsResult = BMSGameManager.bmsResult;
 
-            str0000to9999Table = new string[10000];
-            for (int i = 0; i < 10000; i++) { str0000to9999Table[i] = i.ToString("D4"); }
+            AccuracyTextPositionSet();
+
+            str0to9999Table = new string[10000];
+            for (int i = 0; i < 10000; i++) { str0to9999Table[i] = i.ToString(); }
 
             str00to100Table = new string[101];
             for (int i = 0; i < 100; i++) { str00to100Table[i] = i.ToString("D2"); }
@@ -55,15 +61,15 @@ public class JudgementTracker : MonoBehaviour
         {
             if (!bmsGameManager.isJudgementTrackerUpdate) return;
 
-            koolText.text = str0000to9999Table[bmsResult.koolCount];
-            coolText.text = str0000to9999Table[bmsResult.coolCount];
-            goodText.text = str0000to9999Table[bmsResult.goodCount];
-            missText.text = str0000to9999Table[bmsResult.missCount];
-            failText.text = str0000to9999Table[bmsResult.failCount];
+            koolText.text = str0to9999Table[bmsResult.koolCount];
+            coolText.text = str0to9999Table[bmsResult.coolCount];
+            goodText.text = str0to9999Table[bmsResult.goodCount];
+            missText.text = str0to9999Table[bmsResult.missCount];
+            failText.text = str0to9999Table[bmsResult.failCount];
 
             int currentCount = bmsGameManager.currentCount;
             float accuracy = (float)(bmsGameManager.accuracySum * bmsGameManager.divideTable[currentCount]);
-            int frontAC = (int)(accuracy);
+            int frontAC = (int)accuracy;
             int backAC = (int)((accuracy - frontAC) * 100.0d);
             frontAccuracyText.text = str00to100Table[frontAC];
             backAccuracyText.text = str00to100Table[backAC];
@@ -86,5 +92,15 @@ public class JudgementTracker : MonoBehaviour
         frontAccuracyText.gameObject.SetActive(false);
         backAccuracyText.gameObject.SetActive(false);
         gameObject.SetActive(false);
+    }
+
+    private void AccuracyTextPositionSet()
+    {
+        backAccuracyText.rectTransform.localPosition = new Vector3(percentText.rectTransform.localPosition.x - percentText.preferredWidth,
+                                                                   percentText.rectTransform.localPosition.y, 0.0f);
+        dotText.rectTransform.localPosition = new Vector3(backAccuracyText.rectTransform.localPosition.x - backAccuracyText.preferredWidth,
+                                                                   percentText.rectTransform.localPosition.y, 0.0f);
+        frontAccuracyText.rectTransform.localPosition = new Vector3(dotText.rectTransform.localPosition.x - dotText.preferredWidth,
+                                                                   percentText.rectTransform.localPosition.y, 0.0f);
     }
 }
