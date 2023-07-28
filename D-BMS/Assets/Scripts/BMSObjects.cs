@@ -98,7 +98,7 @@ public class BMSResult
     public int rankIndex;
     public double score;
     public double accuracy;
-    public float[] scoreBarArray;
+    public float[] scoreGraphArray;
     public double[] judgeList;
 }
 

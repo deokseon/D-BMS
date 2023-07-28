@@ -18,11 +18,7 @@ public class BMSFileSystem : MonoBehaviour
     {
         if (string.IsNullOrEmpty(rootPath))
         {
-#if UNITY_EDITOR
-            rootPath = $@"{Directory.GetParent((Directory.GetParent(Directory.GetParent(Application.dataPath).ToString())).ToString())}\BMSFiles";
-#else
-            rootPath = $@"{Directory.GetParent(Application.dataPath).ToString()}\BMSFiles";
-#endif
+            rootPath = $@"{Directory.GetParent(Application.dataPath)}\BMSFiles";
             FileInfo[] fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
             int len = fileInfos.Length;
             int bmsFileCount = 0;

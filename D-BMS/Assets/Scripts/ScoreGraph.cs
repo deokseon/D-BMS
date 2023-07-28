@@ -52,7 +52,7 @@ public class ScoreGraph : MonoBehaviour
             if (bmsGameManager.isScoreGraphUpdate)
             {
                 int currentCount = bmsGameManager.currentCount + bmsGameManager.endCount;
-                scoreStick.SetSizeWithCurrentAnchors(vertical, bmsResult.scoreBarArray[currentCount]);
+                scoreStick.SetSizeWithCurrentAnchors(vertical, bmsResult.scoreGraphArray[currentCount]);
                 maxScoreStick.SetSizeWithCurrentAnchors(vertical, bmsGameManager.maxScoreTable[currentCount]);
                 bmsGameManager.isScoreGraphUpdate = false;
             }

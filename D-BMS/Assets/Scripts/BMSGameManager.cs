@@ -185,7 +185,7 @@ public class BMSGameManager : MonoBehaviour
 
         bmsResult.noteCount = pattern.noteCount;
         bmsResult.judgeList = new double[bmsResult.noteCount + 1];
-        bmsResult.scoreBarArray = new float[bmsResult.noteCount + 2]; bmsResult.scoreBarArray[0] = 0.0f;
+        bmsResult.scoreGraphArray = new float[bmsResult.noteCount + 2]; bmsResult.scoreGraphArray[0] = 0.0f;
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] = 2000000.0d; }
 
         if (!isRestart)
@@ -906,7 +906,7 @@ public class BMSGameManager : MonoBehaviour
         if (currentScore <= 600000.0d) { under60 = currentScore * divide20000; }
         else { up60 = (currentScore - 600000.0d) * divide6250; }
         float scoreStickHeight = (float)(under60 + up60);
-        bmsResult.scoreBarArray[currentCount] = scoreStickHeight;
+        bmsResult.scoreGraphArray[currentCount] = scoreStickHeight;
 
         switch ((float)currentScore)
         {
@@ -941,7 +941,7 @@ public class BMSGameManager : MonoBehaviour
             if (bmsResult.score <= 600000.0d) { under60 = bmsResult.score * divide20000; }
             else { up60 = (bmsResult.score - 600000.0d) * divide6250; }
             scoreStickHeight = (float)(under60 + up60);
-            bmsResult.scoreBarArray[currentCount + 1] = scoreStickHeight;
+            bmsResult.scoreGraphArray[currentCount + 1] = scoreStickHeight;
             endCount++;
         }
         isScoreGraphUpdate = true;
@@ -1093,13 +1093,13 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
 
         maxScoreTable = new float[len + 1];
-        if (SongSelectUIManager.songRecordData.rankIndex == 11)
+        if (SongSelectUIManager.resultData.rankIndex == 11)
         {
             for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = 0; }
         }
         else
         {
-            for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = SongSelectUIManager.songRecordData.scoreBarList[i]; }
+            for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = SongSelectUIManager.scoreGraphData.scoreGraphList[i]; }
         }
     }
 

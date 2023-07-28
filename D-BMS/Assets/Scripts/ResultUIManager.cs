@@ -120,7 +120,7 @@ public class ResultUIManager : MonoBehaviour
         DrawJudgeGraph();
         StartCoroutine(DrawSongInfo());
 
-        if (BMSGameManager.isClear && SongSelectUIManager.songRecordData.score < bmsResult.score)
+        if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < bmsResult.score)
         {
             DataSaveManager.SaveResultData(bmsResult, header.fileName);
             newRecordImage.SetActive(true);
@@ -194,13 +194,13 @@ public class ResultUIManager : MonoBehaviour
         SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
         faderText.text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
 
-        DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.songRecordData.koolCount, koolDiffText, koolChangeImage);
-        DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.songRecordData.coolCount, coolDiffText, coolChangeImage);
-        DrawDiffTextAndImage(bmsResult.goodCount - SongSelectUIManager.songRecordData.goodCount, goodDiffText, goodChangeImage);
-        DrawDiffTextAndImage(bmsResult.missCount - SongSelectUIManager.songRecordData.missCount, missDiffText, missChangeImage, -1);
-        DrawDiffTextAndImage(bmsResult.failCount - SongSelectUIManager.songRecordData.failCount, failDiffText, failChangeImage, -1);
-        DrawDiffTextAndImage((float)(bmsResult.accuracy - SongSelectUIManager.songRecordData.accuracy), accuracyDiffText, accuracyChangeImage, 1, true);
-        DrawDiffTextAndImage(bmsResult.maxCombo - SongSelectUIManager.songRecordData.maxCombo, maxComboDiffText, maxComboChangeImage);
+        DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.resultData.koolCount, koolDiffText, koolChangeImage);
+        DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.resultData.coolCount, coolDiffText, coolChangeImage);
+        DrawDiffTextAndImage(bmsResult.goodCount - SongSelectUIManager.resultData.goodCount, goodDiffText, goodChangeImage);
+        DrawDiffTextAndImage(bmsResult.missCount - SongSelectUIManager.resultData.missCount, missDiffText, missChangeImage, -1);
+        DrawDiffTextAndImage(bmsResult.failCount - SongSelectUIManager.resultData.failCount, failDiffText, failChangeImage, -1);
+        DrawDiffTextAndImage((float)(bmsResult.accuracy - SongSelectUIManager.resultData.accuracy), accuracyDiffText, accuracyChangeImage, 1, true);
+        DrawDiffTextAndImage(bmsResult.maxCombo - SongSelectUIManager.resultData.maxCombo, maxComboDiffText, maxComboChangeImage);
 
         rankImage.sprite = rankImageArray[bmsResult.rankIndex];
 
