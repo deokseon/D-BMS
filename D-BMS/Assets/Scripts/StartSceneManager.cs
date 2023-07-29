@@ -62,6 +62,14 @@ public class StartSceneManager : MonoBehaviour
         }
     }
 
+    public void OptionReset()
+    {
+        PlayerPrefs.SetInt("SystemOption", 0);
+        PlayerPrefs.SetInt("GamePlayOption", 0);
+        InitializeSystemOption();
+        InitializeGamePlayOption();
+    }
+
     private void InitializeSystemOption()
     {
         if (PlayerPrefs.GetInt("SystemOption") == 0)
@@ -77,7 +85,7 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("AudioBufferSize", 64);
             PlayerPrefs.SetFloat("MasterVolume", 1.0f);
             PlayerPrefs.SetFloat("KeySoundVolume", 1.0f);
-            PlayerPrefs.SetFloat("BGMVolume", 0.8f);
+            PlayerPrefs.SetFloat("BGMVolume", 5.0f / 7.0f);
 
             PlayerPrefs.SetInt("AssistKeyUse", 1);
             PlayerPrefs.SetInt("PollingRate", 1000);

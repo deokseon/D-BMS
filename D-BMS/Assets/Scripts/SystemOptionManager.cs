@@ -237,6 +237,11 @@ public class SystemOptionManager : MonoBehaviour
             FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
             audioOutputDeviceButton[i].SetActive(true);
             audioOutputDeviceButton[i].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = name;
+            if (originalDriverName.CompareTo("None") == 0)
+            {
+                originalOutputType = "WASAPI";
+                originalDriverName = name;
+            }
             FitTextSize(audioOutputDeviceButton[i].transform.GetChild(3).GetComponent<TextMeshProUGUI>(), 20, 420);
         }
 
@@ -260,6 +265,11 @@ public class SystemOptionManager : MonoBehaviour
                 FMODUnity.RuntimeManager.CoreSystem.getDriverInfo(i, out name, 50, out guid, out systemrate, out speakerMode, out channels);
                 audioOutputDeviceButton[i + wasapiCount].SetActive(true);
                 audioOutputDeviceButton[i + wasapiCount].transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = "ASIO : " + name;
+                if (originalDriverName.CompareTo("None") == 0)
+                {
+                    originalOutputType = "ASIO";
+                    originalDriverName = name;
+                }
                 FitTextSize(audioOutputDeviceButton[i + wasapiCount].transform.GetChild(3).GetComponent<TextMeshProUGUI>(), 20, 420);
             }
         }
