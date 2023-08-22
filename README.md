@@ -4,12 +4,14 @@ I used the music of BMS.<br/><br/>
 BMSFiles (Split compression)
 
 [Split 1](https://drive.google.com/file/d/1mK0jZgPNS41H7ONfIXDRD5xdwbnZZn0a/view?usp=sharing)<br/>
-[Split 2](https://drive.google.com/file/d/1zgZmzthihHw3rstobSD7ikHV9uSAQy2y/view?usp=sharing)
+[Split 2](https://drive.google.com/file/d/1zgZmzthihHw3rstobSD7ikHV9uSAQy2y/view?usp=sharing)<br/><br/>
 
-Please receive both files and extract them.<br/>
-After that, put the BMSFiles folder in the D-BMS folder.<br/>
+[Skin](https://drive.google.com/file/d/1xjH_2lwZ7QcwevcY2rBzrhaT3kbefahJ/view?usp=sharing)
 
-[D-BMS.exe](https://drive.google.com/file/d/10W2K1UDSyksvqpjiW36dzuLLE01GMXdB/view?usp=sharing) <br/><br/>
+Please receive all files and extract them.<br/>
+After that, put the BMSFiles folder and Skin folder in the D-BMS folder.<br/>
+
+[D-BMS.exe](https://drive.google.com/file/d/1oboZFO8vV_VzjW9MuWh2UhRh0Stqv5za/view?usp=sharing) <br/><br/>
 
 # Open source licenses
 
