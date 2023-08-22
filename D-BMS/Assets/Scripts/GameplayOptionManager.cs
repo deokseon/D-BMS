@@ -44,8 +44,6 @@ public class GameplayOptionManager : MonoBehaviour
     [SerializeField]
     private Slider fadeInSlider;
     [SerializeField]
-    private Toggle[] noteSkinToggles;
-    [SerializeField]
     private ToggleController judgementTrackerToggle;
     [SerializeField]
     private ToggleController scoreGraphToggle;
@@ -138,7 +136,6 @@ public class GameplayOptionManager : MonoBehaviour
             case 4: keyFeedbackOpacitySlider.value += value * 0.01f; break;
             case 6: ChangeRandomEffector(value); break;
             case 7: fadeInSlider.value += value * 0.01f; break;
-            case 12: NoteSkinToggleChange(value); break;
         }
     }
 
@@ -174,7 +171,6 @@ public class GameplayOptionManager : MonoBehaviour
         SetRandomEffector(PlayerPrefs.GetInt("RandomEffector"));
         fadeInSlider.value = PlayerPrefs.GetFloat("FadeIn");
         SetFadeInValueText();
-        noteSkinToggles[PlayerPrefs.GetInt("NoteSkin")].isOn = true;
     }
 
     public void NoteSpeedSliderValueChange(float value)
@@ -261,15 +257,5 @@ public class GameplayOptionManager : MonoBehaviour
     private void SetFadeInValueText()
     {
         fadeInValueText.text = $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
-    }
-
-    public void SetNoteSkin(int index)
-    {
-        PlayerPrefs.SetInt("NoteSkin", index);
-    }
-
-    private void NoteSkinToggleChange(int value)
-    {
-        noteSkinToggles[(PlayerPrefs.GetInt("NoteSkin") + value + noteSkinToggles.Length) % noteSkinToggles.Length].isOn = true;
     }
 }

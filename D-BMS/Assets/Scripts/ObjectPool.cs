@@ -8,26 +8,11 @@ public class ObjectPool : MonoBehaviour
     private static List<List<Queue<GameObject>>> longNotePool;
     private static Queue<GameObject> barPool;
 
+    private GameUIManager gameUIManager = null;
+
     public int maxNoteCount;
     public int maxLongNoteCount;
     public int maxBarCount;
-
-    [SerializeField]
-    private Sprite[] noteSprites1;
-    [SerializeField]
-    private Sprite[] noteSprites2;
-    [SerializeField]
-    private Sprite[] longNoteBodySprites1;
-    [SerializeField]
-    private Sprite[] longNoteBodySprites2;
-    [SerializeField]
-    private Sprite[] longNoteBottomSprites1;
-    [SerializeField]
-    private Sprite[] longNoteBottomSprites2;
-    [SerializeField]
-    private Sprite[] longNoteTopSprites1;
-    [SerializeField]
-    private Sprite[] longNoteTopSprites2;
 
     [SerializeField]
     private GameObject[] note;
@@ -69,67 +54,134 @@ public class ObjectPool : MonoBehaviour
 
         notePoolParent = this.transform;
 
+        gameUIManager = FindObjectOfType<GameUIManager>();
+
         CreateNotePool();
     }
 
     public void Init()
     {
         noteParent = GameObject.Find("Notes").transform;
-        SetVerticalLine();
     }
 
     public void SetNoteSprite()
     {
-        int index = PlayerPrefs.GetInt("NoteSkin");
+        float noteSize = GetNoteWidth() / gameUIManager.assetPacker.GetSprite("note1").bounds.size.x;
+        float longNoteTopSize = GetNoteWidth() / gameUIManager.assetPacker.GetSprite("longnotetop1").bounds.size.x;
+        float longNoteBottomSize = GetNoteWidth() / gameUIManager.assetPacker.GetSprite("longnotebottom1").bounds.size.x;
+        float longNoteBodySize = GetNoteWidth() / gameUIManager.assetPacker.GetSprite("longnotebody1").bounds.size.x;
 
         for (int i = 0; i < 5; i++)
         {
-            int isOddEven = i % 2;
             for (int j = 0; j < maxNoteCount; j++)
             {
                 GameObject tempNoteObject = notePool[i].Dequeue();
-                tempNoteObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? noteSprites1[index] : noteSprites2[index]);
+                tempNoteObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite($"note{(i % 2) + 1}");
+                tempNoteObject.transform.GetChild(2).localScale = new Vector3(noteSize, noteSize, 1.0f);
                 notePool[i].Enqueue(tempNoteObject);
             }
 
             for (int j = 0; j < maxLongNoteCount; j++)
             {
                 GameObject tempLongNoteObject = longNotePool[i][2].Dequeue();
-                tempLongNoteObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? longNoteBodySprites1[index] : longNoteBodySprites2[index]);
+                tempLongNoteObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite($"longnotebody{(i % 2) + 1}");
+                tempLongNoteObject.transform.GetChild(2).localScale = new Vector3(longNoteBodySize, 1.0f, 1.0f);
                 longNotePool[i][2].Enqueue(tempLongNoteObject);
 
                 GameObject tempLongNoteBottomObject = longNotePool[i][0].Dequeue();
-                tempLongNoteBottomObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? longNoteBottomSprites1[index] : longNoteBottomSprites2[index]);
+                tempLongNoteBottomObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite($"longnotebottom{(i % 2) + 1}");
+                tempLongNoteBottomObject.transform.GetChild(2).localScale = new Vector3(longNoteBottomSize, longNoteBottomSize, 1.0f);
                 longNotePool[i][0].Enqueue(tempLongNoteBottomObject);
 
                 GameObject tempLongNoteTopObject = longNotePool[i][1].Dequeue();
-                tempLongNoteTopObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = (isOddEven == 0 ? longNoteTopSprites1[index] : longNoteTopSprites2[index]);
+                tempLongNoteTopObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite($"longnotetop{(i % 2) + 1}");
+                tempLongNoteTopObject.transform.GetChild(2).localScale = new Vector3(longNoteTopSize, longNoteTopSize, 1.0f);
                 longNotePool[i][1].Enqueue(tempLongNoteTopObject);
             }
         }
+
+        Sprite barSprite = gameUIManager.assetPacker.GetSprite("barline");
+        float barSize = GetLineWidth() * 5.0f / barSprite.bounds.size.x;
+        for (int i = 0; i < maxBarCount; i++)
+        {
+            GameObject tempBarObject = barPool.Dequeue();
+            tempBarObject.GetComponent<SpriteRenderer>().sprite = barSprite;
+            tempBarObject.transform.localScale = new Vector3(barSize, 1.0f, 1.0f);
+            barPool.Enqueue(tempBarObject);
+        }
     }
 
-    public float GetNoteWidth() { return note[0].transform.GetChild(0).localPosition.x - note[0].transform.GetChild(1).localPosition.x + note[0].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.bounds.size.y; }
-    public float GetOffset() { return longNoteBottomSprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y * longNoteBottom[0].transform.GetChild(2).localScale.y; }
-    public float GetLength() { return 1.0f / longNoteBodySprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y; }
+    public float GetNoteWidth() { return note[0].transform.GetChild(1).localPosition.x - note[0].transform.GetChild(0).localPosition.x - gameUIManager.assetPacker.GetSprite("verticalline").bounds.size.y; }
+    public float GetLineWidth() { return note[0].transform.GetChild(1).localPosition.x - note[0].transform.GetChild(0).localPosition.x + gameUIManager.assetPacker.GetSprite("verticalline").bounds.size.y; }
+    public float GetOffset() { return gameUIManager.assetPacker.GetSprite("longnotebottom1").bounds.size.y * (GetNoteWidth() / gameUIManager.assetPacker.GetSprite("longnotebottom1").bounds.size.x); }
+    public float GetLength() { return 1.0f / gameUIManager.assetPacker.GetSprite("longnotebody1").bounds.size.y; }
 
     private float GetLontNoteBodyVerticalLineLength()
     {
         GameObject temp = longNotePool[0][2].Dequeue();
         temp.SetActive(true);
-        float len = longNoteBodySprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y /
-                    temp.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+        float len = gameUIManager.assetPacker.GetSprite("longnotebody1").bounds.size.y / gameUIManager.assetPacker.GetSprite("longnotebodyverticalline").bounds.size.x;
         temp.SetActive(false);
         longNotePool[0][2].Enqueue(temp);
         return len;
     }
 
-    private void SetVerticalLine()
+    public void SetVerticalLineSprite()
+    {
+        Sprite verticalLineSprite = gameUIManager.assetPacker.GetSprite("verticalline");
+        Sprite longNoteBodyVerticalLineSprite = gameUIManager.assetPacker.GetSprite("longnotebodyverticalline");
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < maxNoteCount; j++)
+            {
+                GameObject tempNoteObject = notePool[i].Dequeue();
+                tempNoteObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempNoteObject.transform.GetChild(k).GetComponent<SpriteRenderer>().sprite = verticalLineSprite;
+                }
+                tempNoteObject.SetActive(false);
+                notePool[i].Enqueue(tempNoteObject);
+            }
+
+            for (int j = 0; j < maxLongNoteCount; j++)
+            {
+                GameObject tempLongNoteObject = longNotePool[i][2].Dequeue();
+                tempLongNoteObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempLongNoteObject.transform.GetChild(k).GetComponent<SpriteRenderer>().sprite = longNoteBodyVerticalLineSprite;
+                }
+                tempLongNoteObject.SetActive(false);
+                longNotePool[i][2].Enqueue(tempLongNoteObject);
+
+                GameObject tempLongNoteBottomObject = longNotePool[i][0].Dequeue();
+                tempLongNoteBottomObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempLongNoteBottomObject.transform.GetChild(k).GetComponent<SpriteRenderer>().sprite = verticalLineSprite;
+                }
+                tempLongNoteBottomObject.SetActive(false);
+                longNotePool[i][0].Enqueue(tempLongNoteBottomObject);
+
+                GameObject tempLongNoteTopObject = longNotePool[i][1].Dequeue();
+                tempLongNoteTopObject.SetActive(true);
+                for (int k = 0; k < 2; k++)
+                {
+                    tempLongNoteTopObject.transform.GetChild(k).GetComponent<SpriteRenderer>().sprite = verticalLineSprite;
+                }
+                tempLongNoteTopObject.SetActive(false);
+                longNotePool[i][1].Enqueue(tempLongNoteTopObject);
+            }
+        }
+    }
+
+    public void SetVerticalLine()
     {
         float verticalLineLength = PlayerPrefs.GetInt("NoteSpeed") * 0.018f * PlayerPrefs.GetFloat("VerticalLine");
-        float normalNoteVerticalLineYPosition = noteSprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y * 0.5f * note[0].transform.GetChild(2).localScale.y;
+        float normalNoteVerticalLineYPosition = gameUIManager.assetPacker.GetSprite("note1").bounds.size.y * 0.5f * (GetNoteWidth() / gameUIManager.assetPacker.GetSprite("note1").bounds.size.x);
         float longNoteBodyVerticalLineLength = GetLontNoteBodyVerticalLineLength();
-        float longNoteBottomVerticalLineYPosition = longNoteBottomSprites1[PlayerPrefs.GetInt("NoteSkin")].bounds.size.y * longNoteBottom[0].transform.GetChild(2).localScale.y;
+        float longNoteBottomVerticalLineYPosition = GetOffset();
                                                 
         for (int i = 0; i < 5; i++)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -125,7 +126,6 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorR", 1.0f);
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorG", 0.0f);
             PlayerPrefs.SetFloat("EvenKeyFeedbackColorB", 0.0f);
-            PlayerPrefs.SetInt("NoteSkin", 0);
             PlayerPrefs.SetInt("JudgeLine", 0);
             PlayerPrefs.SetFloat("FadeIn", 0.0f);
             PlayerPrefs.SetInt("JudgementTracker", 1);

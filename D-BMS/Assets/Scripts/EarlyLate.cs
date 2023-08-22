@@ -9,7 +9,6 @@ public class EarlyLate : MonoBehaviour
     private GameUIManager gameUIManager = null;
     private BMSResult bmsResult = null;
 
-    [SerializeField]
     private Sprite[] earlyLateImageArray;
     [SerializeField]
     private SpriteRenderer[] earlyLateSprite;
@@ -27,16 +26,6 @@ public class EarlyLate : MonoBehaviour
     private SpriteRenderer[] goodDigitArray;
     [SerializeField]
     private GameObject judgementInfo;
-    [SerializeField]
-    private Transform earlyDigitParent;
-    [SerializeField]
-    private Transform lateDigitParent;
-    [SerializeField]
-    private Transform koolDigitParent;
-    [SerializeField]
-    private Transform coolDigitParent;
-    [SerializeField]
-    private Transform goodDigitParent;
 
     private float[] digitPositionX;
 
@@ -54,7 +43,7 @@ public class EarlyLate : MonoBehaviour
             gameUIManager = FindObjectOfType<GameUIManager>();
             bmsResult = BMSGameManager.bmsResult;
 
-            ObjectSetting();
+            StartCoroutine(WaitSetting());
         }
     }
 
@@ -80,10 +69,25 @@ public class EarlyLate : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitSetting()
+    {
+        yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
+
+        ObjectSetting();
+    }
+
     private void ObjectSetting()
     {
+        earlyLateImageArray = new Sprite[2];
+        earlyLateImageArray[0] = gameUIManager.assetPacker.GetSprite("early");
+        earlyLateImageArray[1] = gameUIManager.assetPacker.GetSprite("late");
         earlyLateSprite[0].transform.localPosition = new Vector3(bmsGameManager.xPosition[1], 2.17f, 0.0f);
         earlyLateSprite[1].transform.localPosition = new Vector3(bmsGameManager.xPosition[3], 2.17f, 0.0f);
+        judgementInfo.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().sprite = earlyLateImageArray[0];
+        judgementInfo.transform.GetChild(1).GetChild(0).GetComponent<SpriteRenderer>().sprite = earlyLateImageArray[1];
+        judgementInfo.transform.GetChild(2).GetChild(0).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite("kool-0");
+        judgementInfo.transform.GetChild(3).GetChild(0).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite("cool-0");
+        judgementInfo.transform.GetChild(4).GetChild(0).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite("good-0");
         judgementInfo.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 3.5f, 0.0f);
 
         float numberSize = gameUIManager.defaultNumberArray[0].bounds.size.x * earlyDigitArray[0].transform.localScale.x;
@@ -107,11 +111,12 @@ public class EarlyLate : MonoBehaviour
 
     private void UpdateJudgementText()
     {
-        DigitSet(ref earlyDigitArray, bmsGameManager.fsCount[0], earlyDigitParent);
-        DigitSet(ref lateDigitArray, bmsGameManager.fsCount[1], lateDigitParent);
-        DigitSet(ref koolDigitArray, bmsResult.koolCount, koolDigitParent);
-        DigitSet(ref coolDigitArray, bmsResult.coolCount, coolDigitParent);
-        DigitSet(ref goodDigitArray, bmsResult.goodCount, goodDigitParent);
+        judgementInfo.SetActive(true);
+        DigitSet(ref earlyDigitArray, bmsGameManager.fsCount[0], GameObject.Find("EarlyDigitParent").transform);
+        DigitSet(ref lateDigitArray, bmsGameManager.fsCount[1], GameObject.Find("LateDigitParent").transform);
+        DigitSet(ref koolDigitArray, bmsResult.koolCount, GameObject.Find("KoolDigitParent").transform);
+        DigitSet(ref coolDigitArray, bmsResult.coolCount, GameObject.Find("CoolDigitParent").transform);
+        DigitSet(ref goodDigitArray, bmsResult.goodCount, GameObject.Find("GoodDigitParent").transform);
         judgementInfo.SetActive(bmsGameManager.isEndJudgeInfoUpdate == 1 ? false : true);
     }
 

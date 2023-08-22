@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Threading;
 using UnityEngine.Video;
 using System;
+using System.IO;
 
 public class BMSGameManager : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class BMSGameManager : MonoBehaviour
     private bool isStarted;
     private bool isCountdown;
 
-    private float longNoteOffset;
-    private float longNoteLength;
+    [HideInInspector] public float longNoteOffset;
+    [HideInInspector] public float longNoteLength;
     private float verticalLine;
     private int userSpeed;
     private float gameSpeed;
@@ -92,8 +93,7 @@ public class BMSGameManager : MonoBehaviour
     private int longNotePoolMaxCount;
     private int barPoolMaxCount;
 
-    [HideInInspector]
-    public float[] xPosition;
+    [HideInInspector] public float[] xPosition;
     private int bgaChangeListCount;
     private int bgSoundsListCount;
     private int bpmsListCount;
@@ -114,6 +114,7 @@ public class BMSGameManager : MonoBehaviour
     [HideInInspector] public object inputHandleLock = new object();
     private bool[] isKeyDown;
     private bool[] isNoteBombActive;
+    private int[] noteBombState;
     [HideInInspector] public bool isChangeRankImage = false;
     [HideInInspector] public bool isJudgementTrackerUpdate = false;
     [HideInInspector] public bool isScoreGraphUpdate = false;
@@ -137,8 +138,6 @@ public class BMSGameManager : MonoBehaviour
         stopwatch.Reset();
         soundManager.AudioPause(false);
         bgmThread = new Thread(BGMPlayThread);
-
-        inputBlockLine.localPosition = new Vector3(xPosition[2], -200.0f, 0.0f);
 
         gameUIManager.bga.color = new Color(1, 1, 1, 0);
         gameUIManager.bga.texture = null;
@@ -178,8 +177,6 @@ public class BMSGameManager : MonoBehaviour
         currentBeat += (displayDelayCorrectionBeat * displayDelayCorrectionValue);
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
 
-        bmsDrawer.DrawNotes(xPosition);
-
         currentBPM = bpmsList[bpmsListCount - 1].bpm;
         --bpmsListCount;
 
@@ -190,8 +187,6 @@ public class BMSGameManager : MonoBehaviour
 
         if (!isRestart)
         {
-            keyInput.KeySetting();
-
             koolAddScore = 1100000.0d / pattern.noteCount;
             coolAddScore = koolAddScore * 0.7d;
             goodAddScore = koolAddScore * 0.2d;
@@ -200,8 +195,9 @@ public class BMSGameManager : MonoBehaviour
 
             gauge = new Gauge();
 
+            GameUIManager.isCreateReady = false;
             gameUIManager.SetLoading();
-            totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count;
+            totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count + Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject").Length;
             for (int i = bgaChangeListCount; i > -1; i--) { if (!bgaChangeList[i].isPic) { totalLoading++; break; } }
             divideTotalLoading = 1.0f / totalLoading;
             StartCoroutine(Loading());
@@ -228,11 +224,18 @@ public class BMSGameManager : MonoBehaviour
                     isBGAVideoSupported = !errorFlag;
                 }
             }
-            yield return new WaitUntil(() => gameUIManager.isPrepared);
+            yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
+            keyInput.KeySetting();
             yield return new WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
             yield return new WaitUntil(() => isFadeEnd);
             yield return wait3Sec;
         }
+        else
+        {
+            bmsDrawer.DrawNotes(xPosition);
+        }
+
+        inputBlockLine.localPosition = new Vector3(xPosition[2], -200.0f, 0.0f);
 
         for (int i = 0; i < 5; i++) { if (notesListCount[i] >= 0) { currentNote[i] = notesList[i][notesListCount[i]].keySound; } }
 
@@ -269,7 +272,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
-        //keyInput.InputThreadStart();
+        keyInput.InputThreadStart();
         stopwatch.Start();
     }
 
@@ -347,6 +350,7 @@ public class BMSGameManager : MonoBehaviour
         {
             isKeyDown[i] = false;
             isNoteBombActive[i] = false;
+            noteBombState[i] = 0;
             isCurrentLongNote[i] = false;
             longNoteHandleCount[i] = 0;
             normalNoteHandleCount[i] = 0;
@@ -404,10 +408,14 @@ public class BMSGameManager : MonoBehaviour
         }
         gameUIManager.SetLoadingSlider(1.0f);
         gameUIManager.FadeIn();
-        yield return new WaitForSecondsRealtime(1.0f);
+        yield return new WaitForSeconds(1.0f);
+        GameUIManager.isCreateReady = true;
         gameUIManager.CloseLoading();
+        yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
+        yield return new WaitForSeconds(0.5f);
         StartCoroutine(gameUIManager.FadeOut());
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return new WaitForSeconds(0.5f);
         isFadeEnd = true;
     }
 
@@ -432,19 +440,6 @@ public class BMSGameManager : MonoBehaviour
         header = BMSFileSystem.selectedHeader;
         BMSFileSystem.selectedHeader = null;
 
-        xPosition = new float[5];
-        float noteWidth = ObjectPool.poolInstance.GetNoteWidth();
-        for (int i = 0; i < 5; i++)
-        {
-            xPosition[i] = PlayerPrefs.GetFloat("NoteXPosition") + noteWidth * i;
-        }
-
-        gameUIManager.SetGamePanel();
-        gameUIManager.SetJudgeLine();
-        gameUIManager.SetNoteBombPosition();
-        gameUIManager.SetKeyFeedback();
-        gameUIManager.SetCombo();
-
         currentNote = new int[5] { 0, 0, 0, 0, 0 };
         notesListCount = new int[5];
         longNoteListCount = new int[5];
@@ -457,10 +452,6 @@ public class BMSGameManager : MonoBehaviour
         currentLoading = 0;
         currentRankIndex = -1;
 
-        ObjectPool.poolInstance.SetNoteSprite();
-        longNoteOffset = ObjectPool.poolInstance.GetOffset();
-        longNoteLength = ObjectPool.poolInstance.GetLength();
-
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
@@ -470,6 +461,7 @@ public class BMSGameManager : MonoBehaviour
 
         isKeyDown = new bool[5] { false, false, false, false, false };
         isNoteBombActive = new bool[5] { false, false, false, false, false };
+        noteBombState = new int[5] { 0, 0, 0, 0, 0 };
         fsUpdate = new bool[2] { false, false };
         fsStates = new int[2] { 0, 0 };
         fsCount = new int[2] { 0, 0 };
@@ -607,27 +599,27 @@ public class BMSGameManager : MonoBehaviour
         #region Notebomb Check
         if (isNoteBombActive[0])
         {
-            gameUIManager.NoteBombActive(0);
+            gameUIManager.NoteBombActive(0, noteBombState[0]);
             isNoteBombActive[0] = false;
         }
         if (isNoteBombActive[1])
         {
-            gameUIManager.NoteBombActive(1);
+            gameUIManager.NoteBombActive(1, noteBombState[1]);
             isNoteBombActive[1] = false;
         }
         if (isNoteBombActive[2])
         {
-            gameUIManager.NoteBombActive(2);
+            gameUIManager.NoteBombActive(2, noteBombState[2]);
             isNoteBombActive[2] = false;
         }
         if (isNoteBombActive[3])
         {
-            gameUIManager.NoteBombActive(3);
+            gameUIManager.NoteBombActive(3, noteBombState[3]);
             isNoteBombActive[3] = false;
         }
         if (isNoteBombActive[4])
         {
-            gameUIManager.NoteBombActive(4);
+            gameUIManager.NoteBombActive(4, noteBombState[4]);
             isNoteBombActive[4] = false;
         }
         #endregion
@@ -689,7 +681,11 @@ public class BMSGameManager : MonoBehaviour
         else
         {
             bmsResult.judgeList[currentCount] = diff;
-            if (result != JudgeType.GOOD) { isNoteBombActive[idx] = true; }
+            if (result != JudgeType.GOOD) 
+            { 
+                isNoteBombActive[idx] = true;
+                noteBombState[idx] = 0;
+            }
         }
 
         currentJudge = result;
@@ -727,7 +723,11 @@ public class BMSGameManager : MonoBehaviour
         JudgeType result = currentLongNoteJudge[idx];
 
         if (result <= JudgeType.MISS) { combo = -1; }
-        else if (result >= JudgeType.COOL) { isNoteBombActive[idx] = true; }
+        else if (result >= JudgeType.COOL) 
+        { 
+            isNoteBombActive[idx] = true;
+            noteBombState[idx] = 1;
+        }
 
         currentJudge = currentLongNoteJudge[idx];
 
@@ -842,7 +842,7 @@ public class BMSGameManager : MonoBehaviour
         }
 
         // auto
-        for (int i = 0; i < 5; i++)
+        /*for (int i = 0; i < 5; i++)
         {
             while (notesListCount[i] >= 0 && notesList[i][notesListCount[i]].extra != 2 && 
                 notesList[i][notesListCount[i]].timing <= currentTicks)
@@ -850,7 +850,7 @@ public class BMSGameManager : MonoBehaviour
                 soundManager.PlayKeySound(notesList[i][notesListCount[i]].keySound);
                 HandleNote(notesList[i], i, currentTicks);
             }
-        }
+        }*/
     }
 
     public void KeyDown(int index)
@@ -1039,6 +1039,8 @@ public class BMSGameManager : MonoBehaviour
     {
         isCountdown = true;
         gameUIManager.SetActiveCountdown(true);
+        GameObject countdownBar = GameObject.Find("CountDown_Bar");
+        GameObject countdownTime = GameObject.Find("CountDown_Time");
         while (true)
         {
             long countdown = resumeTicks - currentTicks;
@@ -1057,7 +1059,7 @@ public class BMSGameManager : MonoBehaviour
             {
                 float countdownMS = countdown * 0.0000001f;
                 int second = (int)countdownMS;
-                gameUIManager.SetCountdown(countdownMS - second, second);
+                gameUIManager.SetCountdown(countdownMS - second, second, countdownBar, countdownTime);
             }
             yield return null;
         }
@@ -1202,7 +1204,4 @@ public class BMSGameManager : MonoBehaviour
         }
         soundManager.SoundAndChannelRelease();
     }
-
-    public float GetLongNoteOffset() { return longNoteOffset; }
-    public float GetLongNoteLength() { return longNoteLength; }
 }

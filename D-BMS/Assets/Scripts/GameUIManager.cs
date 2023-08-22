@@ -5,19 +5,24 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using TMPro;
 using B83.Image.BMP;
+using DaVikingCode.AssetPacker;
+using System.IO;
 
 public class GameUIManager : MonoBehaviour
 {
-    public bool isPrepared { get; set; } = false;
+    public int isPrepared { get; set; } = 0;
+    public static bool isCreateReady = false;
     public RawImage bga;
     public Dictionary<string, string> bgImageTable { get; set; }
     private Dictionary<string, Texture2D> bgSprites;
+
+    private BMSDrawer bmsDrawer = null;
+    private BMSGameManager bmsGameManager = null;
 
     [SerializeField]
     private GameObject comboTitle;
     [SerializeField]
     private Transform comboParentTransform;
-    [SerializeField]
     private Sprite[] comboNumberArray;
     [SerializeField]
     private SpriteRenderer[] comboDigitArray;
@@ -31,6 +36,7 @@ public class GameUIManager : MonoBehaviour
     private Animator[] comboAnimatorArray;
     private float[] comboPositionX;
 
+    [HideInInspector]
     public Sprite[] defaultNumberArray;
     [SerializeField]
     private SpriteRenderer[] scoreDigitArray;
@@ -38,30 +44,20 @@ public class GameUIManager : MonoBehaviour
     private SpriteRenderer[] maxcomboDigitArray;
 
     [SerializeField]
-    private SpriteRenderer leftPanel;
-    [SerializeField]
-    private SpriteRenderer rightPanel;
-    [SerializeField]
-    private SpriteRenderer panelBackground;
-    [SerializeField]
-    private SpriteRenderer hpBarBackground;
-    [SerializeField]
     private Transform hpBarMask;
     [SerializeField]
     private GameObject[] keyFeedback;
     [SerializeField]
     private SpriteRenderer[] keyboard;
-    [SerializeField]
     private Sprite[] keyInitImage;
-    [SerializeField]
     private Sprite[] keyPressedImage;
 
     [SerializeField]
     private SpriteRenderer[] noteBombArray;
-    [SerializeField]
-    private Sprite[] noteBombSpriteArray;
+    private List<Sprite>[] noteBombSpriteList;
+    private int[] noteBombState;
     private int[] noteBombAnimationIndex;
-    private int noteBombSpriteArrayLength;
+    private int[] noteBombSpriteArrayLength;
     private WaitUntil[] noteBombWaitUntilArray;
     private WaitForSeconds[] noteBombWaitSecondsArray;
 
@@ -69,16 +65,6 @@ public class GameUIManager : MonoBehaviour
     private Animator judgeEffectAnimator;
     [SerializeField]
     private SpriteRenderer judgeSpriteRenderer;
-    [SerializeField]
-    private Sprite[] koolSprite;
-    [SerializeField]
-    private Sprite[] coolSprite;
-    [SerializeField]
-    private Sprite[] goodSprite;
-    [SerializeField]
-    private Sprite[] missSprite;
-    [SerializeField]
-    private Sprite[] failSprite;
     private Sprite[,] judgeSpriteArray;
     private int currentJudge;
     private int judgeEffectIndex; 
@@ -89,47 +75,12 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI judgeAdjValueText;
 
     [SerializeField]
-    private GameObject loadingPanel;
-    [SerializeField]
-    private RawImage stageImage;
-    [SerializeField]
     private Texture noStageImage;
     [SerializeField]
-    private TextMeshProUGUI loadingTitleText;
-    [SerializeField]
-    private TextMeshProUGUI loadingArtistText;
-    [SerializeField]
-    private TextMeshProUGUI loadingNoteSpeedText;
-    [SerializeField]
-    private TextMeshProUGUI loadingRandomEffetorText;
-    [SerializeField]
-    private TextMeshProUGUI loadingFaderText;
-    [SerializeField]
-    private TextMeshProUGUI sliderValueText;
-    [SerializeField]
-    private Slider loadingSlider;
-    [SerializeField]
     private GameObject countdownObject;
-    [SerializeField]
-    private SpriteRenderer countdownBar;
-    [SerializeField]
-    private SpriteRenderer countdownTimeText;
-    [SerializeField]
-    private TextMeshProUGUI pausePanelNoteSpeedText;
 
     [SerializeField]
-    private Animator fadeinAnimator;
-    [SerializeField]
-    private GameObject fadeinObject;
-
-    [SerializeField]
-    private Sprite[] judgeLineSprites;
-
-    [SerializeField]
-    private SpriteMask panelFade;
-
-    [SerializeField]
-    private BMSGameManager bmsGameManager;
+    private GameObject fadeObject;
 
     private BMPLoader loader;
     private WaitForSecondsRealtime wait1sec;
@@ -143,21 +94,175 @@ public class GameUIManager : MonoBehaviour
 
     private Coroutine judgeAdjTextCoroutine;
 
+    [HideInInspector]
+    public AssetPacker assetPacker;
+
     private void Awake()
     {
+        bmsGameManager = FindObjectOfType<BMSGameManager>();
+        bmsDrawer = FindObjectOfType<BMSDrawer>();
+        assetPacker = GetComponent<AssetPacker>();
+        assetPacker.AddTexturesToPack(Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject"));
+        assetPacker.Process();
+        assetPacker.OnProcessCompleted.AddListener(SpriteSetting);
+
         loader = new BMPLoader();
         wait1sec = new WaitForSecondsRealtime(1.0f);
         wait10ms = new WaitForSecondsRealtime(0.01f);
 
-        noteBombSpriteArrayLength = noteBombSpriteArray.Length;
-        noteBombAnimationIndex = new int[5];
-        noteBombWaitUntilArray = new WaitUntil[5];
-        noteBombWaitSecondsArray = new WaitForSeconds[5];
+        bgImageTable = new Dictionary<string, string>(500);
+        bgSprites = new Dictionary<string, Texture2D>(500);
+    }
+
+    private void SpriteSetting()
+    {
+        ObjectPool.poolInstance.SetVerticalLineSprite();
+        ObjectPool.poolInstance.SetNoteSprite();
+        ObjectPool.poolInstance.SetVerticalLine();
+
+        bmsGameManager.xPosition = new float[5];
+        float noteWidth = ObjectPool.poolInstance.GetLineWidth();
         for (int i = 0; i < 5; i++)
         {
-            NoteBombAnimationSet(i);
+            bmsGameManager.xPosition[i] = PlayerPrefs.GetFloat("NoteXPosition") + noteWidth * i;
         }
 
+        bmsGameManager.longNoteOffset = ObjectPool.poolInstance.GetOffset();
+        bmsGameManager.longNoteLength = ObjectPool.poolInstance.GetLength();
+
+        SetCombo();
+        SetGamePanel();
+        SetJudgeLine();
+        SetNoteBomb();
+        SetJudgeEffect();
+        SetKeyFeedback();
+        SetCountDown();
+        SetInputBlock();
+        SetDefaultNumber();
+
+        bmsDrawer.DrawNotes(bmsGameManager.xPosition);
+
+        isPrepared++;
+    }
+
+    private void SetCountDown()
+    {
+        countdownObject.SetActive(true);
+        Sprite countDownCircle = assetPacker.GetSprite("countdowncircle");
+        SpriteRenderer countdownBar = GameObject.Find("CountDown_Bar").GetComponent<SpriteRenderer>();
+        countdownBar.sprite = countDownCircle;
+        Rect spriteRect = countDownCircle.textureRect;
+
+        Vector4 spriteData = new Vector4(
+            spriteRect.x / countDownCircle.texture.width,
+            spriteRect.y / countDownCircle.texture.height,
+            spriteRect.width / countDownCircle.texture.width,
+            spriteRect.height / countDownCircle.texture.height
+            );
+
+        countdownBar.material.SetVector("_SpriteData", spriteData);
+        countdownObject.SetActive(false);
+    }
+
+    private void SetInputBlock()
+    {
+        Sprite inputBlockSprite = assetPacker.GetSprite("inputblock");
+        GameObject inputBlockLine = GameObject.Find("InputBlockLine");
+        inputBlockLine.GetComponent<SpriteRenderer>().sprite = inputBlockSprite;
+        inputBlockLine.transform.localScale = new Vector3(ObjectPool.poolInstance.GetLineWidth() * 5 / inputBlockSprite.bounds.size.x, 0.75f, 1.0f);
+    }
+
+    private void NoteBombAnimationSet(int line)
+    {
+        noteBombAnimationIndex[line] = noteBombSpriteArrayLength[0];
+        noteBombWaitUntilArray[line] = new WaitUntil(() => noteBombAnimationIndex[line] == 0);
+        noteBombWaitSecondsArray[line] = new WaitForSeconds(1.0f / 60.0f);
+        StartCoroutine(NoteBombEffect(line));
+    }
+
+    private void SetGamePanel()
+    {
+        float cameraSize = Camera.main.orthographicSize;
+        float noteWidth = ObjectPool.poolInstance.GetLineWidth();
+
+        Sprite panelLeftSprite = assetPacker.GetSprite("panel-left");
+        GameObject leftPanel = GameObject.Find("Panel_Left");
+        leftPanel.GetComponent<SpriteRenderer>().sprite = panelLeftSprite;
+        leftPanel.transform.localPosition = new Vector3(bmsGameManager.xPosition[0] - noteWidth * 0.5f, 2.5f, 0.0f);
+        leftPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / panelLeftSprite.bounds.size.y, 1.0f);
+
+        Sprite panelRightSprite = assetPacker.GetSprite("panel-right");
+        GameObject rightPanel = GameObject.Find("Panel_Right");
+        rightPanel.GetComponent<SpriteRenderer>().sprite = panelRightSprite;
+        rightPanel.transform.localPosition = new Vector3(bmsGameManager.xPosition[4] + noteWidth * 0.5f, 2.5f, 0.0f);
+        rightPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / panelRightSprite.bounds.size.y, 1.0f);
+
+        Sprite panelBGSprite = assetPacker.GetSprite("panel-bg");
+        GameObject panelBackground = GameObject.Find("Panel_BG");
+        panelBackground.GetComponent<SpriteRenderer>().sprite = panelBGSprite;
+        panelBackground.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], -0.24f, 0.0f);
+        panelBackground.transform.localScale = new Vector3(noteWidth * 5.0f / panelBGSprite.bounds.size.x, (cameraSize + 2.74f) / panelBGSprite.bounds.size.y, 1.0f);
+
+        Sprite hpBarBGSprite = assetPacker.GetSprite("hpbar-bg");
+        GameObject hpBarBackground = GameObject.Find("HPbar_bg");
+        hpBarBackground.GetComponent<SpriteRenderer>().sprite = hpBarBGSprite;
+        hpBarBackground.transform.localPosition = new Vector3(bmsGameManager.xPosition[4] + noteWidth * 0.5f + panelRightSprite.bounds.size.x + hpBarBGSprite.bounds.size.x * 0.5f,
+                                                      -0.24f + hpBarBGSprite.bounds.size.y * 0.5f, 0.0f);
+
+        GameObject hpBar = GameObject.Find("HPbar");
+        hpBar.GetComponent<SpriteRenderer>().sprite = assetPacker.GetSprite("hpbar");
+        hpBarMask.GetComponent<SpriteMask>().sprite = assetPacker.GetSprite("hpbar");
+
+        float fadeInSize = PlayerPrefs.GetFloat("FadeIn");
+        GameObject panelFade = GameObject.Find("Panel_Fade");
+        if (fadeInSize == 0.0f)
+        {
+            panelFade.gameObject.SetActive(false);
+        }
+        else 
+        {
+            panelFade.GetComponent<SpriteMask>().sprite = panelBGSprite;
+            panelFade.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 2.5f + cameraSize, 0.0f);
+            panelFade.transform.localScale = new Vector3(noteWidth * 5.0f / panelBGSprite.bounds.size.x, 8.0f * fadeInSize, 1.0f);
+        }
+
+        keyInitImage = new Sprite[5];
+        keyPressedImage = new Sprite[5];
+        float keyboardWidth = noteWidth / assetPacker.GetSprite("key1-init").bounds.size.x;
+        float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / assetPacker.GetSprite("key1-init").bounds.size.y;
+        for (int i = 0; i < 5; i++) 
+        {
+            keyInitImage[i] = assetPacker.GetSprite($"key{(i % 2) + 1}-init");
+            keyPressedImage[i] = assetPacker.GetSprite($"key{(i % 2) + 1}-pressed");
+            keyboard[i].sprite = keyInitImage[i];
+            keyboard[i].transform.localPosition = new Vector3(bmsGameManager.xPosition[i], -0.24f, 0.0f);
+            keyboard[i].transform.localScale = new Vector3(keyboardWidth, keyboardHeight, 1.0f);
+        }
+
+        countdownObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 2.2f, 0.0f);
+    }
+
+    private void SetJudgeLine()
+    {
+        float judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
+        Sprite judgelineSprite = assetPacker.GetSprite("judgeline");
+        float judgelinesize = ObjectPool.poolInstance.GetLineWidth() / judgelineSprite.bounds.size.x;
+        for (int i = 1; i < 6; i++)
+        {
+            GameObject tempObject = GameObject.Find($"JudgeLine{i}");
+            tempObject.GetComponent<SpriteRenderer>().sprite = judgelineSprite;
+            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], judgeLineYPosition, 0.0f);
+            tempObject.transform.localScale = new Vector3(judgelinesize, judgelinesize, 1.0f);
+        }
+    }
+
+    private void SetJudgeEffect()
+    {
+        Sprite[] koolSprite = assetPacker.GetSprites("kool-");
+        Sprite[] coolSprite = assetPacker.GetSprites("cool-");
+        Sprite[] goodSprite = assetPacker.GetSprites("good-");
+        Sprite[] missSprite = assetPacker.GetSprites("miss-");
+        Sprite[] failSprite = assetPacker.GetSprites("fail-");
         judgeSpriteArray = new Sprite[5, 15];
         for (int i = 0; i < 15; i++)
         {
@@ -173,88 +278,33 @@ public class GameUIManager : MonoBehaviour
         judgeEffectWaitSeconds = new WaitForSeconds(1.0f / 30.0f);
         StartCoroutine(JudgeEffect());
 
-        bgImageTable = new Dictionary<string, string>(500);
-        bgSprites = new Dictionary<string, Texture2D>(500);
-
-        PopulateAtlasInfo();
-    }
-
-    void PopulateAtlasInfo()
-    {
-        Rect sprite = countdownBar.sprite.textureRect;
-
-        Vector4 spriteData = new Vector4(
-            sprite.x / countdownBar.sprite.texture.width,
-            sprite.y / countdownBar.sprite.texture.height,
-            sprite.width / countdownBar.sprite.texture.width,
-            sprite.height / countdownBar.sprite.texture.height
-            );
-
-        countdownBar.material.SetVector("_SpriteData", spriteData);
-    }
-
-    private void NoteBombAnimationSet(int line)
-    {
-        noteBombAnimationIndex[line] = noteBombSpriteArrayLength;
-        noteBombWaitUntilArray[line] = new WaitUntil(() => noteBombAnimationIndex[line] == 0);
-        noteBombWaitSecondsArray[line] = new WaitForSeconds(1.0f / 60.0f);
-        StartCoroutine(NoteBombEffect(line));
-    }
-
-    public void SetGamePanel()
-    {
-        float cameraSize = Camera.main.orthographicSize;
-        float noteWidth = ObjectPool.poolInstance.GetNoteWidth();
-        leftPanel.transform.localPosition = new Vector3(bmsGameManager.xPosition[0] - noteWidth * 0.5f, 2.5f, 0.0f);
-        leftPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / leftPanel.sprite.bounds.size.y, 1.0f);
-        rightPanel.transform.localPosition = new Vector3(bmsGameManager.xPosition[4] + noteWidth * 0.5f, 2.5f, 0.0f);
-        rightPanel.transform.localScale = new Vector3(1.0f, (cameraSize * 2.0f) / rightPanel.sprite.bounds.size.y, 1.0f);
-
-        panelBackground.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], -0.24f, 0.0f);
-        panelBackground.transform.localScale = new Vector3(noteWidth * 5.0f / panelBackground.sprite.bounds.size.x,
-                                                           (cameraSize + 2.74f) / panelBackground.sprite.bounds.size.y, 1.0f);
-
-        hpBarBackground.transform.localPosition = new Vector3(rightPanel.transform.localPosition.x + rightPanel.sprite.bounds.size.x + hpBarBackground.sprite.bounds.size.x * 0.5f,
-                                                              -0.24f + hpBarBackground.sprite.bounds.size.y * 0.5f, 0.0f);
-
-        float fadeInSize = PlayerPrefs.GetFloat("FadeIn");
-        if (fadeInSize == 0.0f)
-        {
-            panelFade.gameObject.SetActive(false);
-        }
-        else 
-        {
-            panelFade.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 2.5f + cameraSize, 0.0f);
-            panelFade.transform.localScale = new Vector3(noteWidth * 5.0f / panelFade.sprite.bounds.size.x, 8.0f * fadeInSize, 1.0f);
-        }
-
         judgeSpriteRenderer.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 1.4f, 0.0f);
-
-        float keyboardWidth = noteWidth / keyboard[0].sprite.bounds.size.x;
-        float keyboardHeight = Mathf.Abs(2.74f - cameraSize) / keyboard[0].sprite.bounds.size.y;
-        for (int i = 0; i < 5; i++) 
-        {
-            keyboard[i].transform.localPosition = new Vector3(bmsGameManager.xPosition[i], -0.24f, 0.0f);
-            keyboard[i].transform.localScale = new Vector3(keyboardWidth, keyboardHeight, 1.0f);
-        }
-
-        countdownObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 2.2f, 0.0f);
     }
 
-    public void SetJudgeLine()
+    private void SetNoteBomb()
     {
-        int index = PlayerPrefs.GetInt("NoteSkin");
-        float judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
-        for (int i = 1; i < 6; i++)
+        noteBombSpriteList = new List<Sprite>[2];
+        noteBombSpriteArrayLength = new int[2];
+        for (int i = 0; i < 2; i++)
         {
-            GameObject tempObject = GameObject.Find($"JudgeLine{i}");
-            tempObject.GetComponent<SpriteRenderer>().sprite = judgeLineSprites[index];
-            tempObject.transform.localPosition = new Vector3(bmsGameManager.xPosition[i - 1], judgeLineYPosition, 0.0f);
+            Sprite[] noteBombSpriteArray = assetPacker.GetSprites(i == 0 ? "notebombN-" : "notebombL-");
+            noteBombSpriteArrayLength[i] = noteBombSpriteArray.Length;
+            noteBombSpriteList[i] = new List<Sprite>(noteBombSpriteArrayLength[i]);
+            for (int j = 0; j < noteBombSpriteArrayLength[i]; j++)
+            {
+                noteBombSpriteList[i].Add(noteBombSpriteArray[j]);
+            }
         }
-    }
 
-    public void SetNoteBombPosition()
-    {
+        noteBombState = new int[5] { 0, 0, 0, 0, 0 };
+        noteBombAnimationIndex = new int[5];
+        noteBombWaitUntilArray = new WaitUntil[5];
+        noteBombWaitSecondsArray = new WaitForSeconds[5];
+        for (int i = 0; i < 5; i++)
+        {
+            NoteBombAnimationSet(i);
+        }
+
         float yPos = GameObject.Find("JudgeLine1").GetComponent<SpriteRenderer>().sprite.bounds.size.y * 
                      GameObject.Find("JudgeLine1").transform.localScale.y * 0.5f + (PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f);
         for (int i = 1; i < 6; i++)
@@ -264,25 +314,29 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    public void SetKeyFeedback()
+    private void SetKeyFeedback()
     {
+        Sprite keyfeedbackSprite = assetPacker.GetSprite("keyfeedback");
         Color oddColor = new Color(PlayerPrefs.GetFloat("OddKeyFeedbackColorR"), PlayerPrefs.GetFloat("OddKeyFeedbackColorG"),
                                    PlayerPrefs.GetFloat("OddKeyFeedbackColorB"), PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
         Color evenColor = new Color(PlayerPrefs.GetFloat("EvenKeyFeedbackColorR"), PlayerPrefs.GetFloat("EvenKeyFeedbackColorG"),
                                     PlayerPrefs.GetFloat("EvenKeyFeedbackColorB"), PlayerPrefs.GetFloat("KeyFeedbackOpacity"));
-        float xScale = ObjectPool.poolInstance.GetNoteWidth() / keyFeedback[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x;
-        float yScale = (Camera.main.orthographicSize + 2.74f) / keyFeedback[0].GetComponent<SpriteRenderer>().sprite.bounds.size.y;
+        float xScale = ObjectPool.poolInstance.GetLineWidth() / keyfeedbackSprite.bounds.size.x;
+        float yScale = (Camera.main.orthographicSize + 2.74f) / keyfeedbackSprite.bounds.size.y;
         for (int i = 0; i < 5; i++)
         {
-            SpriteRenderer tempSpriteRenderer = keyFeedback[i].GetComponent<SpriteRenderer>();
-            tempSpriteRenderer.color = i % 2 == 0 ? oddColor : evenColor;
+            keyFeedback[i].GetComponent<SpriteRenderer>().color = i % 2 == 0 ? oddColor : evenColor;
+            keyFeedback[i].GetComponent<SpriteRenderer>().sprite = keyfeedbackSprite;
             keyFeedback[i].transform.localPosition = new Vector3(bmsGameManager.xPosition[i], -0.24f, 0.0f);
             keyFeedback[i].transform.localScale = new Vector3(xScale, yScale, 1.0f);
         }
     }
 
-    public void SetCombo()
+    private void SetCombo()
     {
+        comboTitle.GetComponent<SpriteRenderer>().sprite = assetPacker.GetSprite("text-combo");
+        comboNumberArray = assetPacker.GetSprites("combo-");
+
         comboParentTransform.localPosition = new Vector3(bmsGameManager.xPosition[2], 5.15f, 0.0f);
         float comboNumberSize = comboNumberArray[0].bounds.size.x * comboDigitArray[0].transform.localScale.x;
         comboPositionX = new float[5];
@@ -292,6 +346,22 @@ public class GameUIManager : MonoBehaviour
             comboPositionX[i] = bmsGameManager.xPosition[2] - ((4 - i) * comboNumberSize * 0.5f);
         }
         comboTitle.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 5.84f, 0.0f);
+    }
+
+    private void SetDefaultNumber()
+    {
+        defaultNumberArray = assetPacker.GetSprites("default-");
+        GameObject.Find("Score_Title").GetComponent<SpriteRenderer>().sprite = assetPacker.GetSprite("text-score");
+        GameObject.Find("Maxcombo_Title").GetComponent<SpriteRenderer>().sprite = assetPacker.GetSprite("text-maxcombo");
+
+        for (int i = 0; i < 7; i++)
+        {
+            scoreDigitArray[i].transform.localPosition = new Vector3(-i * defaultNumberArray[0].bounds.size.x * scoreDigitArray[i].transform.localScale.x, 0.0f, 0.0f);
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            maxcomboDigitArray[i].transform.localPosition = new Vector3(-i * defaultNumberArray[0].bounds.size.x * maxcomboDigitArray[i].transform.localScale.x, 0.0f, 0.0f);
+        }
     }
 
     public void LoadImages()
@@ -325,7 +395,7 @@ public class GameUIManager : MonoBehaviour
             bgSprites.Add(p.Key, texture2D);
             BMSGameManager.currentLoading++;
         }
-        isPrepared = true;
+        isPrepared++;
     }
 
     public void ChangeBGA(string key)
@@ -342,9 +412,10 @@ public class GameUIManager : MonoBehaviour
         keyboard[index].sprite = active ? keyPressedImage[index] : keyInitImage[index];
     }
 
-    public void NoteBombActive(int index)
+    public void NoteBombActive(int index, int state)
     {
         noteBombAnimationIndex[index] = 0;
+        noteBombState[index] = state;
     }
 
     public void GameUIUpdate(int combo, JudgeType judge)
@@ -411,9 +482,9 @@ public class GameUIManager : MonoBehaviour
         while (true)
         {
             yield return noteBombWaitUntilArray[line];
-            while (noteBombAnimationIndex[line] < noteBombSpriteArrayLength)
+            while (noteBombAnimationIndex[line] < noteBombSpriteArrayLength[noteBombState[line]])
             {
-                noteBombArray[line].sprite = noteBombSpriteArray[noteBombAnimationIndex[line]++];
+                noteBombArray[line].sprite = noteBombSpriteList[noteBombState[line]][noteBombAnimationIndex[line]++];
                 yield return noteBombWaitSecondsArray[line];
             }
             noteBombArray[line].sprite = null;
@@ -436,14 +507,14 @@ public class GameUIManager : MonoBehaviour
 
     public void FadeIn()
     {
-        fadeinObject.SetActive(true);
-        fadeinAnimator.SetTrigger("FadeIn");
+        fadeObject.SetActive(true);
+        fadeObject.GetComponent<Animator>().SetTrigger("FadeIn");
     }
     public IEnumerator FadeOut()
     {
-        fadeinAnimator.SetTrigger("FadeOut");
+        fadeObject.GetComponent<Animator>().SetTrigger("FadeOut");
         yield return wait1sec;
-        fadeinObject.SetActive(false);
+        fadeObject.SetActive(false);
     }
 
     public void CoUpdateJudgeAdjText()
@@ -480,16 +551,16 @@ public class GameUIManager : MonoBehaviour
 
     public void SetLoading()
     {
-        StartCoroutine(LoadRawImage(stageImage, BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
+        StartCoroutine(LoadRawImage(GameObject.Find("Loading_StageImage").GetComponent<RawImage>(), BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
         //StartCoroutine(StageImageFade());
-        loadingTitleText.text = BMSGameManager.header.title;
-        loadingArtistText.text = BMSGameManager.header.artist;
-        loadingNoteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
-        SetRandomEffectorText(loadingRandomEffetorText, PlayerPrefs.GetInt("RandomEffector"));
-        loadingFaderText.text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
+        GameObject.Find("Loading_Title").GetComponent<TextMeshProUGUI>().text = BMSGameManager.header.title;
+        GameObject.Find("Loading_Artist").GetComponent<TextMeshProUGUI>().text = BMSGameManager.header.artist;
+        GameObject.Find("Loading_NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+        SetRandomEffectorText(GameObject.Find("Loading_Random").GetComponent<TextMeshProUGUI>(), PlayerPrefs.GetInt("RandomEffector"));
+        GameObject.Find("Loading_Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
     }
 
-    private IEnumerator StageImageFade()
+    /*private IEnumerator StageImageFade()
     {
         float fadeValue = 0.1f;
         while (fadeValue < 0.9f)
@@ -498,7 +569,7 @@ public class GameUIManager : MonoBehaviour
             yield return wait10ms;
             stageImage.color = new Color(1, 1, 1, fadeValue);
         }
-    }
+    }*/
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
     {
@@ -542,20 +613,20 @@ public class GameUIManager : MonoBehaviour
 
     public void SetLoadingSlider(float loadingValue)
     {
-        loadingSlider.value = loadingValue;
-        sliderValueText.text = ((int)(loadingValue * 100.0f)).ToString() + "%";
+        GameObject.Find("LoadingBar").GetComponent<Slider>().value = loadingValue;
+        GameObject.Find("LoadingValue").GetComponent<TextMeshProUGUI>().text = ((int)(loadingValue * 100.0f)).ToString() + "%";
     }
 
     public void CloseLoading()
     {
         hpBarMask.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-        loadingPanel.SetActive(false);
+        GameObject.Find("Loading_Panel").SetActive(false);
     }
 
-    public void SetCountdown(float amount, int second)
+    public void SetCountdown(float amount, int second, GameObject countdownBar, GameObject countdownTime)
     {
-        countdownBar.material.SetInt("_Arc2", (int)((1.0f - amount) * 360.0f));
-        countdownTimeText.sprite = comboNumberArray[second == 3 ? second : second + 1];
+        countdownBar.GetComponent<SpriteRenderer>().material.SetInt("_Arc2", (int)((1.0f - amount) * 360.0f));
+        countdownTime.GetComponent<SpriteRenderer>().sprite = comboNumberArray[second == 3 ? second : second + 1];
     }
 
     public void SetActiveCountdown(bool isActive)
@@ -565,7 +636,7 @@ public class GameUIManager : MonoBehaviour
 
     public void SetPausePanelNoteSpeedText()
     {
-        pausePanelNoteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+        GameObject.Find("Pause_NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
     }
 
     public void AnimationPause(bool isPause)

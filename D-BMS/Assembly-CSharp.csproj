@@ -68,6 +68,12 @@
      <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\SizeHelper2.cs" />
      <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\UI_ControlData.cs" />
      <Compile Include="Assets\LoopScrollRect-master\Demo\Scripts\UI_ControlScene.cs" />
+     <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\AssetPacker\AssetPacker.cs" />
+     <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\AssetPacker\TextureAsset.cs" />
+     <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\AssetPacker\TextureToPack.cs" />
+     <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\RectanglePacking\IntegerRectangle.cs" />
+     <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\RectanglePacking\RectanglePacker.cs" />
+     <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\RectanglePacking\SortableSize.cs" />
      <Compile Include="Assets\Scripts\BMPLoader.cs" />
      <Compile Include="Assets\Scripts\BMSDrawer.cs" />
      <Compile Include="Assets\Scripts\BMSFileSystem.cs" />

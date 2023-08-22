@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 5652058}
   - component: {fileID: 5652057}
   m_Layer: 5
-  m_Name: COOL
+  m_Name: Cool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -606,7 +606,7 @@ GameObject:
   - component: {fileID: 15090321}
   - component: {fileID: 15090320}
   m_Layer: 5
-  m_Name: GOOD
+  m_Name: Good
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1079,7 +1079,7 @@ GameObject:
   - component: {fileID: 147227468}
   - component: {fileID: 147227467}
   m_Layer: 5
-  m_Name: MISS
+  m_Name: Miss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4693,7 +4693,7 @@ GameObject:
   - component: {fileID: 1146132073}
   - component: {fileID: 1146132072}
   m_Layer: 5
-  m_Name: FAIL
+  m_Name: Fail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6349,7 +6349,7 @@ GameObject:
   - component: {fileID: 1522660251}
   - component: {fileID: 1522660250}
   m_Layer: 5
-  m_Name: KOOL
+  m_Name: Kool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7541,35 +7541,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fd4451290e4c943a52b58fce843d3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalnotesText: {fileID: 1721578007}
-  koolText: {fileID: 1522660250}
-  coolText: {fileID: 5652057}
-  goodText: {fileID: 15090320}
-  missText: {fileID: 147227467}
-  failText: {fileID: 1146132072}
-  accuracyText: {fileID: 675091129}
-  maxComboText: {fileID: 1423366965}
-  scoreText: {fileID: 376634209}
-  koolDiffText: {fileID: 2006690503}
-  coolDiffText: {fileID: 11464533}
-  goodDiffText: {fileID: 1007357649}
-  missDiffText: {fileID: 1143783179}
-  failDiffText: {fileID: 457189118}
-  accuracyDiffText: {fileID: 559986914}
-  maxComboDiffText: {fileID: 524315168}
-  koolChangeImage: {fileID: 1820492880}
-  coolChangeImage: {fileID: 1882324165}
-  goodChangeImage: {fileID: 24582673}
-  missChangeImage: {fileID: 1039598267}
-  failChangeImage: {fileID: 1409883329}
-  accuracyChangeImage: {fileID: 595964042}
-  maxComboChangeImage: {fileID: 2020930286}
   changeImage: {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   newRecordImage: {fileID: 679732803}
-  noteSpeedText: {fileID: 1135924767}
-  randomEffectorText: {fileID: 1265260007}
-  faderText: {fileID: 53243284}
-  rankImage: {fileID: 226062586}
   rankImageArray:
   - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
   - {fileID: 21300000, guid: 5f0d245f70bf18544aaa5ffb839e1567, type: 3}
@@ -7586,16 +7559,8 @@ MonoBehaviour:
   clearLamp: {fileID: 536094229}
   nomissLamp: {fileID: 345120142}
   allcoolLamp: {fileID: 1017247647}
-  dotParent: {fileID: 1023313579}
   dot: {fileID: 8915827379289084883, guid: 3d7a1ba55c0d00e45804ec3e2e0f1c38, type: 3}
-  averageInputTimingText: {fileID: 1851578735}
-  banner: {fileID: 1055400061}
   noBannerTexture: {fileID: 2800000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
-  titleText: {fileID: 4495900234421687699}
-  subtitleText: {fileID: 9053740179251063422}
-  artistText: {fileID: 6157561527084027325}
-  bpmText: {fileID: 9125145844959747713}
-  levelText: {fileID: 2106983822804624844}
   fadeAnimator: {fileID: 2121507811}
   fadeImage: {fileID: 2121507812}
 --- !u!1 &1979731532

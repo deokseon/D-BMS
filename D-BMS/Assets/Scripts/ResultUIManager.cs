@@ -9,63 +9,9 @@ using B83.Image.BMP;
 public class ResultUIManager : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI totalnotesText;
-    [SerializeField]
-    private TextMeshProUGUI koolText;
-    [SerializeField]
-    private TextMeshProUGUI coolText;
-    [SerializeField]
-    private TextMeshProUGUI goodText;
-    [SerializeField]
-    private TextMeshProUGUI missText;
-    [SerializeField]
-    private TextMeshProUGUI failText;
-    [SerializeField]
-    private TextMeshProUGUI accuracyText;
-    [SerializeField]
-    private TextMeshProUGUI maxComboText;
-    [SerializeField]
-    private TextMeshProUGUI scoreText;
-    [SerializeField]
-    private TextMeshProUGUI koolDiffText;
-    [SerializeField]
-    private TextMeshProUGUI coolDiffText;
-    [SerializeField]
-    private TextMeshProUGUI goodDiffText;
-    [SerializeField]
-    private TextMeshProUGUI missDiffText;
-    [SerializeField]
-    private TextMeshProUGUI failDiffText;
-    [SerializeField]
-    private TextMeshProUGUI accuracyDiffText;
-    [SerializeField]
-    private TextMeshProUGUI maxComboDiffText;
-    [SerializeField]
-    private Image koolChangeImage;
-    [SerializeField]
-    private Image coolChangeImage;
-    [SerializeField]
-    private Image goodChangeImage;
-    [SerializeField]
-    private Image missChangeImage;
-    [SerializeField]
-    private Image failChangeImage;
-    [SerializeField]
-    private Image accuracyChangeImage;
-    [SerializeField]
-    private Image maxComboChangeImage;
-    [SerializeField]
     private Sprite changeImage;
     [SerializeField]
     private GameObject newRecordImage;
-    [SerializeField]
-    private TextMeshProUGUI noteSpeedText;
-    [SerializeField]
-    private TextMeshProUGUI randomEffectorText;
-    [SerializeField]
-    private TextMeshProUGUI faderText;
-    [SerializeField]
-    private Image rankImage;
     [SerializeField]
     private Sprite[] rankImageArray;
     [SerializeField]
@@ -77,27 +23,9 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private GameObject allcoolLamp;
     [SerializeField]
-    private Transform dotParent;
-    [SerializeField]
     private GameObject dot;
     [SerializeField]
-    private TextMeshProUGUI averageInputTimingText;
-    [SerializeField]
-    private RawImage banner;
-    [SerializeField]
     private Texture noBannerTexture;
-    [SerializeField]
-    private TextMeshProUGUI titleText;
-    [SerializeField]
-    private TextMeshProUGUI subtitleText;
-    [SerializeField]
-    private TextMeshProUGUI artistText;
-    [SerializeField]
-    private TextMeshProUGUI bpmText;
-    [SerializeField]
-    private TextMeshProUGUI levelText;
-    [SerializeField]
-    private Animator fadeAnimator;
     [SerializeField]
     private Image fadeImage;
 
@@ -132,12 +60,12 @@ public class ResultUIManager : MonoBehaviour
     private IEnumerator CoFadeOut()
     {
         yield return new WaitForSeconds(0.5f);
-        fadeAnimator.SetTrigger("FadeOut");
+        fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
     private IEnumerator CoLoadSelectScene()
     {
-        fadeAnimator.SetTrigger("FadeIn");
+        fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
         yield return new WaitForSecondsRealtime(1.0f);
 
@@ -155,6 +83,8 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawStatisticsResult()
     {
+        TextMeshProUGUI titleText = GameObject.Find("Title_Text").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI subtitleText = GameObject.Find("Subtitle_Text").GetComponent<TextMeshProUGUI>();
         titleText.text = header.title;
         titleText.fontSize = 28;
         subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
@@ -167,6 +97,8 @@ public class ResultUIManager : MonoBehaviour
             subtitleText.fontSize -= 0.1f;
         }
 
+        TextMeshProUGUI artistText = GameObject.Find("Artist_Text").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI bpmText = GameObject.Find("BPM_Text").GetComponent<TextMeshProUGUI>();
         artistText.text = header.artist;
         artistText.fontSize = 15;
         bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
@@ -179,30 +111,30 @@ public class ResultUIManager : MonoBehaviour
             bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
             bpmText.fontSize -= 0.1f;
         }
-        levelText.text = header.level.ToString();
+        GameObject.Find("Level_Text").GetComponent<TextMeshProUGUI>().text = header.level.ToString();
 
-        totalnotesText.text = bmsResult.noteCount.ToString();
-        koolText.text = bmsResult.koolCount.ToString();
-        coolText.text = bmsResult.coolCount.ToString();
-        goodText.text = bmsResult.goodCount.ToString();
-        missText.text = bmsResult.missCount.ToString();
-        failText.text = bmsResult.failCount.ToString();
-        accuracyText.text = ((float)bmsResult.accuracy).ToString("P");
-        maxComboText.text = bmsResult.maxCombo.ToString();
-        scoreText.text = ((int)((float)bmsResult.score)).ToString();
-        noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
+        GameObject.Find("TotalNote").GetComponent<TextMeshProUGUI>().text = bmsResult.noteCount.ToString();
+        GameObject.Find("Kool").GetComponent<TextMeshProUGUI>().text = bmsResult.koolCount.ToString();
+        GameObject.Find("Cool").GetComponent<TextMeshProUGUI>().text = bmsResult.coolCount.ToString();
+        GameObject.Find("Good").GetComponent<TextMeshProUGUI>().text = bmsResult.goodCount.ToString();
+        GameObject.Find("Miss").GetComponent<TextMeshProUGUI>().text = bmsResult.missCount.ToString();
+        GameObject.Find("Fail").GetComponent<TextMeshProUGUI>().text = bmsResult.failCount.ToString();
+        GameObject.Find("Accuracy").GetComponent<TextMeshProUGUI>().text = ((float)bmsResult.accuracy).ToString("P");
+        GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = bmsResult.maxCombo.ToString();
+        GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)bmsResult.score)).ToString();
+        GameObject.Find("NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
         SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
-        faderText.text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
+        GameObject.Find("Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
 
-        DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.resultData.koolCount, koolDiffText, koolChangeImage);
-        DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.resultData.coolCount, coolDiffText, coolChangeImage);
-        DrawDiffTextAndImage(bmsResult.goodCount - SongSelectUIManager.resultData.goodCount, goodDiffText, goodChangeImage);
-        DrawDiffTextAndImage(bmsResult.missCount - SongSelectUIManager.resultData.missCount, missDiffText, missChangeImage, -1);
-        DrawDiffTextAndImage(bmsResult.failCount - SongSelectUIManager.resultData.failCount, failDiffText, failChangeImage, -1);
-        DrawDiffTextAndImage((float)(bmsResult.accuracy - SongSelectUIManager.resultData.accuracy), accuracyDiffText, accuracyChangeImage, 1, true);
-        DrawDiffTextAndImage(bmsResult.maxCombo - SongSelectUIManager.resultData.maxCombo, maxComboDiffText, maxComboChangeImage);
+        DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.resultData.koolCount, GameObject.Find("KoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("KoolChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.resultData.coolCount, GameObject.Find("CoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("CoolChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.goodCount - SongSelectUIManager.resultData.goodCount, GameObject.Find("GoodDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("GoodChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.missCount - SongSelectUIManager.resultData.missCount, GameObject.Find("MissDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MissChangeImage").GetComponent<Image>(), -1);
+        DrawDiffTextAndImage(bmsResult.failCount - SongSelectUIManager.resultData.failCount, GameObject.Find("FailDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("FailChangeImage").GetComponent<Image>(), -1);
+        DrawDiffTextAndImage((float)(bmsResult.accuracy - SongSelectUIManager.resultData.accuracy), GameObject.Find("AccuracyDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("AccuracyChangeImage").GetComponent<Image>(), 1, true);
+        DrawDiffTextAndImage(bmsResult.maxCombo - SongSelectUIManager.resultData.maxCombo, GameObject.Find("MaxComboDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MaxComboChangeImage").GetComponent<Image>());
 
-        rankImage.sprite = rankImageArray[bmsResult.rankIndex];
+        GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[bmsResult.rankIndex];
 
         if (!BMSGameManager.isClear) 
         { 
@@ -226,11 +158,11 @@ public class ResultUIManager : MonoBehaviour
     {
         switch (index)
         {
-            case 0: randomEffectorText.text = "NONE"; break;
-            case 1: randomEffectorText.text = "RANDOM"; break;
-            case 2: randomEffectorText.text = "MIRROR"; break;
-            case 3: randomEffectorText.text = "F-RANDOM"; break;
-            case 4: randomEffectorText.text = "MF-RANDOM"; break;
+            case 0: GameObject.Find("Random").GetComponent<TextMeshProUGUI>().text = "NONE"; break;
+            case 1: GameObject.Find("Random").GetComponent<TextMeshProUGUI>().text = "RANDOM"; break;
+            case 2: GameObject.Find("Random").GetComponent<TextMeshProUGUI>().text = "MIRROR"; break;
+            case 3: GameObject.Find("Random").GetComponent<TextMeshProUGUI>().text = "F-RANDOM"; break;
+            case 4: GameObject.Find("Random").GetComponent<TextMeshProUGUI>().text = "MF-RANDOM"; break;
         }
     }
 
@@ -250,6 +182,7 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawJudgeGraph()
     {
+        Transform dotParent = GameObject.Find("JudgeGraph_Panel").transform;
         int len = bmsResult.judgeList.Length;
         double divideNoteCount = 1.0d / bmsResult.noteCount;
         double total = 0;
@@ -265,15 +198,16 @@ public class ResultUIManager : MonoBehaviour
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);
         }
         int average = (totalCount == 0 ? 0 : (int)(total / totalCount));
-        averageInputTimingText.text = $"{average} MS";
+        GameObject.Find("AverageInputTiming").GetComponent<TextMeshProUGUI>().text = $"{average} MS";
     }
 
     private IEnumerator DrawSongInfo()
     {
+        RawImage stageImage = GameObject.Find("StageImage").GetComponent<RawImage>();
         if (string.IsNullOrEmpty(header.stageFilePath)) 
-        { 
-            banner.texture = noBannerTexture;
-            banner.color = new Color32(0, 0, 0, 230);
+        {
+            stageImage.texture = noBannerTexture;
+            stageImage.color = new Color32(0, 0, 0, 230);
         }
         else
         {
@@ -298,13 +232,13 @@ public class ResultUIManager : MonoBehaviour
 
             if (tex == null)
             {
-                banner.texture = noBannerTexture;
-                banner.color = new Color32(0, 0, 0, 230);
+                stageImage.texture = noBannerTexture;
+                stageImage.color = new Color32(0, 0, 0, 230);
             }
             else
             {
-                banner.texture = tex;
-                banner.color = new Color32(255, 255, 255, 255);
+                stageImage.texture = tex;
+                stageImage.color = new Color32(255, 255, 255, 255);
             }
         }
     }
