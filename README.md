@@ -52,3 +52,13 @@ Copyright (c) 2016 Judah Perez
 [Show License](https://github.com/judah4/HSV-Color-Picker-Unity/blob/master/LICENSE)
 
 MIT License
+<br/><br/>
+### UnityRuntimeSpriteSheetsGenerator
+
+Copyright (c) 2020 Da Viking Code
+
+[Homepage](https://github.com/DaVikingCode/UnityRuntimeSpriteSheetsGenerator)
+
+[Show License](https://github.com/DaVikingCode/UnityRuntimeSpriteSheetsGenerator/blob/master/LICENSE.txt)
+
+MIT License
