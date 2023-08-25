@@ -6336,10 +6336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 988f379ebfebeef4f85d2e057ae114fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeAnimator: {fileID: 1429211853}
   fadeImage: {fileID: 1429211854}
-  screen: {fileID: 384791247}
-  videoPlayer: {fileID: 1753875445}
   frameValueText: {fileID: 376135612}
   frameSelectPanel: {fileID: 1524446125}
   displayModeText: {fileID: 2098674409}
@@ -26331,7 +26328,7 @@ GameObject:
   - component: {fileID: 1753875446}
   - component: {fileID: 1753875445}
   m_Layer: 0
-  m_Name: Video Player
+  m_Name: VideoPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26353,9 +26350,9 @@ VideoPlayer:
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: _MainTex
-  m_RenderMode: 4
-  m_AspectRatio: 2
-  m_DataSource: 0
+  m_RenderMode: 2
+  m_AspectRatio: 0
+  m_DataSource: 1
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 0
   m_TargetAudioSources: []

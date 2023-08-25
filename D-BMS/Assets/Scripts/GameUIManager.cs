@@ -551,6 +551,15 @@ public class GameUIManager : MonoBehaviour
 
     public void SetLoading()
     {
+        string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\loading-bg";
+        if (File.Exists(filePath + ".jpg"))
+        {
+            StartCoroutine(LoadRawImage(GameObject.Find("Loading_Panel").GetComponent<RawImage>(), "", filePath + ".jpg", noStageImage));
+        }
+        else if (File.Exists(filePath + ".png"))
+        {
+            StartCoroutine(LoadRawImage(GameObject.Find("Loading_Panel").GetComponent<RawImage>(), "", filePath + ".png", noStageImage));
+        }
         StartCoroutine(LoadRawImage(GameObject.Find("Loading_StageImage").GetComponent<RawImage>(), BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
         //StartCoroutine(StageImageFade());
         GameObject.Find("Loading_Title").GetComponent<TextMeshProUGUI>().text = BMSGameManager.header.title;

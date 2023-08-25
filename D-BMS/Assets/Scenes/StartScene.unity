@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: b784b3022aebdf74ab7f520210286257, type: 2}
-  m_Color: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_Maskable: 0
   m_OnCullStateChanged:
@@ -512,7 +512,7 @@ GameObject:
   - component: {fileID: 829899011}
   - component: {fileID: 829899010}
   m_Layer: 5
-  m_Name: Video Player
+  m_Name: VideoPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -534,9 +534,9 @@ VideoPlayer:
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: _MainTex
-  m_RenderMode: 4
-  m_AspectRatio: 2
-  m_DataSource: 0
+  m_RenderMode: 2
+  m_AspectRatio: 0
+  m_DataSource: 1
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 0
   m_TargetAudioSources:
@@ -1093,10 +1093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d1d3065cf60c8f4789cf75c201a2831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeAnimator: {fileID: 870135573}
   fadeImage: {fileID: 870135574}
-  screen: {fileID: 419897}
-  videoPlayer: {fileID: 829899010}
   toggleGroup: {fileID: 1215419175}
   toggleArray:
   - {fileID: 3030847656466551812}

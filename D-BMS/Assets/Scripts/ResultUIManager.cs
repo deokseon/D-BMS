@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 using TMPro;
 using UnityEngine;
 using B83.Image.BMP;
+using System.IO;
+using UnityEngine.Video;
 
 public class ResultUIManager : MonoBehaviour
 {
@@ -53,6 +55,68 @@ public class ResultUIManager : MonoBehaviour
             DataSaveManager.SaveResultData(bmsResult, header.fileName);
             newRecordImage.SetActive(true);
         }
+
+        SetBackground();
+    }
+
+    private void SetBackground()
+    {
+        string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\result-bg";
+        if (File.Exists(filePath + ".jpg"))
+        {
+            StartCoroutine(LoadBG(filePath + ".jpg"));
+        }
+        else if (File.Exists(filePath + ".png"))
+        {
+            StartCoroutine(LoadBG(filePath + ".png"));
+        }
+        else if (File.Exists(filePath + ".mp4"))
+        {
+            StartCoroutine(PrepareVideo(filePath + ".mp4"));
+        }
+        else if (File.Exists(filePath + ".avi"))
+        {
+            StartCoroutine(PrepareVideo(filePath + ".avi"));
+        }
+        else if (File.Exists(filePath + ".wmv"))
+        {
+            StartCoroutine(PrepareVideo(filePath + ".wmv"));
+        }
+        else if (File.Exists(filePath + ".mpeg"))
+        {
+            StartCoroutine(PrepareVideo(filePath + ".mpeg"));
+        }
+        else if (File.Exists(filePath + ".mpg"))
+        {
+            StartCoroutine(PrepareVideo(filePath + ".mpg"));
+        }
+    }
+
+    private IEnumerator LoadBG(string path)
+    {
+        string imagePath = $@"file:\\{path}";
+
+        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
+        yield return uwr.SendWebRequest();
+
+        GameObject.Find("Screen").GetComponent<RawImage>().texture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+
+        StartCoroutine(CoFadeOut());
+    }
+
+
+    private IEnumerator PrepareVideo(string path)
+    {
+        VideoPlayer videoPlayer = GameObject.Find("VideoPlayer").GetComponent<VideoPlayer>();
+        videoPlayer.url = $"file://{path}";
+
+        videoPlayer.Prepare();
+
+        yield return new WaitUntil(() => videoPlayer.isPrepared);
+
+        GameObject.Find("Screen").GetComponent<RawImage>().texture = videoPlayer.texture;
+
+        videoPlayer.Play();
 
         StartCoroutine(CoFadeOut());
     }

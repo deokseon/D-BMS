@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
+using UnityEngine.Networking;
 
 public class PauseManager : MonoBehaviour
 {
@@ -14,10 +16,7 @@ public class PauseManager : MonoBehaviour
     private Image[] checkMarkArray;
     [SerializeField]
     private TextMeshProUGUI[] toggleText;
-    [SerializeField]
-    private Image panelImage;
-    [SerializeField]
-    private TextMeshProUGUI titleText;
+    private Texture[] backgroundTexture;
     private int currentIndex;
     private PauseManager pauseManager;
     private BMSGameManager bmsGameManager;
@@ -28,22 +27,48 @@ public class PauseManager : MonoBehaviour
         bmsGameManager = FindObjectOfType<BMSGameManager>();
         currentIndex = 0;
 
+        backgroundTexture = new Texture[2];
+
         for (int i = toggleArray.Length - 1; i >= 0; i--)
         {
             AddToggleListener(toggleArray[i], i, toggleText[i]);
         }
 
+        SetBackground(0, "pause-bg");
+        SetBackground(1, "fail-bg");
+
         pauseManager.Pause_SetActive(false);
+    }
+
+    private void SetBackground(int index, string file)
+    {
+        string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\{file}";
+        if (File.Exists(filePath + ".jpg"))
+        {
+            StartCoroutine(LoadBG(index, filePath + ".jpg"));
+        }
+        else if (File.Exists(filePath + ".png"))
+        {
+            StartCoroutine(LoadBG(index, filePath + ".png"));
+        }
+    }
+
+    private IEnumerator LoadBG(int index, string path)
+    {
+        string imagePath = $@"file:\\{path}";
+
+        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
+        yield return uwr.SendWebRequest();
+
+        backgroundTexture[index] = (uwr.downloadHandler as DownloadHandlerTexture).texture;
     }
 
     public void PausePanelSetting(int set)
     {
         if (set == 0)
         {
-            titleText.text = "PAUSE";
-            titleText.color = new Color32(215, 215, 215, 255);
             toggleText[0].text = "RESUME";
-            panelImage.color = new Color32(0, 255, 255, 200);
+            gameObject.GetComponent<RawImage>().texture = backgroundTexture[set];
             for (int i = checkMarkArray.Length - 1; i >= 0; i--)
             {
                 checkMarkArray[i].color = new Color32(0, 255, 255, 255);
@@ -51,10 +76,8 @@ public class PauseManager : MonoBehaviour
         }
         else
         {
-            titleText.text = "GAME OVER";
-            titleText.color = new Color32(170, 0, 0, 255);
             toggleText[0].text = "RESULT";
-            panelImage.color = new Color32(255, 0, 0, 200);
+            gameObject.GetComponent<RawImage>().texture = backgroundTexture[set];
             for (int i = checkMarkArray.Length - 1; i >= 0; i--)
             {
                 checkMarkArray[i].color = new Color32(255, 0, 0, 255);
