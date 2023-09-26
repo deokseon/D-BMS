@@ -11,7 +11,7 @@ BMSFiles (Split compression)
 Please receive all files and extract them.<br/>
 After that, put the BMSFiles folder and Skin folder in the D-BMS folder.<br/>
 
-[D-BMS.exe](https://drive.google.com/file/d/1U2Yu5oFL2Rw7_rxdiPIU1hBC54cMJ9QW/view?usp=sharing) <br/><br/>
+[D-BMS.exe](https://drive.google.com/file/d/138hXwABKQ7otyAnYNvcLDMUuVRogIGB_/view?usp=sharing) <br/><br/>
 
 # Open source licenses
 
