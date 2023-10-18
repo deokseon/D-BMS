@@ -33,39 +33,46 @@ public class EarlyLate : MonoBehaviour
 
     void Awake()
     {
-        if (PlayerPrefs.GetInt("EarlyLate") == 0)
+        bmsGameManager = FindObjectOfType<BMSGameManager>();
+        gameUIManager = FindObjectOfType<GameUIManager>();
+
+        if (bmsGameManager != null)
         {
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            bmsGameManager = FindObjectOfType<BMSGameManager>();
-            gameUIManager = FindObjectOfType<GameUIManager>();
+            if (PlayerPrefs.GetInt("EarlyLate") == 0)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
             bmsResult = BMSGameManager.bmsResult;
 
+            StartCoroutine(CheckEarlyLate());
             StartCoroutine(WaitSetting());
         }
     }
 
-    void Update()
+    private IEnumerator CheckEarlyLate()
     {
-        lock (bmsGameManager.inputHandleLock)
+        while (true)
         {
-            if (bmsGameManager.fsUpdate[0])
+            lock (bmsGameManager.inputHandleLock)
             {
-                UpdateFSText(0, bmsGameManager.fsStates[0]);
-                bmsGameManager.fsUpdate[0] = false;
+                if (bmsGameManager.fsUpdate[0])
+                {
+                    UpdateELText(0, bmsGameManager.fsStates[0]);
+                    bmsGameManager.fsUpdate[0] = false;
+                }
+                if (bmsGameManager.fsUpdate[1])
+                {
+                    UpdateELText(1, bmsGameManager.fsStates[1]);
+                    bmsGameManager.fsUpdate[1] = false;
+                }
+                if (bmsGameManager.isEndJudgeInfoUpdate != 0)
+                {
+                    UpdateJudgementText();
+                    bmsGameManager.isEndJudgeInfoUpdate = 0;
+                }
             }
-            if (bmsGameManager.fsUpdate[1])
-            {
-                UpdateFSText(1, bmsGameManager.fsStates[1]);
-                bmsGameManager.fsUpdate[1] = false;
-            }
-            if (bmsGameManager.isEndJudgeInfoUpdate != 0)
-            {
-                UpdateJudgementText();
-                bmsGameManager.isEndJudgeInfoUpdate = 0;
-            }
+            yield return null;
         }
     }
 
@@ -76,19 +83,19 @@ public class EarlyLate : MonoBehaviour
         ObjectSetting();
     }
 
-    private void ObjectSetting()
+    public void ObjectSetting()
     {
         earlyLateImageArray = new Sprite[2];
         earlyLateImageArray[0] = gameUIManager.assetPacker.GetSprite("early");
         earlyLateImageArray[1] = gameUIManager.assetPacker.GetSprite("late");
-        earlyLateSprite[0].transform.localPosition = new Vector3(bmsGameManager.xPosition[1], 2.17f, 0.0f);
-        earlyLateSprite[1].transform.localPosition = new Vector3(bmsGameManager.xPosition[3], 2.17f, 0.0f);
+
         judgementInfo.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().sprite = earlyLateImageArray[0];
         judgementInfo.transform.GetChild(1).GetChild(0).GetComponent<SpriteRenderer>().sprite = earlyLateImageArray[1];
         judgementInfo.transform.GetChild(2).GetChild(0).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite("kool-0");
         judgementInfo.transform.GetChild(3).GetChild(0).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite("cool-0");
         judgementInfo.transform.GetChild(4).GetChild(0).GetComponent<SpriteRenderer>().sprite = gameUIManager.assetPacker.GetSprite("good-0");
-        judgementInfo.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], 3.5f, 0.0f);
+
+        SetEarlyLatePosition();
 
         float numberSize = gameUIManager.defaultNumberArray[0].bounds.size.x * earlyDigitArray[0].transform.localScale.x;
         digitPositionX = new float[4];
@@ -103,7 +110,15 @@ public class EarlyLate : MonoBehaviour
         }
     }
 
-    private void UpdateFSText(int idx, int state)
+    public void CustomSetting()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            earlyLateSprite[i].sprite = earlyLateImageArray[i];
+        }
+    }
+
+    private void UpdateELText(int idx, int state)
     {
         earlyLateSprite[idx].sprite = earlyLateImageArray[state];
         earlyLateEffectAnimator[idx].SetTrigger(hashEarlyLateEffect);
@@ -136,5 +151,22 @@ public class EarlyLate : MonoBehaviour
             count = tempValue;
         } while (count > 0);
         digitParent.localPosition = new Vector3(digitPositionX[digitCount - 1], digitParent.localPosition.y, 0.0f);
+    }
+
+    public void SetEarlyLatePosition()
+    {
+        earlyLateSprite[0].transform.localPosition = new Vector3((gameUIManager.GetXPosition(0) + gameUIManager.GetXPosition(1)) * 0.5f, GameUIManager.config.earlyLatePosition, 0.0f);
+        earlyLateSprite[1].transform.localPosition = new Vector3((gameUIManager.GetXPosition(3) + gameUIManager.GetXPosition(4)) * 0.5f, GameUIManager.config.earlyLatePosition, 0.0f);
+        judgementInfo.transform.localPosition = new Vector3(gameUIManager.GetXPosition(2), 3.5f, 0.0f);
+    }
+
+    public float GetMinEarlyLatePosition()
+    {
+        return -0.24f + earlyLateImageArray[0].bounds.size.y * earlyLateSprite[0].transform.localScale.y * 0.5f;
+    }
+
+    public float GetMaxEarlyLatePosition()
+    {
+        return 7.5f - earlyLateImageArray[0].bounds.size.y * earlyLateSprite[0].transform.localScale.y * 0.5f;
     }
 }

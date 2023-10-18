@@ -173,8 +173,8 @@ public class StartSceneManager : MonoBehaviour
             PlayerPrefs.SetInt("Category1Index", 0);
             PlayerPrefs.SetInt("Category2Index", 0);
             PlayerPrefs.SetInt("NoteSpeed", 50);
+            PlayerPrefs.SetInt("BGAOpacity", 10);
             PlayerPrefs.SetInt("RandomEffector", 0);
-            PlayerPrefs.SetInt("DisplayDelayCorrection", 0);
             PlayerPrefs.SetInt("EarlyLateThreshold", 22);
             PlayerPrefs.SetFloat("VerticalLine", 0.0f);
             PlayerPrefs.SetFloat("KeyFeedbackOpacity", 0.7f);
@@ -248,6 +248,10 @@ public class StartSceneManager : MonoBehaviour
         else if (currentIndex == 1)
         {
             StartCoroutine(CoLoadScene(4));
+        }
+        else if (currentIndex == 2)
+        {
+            StartCoroutine(CoLoadScene(5));
         }
         else
         {

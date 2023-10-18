@@ -35,46 +35,54 @@ public class JudgementTracker : MonoBehaviour
 
     void Awake()
     {
-        if (PlayerPrefs.GetInt("JudgementTracker") == 0)
+        bmsGameManager = FindObjectOfType<BMSGameManager>();
+        if (bmsGameManager != null)
         {
-            JudgementTrackerInactivate();
-        }
-        else
-        {
-            bmsGameManager = FindObjectOfType<BMSGameManager>();
+            if (PlayerPrefs.GetInt("JudgementTracker") == 0)
+            {
+                JudgementTrackerInactivate();
+                return;
+            }
+
             bmsResult = BMSGameManager.bmsResult;
-
-            AccuracyTextPositionSet();
-
             str0to9999Table = new string[10000];
             for (int i = 0; i < 10000; i++) { str0to9999Table[i] = i.ToString(); }
 
             str00to100Table = new string[101];
             for (int i = 0; i < 100; i++) { str00to100Table[i] = i.ToString("D2"); }
             str00to100Table[100] = "100";
+
+            StartCoroutine(CheckJudgementUpdate());
         }
+        AccuracyTextPositionSet();
+        SetJudgementTrackerPosition(GameUIManager.config.judgementTrackerPositionOffsetX, GameUIManager.config.judgementTrackerPositionOffsetY);
     }
 
-    void Update()
+    private IEnumerator CheckJudgementUpdate()
     {
-        lock (bmsGameManager.inputHandleLock)
+        while (true)
         {
-            if (!bmsGameManager.isJudgementTrackerUpdate) return;
+            lock (bmsGameManager.inputHandleLock)
+            {
+                if (bmsGameManager.isJudgementTrackerUpdate)
+                {
+                    koolText.text = str0to9999Table[bmsResult.koolCount];
+                    coolText.text = str0to9999Table[bmsResult.coolCount];
+                    goodText.text = str0to9999Table[bmsResult.goodCount];
+                    missText.text = str0to9999Table[bmsResult.missCount];
+                    failText.text = str0to9999Table[bmsResult.failCount];
 
-            koolText.text = str0to9999Table[bmsResult.koolCount];
-            coolText.text = str0to9999Table[bmsResult.coolCount];
-            goodText.text = str0to9999Table[bmsResult.goodCount];
-            missText.text = str0to9999Table[bmsResult.missCount];
-            failText.text = str0to9999Table[bmsResult.failCount];
+                    int currentCount = bmsGameManager.currentCount;
+                    float accuracy = (float)(bmsGameManager.accuracySum * bmsGameManager.divideTable[currentCount]);
+                    int frontAC = (int)accuracy;
+                    int backAC = (int)((accuracy - frontAC) * 100.0d);
+                    frontAccuracyText.text = str00to100Table[frontAC];
+                    backAccuracyText.text = str00to100Table[backAC];
 
-            int currentCount = bmsGameManager.currentCount;
-            float accuracy = (float)(bmsGameManager.accuracySum * bmsGameManager.divideTable[currentCount]);
-            int frontAC = (int)accuracy;
-            int backAC = (int)((accuracy - frontAC) * 100.0d);
-            frontAccuracyText.text = str00to100Table[frontAC];
-            backAccuracyText.text = str00to100Table[backAC];
-
-            bmsGameManager.isJudgementTrackerUpdate = false;
+                    bmsGameManager.isJudgementTrackerUpdate = false;
+                }
+            }
+            yield return null;
         }
     }
 
@@ -102,5 +110,30 @@ public class JudgementTracker : MonoBehaviour
                                                                    percentText.rectTransform.localPosition.y, 0.0f);
         frontAccuracyText.rectTransform.localPosition = new Vector3(dotText.rectTransform.localPosition.x - dotText.preferredWidth,
                                                                    percentText.rectTransform.localPosition.y, 0.0f);
+    }
+
+    public void SetJudgementTrackerPosition(float offsetX, float offsetY)
+    {
+        for (int i = 0; i < judgementTrackerObjects.Length; i++)
+        {
+            RectTransform objectRectTr = judgementTrackerObjects[i].GetComponent<RectTransform>();
+            objectRectTr.localPosition = new Vector3(objectRectTr.localPosition.x + offsetX, objectRectTr.localPosition.y + offsetY, 0.0f);
+        }
+        koolText.rectTransform.localPosition = new Vector3(koolText.rectTransform.localPosition.x + offsetX,
+                                                           koolText.rectTransform.localPosition.y + offsetY, 0.0f);
+        coolText.rectTransform.localPosition = new Vector3(coolText.rectTransform.localPosition.x + offsetX,
+                                                           coolText.rectTransform.localPosition.y + offsetY, 0.0f);
+        goodText.rectTransform.localPosition = new Vector3(goodText.rectTransform.localPosition.x + offsetX,
+                                                           goodText.rectTransform.localPosition.y + offsetY, 0.0f);
+        missText.rectTransform.localPosition = new Vector3(missText.rectTransform.localPosition.x + offsetX,
+                                                           missText.rectTransform.localPosition.y + offsetY, 0.0f);
+        failText.rectTransform.localPosition = new Vector3(failText.rectTransform.localPosition.x + offsetX,
+                                                           failText.rectTransform.localPosition.y + offsetY, 0.0f);
+        frontAccuracyText.rectTransform.localPosition = new Vector3(frontAccuracyText.rectTransform.localPosition.x + offsetX,
+                                                                    frontAccuracyText.rectTransform.localPosition.y + offsetY, 0.0f);
+        backAccuracyText.rectTransform.localPosition = new Vector3(backAccuracyText.rectTransform.localPosition.x + offsetX,
+                                                                   backAccuracyText.rectTransform.localPosition.y + offsetY, 0.0f);
+        gameObject.GetComponent<RectTransform>().localPosition = new Vector3(gameObject.GetComponent<RectTransform>().localPosition.x + offsetX,
+                                                                             gameObject.GetComponent<RectTransform>().localPosition.y + offsetY, 0.0f);
     }
 }

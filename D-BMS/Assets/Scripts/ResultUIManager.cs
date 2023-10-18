@@ -254,7 +254,7 @@ public class ResultUIManager : MonoBehaviour
         for (int i = 1; i < len; i++)
         {
             double y = bmsResult.judgeList[i];
-            if (Utility.Dabs(y) > 115) { continue; }
+            if (Utility.Dabs(y) > 110.0d) { continue; }
             total += y; totalCount++;
             double x = (i * divideNoteCount * 600) - 300;
 

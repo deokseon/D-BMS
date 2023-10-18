@@ -83,7 +83,9 @@
      <Compile Include="Assets\Scripts\BMSObjects.cs" />
      <Compile Include="Assets\Scripts\BMSParser.cs" />
      <Compile Include="Assets\Scripts\BMSPattern.cs" />
+     <Compile Include="Assets\Scripts\CustomManager.cs" />
      <Compile Include="Assets\Scripts\DataSaveManager.cs" />
+     <Compile Include="Assets\Scripts\DragAndDrop.cs" />
      <Compile Include="Assets\Scripts\EarlyLate.cs" />
      <Compile Include="Assets\Scripts\FrameChecker.cs" />
      <Compile Include="Assets\Scripts\GameUIManager.cs" />

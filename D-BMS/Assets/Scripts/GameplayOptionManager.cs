@@ -12,13 +12,13 @@ public class GameplayOptionManager : MonoBehaviour
     [SerializeField]
     private Slider noteSpeedSlider;
     [SerializeField]
+    private TextMeshProUGUI bgaOpacityValueText;
+    [SerializeField]
+    private Slider bgaOpacitySlider;
+    [SerializeField]
     private TextMeshProUGUI randomEffectorValueText;
     [SerializeField]
     private Image[] currentRandomEffectorImage;
-    [SerializeField]
-    private TextMeshProUGUI displayDelayCorrectionValueText;
-    [SerializeField]
-    private Slider displayDelayCorrectionSlider;
     [SerializeField]
     private TextMeshProUGUI earlyLateThresholdValueText;
     [SerializeField]
@@ -130,7 +130,7 @@ public class GameplayOptionManager : MonoBehaviour
         switch (currentOptionIndex)
         {
             case 0: noteSpeedSlider.value = (PlayerPrefs.GetInt("NoteSpeed") - 10.0f + value) / 190.0f; break;
-            case 1: displayDelayCorrectionSlider.value = (PlayerPrefs.GetInt("DisplayDelayCorrection") + 80.0f + value) / 160.0f; break;
+            case 1: bgaOpacitySlider.value = (PlayerPrefs.GetInt("BGAOpacity") + value) / 10.0f; break;
             case 2: earlyLateThresholdSlider.value = (PlayerPrefs.GetInt("EarlyLateThreshold") - 1.0f + value) / 21.0f; break;
             case 3: verticalLineSlider.value += value * 0.01f; break;
             case 4: keyFeedbackOpacitySlider.value += value * 0.01f; break;
@@ -154,8 +154,8 @@ public class GameplayOptionManager : MonoBehaviour
     {
         noteSpeedSlider.value = (PlayerPrefs.GetInt("NoteSpeed") - 10.0f) / 190.0f;
         SetNoteSpeedValueText();
-        displayDelayCorrectionSlider.value = (PlayerPrefs.GetInt("DisplayDelayCorrection") + 80.0f) / 160.0f;
-        SetDisplayDelayCorrectionValueText();
+        bgaOpacitySlider.value = PlayerPrefs.GetInt("BGAOpacity") / 10.0f;
+        SetBGAOpacityValueText();
         earlyLateThresholdSlider.value = (PlayerPrefs.GetInt("EarlyLateThreshold") - 1.0f) / 21.0f;
         SetEarlyLateThresholdValueText();
         verticalLineSlider.value = PlayerPrefs.GetFloat("VerticalLine");
@@ -183,10 +183,21 @@ public class GameplayOptionManager : MonoBehaviour
         noteSpeedValueText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
     }
 
+    public void BGAOpacitySliderValueChange(float value)
+    {
+        PlayerPrefs.SetInt("BGAOpacity", Mathf.RoundToInt(value * 10.0f));
+        SetBGAOpacityValueText();
+    }
+    private void SetBGAOpacityValueText()
+    {
+        bgaOpacityValueText.text = (PlayerPrefs.GetInt("BGAOpacity") * 10) + "%";
+    }
+
     public void ChangeRandomEffector(int value)
     {
         SetRandomEffector((PlayerPrefs.GetInt("RandomEffector") + value + randomEffectorCount) % randomEffectorCount);
     }
+
     private void SetRandomEffector(int index)
     {
         switch (index)
@@ -206,17 +217,6 @@ public class GameplayOptionManager : MonoBehaviour
         currentRandomEffectorImage[index].color = new Color(1, 1, 1);
 
         PlayerPrefs.SetInt("RandomEffector", index);
-    }
-
-    public void DisplayDelayCorrectionSliderValueChange(float value)
-    {
-        PlayerPrefs.SetInt("DisplayDelayCorrection", Mathf.RoundToInt(value * 160.0f - 80.0f));
-        SetDisplayDelayCorrectionValueText();
-    }
-    private void SetDisplayDelayCorrectionValueText()
-    {
-        int value = PlayerPrefs.GetInt("DisplayDelayCorrection");
-        displayDelayCorrectionValueText.text = (value > 0 ? "+" : "") + value.ToString() + "ms";
     }
 
     public void EarlyLateThresholdSliderValueChange(float value)

@@ -880,7 +880,10 @@ namespace UnityEngine.UI
             }
             StopMovement();
             UpdatePrevData();
-            GameObject.Find(index.ToString()).transform.GetChild(0).GetComponent<Toggle>().isOn = true;
+            Toggle currentToggle = GameObject.Find(index.ToString()).transform.GetChild(0).GetComponent<Toggle>();
+            currentToggle.isOn = false;
+            yield return null;
+            currentToggle.isOn = true;
         }
 
         IEnumerator ScrollToCellCoroutine(int index, float speed)

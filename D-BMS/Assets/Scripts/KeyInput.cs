@@ -21,8 +21,8 @@ public class KeyInput : MonoBehaviour
     private InputAction funcSpeedDownAction;
     private InputAction funcSpeedUp2Action;
     private InputAction funcSpeedDown2Action;
-    private InputAction funcJudgeAdjUpAction;
-    private InputAction funcJudgeAdjDownAction;
+    private InputAction funcBGAOpacityUpAction;
+    private InputAction funcBGAOpacityDownAction;
 
     [SerializeField]
     private BMSGameManager bmsGameManager;
@@ -53,8 +53,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDownAction = new InputAction("FuncSpeedDown", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown1"))}");
         funcSpeedUp2Action = new InputAction("FuncSpeedUp2", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedUp2"))}");
         funcSpeedDown2Action = new InputAction("FuncSpeedDown2", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown2"))}");
-        funcJudgeAdjUpAction = new InputAction("FuncJudgeAdjUp", InputActionType.Button, "<Keyboard>/F8");
-        funcJudgeAdjDownAction = new InputAction("FuncJudgeAdjDown", InputActionType.Button, "<Keyboard>/F7");
+        funcBGAOpacityUpAction = new InputAction("FuncBGAOpacityUp", InputActionType.Button, $"<Keyboard>/F4");
+        funcBGAOpacityDownAction = new InputAction("FuncBGAOpacityDown", InputActionType.Button, $"<Keyboard>/F3");
     }
 
     public void InputThreadStart()
@@ -331,9 +331,9 @@ public class KeyInput : MonoBehaviour
             case 0x6F: value = "NumpadDivide"; break;
             case 0x70: value = "F1"; break;
             case 0x71: value = "F2"; break;
-            case 0x72: value = "F3"; break;
-            case 0x73: value = "F4"; break;
             case 0x75: value = "F6"; break;
+            case 0x76: value = "F7"; break;
+            case 0x77: value = "F8"; break;
             case 0x78: value = "F9"; break;
             case 0x79: value = "F10"; break;
             case 0x7A: value = "F11"; break;
@@ -385,8 +385,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcSpeedUp2Action.started += ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };
         funcSpeedDown2Action.started += ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
-        funcJudgeAdjUpAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
-        funcJudgeAdjDownAction.started += ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
+        funcBGAOpacityUpAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(1); };
+        funcBGAOpacityDownAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(-1); };
 
         funcGamePauseAction.Enable();
         funcGameRestartAction.Enable();
@@ -394,8 +394,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDownAction.Enable();
         funcSpeedUp2Action.Enable();
         funcSpeedDown2Action.Enable();
-        funcJudgeAdjUpAction.Enable();
-        funcJudgeAdjDownAction.Enable();
+        funcBGAOpacityUpAction.Enable();
+        funcBGAOpacityDownAction.Enable();
     }
 
     private void DeleteFunctionKeyAction()
@@ -408,8 +408,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcSpeedUp2Action.started -= ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };
         funcSpeedDown2Action.started -= ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
-        funcJudgeAdjUpAction.started -= ctx => { bmsGameManager.ChangeJudgeAdjValue(1); };
-        funcJudgeAdjDownAction.started -= ctx => { bmsGameManager.ChangeJudgeAdjValue(-1); };
+        funcBGAOpacityUpAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(-1); };
+        funcBGAOpacityDownAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(1); };
 
         funcGamePauseAction.Disable();
         funcGameRestartAction.Disable();
@@ -417,15 +417,15 @@ public class KeyInput : MonoBehaviour
         funcSpeedDownAction.Disable();
         funcSpeedUp2Action.Disable();
         funcSpeedDown2Action.Disable();
-        funcJudgeAdjUpAction.Disable();
-        funcJudgeAdjDownAction.Disable();
+        funcBGAOpacityUpAction.Disable();
+        funcBGAOpacityDownAction.Disable();
         funcGamePauseAction = null;
         funcGameRestartAction = null;
         funcSpeedUpAction = null;
         funcSpeedDownAction = null;
         funcSpeedUp2Action = null;
         funcSpeedDown2Action = null;
-        funcJudgeAdjUpAction = null;
-        funcJudgeAdjDownAction = null;
+        funcBGAOpacityUpAction = null;
+        funcBGAOpacityDownAction = null;
     }
 }

@@ -55,6 +55,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 664cd511d8204ac449eb3be3d42ece97, type: 3}
   - {fileID: 21300000, guid: 9487ed319d5c04841b1b9f0332de4c79, type: 3}
   - {fileID: 21300000, guid: cd7ec5b1bc9552746bf1d4beebae392f, type: 3}
+  - {fileID: 21300000, guid: 9670a5423f2b5a84dbd8c62642c571bd, type: 3}
   - {fileID: 21300000, guid: aeaa770380e7a084d82bd065d4cc7044, type: 3}
   - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
@@ -87,6 +88,7 @@ SpriteAtlas:
   - PlayButton
   - toggleHandle
   - NoChange
+  - return
   - circle_mask
   - StageImageFrame
   - ToggleFrame

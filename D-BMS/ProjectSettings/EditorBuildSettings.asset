@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OptionScene.unity
     guid: 1cb01ef4d2bba7f44abb2e1380b42b3b
+  - enabled: 1
+    path: Assets/Scenes/CustomScene.unity
+    guid: 220e9e4502f8ce0468094c05e0578fd1
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 30ba3225f3acab54b84d9a5d11e255ac,
       type: 2}

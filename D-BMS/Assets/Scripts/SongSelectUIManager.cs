@@ -623,4 +623,12 @@ public class SongSelectUIManager : MonoBehaviour
     {
         MoveToIndex(Random.Range(0, currentHeaderListCount));
     }
+
+    public void Check()
+    {
+        if (BMSFileSystem.selectedHeader.title.CompareTo(BMSFileSystem.selectedCategoryHeaderList[convertedIndex].title) != 0)
+        {
+            Debug.Log("Change");
+        }
+    }
 }

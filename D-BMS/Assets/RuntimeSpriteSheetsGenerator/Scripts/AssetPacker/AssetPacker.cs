@@ -216,7 +216,7 @@ namespace DaVikingCode.AssetPacker {
             {
 				pivot = new Vector2(1.0f, 0.5f);
 			}
-			else if (name.CompareTo("panel-right") == 0 || name.CompareTo("text-score") == 0 || name.CompareTo("text-maxcombo") == 0)  // pivot - left
+			else if (name.CompareTo("panel-right") == 0)  // pivot - left
 			{
 				pivot = new Vector2(0.0f, 0.5f);
 			}

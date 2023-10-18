@@ -19,7 +19,6 @@ public class BMSGameManager : MonoBehaviour
     private float verticalLine;
     private int userSpeed;
     private float gameSpeed;
-    private int displayDelayCorrectionValue;
     private int earlyLateThreshold;
     private float judgeLineYPosition;
 
@@ -52,8 +51,6 @@ public class BMSGameManager : MonoBehaviour
     private int totalLoading = 0;
     private bool isFadeEnd = false;
     private float divideTotalLoading;
-    private double displayDelayCorrectionBeat;
-    private float longNoteEndOffset;
     public static int currentLoading = 0;
     private int currentRankIndex;
     public int endCount;
@@ -139,7 +136,8 @@ public class BMSGameManager : MonoBehaviour
         soundManager.AudioPause(false);
         bgmThread = new Thread(BGMPlayThread);
 
-        gameUIManager.bga.color = new Color(1, 1, 1, 0);
+        gameUIManager.bga.color = new Color(0, 0, 0, 0);
+        gameUIManager.bgaOpacity.color = new Color(0, 0, 0, 0);
         gameUIManager.bga.texture = null;
 
         ObjectPool.poolInstance.Init();
@@ -172,9 +170,6 @@ public class BMSGameManager : MonoBehaviour
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
 
-        displayDelayCorrectionBeat = 0.001d * header.bpm * divide60;
-        longNoteEndOffset = Mathf.Max((float)(displayDelayCorrectionBeat * -displayDelayCorrectionValue), 0.0f);
-        currentBeat += (displayDelayCorrectionBeat * displayDelayCorrectionValue);
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
 
         currentBPM = bpmsList[bpmsListCount - 1].bpm;
@@ -247,13 +242,17 @@ public class BMSGameManager : MonoBehaviour
             bgaChangeListCount = 0;
             bgaChangeList[0].timing = 2000000000.0d;
         }
-        else { gameUIManager.bga.color = Color.white; }
+        else 
+        { 
+            gameUIManager.bga.color = Color.white;
+            gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
+        }
 
         for (int i = 0; i < 5; i++)
         {
             gameUIManager.KeyInputImageSetActive(false, i);
         }
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
         isJudgementTrackerUpdate = true;
         isScoreGraphUpdate = true;
         isChangeRankImage = true;
@@ -285,6 +284,8 @@ public class BMSGameManager : MonoBehaviour
             StopCoroutine(songEndCheckCoroutine);
         }
         pauseManager.Pause_SetActive(false);
+        gameUIManager.CoUpdateInfoPanel(false);
+        gameUIManager.SetInfoPanel(false);
         bgmThread.Abort();
         keyInput.InputThreadAbort();
         stopwatch.Stop();
@@ -412,7 +413,7 @@ public class BMSGameManager : MonoBehaviour
         GameUIManager.isCreateReady = true;
         gameUIManager.CloseLoading();
         yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(gameUIManager.FadeOut());
         yield return new WaitForSeconds(0.5f);
@@ -424,10 +425,9 @@ public class BMSGameManager : MonoBehaviour
         QualitySettings.vSyncCount = PlayerPrefs.GetInt("SyncCount");
         Application.targetFrameRate = PlayerPrefs.GetInt("FrameRate");
         userSpeed = PlayerPrefs.GetInt("NoteSpeed");
-        displayDelayCorrectionValue = PlayerPrefs.GetInt("DisplayDelayCorrection");
         earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold");
         verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.018f;
-        judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? 0.0f : -0.24f;
+        judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? GameUIManager.config.judgeLinePosition : GameUIManager.config.judgeLinePosition - 0.24f;
 
         stopwatch = new System.Diagnostics.Stopwatch();
         isPaused = true;
@@ -626,7 +626,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (isGameUIUpdate)
         {
-            gameUIManager.GameUIUpdate(combo, currentJudge);
+            gameUIManager.GameUIUpdate(combo, currentJudge, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
             isGameUIUpdate = false;
         }
 
@@ -804,7 +804,7 @@ public class BMSGameManager : MonoBehaviour
             if (!isCurrentLongNote[i]) { continue; }
 
             float longNoteNextYscale = ((float)(longNoteList[i][longNoteListCount[i] - 1].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength;
-            if (longNoteNextYscale > longNoteEndOffset)
+            if (longNoteNextYscale > 0.0f)
             {
                 longNoteList[i][longNoteListCount[i] - 3].modelTransform.localPosition = new Vector3(xPosition[i], (float)currentBeat * gameSpeed, 0.0f);
                 longNoteList[i][longNoteListCount[i] - 2].modelTransform.localScale = new Vector3(1.0f, longNoteNextYscale, 1.0f);
@@ -964,13 +964,16 @@ public class BMSGameManager : MonoBehaviour
             if (isBGAVideoSupported) { videoPlayer.Pause(); }
             pauseManager.PausePanelSetting(set);
             pauseManager.Pause_SetActive(true);
-            gameUIManager.SetPausePanelNoteSpeedText();
+            gameUIManager.CoUpdateInfoPanel(false);
+            gameUIManager.SetInfoPanel(true);
+            gameUIManager.SetNoteSpeedText();
         }
     }
 
     public IEnumerator GameEnd(bool clear)
     {
         pauseManager.Pause_SetActive(false);
+        gameUIManager.SetInfoPanel(false);
         keyInput.KeyDisable();
         isPaused = true;
         isClear = clear;
@@ -1006,6 +1009,7 @@ public class BMSGameManager : MonoBehaviour
     {
         gameUIManager.AnimationPause(false);
         pauseManager.Pause_SetActive(false);
+        gameUIManager.SetInfoPanel(false);
         gameUIManager.FadeIn();
         yield return new WaitForSecondsRealtime(1.0f);
         ReturnAllNotes();
@@ -1029,6 +1033,7 @@ public class BMSGameManager : MonoBehaviour
         resumeCountTicks += 30000000;
         currentTicks = stopwatch.ElapsedTicks - resumeCountTicks;
         pauseManager.Pause_SetActive(false);
+        gameUIManager.SetInfoPanel(false);
         stopwatch.Start();
         StartCoroutine(CoCountDown3());
         Thread bgmResumeThread = new Thread(ResumeBGM);
@@ -1052,7 +1057,7 @@ public class BMSGameManager : MonoBehaviour
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
                 isCountdown = false;
-                gameUIManager.GameUIUpdate(0, JudgeType.IGNORE);
+                gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
                 break;
             }
             else
@@ -1113,7 +1118,8 @@ public class BMSGameManager : MonoBehaviour
             if (userSpeed > 200) { userSpeed = 200; }
             else if (userSpeed < 10) { userSpeed = 10; }
             PlayerPrefs.SetInt("NoteSpeed", userSpeed);
-            if (pauseManager.enabled) { gameUIManager.SetPausePanelNoteSpeedText(); }
+            if (pauseManager.enabled) { gameUIManager.SetNoteSpeedText(); }
+            else { gameUIManager.CoUpdateInfoPanel(true); }
             gameSpeed = CalulateSpeed();
 
             float verticalLineLength = verticalLine * userSpeed;
@@ -1172,26 +1178,17 @@ public class BMSGameManager : MonoBehaviour
         }
     }
 
-    public void ChangeJudgeAdjValue(int value)
+    public void ChangeBGAOpacity(int value)
     {
-        displayDelayCorrectionValue += value;
-        if (displayDelayCorrectionValue > 80) 
-        { 
-            displayDelayCorrectionValue = 80; 
-            value = 0;
-        }
-        else if (displayDelayCorrectionValue < -80) 
-        {
-            displayDelayCorrectionValue = -80;
-            value = 0;
-        }
+        int opacity = PlayerPrefs.GetInt("BGAOpacity") + value;
+        if (opacity > 10) { opacity = 10; }
+        else if (opacity < 0) { opacity = 0; }
+        PlayerPrefs.SetInt("BGAOpacity", opacity);
+        if (gameUIManager.bga.color.r == 1.0f)
+            gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
 
-        currentBeat += (displayDelayCorrectionBeat * value);
-        longNoteEndOffset = Mathf.Max((float)(displayDelayCorrectionBeat * -displayDelayCorrectionValue), 0.0f);
-
-        PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
-
-        gameUIManager.CoUpdateJudgeAdjText();
+        if (pauseManager.enabled) { gameUIManager.SetBGAOpacityText(); }
+        else { gameUIManager.CoUpdateInfoPanel(true); }
     }
 
     private void OnDestroy()

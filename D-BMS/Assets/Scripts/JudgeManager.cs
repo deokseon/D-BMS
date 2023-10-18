@@ -20,7 +20,7 @@
         {
             case double k when (k <= 220000.0d): return JudgeType.KOOL;
             case double k when (k <= 550000.0d): return JudgeType.COOL;
-            case double k when (k <= 1150000.0d): return JudgeType.GOOD;
+            case double k when (k <= 1100000.0d): return JudgeType.GOOD;
             case double k when (k <= 1750000.0d): return JudgeType.MISS;
             default: return JudgeType.IGNORE;
         }
