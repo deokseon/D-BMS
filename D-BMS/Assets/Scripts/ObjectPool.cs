@@ -116,16 +116,6 @@ public class ObjectPool : MonoBehaviour
     public float GetOffset() { return gameUIManager.assetPacker.GetSprite("longnotebottom1").bounds.size.y * (GetNoteWidth() / gameUIManager.assetPacker.GetSprite("longnotebottom1").bounds.size.x); }
     public float GetLength() { return 1.0f / gameUIManager.assetPacker.GetSprite("longnotebody1").bounds.size.y; }
 
-    private float GetLontNoteBodyVerticalLineLength()
-    {
-        GameObject temp = longNotePool[0][2].Dequeue();
-        temp.SetActive(true);
-        float len = gameUIManager.assetPacker.GetSprite("longnotebody1").bounds.size.y / gameUIManager.assetPacker.GetSprite("longnotebodyverticalline").bounds.size.x;
-        temp.SetActive(false);
-        longNotePool[0][2].Enqueue(temp);
-        return len;
-    }
-
     public void SetVerticalLineSprite()
     {
         Sprite verticalLineSprite = gameUIManager.assetPacker.GetSprite("verticalline");
@@ -180,7 +170,7 @@ public class ObjectPool : MonoBehaviour
     {
         float verticalLineLength = PlayerPrefs.GetInt("NoteSpeed") * 0.018f * PlayerPrefs.GetFloat("VerticalLine");
         float normalNoteVerticalLineYPosition = gameUIManager.assetPacker.GetSprite("note1").bounds.size.y * 0.5f * (GetNoteWidth() / gameUIManager.assetPacker.GetSprite("note1").bounds.size.x);
-        float longNoteBodyVerticalLineLength = GetLontNoteBodyVerticalLineLength();
+        float longNoteBodyVerticalLineLength = gameUIManager.assetPacker.GetSprite("longnotebody1").bounds.size.y / gameUIManager.assetPacker.GetSprite("longnotebodyverticalline").bounds.size.x;
         float longNoteBottomVerticalLineYPosition = GetOffset();
                                                 
         for (int i = 0; i < 5; i++)

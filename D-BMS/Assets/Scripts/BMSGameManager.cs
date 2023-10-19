@@ -457,7 +457,7 @@ public class BMSGameManager : MonoBehaviour
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
 
         wait3Sec = new WaitForSeconds(3.0f);
-        wait1Sec = new WaitForSeconds(1.5f);
+        wait1Sec = new WaitForSeconds(1.0f);
 
         isKeyDown = new bool[5] { false, false, false, false, false };
         isNoteBombActive = new bool[5] { false, false, false, false, false };
@@ -691,12 +691,6 @@ public class BMSGameManager : MonoBehaviour
         currentJudge = result;
 
         UpdateResult(result);
-        combo++;
-        if (bmsResult.maxCombo <= combo)
-        {
-            bmsResult.maxCombo = combo;
-        }
-        isGameUIUpdate = true;
 
         if (result == JudgeType.FAIL) { return; }
 
@@ -732,12 +726,6 @@ public class BMSGameManager : MonoBehaviour
         currentJudge = currentLongNoteJudge[idx];
 
         UpdateResult(result);
-        combo++;
-        if (bmsResult.maxCombo <= combo)
-        {
-            bmsResult.maxCombo = combo;
-        }
-        isGameUIUpdate = true;
     }
 
     private void PlayNotes()
@@ -868,6 +856,40 @@ public class BMSGameManager : MonoBehaviour
         isKeyDown[index] = true;
     }
 
+    private void UpdateScoreGraph(float score, int index)
+    {
+        double under60 = height60;
+        double up60 = 0.0d;
+        if (score <= 600000.0d) { under60 = score * divide20000; }
+        else { up60 = (score - 600000.0d) * divide6250; }
+        float scoreStickHeight = (float)(under60 + up60);
+        bmsResult.scoreGraphArray[index] = scoreStickHeight;
+        isScoreGraphUpdate = true;
+    }
+
+    private void UpdateRank(float score)
+    {
+        switch (score)
+        {
+            case float n when (n >= 0.0f && n < 550000.0f): bmsResult.rankIndex = 0; break;
+            case float n when (n >= 550000.0f && n < 650000.0f): bmsResult.rankIndex = 1; break;
+            case float n when (n >= 650000.0f && n < 750000.0f): bmsResult.rankIndex = 2; break;
+            case float n when (n >= 750000.0f && n < 850000.0f): bmsResult.rankIndex = 3; break;
+            case float n when (n >= 850000.0f && n < 900000.0f): bmsResult.rankIndex = 4; break;
+            case float n when (n >= 900000.0f && n < 950000.0f): bmsResult.rankIndex = 5; break;
+            case float n when (n >= 950000.0f && n < 1000000.0f): bmsResult.rankIndex = 6; break;
+            case float n when (n >= 1000000.0f && n < 1025000.0f): bmsResult.rankIndex = 7; break;
+            case float n when (n >= 1025000.0f && n < 1050000.0f): bmsResult.rankIndex = 8; break;
+            case float n when (n >= 1050000.0f && n < 1090000.0f): bmsResult.rankIndex = 9; break;
+            case float n when (n >= 1090000.0f): bmsResult.rankIndex = 10; break;
+        }
+        if (currentRankIndex != bmsResult.rankIndex)
+        {
+            currentRankIndex = bmsResult.rankIndex;
+            isChangeRankImage = true;
+        }
+    }
+
     public void UpdateResult(JudgeType judge)
     {
         switch (judge)
@@ -901,50 +923,32 @@ public class BMSGameManager : MonoBehaviour
         }
         isJudgementTrackerUpdate = true;
 
-        double under60 = height60;
-        double up60 = 0.0d;
-        if (currentScore <= 600000.0d) { under60 = currentScore * divide20000; }
-        else { up60 = (currentScore - 600000.0d) * divide6250; }
-        float scoreStickHeight = (float)(under60 + up60);
-        bmsResult.scoreGraphArray[currentCount] = scoreStickHeight;
-
-        switch ((float)currentScore)
+        combo++;
+        if (bmsResult.maxCombo <= combo)
         {
-            case float n when (n >= 0.0f && n < 550000.0f): bmsResult.rankIndex = 0; break;
-            case float n when (n >= 550000.0f && n < 650000.0f): bmsResult.rankIndex = 1; break;
-            case float n when (n >= 650000.0f && n < 750000.0f): bmsResult.rankIndex = 2; break;
-            case float n when (n >= 750000.0f && n < 850000.0f): bmsResult.rankIndex = 3; break;
-            case float n when (n >= 850000.0f && n < 900000.0f): bmsResult.rankIndex = 4; break;
-            case float n when (n >= 900000.0f && n < 950000.0f): bmsResult.rankIndex = 5; break;
-            case float n when (n >= 950000.0f && n < 1000000.0f): bmsResult.rankIndex = 6; break;
-            case float n when (n >= 1000000.0f && n < 1025000.0f): bmsResult.rankIndex = 7; break;
-            case float n when (n >= 1025000.0f && n < 1050000.0f): bmsResult.rankIndex = 8; break;
-            case float n when (n >= 1050000.0f && n < 1090000.0f): bmsResult.rankIndex = 9; break;
-            case float n when (n >= 1090000.0f): bmsResult.rankIndex = 10; break;
+            bmsResult.maxCombo = combo;
         }
-        if (currentRankIndex != bmsResult.rankIndex) 
-        { 
-            currentRankIndex = bmsResult.rankIndex;
-            isChangeRankImage = true;
-        }
+        isGameUIUpdate = true;
+
+        UpdateScoreGraph((float)currentScore, currentCount);
+        UpdateRank((float)currentScore);
 
         if (gauge.hp > 1.0f) { gauge.hp = 1.0f; }
-        else if (gauge.hp <= 0.0f) { isGameOver = true; }
+        else if (gauge.hp <= 0.0f) 
+        {
+            isGameOver = true;
+            return;
+        }
 
-        if (currentCount >= pattern.noteCount && gauge.hp > 0.0f)
+        if (currentCount >= pattern.noteCount)
         {
             isGameEnd = true;
             isPaused = true;
             bmsResult.score = currentScore + bmsResult.maxCombo;
-            under60 = height60;
-            up60 = 0.0d;
-            if (bmsResult.score <= 600000.0d) { under60 = bmsResult.score * divide20000; }
-            else { up60 = (bmsResult.score - 600000.0d) * divide6250; }
-            scoreStickHeight = (float)(under60 + up60);
-            bmsResult.scoreGraphArray[currentCount + 1] = scoreStickHeight;
             endCount++;
+            UpdateScoreGraph((float)bmsResult.score, currentCount + 1);
+            UpdateRank((float)bmsResult.score);
         }
-        isScoreGraphUpdate = true;
     }
 
     public void GamePause(int set)
