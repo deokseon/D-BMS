@@ -350,7 +350,7 @@ public class BMSParser : MonoBehaviour
             currentCount++;
             currentBeat = currentCount / beat16Count * 4.0d;
 
-            if (currentBeat <= prevBeat) { continue; }
+            if ((float)currentBeat <= (float)prevBeat) { continue; }
 
             if (currentCount >= beat16Count)
             {

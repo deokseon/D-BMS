@@ -42,7 +42,9 @@ namespace DaVikingCode.AssetPacker {
 			if (fileName.CompareTo("barline") == 0 || fileName.CompareTo("keyfeedback") == 0 ||
 				fileName.CompareTo("longnotebody1") == 0 || fileName.CompareTo("longnotebody2") == 0 ||
 				fileName.CompareTo("longnotebodyverticalline") == 0 || fileName.CompareTo("panel-bg") == 0 ||
-				fileName.CompareTo("verticalline") == 0)
+				fileName.CompareTo("verticalline") == 0 || fileName.CompareTo("longnotebottom1") == 0 ||
+				fileName.CompareTo("longnotebottom2") == 0 || fileName.CompareTo("longnotetop1") == 0 ||
+				fileName.CompareTo("longnotetop2") == 0)
             {
 				itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
 			}
