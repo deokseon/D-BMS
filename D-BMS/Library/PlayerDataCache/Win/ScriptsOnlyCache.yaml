@@ -765,7 +765,7 @@ ScriptsOnlyBuild:
     className: PlayerQuitHandler
   - hash:
       serializedVersion: 2
-      Hash: f4c243f4231b808c1d688c1b48a8ee07
+      Hash: 1bde1587cbb9c62a5f065a78dd711c16
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SongSelectUIManager
@@ -1215,7 +1215,7 @@ ScriptsOnlyBuild:
     className: CustomListBank
   - hash:
       serializedVersion: 2
-      Hash: 2cfc9d455d546d9cd83d27696d28e0e5
+      Hash: ebbd192375693816c699cbbdfecbac2f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSGameManager

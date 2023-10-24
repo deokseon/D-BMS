@@ -117,7 +117,6 @@ public class BMSGameManager : MonoBehaviour
     [HideInInspector] public bool isScoreGraphUpdate = false;
     [HideInInspector] public bool[] fsUpdate;
     [HideInInspector] public int[] fsStates;
-    [HideInInspector] public int[] fsCount;
     private bool isGameUIUpdate = false;
     private bool isGameEnd = false;
     [HideInInspector] public int isEndJudgeInfoUpdate = 0;
@@ -339,6 +338,8 @@ public class BMSGameManager : MonoBehaviour
         bmsResult.goodCount = 0;
         bmsResult.missCount = 0;
         bmsResult.failCount = 0;
+        bmsResult.earlyCount = 0;
+        bmsResult.lateCount = 0;
         bmsResult.maxCombo = 0;
         bmsResult.rankIndex = 0;
         bmsResult.score = 0.0d;
@@ -366,7 +367,6 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             fsUpdate[i] = false;
-            fsCount[i] = 0;
         }
 
         StartCoroutine(PreLoad(true));
@@ -464,7 +464,6 @@ public class BMSGameManager : MonoBehaviour
         noteBombState = new int[5] { 0, 0, 0, 0, 0 };
         fsUpdate = new bool[2] { false, false };
         fsStates = new int[2] { 0, 0 };
-        fsCount = new int[2] { 0, 0 };
         threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
 
         StartCoroutine(PreLoad(false));
@@ -696,11 +695,19 @@ public class BMSGameManager : MonoBehaviour
 
         if ((earlyLateThreshold == 22 && result != JudgeType.KOOL) || (earlyLateThreshold < 22 && (diff > earlyLateThreshold || diff < -earlyLateThreshold)))
         {
-            int fsState = diff < 0 ? 0 : 1;
             int index = idx < 2 ? 0 : 1;
             fsUpdate[index] = true;
-            fsStates[index] = fsState;
-            fsCount[fsState]++;
+
+            if (diff < 0)
+            {
+                fsStates[index] = 0;
+                bmsResult.earlyCount++;
+            }
+            else
+            {
+                fsStates[index] = 1;
+                bmsResult.lateCount++;
+            }
         }
     }
 

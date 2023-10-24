@@ -183,6 +183,8 @@ public class ResultUIManager : MonoBehaviour
         GameObject.Find("Good").GetComponent<TextMeshProUGUI>().text = bmsResult.goodCount.ToString();
         GameObject.Find("Miss").GetComponent<TextMeshProUGUI>().text = bmsResult.missCount.ToString();
         GameObject.Find("Fail").GetComponent<TextMeshProUGUI>().text = bmsResult.failCount.ToString();
+        GameObject.Find("Early").GetComponent<TextMeshProUGUI>().text = bmsResult.earlyCount.ToString();
+        GameObject.Find("Late").GetComponent<TextMeshProUGUI>().text = bmsResult.lateCount.ToString();
         GameObject.Find("Accuracy").GetComponent<TextMeshProUGUI>().text = ((float)bmsResult.accuracy).ToString("P");
         GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = bmsResult.maxCombo.ToString();
         GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)bmsResult.score)).ToString();

@@ -94,6 +94,8 @@ public class BMSResult
     public int goodCount;
     public int missCount;
     public int failCount;
+    public int earlyCount;
+    public int lateCount;
     public int maxCombo;
     public int rankIndex;
     public double score;

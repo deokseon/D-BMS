@@ -343,7 +343,7 @@ public class BMSParser : MonoBehaviour
 
         double beat16Count = 16 * pattern.GetBeatC(currentBar);
 
-        if (currentBar == bar && prevBeat >= endBeat) { return; }
+        if (currentBar == bar && (float)prevBeat >= (float)endBeat) { return; }
 
         while (true)
         {
@@ -361,7 +361,7 @@ public class BMSParser : MonoBehaviour
                 prevBeat = -4.0d;
             }
 
-            if ((currentBar == bar && currentBeat > endBeat) || currentBar > bar) { break; }
+            if ((currentBar == bar && (float)currentBeat > (float)endBeat) || currentBar > bar) { break; }
 
             pattern.AddNote(line, currentBar, currentBeat, 0, 2);
         }

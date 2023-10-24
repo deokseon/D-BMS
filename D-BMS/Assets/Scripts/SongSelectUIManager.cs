@@ -21,6 +21,10 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI failText;
     [SerializeField]
+    private TextMeshProUGUI earlyText;
+    [SerializeField]
+    private TextMeshProUGUI lateText;
+    [SerializeField]
     private TextMeshProUGUI accuracyText;
     [SerializeField]
     private TextMeshProUGUI maxComboText;
@@ -613,6 +617,8 @@ public class SongSelectUIManager : MonoBehaviour
         goodText.text = resultData.goodCount.ToString();
         missText.text = resultData.missCount.ToString();
         failText.text = resultData.failCount.ToString();
+        earlyText.text = resultData.earlyCount.ToString();
+        lateText.text = resultData.lateCount.ToString();
         accuracyText.text = ((float)resultData.accuracy).ToString("P");
         maxComboText.text = resultData.maxCombo.ToString();
         scoreText.text = ((int)((float)resultData.score)).ToString();

@@ -9,6 +9,8 @@ public class ResultData
     public int goodCount;
     public int missCount;
     public int failCount;
+    public int earlyCount;
+    public int lateCount;
     public int maxCombo;
     public int rankIndex;
     public double score;
@@ -21,6 +23,8 @@ public class ResultData
         goodCount = 0;
         missCount = 0;
         failCount = 0;
+        earlyCount = 0;
+        lateCount = 0;
         maxCombo = 0;
         rankIndex = 11;
         score = 0;
@@ -34,6 +38,8 @@ public class ResultData
         goodCount = result.goodCount;
         missCount = result.missCount;
         failCount = result.failCount;
+        earlyCount = result.earlyCount;
+        lateCount = result.lateCount;
         maxCombo = result.maxCombo;
         rankIndex = result.rankIndex;
         score = result.score;
@@ -47,6 +53,8 @@ public class ResultData
         goodCount = 0;
         missCount = 0;
         failCount = 0;
+        earlyCount = 0;
+        lateCount = 0;
         maxCombo = 0;
         rankIndex = 0;
         score = 0;

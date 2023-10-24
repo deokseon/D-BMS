@@ -127,8 +127,8 @@ public class EarlyLate : MonoBehaviour
     private void UpdateJudgementText()
     {
         judgementInfo.SetActive(true);
-        DigitSet(ref earlyDigitArray, bmsGameManager.fsCount[0], GameObject.Find("EarlyDigitParent").transform);
-        DigitSet(ref lateDigitArray, bmsGameManager.fsCount[1], GameObject.Find("LateDigitParent").transform);
+        DigitSet(ref earlyDigitArray, bmsResult.earlyCount, GameObject.Find("EarlyDigitParent").transform);
+        DigitSet(ref lateDigitArray, bmsResult.lateCount, GameObject.Find("LateDigitParent").transform);
         DigitSet(ref koolDigitArray, bmsResult.koolCount, GameObject.Find("KoolDigitParent").transform);
         DigitSet(ref coolDigitArray, bmsResult.coolCount, GameObject.Find("CoolDigitParent").transform);
         DigitSet(ref goodDigitArray, bmsResult.goodCount, GameObject.Find("GoodDigitParent").transform);
