@@ -138,7 +138,7 @@ public class ResultUIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKeyDown)
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             if (fadeImage.IsActive()) { return; }
             StartCoroutine(CoLoadSelectScene());
@@ -261,6 +261,10 @@ public class ResultUIManager : MonoBehaviour
             double x = (i * divideNoteCount * 600) - 300;
 
             GameObject tempDot = Instantiate(dot, dotParent);
+            if (y > 22.0d || y < -22.0d)
+            {
+                tempDot.GetComponent<Image>().color = y > 0.0d ? Color.red : Color.blue;
+            }
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);
         }
         int average = (totalCount == 0 ? 0 : (int)(total / totalCount));

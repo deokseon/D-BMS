@@ -67,8 +67,6 @@ public class BMSGameManager : MonoBehaviour
     public Gauge gauge;
     private JudgeManager judge;
     private BMSPattern pattern;
-    private WaitForSeconds wait3Sec;
-    private WaitForSeconds wait1Sec;
     private double currentBPM;
     private int combo = 0;
     private bool isBGAVideoSupported = false;
@@ -222,7 +220,7 @@ public class BMSGameManager : MonoBehaviour
             keyInput.KeySetting();
             yield return new WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
             yield return new WaitUntil(() => isFadeEnd);
-            yield return wait3Sec;
+            yield return new WaitForSeconds(3.0f);
         }
         else
         {
@@ -261,7 +259,7 @@ public class BMSGameManager : MonoBehaviour
         if (isRestart)
         {
             StartCoroutine(gameUIManager.FadeOut());
-            yield return wait1Sec;
+            yield return new WaitForSeconds(1.0f);
         }
 
         isStarted = true;
@@ -294,7 +292,7 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.AnimationPause(false);
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
-        yield return wait1Sec;
+        yield return new WaitForSeconds(1.0f);
 
         if (isBGAVideoSupported)
         {
@@ -455,9 +453,6 @@ public class BMSGameManager : MonoBehaviour
         notePoolMaxCount = ObjectPool.poolInstance.maxNoteCount;
         longNotePoolMaxCount = ObjectPool.poolInstance.maxLongNoteCount;
         barPoolMaxCount = ObjectPool.poolInstance.maxBarCount;
-
-        wait3Sec = new WaitForSeconds(3.0f);
-        wait1Sec = new WaitForSeconds(1.0f);
 
         isKeyDown = new bool[5] { false, false, false, false, false };
         isNoteBombActive = new bool[5] { false, false, false, false, false };
@@ -991,12 +986,9 @@ public class BMSGameManager : MonoBehaviour
 
         if (isClear)
         {
-            int maxWaitTime = 0;
             while (soundManager.IsPlayingAudio()) 
             {
-                maxWaitTime++;
-                if (maxWaitTime >= 10) { break; }
-                yield return wait1Sec;
+                yield return null;
             }
         }
         else
@@ -1012,7 +1004,7 @@ public class BMSGameManager : MonoBehaviour
         bmsResult.score = currentScore + bmsResult.maxCombo;
         bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
 
-        if (isClear) { yield return wait3Sec; }
+        if (isClear) { yield return new WaitForSeconds(3.0f); }
         StartCoroutine(CoLoadScene(3));
     }
 
