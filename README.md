@@ -3,8 +3,8 @@ This program is made for studying.<br/><br/>
 I used the music of BMS.<br/><br/>
 BMSFiles (Split compression)
 
-[Split 1](https://drive.google.com/file/d/1mK0jZgPNS41H7ONfIXDRD5xdwbnZZn0a/view?usp=sharing)<br/>
-[Split 2](https://drive.google.com/file/d/1zgZmzthihHw3rstobSD7ikHV9uSAQy2y/view?usp=sharing)<br/><br/>
+[Split 1](https://drive.google.com/file/d/1MsVWi05RvcjZ_EmvcUKVaqUSgCJb3BoE/view?usp=sharing)<br/>
+[Split 2](https://drive.google.com/file/d/1SoAeNFzinZbCslS-G3xqeQWSJq306WOm/view?usp=sharing)<br/><br/>
 
 [Skin](https://drive.google.com/file/d/1FIo0vpQthrL_M-R2k-rchafk3xxEbDBh/view?usp=sharing)
 
