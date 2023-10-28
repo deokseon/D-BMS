@@ -263,7 +263,7 @@ public class ResultUIManager : MonoBehaviour
             GameObject tempDot = Instantiate(dot, dotParent);
             if (y > 22.0d || y < -22.0d)
             {
-                tempDot.GetComponent<Image>().color = y > 0.0d ? Color.red : Color.blue;
+                tempDot.GetComponent<Image>().color = y > 0.0d ? Color.red : new Color(0.0f, 155.0f / 255.0f, 1.0f);
             }
             tempDot.transform.localPosition = new Vector3((float)x, (float)y * 2, 0.0f);
         }

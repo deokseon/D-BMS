@@ -17,6 +17,7 @@ public class SoundManager : MonoBehaviour
 
     private FMOD.System coreSystem;
     private FMOD.ChannelGroup channelGroup;
+    private FMOD.ChannelGroup endChannelGroup;
     private FMOD.Channel endChannel;
     private FMOD.Channel keySoundChannel;
     private FMOD.Channel bgmChannel;
@@ -37,6 +38,9 @@ public class SoundManager : MonoBehaviour
         coreSystem = RuntimeManager.CoreSystem;
         coreSystem.getMasterChannelGroup(out channelGroup);
         channelGroup.setVolume(PlayerPrefs.GetFloat("MasterVolume"));
+
+        coreSystem.createChannelGroup("EndChannel", out endChannelGroup);
+        endChannelGroup.setVolume(PlayerPrefs.GetFloat("MasterVolume"));
 
         pathes = new List<KeyValuePair<int, string>>(keySoundMaxCount);
         keySoundArray = new FMOD.Sound[keySoundMaxCount];
@@ -89,7 +93,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayKeySoundEnd(int keyIndex)
     {
-        coreSystem.playSound(keySoundArray[keyIndex], channelGroup, true, out endChannel);
+        coreSystem.playSound(keySoundArray[keyIndex], endChannelGroup, true, out endChannel);
         endChannel.setVolume(keySoundVolume);
         endChannel.setPaused(false);
     }
@@ -103,11 +107,10 @@ public class SoundManager : MonoBehaviour
 
     public bool IsPlayingAudio()
     {
-        bool isKeySoundChannelPlaying, isBGMChannelPlaying;
-        keySoundChannel.isPlaying(out isKeySoundChannelPlaying);
-        bgmChannel.isPlaying(out isBGMChannelPlaying);
-        if (isKeySoundChannelPlaying || isBGMChannelPlaying) { return true; }
-        else { return false; }
+        int count;
+        channelGroup.getNumChannels(out count);
+
+        return count > 0 ? true : false;
     }
 
     public void AudioPause(bool isPause)
@@ -127,5 +130,6 @@ public class SoundManager : MonoBehaviour
             keySoundArray[pathes[i].Key].release();
         }
         channelGroup.release();
+        endChannelGroup.release();
     }
 }

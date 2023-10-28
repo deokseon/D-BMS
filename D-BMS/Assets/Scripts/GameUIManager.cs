@@ -671,7 +671,13 @@ public class GameUIManager : MonoBehaviour
         }
         StartCoroutine(LoadRawImage(GameObject.Find("Loading_StageImage").GetComponent<RawImage>(), BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
         //StartCoroutine(StageImageFade());
-        GameObject.Find("Loading_Title").GetComponent<TextMeshProUGUI>().text = BMSGameManager.header.title;
+        TextMeshProUGUI titleText = GameObject.Find("Loading_Title").GetComponent<TextMeshProUGUI>();
+        titleText.text = BMSGameManager.header.title;
+        titleText.fontSize = 35;
+        while (titleText.preferredWidth > 775.0f)
+        {
+            titleText.fontSize -= 0.1f;
+        }
         GameObject.Find("Loading_Artist").GetComponent<TextMeshProUGUI>().text = BMSGameManager.header.artist;
         GameObject.Find("Loading_NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
         SetRandomEffectorText(GameObject.Find("Loading_Random").GetComponent<TextMeshProUGUI>(), PlayerPrefs.GetInt("RandomEffector"));
