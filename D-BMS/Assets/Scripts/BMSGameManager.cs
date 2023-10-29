@@ -232,7 +232,7 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++) { if (notesListCount[i] >= 0) { currentNote[i] = notesList[i][notesListCount[i]].keySound; } }
 
         gameUIManager.bga.texture = videoPlayer.texture;
-        if (bgaChangeListCount == -1 || (!string.IsNullOrEmpty(videoPlayer.url) && !isBGAVideoSupported)) 
+        if (bgaChangeListCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageTable.Count == 0) && !isBGAVideoSupported)) 
         {
             gameUIManager.bga.color = Color.black;
             bgaChangeList.Add(new BGChange(0, "00", 0, 0, true));
@@ -983,11 +983,8 @@ public class BMSGameManager : MonoBehaviour
 
         if (isClear)
         {
-            //float waitTime = 0.0f;
-            while (soundManager.IsPlayingAudio()) 
+            while (soundManager.IsPlayingAudio())
             {
-                //waitTime += Time.deltaTime;
-                //if (waitTime >= 15.0f) break;
                 yield return null;
             }
         }
