@@ -31,6 +31,11 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private Image fadeImage;
 
+    [SerializeField]
+    private Sprite clearlamp_allcool;
+    [SerializeField]
+    private Sprite clearlamp_normal;
+
     private BMPLoader loader;
 
     private BMSHeader header;
@@ -202,21 +207,61 @@ public class ResultUIManager : MonoBehaviour
 
         GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[bmsResult.rankIndex];
 
+        int clearLampIndex = -1;
         if (!BMSGameManager.isClear) 
         { 
             playLamp.SetActive(true);
+            clearLampIndex = 0;
         }
         else if (bmsResult.missCount > 0 || bmsResult.failCount > 0) 
         { 
             clearLamp.SetActive(true);
+            clearLampIndex = 1;
         }
         else if (bmsResult.goodCount > 0)
         { 
             nomissLamp.SetActive(true);
+            clearLampIndex = 2;
         }
         else 
         { 
             allcoolLamp.SetActive(true);
+            clearLampIndex = 3;
+        }
+
+        int priClearLampIndex;
+        if (BMSFileSystem.songClearLamp.clearLampDict.TryGetValue(header.fileName, out priClearLampIndex))
+        {
+            if (priClearLampIndex < clearLampIndex)
+            {
+                BMSFileSystem.songClearLamp.clearLampDict[header.fileName] = clearLampIndex;
+                DataSaveManager.SaveClearLamp();
+            }
+        }
+        else
+        {
+            BMSFileSystem.songClearLamp.clearLampDict.Add(header.fileName, clearLampIndex);
+            DataSaveManager.SaveClearLamp();
+        }
+        Image songClearLamp = GameObject.Find("SongClearLamp").GetComponent<Image>();
+        switch (BMSFileSystem.songClearLamp.clearLampDict[header.fileName])
+        {
+            case 0:
+                songClearLamp.sprite = clearlamp_normal;
+                songClearLamp.color = Color.red;
+                break;
+            case 1:
+                songClearLamp.sprite = clearlamp_normal;
+                songClearLamp.color = new Color(0.0f, 215.0f / 255.0f, 1.0f);
+                break;
+            case 2:
+                songClearLamp.sprite = clearlamp_normal;
+                songClearLamp.color = Color.yellow;
+                break;
+            case 3:
+                songClearLamp.sprite = clearlamp_allcool;
+                songClearLamp.color = Color.white;
+                break;
         }
     }
 

@@ -68,7 +68,7 @@ public class SoundManager : MonoBehaviour
                 {
                     if (!File.Exists(keySoundFilePath + soundFileExtension[j])) { continue; }
                     var keySound = new FMOD.Sound();
-                    coreSystem.createSound(keySoundFilePath + soundFileExtension[j], FMOD.MODE.CREATESAMPLE | FMOD.MODE._2D, out keySound);
+                    coreSystem.createSound(keySoundFilePath + soundFileExtension[j], FMOD.MODE.CREATESAMPLE | FMOD.MODE._2D | FMOD.MODE.LOOP_OFF, out keySound);
                     keySoundArray[pathes[i].Key] = keySound;
                     break;
                 }

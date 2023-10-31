@@ -75,6 +75,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fa95eaebf10aa48c1b9a954b7fd6e9b4, type: 3}
   - {fileID: 21300000, guid: adf3371cdd5337a48b124093948695a1, type: 3}
   - {fileID: 21300000, guid: 75717c3cd8ff71c4db83b5ed7c238f9b, type: 3}
+  - {fileID: 21300000, guid: eebe875e68762744d969965df9d11545, type: 3}
   - {fileID: 21300000, guid: 0170ccaeac3eca648bb9a306f19876f7, type: 3}
   - {fileID: 21300000, guid: 02cbb6dee3a07134fa1ea37cd80b9aad, type: 3}
   - {fileID: 21300000, guid: 8566f04fc73d3a84daa6d5e1f33d0658, type: 3}
@@ -108,6 +109,7 @@ SpriteAtlas:
   - toggleBG
   - S
   - RoundRect2
+  - AllCoolLamp_mini
   - C
   - Frame
   - TriangleCircle

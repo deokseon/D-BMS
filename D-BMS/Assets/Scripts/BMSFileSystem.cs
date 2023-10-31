@@ -14,6 +14,8 @@ public class BMSFileSystem : MonoBehaviour
     private Demo.InitOnStart initOnStart;
     private static string rootPath;
 
+    public static SongClearLamp songClearLamp;
+
     void Awake()
     {
         if (string.IsNullOrEmpty(rootPath))
@@ -42,6 +44,11 @@ public class BMSFileSystem : MonoBehaviour
                 int result = x.level.CompareTo(y.level);
                 return result != 0 ? result : string.Compare(x.title, y.title);
             });
+        }
+        if (songClearLamp == null)
+        {
+            songClearLamp = new SongClearLamp();
+            DataSaveManager.LoadClearLamp();
         }
         initOnStart.DrawSongUI();
     }

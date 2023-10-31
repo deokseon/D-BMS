@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class ResultData
 {
@@ -165,6 +166,16 @@ public class ConfigData
     }
 }
 
+public class SongClearLamp
+{
+    public Dictionary<string, int> clearLampDict;
+
+    public SongClearLamp()
+    {
+        clearLampDict = new Dictionary<string, int>(BMSFileSystem.headers.Length);
+    }
+}
+
 public static class DataSaveManager
 {
     public static void SaveResultData(BMSResult result, string fileName)
@@ -250,6 +261,30 @@ public static class DataSaveManager
         else
         {
             GameUIManager.config.InitData();
+        }
+    }
+
+    public static void SaveClearLamp()
+    {
+        string clearLampPath = $@"{Directory.GetParent(Application.dataPath)}\DataSave\";
+
+        if (!Directory.Exists(clearLampPath))
+        {
+            Directory.CreateDirectory(clearLampPath);
+        }
+
+        string clearLampJson = JsonConvert.SerializeObject(BMSFileSystem.songClearLamp);
+
+        File.WriteAllText(clearLampPath + "clearLamp.json", clearLampJson);
+    }
+
+    public static void LoadClearLamp()
+    {
+        string clearLampPath = $@"{Directory.GetParent(Application.dataPath)}\DataSave\";
+
+        if (File.Exists(clearLampPath + "clearLamp.json"))
+        {
+            BMSFileSystem.songClearLamp = JsonConvert.DeserializeObject<SongClearLamp>(File.ReadAllText(clearLampPath + "clearLamp.json"));
         }
     }
 }

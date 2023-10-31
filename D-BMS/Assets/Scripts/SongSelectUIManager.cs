@@ -70,6 +70,9 @@ public class SongSelectUIManager : MonoBehaviour
     private readonly int hashRightRotate = Animator.StringToHash("RightRotate");
     private readonly int hashLeftRotate = Animator.StringToHash("LeftRotate");
 
+    public Sprite clearlamp_allcool;
+    public Sprite clearlamp_normal;
+
     public LoopVerticalScrollRect lvScrollRect;
     public ToggleGroup songToggleGroup;
     public GameObject currentContent;

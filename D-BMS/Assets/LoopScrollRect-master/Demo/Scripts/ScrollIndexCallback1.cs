@@ -19,6 +19,8 @@ public class ScrollIndexCallback1 : MonoBehaviour
     private TextMeshProUGUI toggleBPMText;
     [SerializeField]
     private TextMeshProUGUI toggleLevelText;
+    [SerializeField]
+    private Image clearLampImage;
 
     private Color32 normalTextColor;
 
@@ -73,6 +75,32 @@ public class ScrollIndexCallback1 : MonoBehaviour
         }
 
         toggleLevelText.text = header.level.ToString();
+        int clearlamp;
+        bool check = BMSFileSystem.songClearLamp.clearLampDict.TryGetValue(header.fileName, out clearlamp);
+        if (!check) clearlamp = -1;
+        switch (clearlamp)
+        {
+            case -1:
+                clearLampImage.sprite = songSelectUIManager.clearlamp_normal;
+                clearLampImage.color = Color.gray;
+                break;
+            case 0:
+                clearLampImage.sprite = songSelectUIManager.clearlamp_normal;
+                clearLampImage.color = Color.red;
+                break;
+            case 1:
+                clearLampImage.sprite = songSelectUIManager.clearlamp_normal;
+                clearLampImage.color = new Color(0.0f, 215.0f / 255.0f, 1.0f);
+                break;
+            case 2:
+                clearLampImage.sprite = songSelectUIManager.clearlamp_normal;
+                clearLampImage.color = Color.yellow;
+                break;
+            case 3:
+                clearLampImage.sprite = songSelectUIManager.clearlamp_allcool;
+                clearLampImage.color = Color.white;
+                break;
+        }
 
         if (gameObject.CompareTag("CurrentContent")) { songSelectUIManager.songToggleGroup.allowSwitchOff = (idx != songSelectUIManager.currentIndex); }
 

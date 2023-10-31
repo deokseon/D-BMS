@@ -268,7 +268,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
-        //keyInput.InputThreadStart();
+        keyInput.InputThreadStart();
         stopwatch.Start();
     }
 
@@ -829,7 +829,7 @@ public class BMSGameManager : MonoBehaviour
         }
 
         // auto
-        for (int i = 0; i < 5; i++)
+        /*for (int i = 0; i < 5; i++)
         {
             while (notesListCount[i] >= 0 && notesList[i][notesListCount[i]].extra != 2 && 
                 notesList[i][notesListCount[i]].timing <= currentTicks)
@@ -837,7 +837,7 @@ public class BMSGameManager : MonoBehaviour
                 soundManager.PlayKeySound(notesList[i][notesListCount[i]].keySound);
                 HandleNote(notesList[i], i, currentTicks);
             }
-        }
+        }*/
     }
 
     public void KeyDown(int index)
