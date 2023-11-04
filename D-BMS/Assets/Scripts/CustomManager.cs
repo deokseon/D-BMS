@@ -88,7 +88,7 @@ public class CustomManager : MonoBehaviour
     {
         gameUIManager.FadeIn();
 
-        DataSaveManager.SaveConfigData();
+        DataSaveManager.SaveData("Skin", "config.json", GameUIManager.config);
 
         yield return new WaitForSecondsRealtime(1.0f);
 

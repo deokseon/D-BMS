@@ -61,7 +61,6 @@ public class BMSGameManager : MonoBehaviour
     private const double divide60 = 1.0d / 60.0d;
     private float divideBPM;
     public double[] divideTable;
-    public float[] maxScoreTable;
 
     public static BMSHeader header;
     public Gauge gauge;
@@ -173,8 +172,9 @@ public class BMSGameManager : MonoBehaviour
         --bpmsListCount;
 
         bmsResult.noteCount = pattern.noteCount;
+        bmsResult.resultData = new ResultData(0);
+        bmsResult.scoreGraphData = new ScoreGraphData(bmsResult.noteCount + 2);
         bmsResult.judgeList = new double[bmsResult.noteCount + 1];
-        bmsResult.scoreGraphArray = new float[bmsResult.noteCount + 2]; bmsResult.scoreGraphArray[0] = 0.0f;
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] = 2000000.0d; }
 
         if (!isRestart)
@@ -184,7 +184,7 @@ public class BMSGameManager : MonoBehaviour
             goodAddScore = koolAddScore * 0.2d;
 
             MakeTable();
-
+            FindObjectOfType<ScoreGraph>().SetMaxScoreGraph(pattern.noteCount + 2);
             gauge = new Gauge();
 
             GameUIManager.isCreateReady = false;
@@ -249,7 +249,7 @@ public class BMSGameManager : MonoBehaviour
         {
             gameUIManager.KeyInputImageSetActive(false, i);
         }
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
         isJudgementTrackerUpdate = true;
         isScoreGraphUpdate = true;
         isChangeRankImage = true;
@@ -268,7 +268,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
-        keyInput.InputThreadStart();
+        //keyInput.InputThreadStart();
         stopwatch.Start();
     }
 
@@ -331,17 +331,6 @@ public class BMSGameManager : MonoBehaviour
         currentRankIndex = 0;
         endCount = 0;
 
-        bmsResult.koolCount = 0;
-        bmsResult.coolCount = 0;
-        bmsResult.goodCount = 0;
-        bmsResult.missCount = 0;
-        bmsResult.failCount = 0;
-        bmsResult.earlyCount = 0;
-        bmsResult.lateCount = 0;
-        bmsResult.maxCombo = 0;
-        bmsResult.rankIndex = 0;
-        bmsResult.score = 0.0d;
-        bmsResult.accuracy = 0.0d;
         notesList = new List<Note>[5];
         longNoteList = new List<Note>[5];
         normalNoteList = new List<Note>[5];
@@ -411,7 +400,7 @@ public class BMSGameManager : MonoBehaviour
         GameUIManager.isCreateReady = true;
         gameUIManager.CloseLoading();
         yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(gameUIManager.FadeOut());
         yield return new WaitForSeconds(0.5f);
@@ -617,7 +606,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (isGameUIUpdate)
         {
-            gameUIManager.GameUIUpdate(combo, currentJudge, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
+            gameUIManager.GameUIUpdate(combo, currentJudge, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
             isGameUIUpdate = false;
         }
 
@@ -693,12 +682,12 @@ public class BMSGameManager : MonoBehaviour
             if (diff < 0)
             {
                 fsStates[index] = 0;
-                bmsResult.earlyCount++;
+                bmsResult.resultData.earlyCount++;
             }
             else
             {
                 fsStates[index] = 1;
-                bmsResult.lateCount++;
+                bmsResult.resultData.lateCount++;
             }
         }
     }
@@ -829,7 +818,7 @@ public class BMSGameManager : MonoBehaviour
         }
 
         // auto
-        /*for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             while (notesListCount[i] >= 0 && notesList[i][notesListCount[i]].extra != 2 && 
                 notesList[i][notesListCount[i]].timing <= currentTicks)
@@ -837,7 +826,7 @@ public class BMSGameManager : MonoBehaviour
                 soundManager.PlayKeySound(notesList[i][notesListCount[i]].keySound);
                 HandleNote(notesList[i], i, currentTicks);
             }
-        }*/
+        }
     }
 
     public void KeyDown(int index)
@@ -862,7 +851,7 @@ public class BMSGameManager : MonoBehaviour
         if (score <= 600000.0d) { under60 = score * divide20000; }
         else { up60 = (score - 600000.0d) * divide6250; }
         float scoreStickHeight = (float)(under60 + up60);
-        bmsResult.scoreGraphArray[index] = scoreStickHeight;
+        bmsResult.scoreGraphData.scoreGraphList[index] = scoreStickHeight;
         isScoreGraphUpdate = true;
     }
 
@@ -870,21 +859,21 @@ public class BMSGameManager : MonoBehaviour
     {
         switch (score)
         {
-            case float n when (n >= 0.0f && n < 550000.0f): bmsResult.rankIndex = 0; break;
-            case float n when (n >= 550000.0f && n < 650000.0f): bmsResult.rankIndex = 1; break;
-            case float n when (n >= 650000.0f && n < 750000.0f): bmsResult.rankIndex = 2; break;
-            case float n when (n >= 750000.0f && n < 850000.0f): bmsResult.rankIndex = 3; break;
-            case float n when (n >= 850000.0f && n < 900000.0f): bmsResult.rankIndex = 4; break;
-            case float n when (n >= 900000.0f && n < 950000.0f): bmsResult.rankIndex = 5; break;
-            case float n when (n >= 950000.0f && n < 1000000.0f): bmsResult.rankIndex = 6; break;
-            case float n when (n >= 1000000.0f && n < 1025000.0f): bmsResult.rankIndex = 7; break;
-            case float n when (n >= 1025000.0f && n < 1050000.0f): bmsResult.rankIndex = 8; break;
-            case float n when (n >= 1050000.0f && n < 1090000.0f): bmsResult.rankIndex = 9; break;
-            case float n when (n >= 1090000.0f): bmsResult.rankIndex = 10; break;
+            case float n when (n >= 0.0f && n < 550000.0f): bmsResult.resultData.rankIndex = 0; break;
+            case float n when (n >= 550000.0f && n < 650000.0f): bmsResult.resultData.rankIndex = 1; break;
+            case float n when (n >= 650000.0f && n < 750000.0f): bmsResult.resultData.rankIndex = 2; break;
+            case float n when (n >= 750000.0f && n < 850000.0f): bmsResult.resultData.rankIndex = 3; break;
+            case float n when (n >= 850000.0f && n < 900000.0f): bmsResult.resultData.rankIndex = 4; break;
+            case float n when (n >= 900000.0f && n < 950000.0f): bmsResult.resultData.rankIndex = 5; break;
+            case float n when (n >= 950000.0f && n < 1000000.0f): bmsResult.resultData.rankIndex = 6; break;
+            case float n when (n >= 1000000.0f && n < 1025000.0f): bmsResult.resultData.rankIndex = 7; break;
+            case float n when (n >= 1025000.0f && n < 1050000.0f): bmsResult.resultData.rankIndex = 8; break;
+            case float n when (n >= 1050000.0f && n < 1090000.0f): bmsResult.resultData.rankIndex = 9; break;
+            case float n when (n >= 1090000.0f): bmsResult.resultData.rankIndex = 10; break;
         }
-        if (currentRankIndex != bmsResult.rankIndex)
+        if (currentRankIndex != bmsResult.resultData.rankIndex)
         {
-            currentRankIndex = bmsResult.rankIndex;
+            currentRankIndex = bmsResult.resultData.rankIndex;
             isChangeRankImage = true;
         }
     }
@@ -894,38 +883,38 @@ public class BMSGameManager : MonoBehaviour
         switch (judge)
         {
             case JudgeType.KOOL:
-                bmsResult.koolCount++; 
+                bmsResult.resultData.koolCount++; 
                 accuracySum += 100;
                 currentScore += koolAddScore;
                 gauge.hp += gauge.koolHealAmount;
                 break;
             case JudgeType.COOL:
-                bmsResult.coolCount++; 
+                bmsResult.resultData.coolCount++; 
                 accuracySum += 70;
                 currentScore += coolAddScore;
                 gauge.hp += gauge.coolHealAmount;
                 break;
             case JudgeType.GOOD:
-                bmsResult.goodCount++; 
+                bmsResult.resultData.goodCount++; 
                 accuracySum += 20;
                 currentScore += goodAddScore;
                 gauge.hp += gauge.goodHealAmount;
                 break;
             case JudgeType.MISS:
-                bmsResult.missCount++;
+                bmsResult.resultData.missCount++;
                 gauge.hp -= gauge.missDamage;
                 break;
             case JudgeType.FAIL:
-                bmsResult.failCount++;
+                bmsResult.resultData.failCount++;
                 gauge.hp -= gauge.failDamage;
                 break;
         }
         isJudgementTrackerUpdate = true;
 
         combo++;
-        if (bmsResult.maxCombo <= combo)
+        if (bmsResult.resultData.maxCombo <= combo)
         {
-            bmsResult.maxCombo = combo;
+            bmsResult.resultData.maxCombo = combo;
         }
         isGameUIUpdate = true;
 
@@ -943,10 +932,10 @@ public class BMSGameManager : MonoBehaviour
         {
             isGameEnd = true;
             isPaused = true;
-            bmsResult.score = currentScore + bmsResult.maxCombo;
+            bmsResult.resultData.score = currentScore + bmsResult.resultData.maxCombo;
             endCount++;
-            UpdateScoreGraph((float)bmsResult.score, currentCount + 1);
-            UpdateRank((float)bmsResult.score);
+            UpdateScoreGraph((float)bmsResult.resultData.score, currentCount + 1);
+            UpdateRank((float)bmsResult.resultData.score);
         }
     }
 
@@ -998,8 +987,8 @@ public class BMSGameManager : MonoBehaviour
         }
 
         for (int i = bmsResult.judgeList.Length - 1; i >= 1; i--) { bmsResult.judgeList[i] *= 0.0001d; }
-        bmsResult.score = currentScore + bmsResult.maxCombo;
-        bmsResult.accuracy = bmsResult.score / (1100000.0d + pattern.noteCount);
+        bmsResult.resultData.score = currentScore + bmsResult.resultData.maxCombo;
+        bmsResult.resultData.accuracy = bmsResult.resultData.score / (1100000.0d + pattern.noteCount);
 
         if (isClear) { yield return new WaitForSeconds(1.0f); }
         StartCoroutine(CoLoadScene(3));
@@ -1057,7 +1046,7 @@ public class BMSGameManager : MonoBehaviour
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
                 isCountdown = false;
-                gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.maxCombo, (int)(float)currentScore);
+                gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
                 break;
             }
             else
@@ -1098,16 +1087,6 @@ public class BMSGameManager : MonoBehaviour
         int len = pattern.noteCount + 1;
         divideTable = new double[len];
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
-
-        maxScoreTable = new float[len + 1];
-        if (SongSelectUIManager.resultData.rankIndex == 11)
-        {
-            for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = 0; }
-        }
-        else
-        {
-            for (int i = 1; i < len + 1; i++) { maxScoreTable[i] = SongSelectUIManager.scoreGraphData.scoreGraphList[i]; }
-        }
     }
 
     public void ChangeSpeed(int value)

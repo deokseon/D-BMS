@@ -8,6 +8,8 @@ public class ScoreGraph : MonoBehaviour
     private BMSGameManager bmsGameManager = null;
     private BMSResult bmsResult = null;
 
+    private ScoreGraphData maxScoreGraph;
+
     [SerializeField]
     private Sprite[] rank;
     [SerializeField]
@@ -41,6 +43,11 @@ public class ScoreGraph : MonoBehaviour
         SetScoreGraphPosition(GameUIManager.config.scoreGraphPositionOffsetX, GameUIManager.config.scoreGraphPositionOffsetY);
     }
 
+    public void SetMaxScoreGraph(int count)
+    {
+        maxScoreGraph = DataSaveManager.LoadData<ScoreGraphData>("DataSave", BMSGameManager.header.fileName + "_SG.json") ?? new ScoreGraphData(count);
+    }
+
     private IEnumerator CheckScoreGraphUpdate()
     {
         while (true)
@@ -49,16 +56,16 @@ public class ScoreGraph : MonoBehaviour
             {
                 if (bmsGameManager.isChangeRankImage)
                 {
-                    rankImage.sprite = rank[bmsResult.rankIndex];
-                    rankImage.rectTransform.localPosition = new Vector3(-244.0f + GameUIManager.config.scoreGraphPositionOffsetX, yPos[bmsResult.rankIndex] + GameUIManager.config.scoreGraphPositionOffsetY, 0.0f);
+                    rankImage.sprite = rank[bmsResult.resultData.rankIndex];
+                    rankImage.rectTransform.localPosition = new Vector3(-244.0f + GameUIManager.config.scoreGraphPositionOffsetX, yPos[bmsResult.resultData.rankIndex] + GameUIManager.config.scoreGraphPositionOffsetY, 0.0f);
                     bmsGameManager.isChangeRankImage = false;
                 }
 
                 if (bmsGameManager.isScoreGraphUpdate)
                 {
                     int currentCount = bmsGameManager.currentCount + bmsGameManager.endCount;
-                    scoreStick.SetSizeWithCurrentAnchors(vertical, bmsResult.scoreGraphArray[currentCount]);
-                    maxScoreStick.SetSizeWithCurrentAnchors(vertical, bmsGameManager.maxScoreTable[currentCount]);
+                    scoreStick.SetSizeWithCurrentAnchors(vertical, bmsResult.scoreGraphData.scoreGraphList[currentCount]);
+                    maxScoreStick.SetSizeWithCurrentAnchors(vertical, maxScoreGraph.scoreGraphList[currentCount]);
                     bmsGameManager.isScoreGraphUpdate = false;
                 }
             }

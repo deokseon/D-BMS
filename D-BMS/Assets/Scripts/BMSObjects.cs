@@ -89,18 +89,8 @@ public class Utility
 public class BMSResult
 {
     public int noteCount;
-    public int koolCount;
-    public int coolCount;
-    public int goodCount;
-    public int missCount;
-    public int failCount;
-    public int earlyCount;
-    public int lateCount;
-    public int maxCombo;
-    public int rankIndex;
-    public double score;
-    public double accuracy;
-    public float[] scoreGraphArray;
+    public ResultData resultData;
+    public ScoreGraphData scoreGraphData;
     public double[] judgeList;
 }
 

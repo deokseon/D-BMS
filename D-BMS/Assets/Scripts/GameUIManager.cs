@@ -110,11 +110,7 @@ public class GameUIManager : MonoBehaviour
         assetPacker.Process();
         assetPacker.OnProcessCompleted.AddListener(SpriteSetting);
 
-        if (config == null)
-        {
-            config = new ConfigData();
-        }
-        DataSaveManager.LoadConfigData();
+        config = config ?? DataSaveManager.LoadData<ConfigData>("Skin", "config.json") ?? new ConfigData();
 
         if (bmsGameManager == null) 
         {

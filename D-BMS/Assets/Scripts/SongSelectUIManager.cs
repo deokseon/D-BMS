@@ -88,14 +88,12 @@ public class SongSelectUIManager : MonoBehaviour
     private int findSequence;
 
     public static ResultData resultData;
-    public static ScoreGraphData scoreGraphData;
 
     private BMPLoader loader;
 
     void Awake()
     {
-        if (resultData == null) { resultData = new ResultData(); }
-        if (scoreGraphData == null) { scoreGraphData = new ScoreGraphData(); }
+        if (resultData == null) { resultData = new ResultData(11); }
         loader = new BMPLoader();
 
         noteSpeedText.text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
@@ -364,9 +362,9 @@ public class SongSelectUIManager : MonoBehaviour
         currentIndex = index;
         lvScrollRect.ScrollToCellWithinTime(currentIndex, 0.05f);
         ConvertIndex();
-        scrollbar.value = convertedIndex / (currentHeaderListCount - 1.0f);
+        scrollbar.value = currentHeaderListCount == 1 ? 1.0f : convertedIndex / (currentHeaderListCount - 1.0f);
         SongIndexUpdate();
-        DataSaveManager.LoadResultData(BMSFileSystem.selectedCategoryHeaderList[convertedIndex].fileName);
+        resultData = DataSaveManager.LoadData<ResultData>("DataSave", BMSFileSystem.selectedCategoryHeaderList[convertedIndex].fileName + ".json") ?? new ResultData(11);
         SetSongRecord();
     }
 
@@ -374,7 +372,6 @@ public class SongSelectUIManager : MonoBehaviour
     {
         if (BMSFileSystem.selectedHeader != null)
         {
-            DataSaveManager.LoadScoreGraphData(BMSFileSystem.selectedCategoryHeaderList[convertedIndex].fileName);
             PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
             UnityEngine.SceneManagement.SceneManager.LoadScene(2);
         }
@@ -503,6 +500,7 @@ public class SongSelectUIManager : MonoBehaviour
                     case "Category_All": PlayerPrefs.SetInt("Category", 0); nextCategory = 0; break;
                     case "Category_Aery": PlayerPrefs.SetInt("Category", 1); nextCategory = 1; break;
                     case "Category_SeoRi": PlayerPrefs.SetInt("Category", 2); nextCategory = 2; break;
+                    case "Category_Favorite": PlayerPrefs.SetInt("Category", 3); nextCategory = 3; break;
                 }
                 if (curCategory != nextCategory) { PlayerPrefs.SetInt($"Category{curCategory}Index", currentIndex); }
                 toggleText.fontSize = 25;
@@ -537,11 +535,29 @@ public class SongSelectUIManager : MonoBehaviour
         Category currentCategory = (Category)PlayerPrefs.GetInt("Category");
 
         int headerCount = BMSFileSystem.headers.Length;
-        for (int i = 0; i < headerCount; i++)
+        if ((int)currentCategory == 3)
         {
-            if (currentCategory == Category.NONE || BMSFileSystem.headers[i].songCategory == currentCategory)
+            if (BMSFileSystem.favoriteSong.favoriteSongSet.Count == 0)
             {
-                BMSFileSystem.selectedCategoryHeaderList.Add(BMSFileSystem.headers[i]);
+                categoryToggles[0].isOn = true;
+                return;
+            }
+            for (int i = 0; i < headerCount; i++)
+            {
+                if (BMSFileSystem.favoriteSong.favoriteSongSet.Contains(BMSFileSystem.headers[i].fileName))
+                {
+                    BMSFileSystem.selectedCategoryHeaderList.Add(BMSFileSystem.headers[i]);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < headerCount; i++)
+            {
+                if (currentCategory == Category.NONE || BMSFileSystem.headers[i].songCategory == currentCategory)
+                {
+                    BMSFileSystem.selectedCategoryHeaderList.Add(BMSFileSystem.headers[i]);
+                }
             }
         }
 

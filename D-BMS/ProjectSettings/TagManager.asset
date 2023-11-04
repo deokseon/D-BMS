@@ -8,6 +8,9 @@ TagManager:
   - Category_All
   - Category_Aery
   - Category_SeoRi
+  - Toggle Bg
+  - Handle
+  - Category_Favorite
   layers:
   - Default
   - TransparentFX

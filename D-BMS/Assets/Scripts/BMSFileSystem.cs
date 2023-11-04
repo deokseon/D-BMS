@@ -15,6 +15,7 @@ public class BMSFileSystem : MonoBehaviour
     private static string rootPath;
 
     public static SongClearLamp songClearLamp;
+    public static FavoriteSong favoriteSong;
 
     void Awake()
     {
@@ -45,11 +46,10 @@ public class BMSFileSystem : MonoBehaviour
                 return result != 0 ? result : string.Compare(x.title, y.title);
             });
         }
-        if (songClearLamp == null)
-        {
-            songClearLamp = new SongClearLamp();
-            DataSaveManager.LoadClearLamp();
-        }
+
+        songClearLamp = songClearLamp ?? DataSaveManager.LoadData<SongClearLamp>("DataSave", "ClearLamp.json") ?? new SongClearLamp();
+        favoriteSong = favoriteSong ?? DataSaveManager.LoadData<FavoriteSong>("DataSave", "FavoriteSong.json") ?? new FavoriteSong();
+
         initOnStart.DrawSongUI();
     }
 

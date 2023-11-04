@@ -56,6 +56,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9487ed319d5c04841b1b9f0332de4c79, type: 3}
   - {fileID: 21300000, guid: cd7ec5b1bc9552746bf1d4beebae392f, type: 3}
   - {fileID: 21300000, guid: 9670a5423f2b5a84dbd8c62642c571bd, type: 3}
+  - {fileID: 21300000, guid: 9589f6429d8c60540ba4b31da9115666, type: 3}
   - {fileID: 21300000, guid: aeaa770380e7a084d82bd065d4cc7044, type: 3}
   - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
@@ -68,6 +69,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d56643687ae506946be124c62dacec22, type: 3}
   - {fileID: 21300000, guid: 3ee4bf68b9684a540bc4ec8389733d65, type: 3}
   - {fileID: 21300000, guid: d86c43c8a8f6da442988feb1364dd08b, type: 3}
+  - {fileID: 21300000, guid: e9f68119734b3c14ea59c3a7e983d4a7, type: 3}
   - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 1eec5ae9440d44f46a7f54cedaf76750, type: 3}
   - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
@@ -90,6 +92,7 @@ SpriteAtlas:
   - toggleHandle
   - NoChange
   - return
+  - favorite_0
   - circle_mask
   - StageImageFrame
   - ToggleFrame
@@ -102,6 +105,7 @@ SpriteAtlas:
   - D
   - S+
   - norank
+  - favorite_1
   - Triangle
   - F
   - PersonIcon

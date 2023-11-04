@@ -66,11 +66,11 @@ public class JudgementTracker : MonoBehaviour
             {
                 if (bmsGameManager.isJudgementTrackerUpdate)
                 {
-                    koolText.text = str0to9999Table[bmsResult.koolCount];
-                    coolText.text = str0to9999Table[bmsResult.coolCount];
-                    goodText.text = str0to9999Table[bmsResult.goodCount];
-                    missText.text = str0to9999Table[bmsResult.missCount];
-                    failText.text = str0to9999Table[bmsResult.failCount];
+                    koolText.text = str0to9999Table[bmsResult.resultData.koolCount];
+                    coolText.text = str0to9999Table[bmsResult.resultData.coolCount];
+                    goodText.text = str0to9999Table[bmsResult.resultData.goodCount];
+                    missText.text = str0to9999Table[bmsResult.resultData.missCount];
+                    failText.text = str0to9999Table[bmsResult.resultData.failCount];
 
                     int currentCount = bmsGameManager.currentCount;
                     float accuracy = (float)(bmsGameManager.accuracySum * bmsGameManager.divideTable[currentCount]);

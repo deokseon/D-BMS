@@ -55,9 +55,10 @@ public class ResultUIManager : MonoBehaviour
         DrawJudgeGraph();
         StartCoroutine(DrawSongInfo());
 
-        if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < bmsResult.score)
+        if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < bmsResult.resultData.score)
         {
-            DataSaveManager.SaveResultData(bmsResult, header.fileName);
+            DataSaveManager.SaveData("DataSave", header.fileName + ".json", bmsResult.resultData);
+            DataSaveManager.SaveData("DataSave", header.fileName + "_SG.json", bmsResult.scoreGraphData);
             newRecordImage.SetActive(true);
         }
 
@@ -159,7 +160,7 @@ public class ResultUIManager : MonoBehaviour
         subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
         subtitleText.text = header.subTitle;
         subtitleText.fontSize = 17;
-        while (titleText.preferredWidth + subtitleText.preferredWidth > 835.0f)
+        while (titleText.preferredWidth + subtitleText.preferredWidth > 800.0f)
         {
             titleText.fontSize -= 0.1f;
             subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
@@ -174,38 +175,39 @@ public class ResultUIManager : MonoBehaviour
         if (header.maxBPM == header.minBPM) { bpmText.text = "BPM " + header.bpm.ToString(); }
         else { bpmText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
         bpmText.fontSize = 15;
-        while (artistText.preferredWidth + bpmText.preferredWidth > 835.0f)
+        while (artistText.preferredWidth + bpmText.preferredWidth > 800.0f)
         {
             artistText.fontSize -= 0.1f;
             bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
             bpmText.fontSize -= 0.1f;
         }
         GameObject.Find("Level_Text").GetComponent<TextMeshProUGUI>().text = header.level.ToString();
+        GameObject.Find("Favorite_Toggle").GetComponent<Toggle>().isOn = BMSFileSystem.favoriteSong.favoriteSongSet.Contains(header.fileName);
 
         GameObject.Find("TotalNote").GetComponent<TextMeshProUGUI>().text = bmsResult.noteCount.ToString();
-        GameObject.Find("Kool").GetComponent<TextMeshProUGUI>().text = bmsResult.koolCount.ToString();
-        GameObject.Find("Cool").GetComponent<TextMeshProUGUI>().text = bmsResult.coolCount.ToString();
-        GameObject.Find("Good").GetComponent<TextMeshProUGUI>().text = bmsResult.goodCount.ToString();
-        GameObject.Find("Miss").GetComponent<TextMeshProUGUI>().text = bmsResult.missCount.ToString();
-        GameObject.Find("Fail").GetComponent<TextMeshProUGUI>().text = bmsResult.failCount.ToString();
-        GameObject.Find("Early").GetComponent<TextMeshProUGUI>().text = bmsResult.earlyCount.ToString();
-        GameObject.Find("Late").GetComponent<TextMeshProUGUI>().text = bmsResult.lateCount.ToString();
-        GameObject.Find("Accuracy").GetComponent<TextMeshProUGUI>().text = ((float)bmsResult.accuracy).ToString("P");
-        GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = bmsResult.maxCombo.ToString();
-        GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)bmsResult.score)).ToString();
+        GameObject.Find("Kool").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.koolCount.ToString();
+        GameObject.Find("Cool").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.coolCount.ToString();
+        GameObject.Find("Good").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.goodCount.ToString();
+        GameObject.Find("Miss").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.missCount.ToString();
+        GameObject.Find("Fail").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.failCount.ToString();
+        GameObject.Find("Early").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.earlyCount.ToString();
+        GameObject.Find("Late").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.lateCount.ToString();
+        GameObject.Find("Accuracy").GetComponent<TextMeshProUGUI>().text = ((float)bmsResult.resultData.accuracy).ToString("P");
+        GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.maxCombo.ToString();
+        GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)bmsResult.resultData.score)).ToString();
         GameObject.Find("NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
         SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
         GameObject.Find("Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
 
-        DrawDiffTextAndImage(bmsResult.koolCount - SongSelectUIManager.resultData.koolCount, GameObject.Find("KoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("KoolChangeImage").GetComponent<Image>());
-        DrawDiffTextAndImage(bmsResult.coolCount - SongSelectUIManager.resultData.coolCount, GameObject.Find("CoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("CoolChangeImage").GetComponent<Image>());
-        DrawDiffTextAndImage(bmsResult.goodCount - SongSelectUIManager.resultData.goodCount, GameObject.Find("GoodDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("GoodChangeImage").GetComponent<Image>());
-        DrawDiffTextAndImage(bmsResult.missCount - SongSelectUIManager.resultData.missCount, GameObject.Find("MissDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MissChangeImage").GetComponent<Image>(), -1);
-        DrawDiffTextAndImage(bmsResult.failCount - SongSelectUIManager.resultData.failCount, GameObject.Find("FailDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("FailChangeImage").GetComponent<Image>(), -1);
-        DrawDiffTextAndImage((float)(bmsResult.accuracy - SongSelectUIManager.resultData.accuracy), GameObject.Find("AccuracyDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("AccuracyChangeImage").GetComponent<Image>(), 1, true);
-        DrawDiffTextAndImage(bmsResult.maxCombo - SongSelectUIManager.resultData.maxCombo, GameObject.Find("MaxComboDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MaxComboChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.resultData.koolCount - SongSelectUIManager.resultData.koolCount, GameObject.Find("KoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("KoolChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.resultData.coolCount - SongSelectUIManager.resultData.coolCount, GameObject.Find("CoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("CoolChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.resultData.goodCount - SongSelectUIManager.resultData.goodCount, GameObject.Find("GoodDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("GoodChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(bmsResult.resultData.missCount - SongSelectUIManager.resultData.missCount, GameObject.Find("MissDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MissChangeImage").GetComponent<Image>(), -1);
+        DrawDiffTextAndImage(bmsResult.resultData.failCount - SongSelectUIManager.resultData.failCount, GameObject.Find("FailDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("FailChangeImage").GetComponent<Image>(), -1);
+        DrawDiffTextAndImage((float)(bmsResult.resultData.accuracy - SongSelectUIManager.resultData.accuracy), GameObject.Find("AccuracyDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("AccuracyChangeImage").GetComponent<Image>(), 1, true);
+        DrawDiffTextAndImage(bmsResult.resultData.maxCombo - SongSelectUIManager.resultData.maxCombo, GameObject.Find("MaxComboDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MaxComboChangeImage").GetComponent<Image>());
 
-        GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[bmsResult.rankIndex];
+        GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[bmsResult.resultData.rankIndex];
 
         int clearLampIndex = -1;
         if (!BMSGameManager.isClear) 
@@ -213,12 +215,12 @@ public class ResultUIManager : MonoBehaviour
             playLamp.SetActive(true);
             clearLampIndex = 0;
         }
-        else if (bmsResult.missCount > 0 || bmsResult.failCount > 0) 
+        else if (bmsResult.resultData.missCount > 0 || bmsResult.resultData.failCount > 0) 
         { 
             clearLamp.SetActive(true);
             clearLampIndex = 1;
         }
-        else if (bmsResult.goodCount > 0)
+        else if (bmsResult.resultData.goodCount > 0)
         { 
             nomissLamp.SetActive(true);
             clearLampIndex = 2;
@@ -235,14 +237,14 @@ public class ResultUIManager : MonoBehaviour
             if (priClearLampIndex < clearLampIndex)
             {
                 BMSFileSystem.songClearLamp.clearLampDict[header.fileName] = clearLampIndex;
-                DataSaveManager.SaveClearLamp();
             }
         }
         else
         {
             BMSFileSystem.songClearLamp.clearLampDict.Add(header.fileName, clearLampIndex);
-            DataSaveManager.SaveClearLamp();
         }
+        DataSaveManager.SaveData("DataSave", "ClearLamp.json", BMSFileSystem.songClearLamp);
+
         Image songClearLamp = GameObject.Find("SongClearLamp").GetComponent<Image>();
         switch (BMSFileSystem.songClearLamp.clearLampDict[header.fileName])
         {

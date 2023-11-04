@@ -21,6 +21,8 @@ public class ScrollIndexCallback1 : MonoBehaviour
     private TextMeshProUGUI toggleLevelText;
     [SerializeField]
     private Image clearLampImage;
+    [SerializeField]
+    private Toggle favoriteToggle;
 
     private Color32 normalTextColor;
 
@@ -40,6 +42,7 @@ public class ScrollIndexCallback1 : MonoBehaviour
         if (songSelectUIManager == null) { songSelectUIManager = FindObjectOfType<SongSelectUIManager>(); }
 
         thisObjectToggle.onValueChanged.RemoveAllListeners();
+        favoriteToggle.onValueChanged.RemoveAllListeners();
 
         gameObject.name = idx.ToString();
 
@@ -54,7 +57,7 @@ public class ScrollIndexCallback1 : MonoBehaviour
         toggleSubtitleText.rectTransform.localPosition = new Vector3(-445.0f + toggleTitleText.preferredWidth, 13.0f, 0.0f);
         toggleSubtitleText.text = header.subTitle;
         toggleSubtitleText.fontSize = 17;
-        while (toggleTitleText.preferredWidth + toggleSubtitleText.preferredWidth > 835.0f)
+        while (toggleTitleText.preferredWidth + toggleSubtitleText.preferredWidth > 800.0f)
         {
             toggleTitleText.fontSize -= 0.1f;
             toggleSubtitleText.rectTransform.localPosition = new Vector3(-445.0f + toggleTitleText.preferredWidth, 13.0f, 0.0f);
@@ -67,7 +70,7 @@ public class ScrollIndexCallback1 : MonoBehaviour
         if (header.maxBPM == header.minBPM) { toggleBPMText.text = "BPM " + header.bpm.ToString(); }
         else { toggleBPMText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
         toggleBPMText.fontSize = 15;
-        while (toggleArtistText.preferredWidth + toggleBPMText.preferredWidth > 835.0f)
+        while (toggleArtistText.preferredWidth + toggleBPMText.preferredWidth > 800.0f)
         {
             toggleArtistText.fontSize -= 0.1f;
             toggleBPMText.rectTransform.localPosition = new Vector3(-420.0f + toggleArtistText.preferredWidth, -20.0f, 0.0f);
@@ -113,7 +116,7 @@ public class ScrollIndexCallback1 : MonoBehaviour
                 if (idx != songSelectUIManager.currentIndex) 
                 { 
                     songSelectUIManager.MoveToIndex(idx);
-                    DataSaveManager.LoadResultData(header.fileName);
+                    SongSelectUIManager.resultData = DataSaveManager.LoadData<ResultData>("DataSave", header.fileName + ".json") ?? new ResultData(11);
                     songSelectUIManager.SetSongRecord();
                 }
                 if (songSelectUIManager.currentContent != null) { songSelectUIManager.currentContent.tag = "Untagged"; }
@@ -125,6 +128,20 @@ public class ScrollIndexCallback1 : MonoBehaviour
             {
                 toggleLevelText.color = normalTextColor;
             }
+        });
+
+        favoriteToggle.isOn = BMSFileSystem.favoriteSong.favoriteSongSet.Contains(header.fileName);
+        favoriteToggle.onValueChanged.AddListener((bool value) =>
+        {
+            if (value)
+            {
+                BMSFileSystem.favoriteSong.favoriteSongSet.Add(header.fileName);
+            }
+            else
+            {
+                BMSFileSystem.favoriteSong.favoriteSongSet.Remove(header.fileName);
+            }
+            DataSaveManager.SaveData("DataSave", "FavoriteSong.json", BMSFileSystem.favoriteSong);
         });
 
         if (idx == songSelectUIManager.currentIndex) { thisObjectToggle.isOn = true; }

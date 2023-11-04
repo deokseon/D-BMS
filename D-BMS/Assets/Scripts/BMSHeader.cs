@@ -3,7 +3,7 @@
 [Flags]
 public enum Lntype { NONE = 0, LN1 = 1 << 1, LN2 = 1 << 2, LNOBJ = 1 << 3 }
 
-public enum Category { NONE = 0, AERY = 1, SEORI = 2 }
+public enum Category { NONE = 0, AERY = 1, SEORI = 2, FAVORITE = 3 }
 
 public enum SortBy { LEVEL = 0, TITLE = 1, BPM = 2 }
 
