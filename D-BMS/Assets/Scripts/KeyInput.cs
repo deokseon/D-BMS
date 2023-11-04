@@ -35,7 +35,7 @@ public class KeyInput : MonoBehaviour
         prevKeyState = new bool[6];
         for (int i = 0; i < 6; i++)
         {
-            prevKeyState[i] = true;
+            prevKeyState[i] = false;
         }
 
         isAssistKeyUse = PlayerPrefs.GetInt("AssistKeyUse") == 1 ? true : false;
