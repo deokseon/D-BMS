@@ -38,19 +38,17 @@ namespace DaVikingCode.AssetPacker {
 		public void AddTextureToPack(string file, string customID = null) {
 
 			string fileName = Path.GetFileNameWithoutExtension(file);
+			switch (fileName)
+            {
+				case "barline": case "keyfeedback": case "longnotebody1": case "longnotebody2": case "longnotebodyverticalline": 
+				case "panel-bg": case "verticalline": case "longnotebottom1": case "longnotebottom2": case "longnotetop1": 
+				case "longnotetop2": case "key1-init": case "key2-init": case "key1-pressed": case "key2-pressed":
+					itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
+					break;
+				default:
+					itemsToRaster[1].Add(new TextureToPack(file, customID != null ? customID : fileName));
+					break;
 
-			if (fileName.CompareTo("barline") == 0 || fileName.CompareTo("keyfeedback") == 0 ||
-				fileName.CompareTo("longnotebody1") == 0 || fileName.CompareTo("longnotebody2") == 0 ||
-				fileName.CompareTo("longnotebodyverticalline") == 0 || fileName.CompareTo("panel-bg") == 0 ||
-				fileName.CompareTo("verticalline") == 0 || fileName.CompareTo("longnotebottom1") == 0 ||
-				fileName.CompareTo("longnotebottom2") == 0 || fileName.CompareTo("longnotetop1") == 0 ||
-				fileName.CompareTo("longnotetop2") == 0)
-            {
-				itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
-			}
-			else
-            {
-				itemsToRaster[1].Add(new TextureToPack(file, customID != null ? customID : fileName));
 			}
 			
 		}
