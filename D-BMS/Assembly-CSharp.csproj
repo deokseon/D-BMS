@@ -99,6 +99,7 @@
      <Compile Include="Assets\Scripts\PauseManager.cs" />
      <Compile Include="Assets\Scripts\ResultUIManager.cs" />
      <Compile Include="Assets\Scripts\ScoreGraph.cs" />
+     <Compile Include="Assets\Scripts\SongInfoObject.cs" />
      <Compile Include="Assets\Scripts\SongSelectUIManager.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\StartSceneManager.cs" />

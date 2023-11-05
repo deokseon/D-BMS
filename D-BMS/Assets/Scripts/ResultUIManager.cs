@@ -31,15 +31,9 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private Image fadeImage;
 
-    [SerializeField]
-    private Sprite clearlamp_allcool;
-    [SerializeField]
-    private Sprite clearlamp_normal;
+    private SongInfoObject songInfoObject;
 
     private BMPLoader loader;
-
-    private BMSHeader header;
-    private BMSResult bmsResult;
 
     public void Awake()
     {
@@ -48,17 +42,16 @@ public class ResultUIManager : MonoBehaviour
 
         loader = new BMPLoader();
 
-        header = BMSGameManager.header;
-        bmsResult = BMSGameManager.bmsResult;
+        songInfoObject = FindObjectOfType<SongInfoObject>();
 
         DrawStatisticsResult();
         DrawJudgeGraph();
         StartCoroutine(DrawSongInfo());
 
-        if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < bmsResult.resultData.score)
+        if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < BMSGameManager.bmsResult.resultData.score)
         {
-            DataSaveManager.SaveData("DataSave", header.fileName + ".json", bmsResult.resultData);
-            DataSaveManager.SaveData("DataSave", header.fileName + "_SG.json", bmsResult.scoreGraphData);
+            DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + ".json", BMSGameManager.bmsResult.resultData);
+            DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + "_SG.json", BMSGameManager.bmsResult.scoreGraphData);
             newRecordImage.SetActive(true);
         }
 
@@ -153,74 +146,46 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawStatisticsResult()
     {
-        TextMeshProUGUI titleText = GameObject.Find("Title_Text").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI subtitleText = GameObject.Find("Subtitle_Text").GetComponent<TextMeshProUGUI>();
-        titleText.text = header.title;
-        titleText.fontSize = 28;
-        subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
-        subtitleText.text = header.subTitle;
-        subtitleText.fontSize = 17;
-        while (titleText.preferredWidth + subtitleText.preferredWidth > 800.0f)
-        {
-            titleText.fontSize -= 0.1f;
-            subtitleText.rectTransform.localPosition = new Vector3(-445.0f + titleText.preferredWidth, 13.0f, 0.0f);
-            subtitleText.fontSize -= 0.1f;
-        }
+        songInfoObject.SetSongInfo(BMSGameManager.header);
+        songInfoObject.SetFavoriteToggle(BMSGameManager.header);
 
-        TextMeshProUGUI artistText = GameObject.Find("Artist_Text").GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI bpmText = GameObject.Find("BPM_Text").GetComponent<TextMeshProUGUI>();
-        artistText.text = header.artist;
-        artistText.fontSize = 15;
-        bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
-        if (header.maxBPM == header.minBPM) { bpmText.text = "BPM " + header.bpm.ToString(); }
-        else { bpmText.text = "BPM " + header.minBPM.ToString() + " ~ " + header.maxBPM.ToString(); }
-        bpmText.fontSize = 15;
-        while (artistText.preferredWidth + bpmText.preferredWidth > 800.0f)
-        {
-            artistText.fontSize -= 0.1f;
-            bpmText.rectTransform.localPosition = new Vector3(-420.0f + artistText.preferredWidth, -20.0f, 0.0f);
-            bpmText.fontSize -= 0.1f;
-        }
-        GameObject.Find("Level_Text").GetComponent<TextMeshProUGUI>().text = header.level.ToString();
-        GameObject.Find("Favorite_Toggle").GetComponent<Toggle>().isOn = BMSFileSystem.favoriteSong.favoriteSongSet.Contains(header.fileName);
-
-        GameObject.Find("TotalNote").GetComponent<TextMeshProUGUI>().text = bmsResult.noteCount.ToString();
-        GameObject.Find("Kool").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.koolCount.ToString();
-        GameObject.Find("Cool").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.coolCount.ToString();
-        GameObject.Find("Good").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.goodCount.ToString();
-        GameObject.Find("Miss").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.missCount.ToString();
-        GameObject.Find("Fail").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.failCount.ToString();
-        GameObject.Find("Early").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.earlyCount.ToString();
-        GameObject.Find("Late").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.lateCount.ToString();
-        GameObject.Find("Accuracy").GetComponent<TextMeshProUGUI>().text = ((float)bmsResult.resultData.accuracy).ToString("P");
-        GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = bmsResult.resultData.maxCombo.ToString();
-        GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)bmsResult.resultData.score)).ToString();
+        GameObject.Find("TotalNote").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.noteCount.ToString();
+        GameObject.Find("Kool").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.koolCount.ToString();
+        GameObject.Find("Cool").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.coolCount.ToString();
+        GameObject.Find("Good").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.goodCount.ToString();
+        GameObject.Find("Miss").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.missCount.ToString();
+        GameObject.Find("Fail").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.failCount.ToString();
+        GameObject.Find("Early").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.earlyCount.ToString();
+        GameObject.Find("Late").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.lateCount.ToString();
+        GameObject.Find("Accuracy").GetComponent<TextMeshProUGUI>().text = ((float)BMSGameManager.bmsResult.resultData.accuracy).ToString("P");
+        GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.maxCombo.ToString();
+        GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)BMSGameManager.bmsResult.resultData.score)).ToString();
         GameObject.Find("NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
         SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
         GameObject.Find("Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
 
-        DrawDiffTextAndImage(bmsResult.resultData.koolCount - SongSelectUIManager.resultData.koolCount, GameObject.Find("KoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("KoolChangeImage").GetComponent<Image>());
-        DrawDiffTextAndImage(bmsResult.resultData.coolCount - SongSelectUIManager.resultData.coolCount, GameObject.Find("CoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("CoolChangeImage").GetComponent<Image>());
-        DrawDiffTextAndImage(bmsResult.resultData.goodCount - SongSelectUIManager.resultData.goodCount, GameObject.Find("GoodDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("GoodChangeImage").GetComponent<Image>());
-        DrawDiffTextAndImage(bmsResult.resultData.missCount - SongSelectUIManager.resultData.missCount, GameObject.Find("MissDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MissChangeImage").GetComponent<Image>(), -1);
-        DrawDiffTextAndImage(bmsResult.resultData.failCount - SongSelectUIManager.resultData.failCount, GameObject.Find("FailDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("FailChangeImage").GetComponent<Image>(), -1);
-        DrawDiffTextAndImage((float)(bmsResult.resultData.accuracy - SongSelectUIManager.resultData.accuracy), GameObject.Find("AccuracyDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("AccuracyChangeImage").GetComponent<Image>(), 1, true);
-        DrawDiffTextAndImage(bmsResult.resultData.maxCombo - SongSelectUIManager.resultData.maxCombo, GameObject.Find("MaxComboDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MaxComboChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.koolCount - SongSelectUIManager.resultData.koolCount, GameObject.Find("KoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("KoolChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.coolCount - SongSelectUIManager.resultData.coolCount, GameObject.Find("CoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("CoolChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.goodCount - SongSelectUIManager.resultData.goodCount, GameObject.Find("GoodDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("GoodChangeImage").GetComponent<Image>());
+        DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.missCount - SongSelectUIManager.resultData.missCount, GameObject.Find("MissDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MissChangeImage").GetComponent<Image>(), -1);
+        DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.failCount - SongSelectUIManager.resultData.failCount, GameObject.Find("FailDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("FailChangeImage").GetComponent<Image>(), -1);
+        DrawDiffTextAndImage((float)(BMSGameManager.bmsResult.resultData.accuracy - SongSelectUIManager.resultData.accuracy), GameObject.Find("AccuracyDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("AccuracyChangeImage").GetComponent<Image>(), 1, true);
+        DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.maxCombo - SongSelectUIManager.resultData.maxCombo, GameObject.Find("MaxComboDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MaxComboChangeImage").GetComponent<Image>());
 
-        GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[bmsResult.resultData.rankIndex];
+        GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[BMSGameManager.bmsResult.resultData.rankIndex];
 
-        int clearLampIndex = -1;
+        int clearLampIndex;
         if (!BMSGameManager.isClear) 
         { 
             playLamp.SetActive(true);
             clearLampIndex = 0;
         }
-        else if (bmsResult.resultData.missCount > 0 || bmsResult.resultData.failCount > 0) 
+        else if (BMSGameManager.bmsResult.resultData.missCount > 0 || BMSGameManager.bmsResult.resultData.failCount > 0) 
         { 
             clearLamp.SetActive(true);
             clearLampIndex = 1;
         }
-        else if (bmsResult.resultData.goodCount > 0)
+        else if (BMSGameManager.bmsResult.resultData.goodCount > 0)
         { 
             nomissLamp.SetActive(true);
             clearLampIndex = 2;
@@ -232,39 +197,19 @@ public class ResultUIManager : MonoBehaviour
         }
 
         int priClearLampIndex;
-        if (BMSFileSystem.songClearLamp.clearLampDict.TryGetValue(header.fileName, out priClearLampIndex))
+        if (BMSFileSystem.songClearLamp.clearLampDict.TryGetValue(BMSGameManager.header.fileName, out priClearLampIndex))
         {
             if (priClearLampIndex < clearLampIndex)
             {
-                BMSFileSystem.songClearLamp.clearLampDict[header.fileName] = clearLampIndex;
+                BMSFileSystem.songClearLamp.clearLampDict[BMSGameManager.header.fileName] = clearLampIndex;
             }
         }
         else
         {
-            BMSFileSystem.songClearLamp.clearLampDict.Add(header.fileName, clearLampIndex);
+            BMSFileSystem.songClearLamp.clearLampDict.Add(BMSGameManager.header.fileName, clearLampIndex);
         }
         DataSaveManager.SaveData("DataSave", "ClearLamp.json", BMSFileSystem.songClearLamp);
-
-        Image songClearLamp = GameObject.Find("SongClearLamp").GetComponent<Image>();
-        switch (BMSFileSystem.songClearLamp.clearLampDict[header.fileName])
-        {
-            case 0:
-                songClearLamp.sprite = clearlamp_normal;
-                songClearLamp.color = Color.red;
-                break;
-            case 1:
-                songClearLamp.sprite = clearlamp_normal;
-                songClearLamp.color = new Color(0.0f, 215.0f / 255.0f, 1.0f);
-                break;
-            case 2:
-                songClearLamp.sprite = clearlamp_normal;
-                songClearLamp.color = Color.yellow;
-                break;
-            case 3:
-                songClearLamp.sprite = clearlamp_allcool;
-                songClearLamp.color = Color.white;
-                break;
-        }
+        songInfoObject.SetClearLamp(BMSGameManager.header);
     }
 
     private void SetRandomEffectorText(int index)
@@ -296,13 +241,13 @@ public class ResultUIManager : MonoBehaviour
     private void DrawJudgeGraph()
     {
         Transform dotParent = GameObject.Find("JudgeGraph_Panel").transform;
-        int len = bmsResult.judgeList.Length;
-        double divideNoteCount = 1.0d / bmsResult.noteCount;
+        int len = BMSGameManager.bmsResult.judgeList.Length;
+        double divideNoteCount = 1.0d / BMSGameManager.bmsResult.noteCount;
         double total = 0;
         int totalCount = 0;
         for (int i = 1; i < len; i++)
         {
-            double y = bmsResult.judgeList[i];
+            double y = BMSGameManager.bmsResult.judgeList[i];
             if (Utility.Dabs(y) > 110.0d) { continue; }
             total += y; totalCount++;
             double x = (i * divideNoteCount * 600) - 300;
@@ -321,14 +266,14 @@ public class ResultUIManager : MonoBehaviour
     private IEnumerator DrawSongInfo()
     {
         RawImage stageImage = GameObject.Find("StageImage").GetComponent<RawImage>();
-        if (string.IsNullOrEmpty(header.stageFilePath)) 
+        if (string.IsNullOrEmpty(BMSGameManager.header.stageFilePath)) 
         {
             stageImage.texture = noBannerTexture;
             stageImage.color = new Color32(0, 0, 0, 230);
         }
         else
         {
-            string imagePath = $@"file:\\{header.musicFolderPath}{header.stageFilePath}";
+            string imagePath = $@"file:\\{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.stageFilePath}";
 
             Texture tex = null;
             if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
