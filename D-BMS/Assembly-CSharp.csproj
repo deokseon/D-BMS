@@ -97,6 +97,7 @@
      <Compile Include="Assets\Scripts\ListExtension.cs" />
      <Compile Include="Assets\Scripts\ObjectPool.cs" />
      <Compile Include="Assets\Scripts\PauseManager.cs" />
+     <Compile Include="Assets\Scripts\RankImageManager.cs" />
      <Compile Include="Assets\Scripts\ResultUIManager.cs" />
      <Compile Include="Assets\Scripts\ScoreGraph.cs" />
      <Compile Include="Assets\Scripts\SongInfoObject.cs" />

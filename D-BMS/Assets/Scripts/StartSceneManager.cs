@@ -37,7 +37,6 @@ public class StartSceneManager : MonoBehaviour
         SetBackground();
     }
 
-
     private void SetBackground()
     {
         string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\start-bg";

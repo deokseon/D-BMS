@@ -13,34 +13,16 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private Sprite changeImage;
     [SerializeField]
-    private GameObject newRecordImage;
-    [SerializeField]
-    private Sprite[] rankImageArray;
-    [SerializeField]
-    private GameObject playLamp;
-    [SerializeField]
-    private GameObject clearLamp;
-    [SerializeField]
-    private GameObject nomissLamp;
-    [SerializeField]
-    private GameObject allcoolLamp;
-    [SerializeField]
     private GameObject dot;
-    [SerializeField]
-    private Texture noBannerTexture;
     [SerializeField]
     private Image fadeImage;
 
     private SongInfoObject songInfoObject;
 
-    private BMPLoader loader;
-
     public void Awake()
     {
         QualitySettings.vSyncCount = 1;
         Application.targetFrameRate = -1;
-
-        loader = new BMPLoader();
 
         songInfoObject = FindObjectOfType<SongInfoObject>();
 
@@ -52,7 +34,10 @@ public class ResultUIManager : MonoBehaviour
         {
             DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + ".json", BMSGameManager.bmsResult.resultData);
             DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + "_SG.json", BMSGameManager.bmsResult.scoreGraphData);
-            newRecordImage.SetActive(true);
+        }
+        else
+        {
+            GameObject.Find("NewRecord").SetActive(false);
         }
 
         SetBackground();
@@ -172,28 +157,30 @@ public class ResultUIManager : MonoBehaviour
         DrawDiffTextAndImage((float)(BMSGameManager.bmsResult.resultData.accuracy - SongSelectUIManager.resultData.accuracy), GameObject.Find("AccuracyDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("AccuracyChangeImage").GetComponent<Image>(), 1, true);
         DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.maxCombo - SongSelectUIManager.resultData.maxCombo, GameObject.Find("MaxComboDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("MaxComboChangeImage").GetComponent<Image>());
 
-        GameObject.Find("Rank").GetComponent<Image>().sprite = rankImageArray[BMSGameManager.bmsResult.resultData.rankIndex];
+        GameObject.Find("Rank").GetComponent<RawImage>().texture = RankImageManager.rankImageArray[BMSGameManager.bmsResult.resultData.rankIndex];
 
         int clearLampIndex;
         if (!BMSGameManager.isClear) 
         { 
-            playLamp.SetActive(true);
             clearLampIndex = 0;
         }
         else if (BMSGameManager.bmsResult.resultData.missCount > 0 || BMSGameManager.bmsResult.resultData.failCount > 0) 
         { 
-            clearLamp.SetActive(true);
             clearLampIndex = 1;
         }
         else if (BMSGameManager.bmsResult.resultData.goodCount > 0)
         { 
-            nomissLamp.SetActive(true);
             clearLampIndex = 2;
         }
         else 
         { 
-            allcoolLamp.SetActive(true);
             clearLampIndex = 3;
+        }
+
+        GameObject[] lampArray = { GameObject.Find("PlayLamp_on"), GameObject.Find("ClearLamp_on"), GameObject.Find("NoMissLamp_on"), GameObject.Find("AllCoolLamp_on") };
+        for (int i = 0; i < 4; i++)
+        {
+            lampArray[i].SetActive(i == clearLampIndex);
         }
 
         int priClearLampIndex;
@@ -268,7 +255,6 @@ public class ResultUIManager : MonoBehaviour
         RawImage stageImage = GameObject.Find("StageImage").GetComponent<RawImage>();
         if (string.IsNullOrEmpty(BMSGameManager.header.stageFilePath)) 
         {
-            stageImage.texture = noBannerTexture;
             stageImage.color = new Color32(0, 0, 0, 230);
         }
         else
@@ -281,7 +267,7 @@ public class ResultUIManager : MonoBehaviour
                 UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
                 yield return uwr.SendWebRequest();
 
-                tex = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+                tex = new BMPLoader().LoadBMP(uwr.downloadHandler.data).ToTexture2D();
             }
             else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
                      imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
@@ -294,7 +280,6 @@ public class ResultUIManager : MonoBehaviour
 
             if (tex == null)
             {
-                stageImage.texture = noBannerTexture;
                 stageImage.color = new Color32(0, 0, 0, 230);
             }
             else

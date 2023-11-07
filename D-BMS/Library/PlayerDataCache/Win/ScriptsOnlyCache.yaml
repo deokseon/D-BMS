@@ -20,6 +20,7 @@ ScriptsOnlyBuild:
     - ResultUIManager
     - ScoreGraph
     - ScrollIndexCallback1
+    - SongInfoObject
     - SongSelectUIManager
     - SoundManager
     - StartSceneManager
@@ -178,7 +179,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14836}
     - Class: 114
-      Script: {instanceID: 15672}
+      Script: {instanceID: 15674}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -275,13 +276,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14836}
     - Class: 114
-      Script: {instanceID: 15474}
+      Script: {instanceID: 15476}
     - Class: 114
-      Script: {instanceID: 15644}
+      Script: {instanceID: 15646}
     - Class: 114
-      Script: {instanceID: 15672}
+      Script: {instanceID: 15674}
     - Class: 114
-      Script: {instanceID: 15714}
+      Script: {instanceID: 15716}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -354,15 +355,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14836}
     - Class: 114
-      Script: {instanceID: 15426}
+      Script: {instanceID: 15428}
     - Class: 114
-      Script: {instanceID: 15610}
+      Script: {instanceID: 15612}
     - Class: 114
-      Script: {instanceID: 15644}
+      Script: {instanceID: 15646}
     - Class: 114
-      Script: {instanceID: 15672}
+      Script: {instanceID: 15674}
     - Class: 114
-      Script: {instanceID: 15714}
+      Script: {instanceID: 15716}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -415,6 +416,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12196}
     - Class: 114
+      Script: {instanceID: 12224}
+    - Class: 114
       Script: {instanceID: 12616}
     - Class: 114
       Script: {instanceID: 12872}
@@ -427,7 +430,11 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14714}
     - Class: 114
-      Script: {instanceID: 15610}
+      Script: {instanceID: 15074}
+    - Class: 114
+      Script: {instanceID: 15612}
+    - Class: 114
+      Script: {instanceID: 15646}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -538,25 +545,27 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14836}
     - Class: 114
-      Script: {instanceID: 15334}
+      Script: {instanceID: 15074}
     - Class: 114
-      Script: {instanceID: 15342}
+      Script: {instanceID: 15336}
     - Class: 114
-      Script: {instanceID: 15482}
+      Script: {instanceID: 15344}
     - Class: 114
-      Script: {instanceID: 15528}
+      Script: {instanceID: 15484}
     - Class: 114
-      Script: {instanceID: 15610}
+      Script: {instanceID: 15530}
     - Class: 114
-      Script: {instanceID: 15632}
+      Script: {instanceID: 15612}
     - Class: 114
-      Script: {instanceID: 15644}
+      Script: {instanceID: 15634}
     - Class: 114
-      Script: {instanceID: 15672}
+      Script: {instanceID: 15646}
     - Class: 114
-      Script: {instanceID: 15714}
+      Script: {instanceID: 15674}
     - Class: 114
-      Script: {instanceID: 15764}
+      Script: {instanceID: 15716}
+    - Class: 114
+      Script: {instanceID: 15766}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -649,15 +658,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 15050}
     - Class: 114
-      Script: {instanceID: 15188}
+      Script: {instanceID: 15190}
     - Class: 114
-      Script: {instanceID: 15610}
+      Script: {instanceID: 15612}
     - Class: 114
-      Script: {instanceID: 15644}
+      Script: {instanceID: 15646}
     - Class: 114
-      Script: {instanceID: 15696}
+      Script: {instanceID: 15698}
     - Class: 114
-      Script: {instanceID: 15714}
+      Script: {instanceID: 15716}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -765,13 +774,13 @@ ScriptsOnlyBuild:
     className: PlayerQuitHandler
   - hash:
       serializedVersion: 2
-      Hash: 3cb3c66dfe67e3dbde033c51b480738d
+      Hash: 1bde1587cbb9c62a5f065a78dd711c16
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SongSelectUIManager
   - hash:
       serializedVersion: 2
-      Hash: 06b2a3a316f996e0a618d420b2a1a033
+      Hash: c711a4458b5334c0169bd354cf3ac87d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ResultUIManager
@@ -1215,7 +1224,7 @@ ScriptsOnlyBuild:
     className: CustomListBank
   - hash:
       serializedVersion: 2
-      Hash: ebbd192375693816c699cbbdfecbac2f
+      Hash: 9614f974c37e6fc348ca4ed3a85de728
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSGameManager
@@ -1605,6 +1614,12 @@ ScriptsOnlyBuild:
     className: PlatformWindows
   - hash:
       serializedVersion: 2
+      Hash: c03fe97753b1a03e3e95c55e11046cd5
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: SongInfoObject
+  - hash:
+      serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -1749,7 +1764,7 @@ ScriptsOnlyBuild:
     className: StudioBankLoader
   - hash:
       serializedVersion: 2
-      Hash: efe0395611db51affaef682d416e96a7
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ScrollIndexCallback1

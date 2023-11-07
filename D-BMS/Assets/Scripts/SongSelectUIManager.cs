@@ -31,9 +31,7 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI scoreText;
     [SerializeField]
-    private Image rankImage;
-    [SerializeField]
-    private Sprite[] rankImageArray;
+    private RawImage rankImage;
     [SerializeField]
     private RawImage stageImage;
     [SerializeField]
@@ -638,7 +636,7 @@ public class SongSelectUIManager : MonoBehaviour
         accuracyText.text = ((float)resultData.accuracy).ToString("P");
         maxComboText.text = resultData.maxCombo.ToString();
         scoreText.text = ((int)((float)resultData.score)).ToString();
-        rankImage.sprite = rankImageArray[resultData.rankIndex];
+        rankImage.texture = RankImageManager.rankImageArray[resultData.rankIndex];
     }
 
     private void SongRandomSelect()
