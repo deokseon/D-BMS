@@ -105,10 +105,12 @@ public class SoundManager : MonoBehaviour
         bgmChannel.setPaused(false);
     }
 
-    public bool IsPlayingAudio()
+    public bool IsPlayingAudio(float time)
     {
         int count;
         channelGroup.getNumChannels(out count);
+
+        if (time >= 15.0f && count == 1) count = 0;
 
         return count > 0 ? true : false;
     }

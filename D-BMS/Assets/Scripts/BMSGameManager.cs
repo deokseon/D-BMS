@@ -943,7 +943,8 @@ public class BMSGameManager : MonoBehaviour
 
         if (isClear)
         {
-            while (soundManager.IsPlayingAudio())
+            float checkTime = 0.0f;
+            while (soundManager.IsPlayingAudio(checkTime += Time.deltaTime))
             {
                 yield return null;
             }
