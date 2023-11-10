@@ -53,7 +53,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cd7ec5b1bc9552746bf1d4beebae392f, type: 3}
   - {fileID: 21300000, guid: 9670a5423f2b5a84dbd8c62642c571bd, type: 3}
   - {fileID: 21300000, guid: 9589f6429d8c60540ba4b31da9115666, type: 3}
-  - {fileID: 21300000, guid: aeaa770380e7a084d82bd065d4cc7044, type: 3}
   - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
   - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
@@ -76,7 +75,6 @@ SpriteAtlas:
   - NoChange
   - return
   - favorite_0
-  - circle_mask
   - StageImageFrame
   - ToggleFrame
   - background
