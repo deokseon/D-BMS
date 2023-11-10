@@ -64,3 +64,13 @@ Copyright (c) 2020 Da Viking Code
 [Show License](https://github.com/DaVikingCode/UnityRuntimeSpriteSheetsGenerator/blob/master/LICENSE.txt)
 
 MIT License
+<br/><br/>
+### circle_mask_shader
+
+Copyright (c) 2019 Takuma Maruyama
+
+[Homepage](https://github.com/umm/circle_mask_shader)
+
+[Show License](https://github.com/umm/circle_mask_shader/blob/master/LICENSE.txt)
+
+MIT License
