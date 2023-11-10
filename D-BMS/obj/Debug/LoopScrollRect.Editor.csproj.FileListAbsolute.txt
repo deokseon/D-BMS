@@ -271,3 +271,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Editor.csproj.CoreCompi
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Editor.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Editor.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Editor.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml

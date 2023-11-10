@@ -26,7 +26,7 @@ public class BMSDrawer : MonoBehaviour
                 note.transform.localPosition = new Vector3(xPosition[i], (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
 
                 pattern.normalNote[i][j].model = note;
-                pattern.normalNote[i][j].modelTransform = note.transform;
+                pattern.normalNote[i][j].modelTransform = note.GetComponent<Transform>();
             }
 
             for (int j = pattern.longNote[i].Count - 1; j >= 0; j -= 3)
@@ -40,7 +40,7 @@ public class BMSDrawer : MonoBehaviour
                     tempLongNote.SetActive(true);
                     float yPos = (k == 2 ? (float)pattern.longNote[i][j].beat : (float)pattern.longNote[i][j - ((k + 2) % 3)].beat) * speed;
                     pattern.longNote[i][j - ((k + 2) % 3)].model = tempLongNote;
-                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform = tempLongNote.transform;
+                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform = tempLongNote.GetComponent<Transform>();
                     if (k == 2)
                     {
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
@@ -58,7 +58,7 @@ public class BMSDrawer : MonoBehaviour
             if(i < 0) { break; }
             Note bar = pattern.barLine.noteList[i];
             bar.model = ObjectPool.poolInstance.GetBarInPool();
-            bar.modelTransform = bar.model.transform;
+            bar.modelTransform = bar.model.GetComponent<Transform>();
             bar.model.SetActive(true);
             bar.model.transform.localPosition = new Vector3(xPosition[2], (float)(bar.beat * speed), 0.0f);
         }

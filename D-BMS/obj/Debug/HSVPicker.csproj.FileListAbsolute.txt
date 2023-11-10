@@ -267,3 +267,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.csproj.CoreCompileInputs.cac
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml

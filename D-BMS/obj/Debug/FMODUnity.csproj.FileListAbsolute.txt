@@ -267,3 +267,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnity.csproj.CoreCompileInputs.cac
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnity.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnity.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnity.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml

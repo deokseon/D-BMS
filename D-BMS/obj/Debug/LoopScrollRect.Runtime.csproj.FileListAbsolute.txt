@@ -265,3 +265,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Runtime.csproj.CoreComp
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Runtime.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Runtime.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\LoopScrollRect.Runtime.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml

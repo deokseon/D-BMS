@@ -273,3 +273,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.Editors.csproj.CoreCompileIn
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.Editors.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.Editors.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\HSVPicker.Editors.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml

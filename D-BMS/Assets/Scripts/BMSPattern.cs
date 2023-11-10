@@ -9,7 +9,7 @@ public class BMSPattern
     public List<Note> bgSounds { get; set; }
     public List<BPM> bpms { get; set; }
     public Dictionary<int, double> beatCTable { get; set; }
-    public Dictionary<string, string> bgVideoTable { get; set; }
+    public Dictionary<int, string> bgVideoTable { get; set; }
     public Line[] lines { get; set; }
     public Line barLine { get; set; }  // 마디선 리스트
     public List<Note>[] longNote { get; set; }
@@ -20,7 +20,7 @@ public class BMSPattern
         bgSounds = new List<Note>(5000);
         bpms = new List<BPM>(50);
         beatCTable = new Dictionary<int, double>(100);
-        bgVideoTable = new Dictionary<string, string>(5);
+        bgVideoTable = new Dictionary<int, string>(5);
         bgaChanges = new List<BGChange>(1000);
         lines = new Line[5];
         for (int i = 0; i < 5; i++) { lines[i] = new Line(); }
@@ -32,7 +32,7 @@ public class BMSPattern
         for (int i = 0; i < 5; i++) { normalNote[i] = new List<Note>(1000); }
     }
 
-    public void AddBGAChange(int bar, double beat, double beatLength, string key, bool isPic = false)
+    public void AddBGAChange(int bar, double beat, double beatLength, int key, bool isPic = false)
         => bgaChanges.Add(new BGChange(bar, key, beat, beatLength, isPic));
 
     public void AddNote(int line, int bar, double beat, double beatLength, int keySound, int extra)
@@ -106,6 +106,19 @@ public class BMSPattern
             for (int j = lines[i].noteList.Count - 1; j >= 0; j--)
             {
                 lines[i].noteList[j].timing *= 10000000.0d;
+                if (lines[i].noteList[j].extra == 0)
+                {
+                    lines[i].noteList[j].failTiming = lines[i].noteList[j].timing + 1750000.0d;
+                    lines[i].noteList[j].tickTiming = 20000000000.0d;
+                }
+                else
+                {
+                    lines[i].noteList[j].failTiming = 20000000000.0d;
+                    lines[i].noteList[j].tickTiming = lines[i].noteList[j].timing;
+                    lines[i].noteList[j].timing = 20000000000.0d;
+                }
+                //lines[i].noteList[j].failTiming = lines[i].noteList[j].extra == 0 ? lines[i].noteList[j].timing + 1750000.0d : 20000000000.0d;
+                //lines[i].noteList[j].tickTiming = lines[i].noteList[j].extra == 2 ? lines[i].noteList[j].timing : 20000000000.0d;
             }
         }
         NoteDivideSave();

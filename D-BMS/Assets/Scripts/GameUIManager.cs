@@ -10,12 +10,13 @@ using System.IO;
 
 public class GameUIManager : MonoBehaviour
 {
-    public int isPrepared { get; set; } = 0;
+    [HideInInspector] public int isPrepared { get; set; } = 0;
     public static bool isCreateReady = false;
     public RawImage bga;
     public Image bgaOpacity;
-    public Dictionary<string, string> bgImageTable { get; set; }
-    private Dictionary<string, Texture2D> bgSprites;
+    [HideInInspector] public int bgSpriteArrayLength;
+    public Dictionary<int, string> bgImageTable { get; set; }
+    private Texture2D[] bgSpriteArray;
 
     private BMSDrawer bmsDrawer = null;
     private BMSGameManager bmsGameManager = null;
@@ -55,7 +56,7 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private SpriteRenderer[] noteBombArray;
-    private List<Sprite>[] noteBombSpriteList;
+    private Sprite[][] noteBombSpriteArray;
     private int[] noteBombState;
     private int[] noteBombAnimationIndex;
     private int[] noteBombSpriteArrayLength;
@@ -121,8 +122,7 @@ public class GameUIManager : MonoBehaviour
         bmsDrawer = FindObjectOfType<BMSDrawer>();
 
         loader = new BMPLoader();
-        bgImageTable = new Dictionary<string, string>(500);
-        bgSprites = new Dictionary<string, Texture2D>(500);
+        bgImageTable = new Dictionary<int, string>(500);
     }
 
     private void SpriteSetting()
@@ -344,18 +344,8 @@ public class GameUIManager : MonoBehaviour
 
     private void SetNoteBomb()
     {
-        noteBombSpriteList = new List<Sprite>[2];
-        noteBombSpriteArrayLength = new int[2];
-        for (int i = 0; i < 2; i++)
-        {
-            Sprite[] noteBombSpriteArray = assetPacker.GetSprites(i == 0 ? "notebombN-" : "notebombL-");
-            noteBombSpriteArrayLength[i] = noteBombSpriteArray.Length;
-            noteBombSpriteList[i] = new List<Sprite>(noteBombSpriteArrayLength[i]);
-            for (int j = 0; j < noteBombSpriteArrayLength[i]; j++)
-            {
-                noteBombSpriteList[i].Add(noteBombSpriteArray[j]);
-            }
-        }
+        noteBombSpriteArray = new Sprite[2][] { assetPacker.GetSprites("notebombN-"), assetPacker.GetSprites("notebombL-") };
+        noteBombSpriteArrayLength = new int[2] { noteBombSpriteArray[0].Length, noteBombSpriteArray[1].Length };
 
         noteBombState = new int[5] { 0, 0, 0, 0, 0 };
         noteBombAnimationIndex = new int[5];
@@ -456,7 +446,8 @@ public class GameUIManager : MonoBehaviour
 
     private IEnumerator CLoadImages()
     {
-        foreach (KeyValuePair<string, string> p in bgImageTable)
+        bgSpriteArray = new Texture2D[bgSpriteArrayLength + 1];
+        foreach (KeyValuePair<int, string> p in bgImageTable)
         {
             string path = @"file:\\" + BMSGameManager.header.musicFolderPath + p.Value;
 
@@ -476,19 +467,15 @@ public class GameUIManager : MonoBehaviour
 
                 texture2D = (uwr.downloadHandler as DownloadHandlerTexture).texture;
             }
-
-            bgSprites.Add(p.Key, texture2D);
+            bgSpriteArray[p.Key] = texture2D;
             BMSGameManager.currentLoading++;
         }
         isPrepared++;
     }
 
-    public void ChangeBGA(string key)
+    public void ChangeBGA(int key)
     {
-        if (bgSprites.ContainsKey(key))
-        {
-            bga.texture = bgSprites[key];
-        }
+        bga.texture = bgSpriteArray[key];
     }
 
     public void KeyInputImageSetActive(bool active, int index)
@@ -571,7 +558,7 @@ public class GameUIManager : MonoBehaviour
             yield return noteBombWaitUntilArray[line];
             while (noteBombAnimationIndex[line] < noteBombSpriteArrayLength[noteBombState[line]])
             {
-                noteBombArray[line].sprite = noteBombSpriteList[noteBombState[line]][noteBombAnimationIndex[line]++];
+                noteBombArray[line].sprite = noteBombSpriteArray[noteBombState[line]][noteBombAnimationIndex[line]++];
                 yield return noteBombWaitSecondsArray[line];
             }
             noteBombArray[line].sprite = null;

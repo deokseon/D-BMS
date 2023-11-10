@@ -326,3 +326,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\UnityEngine.TestRunner.pdb
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\Assembly-CSharp.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\Assembly-CSharp.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml

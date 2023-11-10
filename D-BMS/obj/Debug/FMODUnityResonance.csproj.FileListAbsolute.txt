@@ -268,3 +268,6 @@ C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnityResonance.csproj.CoreCompileI
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnityResonance.csproj.CopyComplete
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnityResonance.dll
 C:\Users\user\D-BMS\D-BMS\D-BMS\obj\Debug\FMODUnityResonance.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\user\D-BMS\D-BMS\D-BMS\Temp\bin\Debug\Newtonsoft.Json.xml
