@@ -280,7 +280,7 @@ public class BMSParser : MonoBehaviour
                         if (bpm != 0) { pattern.AddBPM(bar, (k - 7) / 2, beatLength, bpm); }
                     }
                 }
-                else if (bmsFile[i][5] == '4' || bmsFile[i][5] == '7')
+                else if (bmsFile[i][5] == '4')
                 {
                     beatLength = (bmsFile[i].Length - 7) / 2;
                     int iLen = bmsFile[i].Length - 1;
@@ -297,6 +297,28 @@ public class BMSParser : MonoBehaviour
                             else
                             {
                                 pattern.AddBGAChange(bar, (k - 7) / 2, beatLength, key, true);
+                            }
+                        }
+                    }
+                }
+                else if (bmsFile[i][5] == '7')
+                {
+                    beatLength = (bmsFile[i].Length - 7) / 2;
+                    int iLen = bmsFile[i].Length - 1;
+                    for (int k = 7; k < iLen; k += 2)
+                    {
+                        int key = Decode36(bmsFile[i].Substring(k, 2));
+                        gameUIManager.bgSpriteArrayLength = gameUIManager.bgSpriteArrayLength > key ? gameUIManager.bgSpriteArrayLength : key;
+                        if (key != 0)
+                        {
+                            if (pattern.bgVideoTable.ContainsKey(key))
+                            {
+                                pattern.AddBGAChange(bar, (k - 7) / 2, beatLength, key);
+                            }
+                            else
+                            {
+                                gameUIManager.layerImageSet.Add(key);
+                                pattern.AddLayerChange(bar, (k - 7) / 2, beatLength, key, true);
                             }
                         }
                     }

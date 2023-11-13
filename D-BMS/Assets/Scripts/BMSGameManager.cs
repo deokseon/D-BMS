@@ -89,6 +89,7 @@ public class BMSGameManager : MonoBehaviour
 
     [HideInInspector] public float[] xPosition;
     private int bgaChangeArrayCount;
+    private int layerChangeArrayCount;
     private int bgSoundArrayCount;
     private int bpmArrayCount;
     private int[] noteArrayCount = new int[5];
@@ -96,6 +97,7 @@ public class BMSGameManager : MonoBehaviour
     private int[] normalNoteArrayCount = new int[5];
     private int barArrayCount;
     private BGChange[] bgaChangeArray;
+    private BGChange[] layerChangeArray;
     private Note[] bgSoundArray;
     private BPM[] bpmArray;
     private Note[][] noteArray = new Note[5][];
@@ -160,9 +162,7 @@ public class BMSGameManager : MonoBehaviour
         soundManager.AudioPause(false);
         bgmThread = new Thread(BGMPlayThread);
 
-        gameUIManager.bga.color = new Color(0, 0, 0, 0);
         gameUIManager.bgaOpacity.color = new Color(0, 0, 0, 0);
-        gameUIManager.bga.texture = null;
 
         ObjectPool.poolInstance.Init();
 
@@ -172,6 +172,7 @@ public class BMSGameManager : MonoBehaviour
         pattern.GetBeatsAndTimings();
 
         bgaChangeArray = pattern.bgaChanges.ToArray();
+        layerChangeArray = pattern.layerChanges.ToArray();
         bgSoundArray = pattern.bgSounds.ToArray();
         bpmArray = pattern.bpms.ToArray();
         for (int i = 0; i < 5; i++) 
@@ -187,6 +188,7 @@ public class BMSGameManager : MonoBehaviour
         barArray = pattern.barLine.noteList.ToArray();
 
         bgaChangeArrayCount = bgaChangeArray.Length - 1;
+        layerChangeArrayCount = layerChangeArray.Length - 1;
         bgSoundArrayCount = bgSoundArray.Length - 1;
         bpmArrayCount = bpmArray.Length;
         barArrayCount = barArray.Length - 1;
@@ -259,19 +261,27 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++) { if (noteArrayCount[i] >= 0) { currentNote[i] = noteArray[i][noteArrayCount[i]].keySound; } }
 
-        gameUIManager.bga.texture = videoPlayer.texture;
+        if (bgaChangeArrayCount + layerChangeArrayCount == -2)
+        {
+            gameUIManager.bgaOpacity.color = Color.black;
+        }
+        else
+        {
+            gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
+        }
         if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageTable.Count == 0) && !isBGAVideoSupported)) 
         {
-            gameUIManager.bga.color = Color.black;
             bgaChangeArray = new BGChange[1] { new BGChange(0, 0, 0, 0, true) };
             bgaChangeArrayCount = 0;
             bgaChangeArray[0].timing = 20000000000.0d;
         }
-        else 
-        { 
-            gameUIManager.bga.color = Color.white;
-            gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
+        if (layerChangeArrayCount == -1)
+        {
+            layerChangeArray = new BGChange[1] { new BGChange(0, 0, 0, 0, true) };
+            layerChangeArrayCount = 0;
+            layerChangeArray[0].timing = 20000000000.0d;
         }
+
 
         for (int i = 0; i < 5; i++)
         {
@@ -328,6 +338,7 @@ public class BMSGameManager : MonoBehaviour
             videoPlayer.Prepare();
             yield return new WaitUntil(() => videoPlayer.isPrepared);
         }
+        gameUIManager.InitBGALayer();
         ReturnAllNotes();
 
         isClear = false;
@@ -424,7 +435,8 @@ public class BMSGameManager : MonoBehaviour
         while (bgaChangeArray[bgaChangeArrayCount].timing <= currentTime)
         {
             if (isBGAVideoSupported && !bgaChangeArray[bgaChangeArrayCount].isPic) 
-            { 
+            {
+                gameUIManager.bga.texture = videoPlayer.texture;
                 videoPlayer.Play();
             }
             else 
@@ -438,6 +450,19 @@ public class BMSGameManager : MonoBehaviour
             else
             {
                 bgaChangeArray[bgaChangeArrayCount].timing = 20000000000.0d;
+            }
+        }
+
+        while (layerChangeArray[layerChangeArrayCount].timing <= currentTime)
+        {
+            gameUIManager.ChangeLayer(layerChangeArray[layerChangeArrayCount].key);
+            if (layerChangeArrayCount > 0)
+            {
+                layerChangeArrayCount--;
+            }
+            else
+            {
+                layerChangeArray[layerChangeArrayCount].timing = 20000000000.0d;
             }
         }
 

@@ -6,6 +6,7 @@ public class BMSPattern
     public int noteCount = 0;
     public int barCount { get; set; } = 0;
     public List<BGChange> bgaChanges { get; set; }
+    public List<BGChange> layerChanges { get; set; }
     public List<Note> bgSounds { get; set; }
     public List<BPM> bpms { get; set; }
     public Dictionary<int, double> beatCTable { get; set; }
@@ -22,6 +23,7 @@ public class BMSPattern
         beatCTable = new Dictionary<int, double>(100);
         bgVideoTable = new Dictionary<int, string>(5);
         bgaChanges = new List<BGChange>(1000);
+        layerChanges = new List<BGChange>(1000);
         lines = new Line[5];
         for (int i = 0; i < 5; i++) { lines[i] = new Line(); }
 
@@ -34,6 +36,9 @@ public class BMSPattern
 
     public void AddBGAChange(int bar, double beat, double beatLength, int key, bool isPic = false)
         => bgaChanges.Add(new BGChange(bar, key, beat, beatLength, isPic));
+
+    public void AddLayerChange(int bar, double beat, double beatLength, int key, bool isPic = false)
+        => layerChanges.Add(new BGChange(bar, key, beat, beatLength, isPic));
 
     public void AddNote(int line, int bar, double beat, double beatLength, int keySound, int extra)
     {
@@ -94,6 +99,13 @@ public class BMSPattern
                 bgaChanges[i].timing -= 0.4d;
             }
         }
+
+        for (int i = 0; i < layerChanges.Count; i++)
+        {
+            layerChanges[i].CalculateBeat(GetPreviousBarBeatSum(layerChanges[i].bar), GetBeatC(layerChanges[i].bar));
+            layerChanges[i].timing = GetTimingInSecond(layerChanges[i]);
+        }
+        layerChanges.Sort();
 
         // GET BGSOUND
         CalculateTimingsInListExtension(bgSounds);

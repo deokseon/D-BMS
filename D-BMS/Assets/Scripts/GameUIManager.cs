@@ -13,8 +13,12 @@ public class GameUIManager : MonoBehaviour
     [HideInInspector] public int isPrepared { get; set; } = 0;
     public static bool isCreateReady = false;
     public RawImage bga;
+    public RawImage layer;
     public Image bgaOpacity;
+    [SerializeField]
+    private Texture2D transparentTexture;
     [HideInInspector] public int bgSpriteArrayLength;
+    public HashSet<int> layerImageSet { get; set; }
     public Dictionary<int, string> bgImageTable { get; set; }
     private Texture2D[] bgSpriteArray;
 
@@ -123,6 +127,7 @@ public class GameUIManager : MonoBehaviour
 
         loader = new BMPLoader();
         bgImageTable = new Dictionary<int, string>(500);
+        layerImageSet = new HashSet<int>();
     }
 
     private void SpriteSetting()
@@ -189,6 +194,10 @@ public class GameUIManager : MonoBehaviour
         bga.rectTransform.localPosition = new Vector3(config.bgaPositionX, config.bgaPositionY);
         bga.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, config.bgaHeight);
         bga.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, config.bgaWidth);
+
+        layer.rectTransform.localPosition = new Vector3(config.bgaPositionX, config.bgaPositionY);
+        layer.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, config.bgaHeight);
+        layer.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, config.bgaWidth);
 
         bgaOpacity.rectTransform.localPosition = new Vector3(config.bgaPositionX, config.bgaPositionY);
         bgaOpacity.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, config.bgaHeight);
@@ -467,8 +476,25 @@ public class GameUIManager : MonoBehaviour
 
                 texture2D = (uwr.downloadHandler as DownloadHandlerTexture).texture;
             }
+
+            if (layerImageSet.Contains(p.Key))
+            {
+                var colors = texture2D.GetPixels32();
+
+                for (int i = colors.Length - 1; i >= 0; i--)
+                {
+                    if (colors[i].a != 0 && colors[i].r + colors[i].g + colors[i].b == 0) colors[i].a = 0;
+                }
+
+                texture2D.SetPixels32(colors);
+                texture2D.Apply();
+            }
             bgSpriteArray[p.Key] = texture2D;
             BMSGameManager.currentLoading++;
+        }
+        for (int i = 0; i < bgSpriteArray.Length; i++)
+        {
+            if (bgSpriteArray[i] == null) bgSpriteArray[i] = transparentTexture;
         }
         isPrepared++;
     }
@@ -476,6 +502,17 @@ public class GameUIManager : MonoBehaviour
     public void ChangeBGA(int key)
     {
         bga.texture = bgSpriteArray[key];
+    }
+
+    public void ChangeLayer(int key)
+    {
+        layer.texture = bgSpriteArray[key];
+    }
+
+    public void InitBGALayer()
+    {
+        bga.texture = transparentTexture;
+        layer.texture = transparentTexture;
     }
 
     public void KeyInputImageSetActive(bool active, int index)
