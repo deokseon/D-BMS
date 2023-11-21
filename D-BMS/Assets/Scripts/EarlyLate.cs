@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -45,40 +46,50 @@ public class EarlyLate : MonoBehaviour
             }
             bmsResult = BMSGameManager.bmsResult;
 
-            StartCoroutine(CheckEarlyLate());
+            _ = CheckEarlyLate(0);
+            _ = CheckEarlyLate(1);
+            _ = CheckEndInfoUpdate();
             StartCoroutine(WaitSetting());
         }
     }
 
-    private IEnumerator CheckEarlyLate()
+    private async UniTask CheckEarlyLate(int index)
     {
+        var token = this.GetCancellationTokenOnDestroy();
         while (true)
         {
-            lock (bmsGameManager.inputHandleLock)
+            lock (bmsGameManager.threadLock)
             {
-                if (bmsGameManager.fsUpdate[0])
+                if (bmsGameManager.fsUpdate[index])
                 {
-                    UpdateELText(0, bmsGameManager.fsStates[0]);
-                    bmsGameManager.fsUpdate[0] = false;
+                    UpdateELText(index, bmsGameManager.fsStates[index]);
+                    bmsGameManager.fsUpdate[index] = false;
                 }
-                if (bmsGameManager.fsUpdate[1])
-                {
-                    UpdateELText(1, bmsGameManager.fsStates[1]);
-                    bmsGameManager.fsUpdate[1] = false;
-                }
+            }
+            await UniTask.Yield(cancellationToken: token);
+        }
+    }
+
+    private async UniTask CheckEndInfoUpdate()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        while (true)
+        {
+            await UniTask.WaitUntil(() => bmsGameManager.isEndJudgeInfoUpdate != 0, cancellationToken: token);
+            lock (bmsGameManager.threadLock)
+            {
                 if (bmsGameManager.isEndJudgeInfoUpdate != 0)
                 {
                     UpdateJudgementText();
                     bmsGameManager.isEndJudgeInfoUpdate = 0;
                 }
             }
-            yield return null;
         }
     }
 
     private IEnumerator WaitSetting()
     {
-        yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
+        yield return new WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
 
         ObjectSetting();
     }

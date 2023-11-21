@@ -149,7 +149,7 @@ public class BMSParser : MonoBehaviour
                 else if ((string.Compare(extend, "bmp", true) == 0 || string.Compare(extend, "png", true) == 0 ||
                           string.Compare(extend, "jpg", true) == 0) && !isRestart)
                 {
-                    gameUIManager.bgImageTable.Add(key, path);
+                    gameUIManager.bgImageList.Add(new KeyValuePair<int, string>(key, path));
                 }
             }
             else if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 4), "#BPM", true) == 0)

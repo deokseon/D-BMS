@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class JudgementTracker : MonoBehaviour
 {
@@ -52,17 +53,18 @@ public class JudgementTracker : MonoBehaviour
             for (int i = 0; i < 100; i++) { str00to100Table[i] = i.ToString("D2"); }
             str00to100Table[100] = "100";
 
-            StartCoroutine(CheckJudgementUpdate());
+            _ = CheckJudgementUpdate();
         }
         AccuracyTextPositionSet();
         SetJudgementTrackerPosition(GameUIManager.config.judgementTrackerPositionOffsetX, GameUIManager.config.judgementTrackerPositionOffsetY);
     }
 
-    private IEnumerator CheckJudgementUpdate()
+    private async UniTask CheckJudgementUpdate()
     {
+        var token = this.GetCancellationTokenOnDestroy();
         while (true)
         {
-            lock (bmsGameManager.inputHandleLock)
+            lock (bmsGameManager.threadLock)
             {
                 if (bmsGameManager.isJudgementTrackerUpdate)
                 {
@@ -82,7 +84,7 @@ public class JudgementTracker : MonoBehaviour
                     bmsGameManager.isJudgementTrackerUpdate = false;
                 }
             }
-            yield return null;
+            await UniTask.Yield(cancellationToken: token);
         }
     }
 

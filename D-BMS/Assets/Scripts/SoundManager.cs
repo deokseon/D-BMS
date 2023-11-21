@@ -7,7 +7,7 @@ using FMODUnity;
 
 public class SoundManager : MonoBehaviour
 {
-    private readonly object threadLock = new object();
+    private BMSGameManager bmsGameManager;
     public int isPrepared;
     private const int keySoundMaxCount = 1300;
     public int threadCount;
@@ -29,8 +29,10 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
+        bmsGameManager = FindObjectOfType<BMSGameManager>();
         isPrepared = 0;
-        threadCount = Mathf.Max(SystemInfo.processorCount - 2, 1);
+        //threadCount = Mathf.Max(SystemInfo.processorCount - 2, 1);
+        threadCount = Mathf.Max((int)(SystemInfo.processorCount * 0.5f) - 2, 1);
 
         keySoundVolume = PlayerPrefs.GetFloat("KeySoundVolume") * 0.7f + 0.3f;
         bgmVolume = PlayerPrefs.GetFloat("BGMVolume") * 0.7f + 0.3f;
@@ -72,12 +74,12 @@ public class SoundManager : MonoBehaviour
                     keySoundArray[pathes[i].Key] = keySound;
                     break;
                 }
-                lock (threadLock)
+                lock (bmsGameManager.threadLock)
                 {
                     BMSGameManager.currentLoading++;
                 }
             }
-            lock (threadLock)
+            lock (bmsGameManager.threadLock)
             {
                 isPrepared++;
             }

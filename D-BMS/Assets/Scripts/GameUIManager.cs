@@ -7,6 +7,9 @@ using TMPro;
 using B83.Image.BMP;
 using DaVikingCode.AssetPacker;
 using System.IO;
+using Cysharp.Threading.Tasks;
+using System;
+using System.Threading;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -19,8 +22,9 @@ public class GameUIManager : MonoBehaviour
     private Texture2D transparentTexture;
     [HideInInspector] public int bgSpriteArrayLength;
     public HashSet<int> layerImageSet { get; set; }
-    public Dictionary<int, string> bgImageTable { get; set; }
+    public List<KeyValuePair<int, string>> bgImageList;
     private Texture2D[] bgSpriteArray;
+    [HideInInspector] public int taskCount;
 
     private BMSDrawer bmsDrawer = null;
     private BMSGameManager bmsGameManager = null;
@@ -58,14 +62,14 @@ public class GameUIManager : MonoBehaviour
     private Sprite[] keyInitImage;
     private Sprite[] keyPressedImage;
 
+    private TimeSpan effectWaitSecond = TimeSpan.FromSeconds(1.0d / 60.0d);
+
     [SerializeField]
     private SpriteRenderer[] noteBombArray;
     private Sprite[][] noteBombSpriteArray;
     private int[] noteBombState;
     private int[] noteBombAnimationIndex;
     private int[] noteBombSpriteArrayLength;
-    private WaitUntil[] noteBombWaitUntilArray;
-    private WaitForSeconds[] noteBombWaitSecondsArray;
 
     [SerializeField]
     private Animator judgeEffectAnimator;
@@ -74,8 +78,6 @@ public class GameUIManager : MonoBehaviour
     private Sprite[,] judgeSpriteArray;
     private int currentJudge;
     private int judgeEffectIndex; 
-    private WaitUntil judgeEffectWaitUntil;
-    private WaitForSeconds judgeEffectWaitSeconds;
 
     [SerializeField]
     private GameObject infoPanel;
@@ -126,8 +128,9 @@ public class GameUIManager : MonoBehaviour
         bmsDrawer = FindObjectOfType<BMSDrawer>();
 
         loader = new BMPLoader();
-        bgImageTable = new Dictionary<int, string>(500);
+        bgImageList = new List<KeyValuePair<int, string>>(500);
         layerImageSet = new HashSet<int>();
+        taskCount = Mathf.Max((int)(SystemInfo.processorCount * 0.5f) - 2, 1);
     }
 
     private void SpriteSetting()
@@ -137,6 +140,7 @@ public class GameUIManager : MonoBehaviour
 
     private IEnumerator CoSpriteSetting()
     {
+        ObjectPool.poolInstance.SetComponent();
         ObjectPool.poolInstance.SetVerticalLineSprite();
         ObjectPool.poolInstance.SetNoteSprite();
         ObjectPool.poolInstance.SetVerticalLine();
@@ -239,9 +243,7 @@ public class GameUIManager : MonoBehaviour
     private void NoteBombAnimationSet(int line)
     {
         noteBombAnimationIndex[line] = noteBombSpriteArrayLength[0];
-        noteBombWaitUntilArray[line] = new WaitUntil(() => noteBombAnimationIndex[line] == 0);
-        noteBombWaitSecondsArray[line] = new WaitForSeconds(1.0f / 60.0f);
-        StartCoroutine(NoteBombEffect(line));
+        _ = NoteBombEffect(line);
     }
 
     public void SetGamePanel()
@@ -339,9 +341,7 @@ public class GameUIManager : MonoBehaviour
         }
         currentJudge = -1;
         judgeEffectIndex = 15;
-        judgeEffectWaitUntil = new WaitUntil(() => judgeEffectIndex == 0);
-        judgeEffectWaitSeconds = new WaitForSeconds(1.0f / 30.0f);
-        StartCoroutine(JudgeEffect());
+        _ = JudgeEffect();
 
         SetJudgePosition();
     }
@@ -358,8 +358,6 @@ public class GameUIManager : MonoBehaviour
 
         noteBombState = new int[5] { 0, 0, 0, 0, 0 };
         noteBombAnimationIndex = new int[5];
-        noteBombWaitUntilArray = new WaitUntil[5];
-        noteBombWaitSecondsArray = new WaitForSeconds[5];
         for (int i = 0; i < 5; i++)
         {
             NoteBombAnimationSet(i);
@@ -450,53 +448,65 @@ public class GameUIManager : MonoBehaviour
 
     public void LoadImages()
     {
-        StartCoroutine(CLoadImages());
+        bgSpriteArray = new Texture2D[bgSpriteArrayLength + 1];
+        for (int i = 0; i < taskCount; i++)
+        {
+            _ = LoadImageTask(i);
+        }
     }
 
-    private IEnumerator CLoadImages()
+    private async UniTask LoadImageTask(int value)
     {
-        bgSpriteArray = new Texture2D[bgSpriteArrayLength + 1];
-        foreach (KeyValuePair<int, string> p in bgImageTable)
+        var token = this.GetCancellationTokenOnDestroy();
+        int start = (int)(value / (double)taskCount * bgImageList.Count);
+        int end = (int)((value + 1) / (double)taskCount * bgImageList.Count);
+        for (int i = start; i < end; i++)
         {
-            string path = @"file:\\" + BMSGameManager.header.musicFolderPath + p.Value;
+            string path = @"file:\\" + BMSGameManager.header.musicFolderPath + bgImageList[i].Value;
 
             Texture2D texture2D = null;
-            if (path.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
+            if (path.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
             {
-                UnityWebRequest uwr = UnityWebRequest.Get(path);
-                yield return uwr.SendWebRequest();
-
-                texture2D = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+                var uwr = await UnityWebRequest.Get(path).SendWebRequest().WithCancellation(cancellationToken: token);
+                var uwrData = uwr.downloadHandler.data;
+                var bmpImage = await UniTask.RunOnThreadPool(() => loader.LoadBMP(uwrData));
+                texture2D = bmpImage.ToTexture2D();
             }
-            else if (path.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
-                     path.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+            else if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                     path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
             {
-                UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(path);
-                yield return uwr.SendWebRequest();
+                var uwr = await UnityWebRequestTexture.GetTexture(path).SendWebRequest().WithCancellation(cancellationToken: token);
 
-                texture2D = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+                texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
             }
 
-            if (layerImageSet.Contains(p.Key))
+            if (layerImageSet.Contains(bgImageList[i].Key))
             {
                 var colors = texture2D.GetPixels32();
 
-                for (int i = colors.Length - 1; i >= 0; i--)
+                for (int k = colors.Length - 1; k >= 0; k--)
                 {
-                    if (colors[i].a != 0 && colors[i].r + colors[i].g + colors[i].b == 0) colors[i].a = 0;
+                    if (colors[k].a != 0 && colors[k].r + colors[k].g + colors[k].b == 0) colors[k].a = 0;
                 }
 
                 texture2D.SetPixels32(colors);
                 texture2D.Apply();
             }
-            bgSpriteArray[p.Key] = texture2D;
-            BMSGameManager.currentLoading++;
+            bgSpriteArray[bgImageList[i].Key] = texture2D;
+            lock (bmsGameManager.threadLock)
+            {
+                BMSGameManager.currentLoading++;
+            }
         }
+        isPrepared++;
+    }
+
+    public void SetNullBGArray()
+    {
         for (int i = 0; i < bgSpriteArray.Length; i++)
         {
             if (bgSpriteArray[i] == null) bgSpriteArray[i] = transparentTexture;
         }
-        isPrepared++;
     }
 
     public void ChangeBGA(int key)
@@ -588,31 +598,33 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    private IEnumerator NoteBombEffect(int line)
+    private async UniTask NoteBombEffect(int line)
     {
+        var token = this.GetCancellationTokenOnDestroy();
         while (true)
         {
-            yield return noteBombWaitUntilArray[line];
             while (noteBombAnimationIndex[line] < noteBombSpriteArrayLength[noteBombState[line]])
             {
                 noteBombArray[line].sprite = noteBombSpriteArray[noteBombState[line]][noteBombAnimationIndex[line]++];
-                yield return noteBombWaitSecondsArray[line];
+                await UniTask.Delay(effectWaitSecond, cancellationToken: token);
             }
             noteBombArray[line].sprite = null;
+            await UniTask.Yield(cancellationToken: token);
         }
     }
 
-    private IEnumerator JudgeEffect()
+    private async UniTask JudgeEffect()
     {
+        var token = this.GetCancellationTokenOnDestroy();
         while (true)
         {
-            yield return judgeEffectWaitUntil;
             while (judgeEffectIndex < 15)
             {
                 judgeSpriteRenderer.sprite = judgeSpriteArray[currentJudge, judgeEffectIndex++];
-                yield return judgeEffectWaitSeconds;
+                await UniTask.Delay(effectWaitSecond, cancellationToken: token);
             }
             judgeSpriteRenderer.sprite = null;
+            await UniTask.Yield(cancellationToken: token);
         }
     }
 
@@ -781,5 +793,22 @@ public class GameUIManager : MonoBehaviour
     public void AnimationPause(bool isPause)
     {
         Time.timeScale = isPause ? 0.0f : 1.0f;
+    }
+
+    public void BGATextureDestroy()
+    {
+        bga.texture = null;
+        layer.texture = null;
+        for (int i = 0; i < bgSpriteArray.Length; i++)
+        {
+            if (bgSpriteArray[i] == transparentTexture) continue;
+            Destroy(bgSpriteArray[i]);
+        }
+    }
+
+    public void SkinTextureDestroy()
+    {
+        ObjectPool.poolInstance.NoteSpriteEmpty();
+        assetPacker.Dispose();
     }
 }

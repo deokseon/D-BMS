@@ -1,4 +1,5 @@
-﻿using DaVikingCode.RectanglePacking;
+﻿using Cysharp.Threading.Tasks;
+using DaVikingCode.RectanglePacking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace DaVikingCode.AssetPacker {
 		public int cacheVersion = 1;
 		public bool deletePreviousCacheVersion = true;
 
-		protected Dictionary<string, Sprite> mSprites = new Dictionary<string, Sprite>();
+		protected Dictionary<string, Sprite> mSprites;
 		protected List<TextureToPack>[] itemsToRaster;
 
 		private int currentIndex = 0;
@@ -31,9 +32,11 @@ namespace DaVikingCode.AssetPacker {
 			itemsToRaster = new List<TextureToPack>[2];
 			for (int i = 0;i < 2; i++)
             {
-				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 11 : 63);
+				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 15 : 66);
             }
-        }
+			mSprites = new Dictionary<string, Sprite>(81);
+
+		}
 
 		public void AddTextureToPack(string file, string customID = null) {
 
@@ -78,13 +81,16 @@ namespace DaVikingCode.AssetPacker {
 					StartCoroutine(loadPack(path));
 				
 			} else*/
-			StartCoroutine(createPack(0));
-			StartCoroutine(createPack(1));
+			_ = createPack(0);
+			_ = createPack(1);
 		}
 
-		protected IEnumerator createPack(int itemIndex, string savePath = "") {
-
-			if (savePath != "") {
+		protected async UniTask createPack(int itemIndex, string savePath = "")
+        {
+			var token = this.GetCancellationTokenOnDestroy();
+			BMSGameManager bmsGameManager = FindObjectOfType<BMSGameManager>();
+			if (savePath != "")
+			{
 
 				if (deletePreviousCacheVersion && Directory.Exists(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/"))
 					foreach (string dirPath in Directory.GetDirectories(Application.persistentDataPath + "/AssetPacker/" + cacheName + "/", "*", SearchOption.AllDirectories))
@@ -96,23 +102,23 @@ namespace DaVikingCode.AssetPacker {
 			List<Texture2D> textures = new List<Texture2D>();
 			List<string> images = new List<string>();
 
-			foreach (TextureToPack itemToRaster in itemsToRaster[itemIndex]) {
+			foreach (TextureToPack itemToRaster in itemsToRaster[itemIndex])
+			{
+				var uwr = await UnityWebRequestTexture.GetTexture("file:///" + itemToRaster.file).SendWebRequest().WithCancellation(cancellationToken: token);
 
-				//WWW loader = new WWW("file:///" + itemToRaster.file);
-
-				//yield return loader;
-
-				UnityWebRequest uwr = UnityWebRequestTexture.GetTexture("file:///" + itemToRaster.file);
-
-				yield return uwr.SendWebRequest();
-
-				textures.Add((uwr.downloadHandler as DownloadHandlerTexture).texture);
+				textures.Add(((DownloadHandlerTexture)uwr.downloadHandler).texture);
 				images.Add(itemToRaster.id);
 
-				BMSGameManager.currentLoading++;
+				if (bmsGameManager != null)
+				{
+					lock (bmsGameManager.threadLock)
+					{
+						BMSGameManager.currentLoading++;
+					}
+				}
 			}
 
-			yield return new WaitUntil(() => itemIndex == 0 ? GameUIManager.isCreateReady : (currentIndex == 1));
+			await UniTask.WaitUntil(() => itemIndex == 0 ? GameUIManager.isCreateReady : (currentIndex == 1), cancellationToken: token);
 
 			int textureSize = allow4096Textures ? 4096 : 2048;
 
@@ -126,7 +132,8 @@ namespace DaVikingCode.AssetPacker {
 			const int padding = 8;
 
 			int numSpriteSheet = 0;
-			while (rectangles.Count > 0) {
+			while (rectangles.Count > 0)
+			{
 
 				Texture2D texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
 				texture.filterMode = itemIndex == 0 ? FilterMode.Point : FilterMode.Bilinear;
@@ -137,11 +144,12 @@ namespace DaVikingCode.AssetPacker {
 				RectanglePacker packer = new RectanglePacker(texture.width, texture.height, padding);
 
 				for (int i = 0; i < rectangles.Count; i++)
-					packer.insertRectangle((int) rectangles[i].width, (int) rectangles[i].height, i);
+					packer.insertRectangle((int)rectangles[i].width, (int)rectangles[i].height, i);
 
 				packer.packRectangles();
 
-				if (packer.rectangleCount > 0) {
+				if (packer.rectangleCount > 0)
+				{
 
 					texture.SetPixels32(fillColor);
 					IntegerRectangle rect = new IntegerRectangle();
@@ -151,7 +159,8 @@ namespace DaVikingCode.AssetPacker {
 					List<Texture2D> garabeTextures = new List<Texture2D>();
 					List<string> garbageImages = new List<string>();
 
-					for (int j = 0; j < packer.rectangleCount; j++) {
+					for (int j = 0; j < packer.rectangleCount; j++)
+					{
 
 						rect = packer.getRectangle(j, rect);
 
@@ -184,14 +193,16 @@ namespace DaVikingCode.AssetPacker {
 
 					texture.Apply();
 
-					if (savePath != "") {
+					if (savePath != "")
+					{
 
 						File.WriteAllBytes(savePath + "/data" + numSpriteSheet + ".png", texture.EncodeToPNG());
 						File.WriteAllText(savePath + "/data" + numSpriteSheet + ".json", JsonUtility.ToJson(new TextureAssets(textureAssets.ToArray())));
 						++numSpriteSheet;
 					}
 
-					foreach (TextureAsset textureAsset in textureAssets) {
+					foreach (TextureAsset textureAsset in textureAssets)
+					{
 						mSprites.Add(textureAsset.name, Sprite.Create(texture, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), GetSpritePivot(textureAsset.name), pixelsPerUnit, 0, SpriteMeshType.FullRect));
 					}
 				}
@@ -273,13 +284,7 @@ namespace DaVikingCode.AssetPacker {
 			mSprites.Clear();
 		}
 
-		void Destroy() {
-
-			Dispose();
-		}
-
 		public Sprite GetSprite(string id) {
-
 			Sprite sprite = null;
 
 			mSprites.TryGetValue (id, out sprite);

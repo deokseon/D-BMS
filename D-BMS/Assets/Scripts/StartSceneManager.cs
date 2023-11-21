@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
@@ -9,6 +10,8 @@ using UnityEngine.Video;
 
 public class StartSceneManager : MonoBehaviour
 {
+    private Texture bgImageTexture;
+
     [SerializeField]
     private Image fadeImage;
     [SerializeField]
@@ -42,61 +45,59 @@ public class StartSceneManager : MonoBehaviour
         string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\start-bg";
         if (File.Exists(filePath + ".jpg"))
         {
-            StartCoroutine(LoadBG(filePath + ".jpg"));
+            _ = LoadBG(filePath + ".jpg");
         }
         else if (File.Exists(filePath + ".png"))
         {
-            StartCoroutine(LoadBG(filePath + ".png"));
+            _ = LoadBG(filePath + ".png");
         }
         else if (File.Exists(filePath + ".mp4"))
         {
-            StartCoroutine(PrepareVideo(filePath + ".mp4"));
+            _ = PrepareVideo(filePath + ".mp4");
         }
         else if (File.Exists(filePath + ".avi"))
         {
-            StartCoroutine(PrepareVideo(filePath + ".avi"));
+            _ = PrepareVideo(filePath + ".avi");
         }
         else if (File.Exists(filePath + ".wmv"))
         {
-            StartCoroutine(PrepareVideo(filePath + ".wmv"));
+            _ = PrepareVideo(filePath + ".wmv");
         }
         else if (File.Exists(filePath + ".mpeg"))
         {
-            StartCoroutine(PrepareVideo(filePath + ".mpeg"));
+            _ = PrepareVideo(filePath + ".mpeg");
         }
         else if (File.Exists(filePath + ".mpg"))
         {
-            StartCoroutine(PrepareVideo(filePath + ".mpg"));
+            _ = PrepareVideo(filePath + ".mpg");
         }
     }
 
-    private IEnumerator LoadBG(string path)
+    private async UniTask LoadBG(string path)
     {
         string imagePath = $@"file:\\{path}";
 
-        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-        yield return uwr.SendWebRequest();
+        var uwr = await UnityWebRequestTexture.GetTexture(imagePath).SendWebRequest();
+        bgImageTexture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
 
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-
-        StartCoroutine(CoFadeOut());
+        _ = FadeOut();
     }
 
-
-    private IEnumerator PrepareVideo(string path)
+    private async UniTask PrepareVideo(string path)
     {
         VideoPlayer videoPlayer = GameObject.Find("VideoPlayer").GetComponent<VideoPlayer>();
         videoPlayer.url = $"file://{path}";
 
         videoPlayer.Prepare();
 
-        yield return new WaitUntil(() => videoPlayer.isPrepared);
+        await UniTask.WaitUntil(() => videoPlayer.isPrepared);
 
         GameObject.Find("Screen").GetComponent<RawImage>().texture = videoPlayer.texture;
 
         videoPlayer.Play();
 
-        StartCoroutine(CoFadeOut());
+        _ = FadeOut();
     }
 
 
@@ -202,9 +203,9 @@ public class StartSceneManager : MonoBehaviour
         Screen.fullScreenMode = (FullScreenMode)(PlayerPrefs.GetInt("DisplayMode"));
     }
 
-    private IEnumerator CoFadeOut()
+    private async UniTask FadeOut()
     {
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
@@ -242,15 +243,15 @@ public class StartSceneManager : MonoBehaviour
         if (fadeImage.IsActive()) { return; }
         if (currentIndex == 0)
         {
-            StartCoroutine(CoLoadScene(1));
+            _ = LoadScene(1);
         }
         else if (currentIndex == 1)
         {
-            StartCoroutine(CoLoadScene(4));
+            _ = LoadScene(4);
         }
         else if (currentIndex == 2)
         {
-            StartCoroutine(CoLoadScene(5));
+            _ = LoadScene(5);
         }
         else
         {
@@ -258,11 +259,21 @@ public class StartSceneManager : MonoBehaviour
         }
     }
 
-    private IEnumerator CoLoadScene(int scene)
+    private void TextureDestroy()
+    {
+        if (bgImageTexture != null)
+        {
+            Destroy(bgImageTexture);
+        }
+    }
+
+    private async UniTask LoadScene(int scene)
     {
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
+
+        TextureDestroy();
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -72,7 +73,7 @@ public class CustomManager : MonoBehaviour
         scoreGraph = FindObjectOfType<ScoreGraph>();
         judgementTracker = FindObjectOfType<JudgementTracker>();
         limitValueDict = new Dictionary<string, float>(24);
-        StartCoroutine(SliderSetting());
+        _ = SliderSetting();
     }
 
     private void Update()
@@ -80,17 +81,19 @@ public class CustomManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (gameUIManager.fadeObject.activeSelf) { return; }
-            StartCoroutine(CoLoadStartScene());
+            _ = LoadStartScene();
         }
     }
 
-    private IEnumerator CoLoadStartScene()
+    private async UniTask LoadStartScene()
     {
         gameUIManager.FadeIn();
 
         DataSaveManager.SaveData("Skin", "config.json", GameUIManager.config);
 
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
+
+        gameUIManager.SkinTextureDestroy();
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
@@ -140,9 +143,9 @@ public class CustomManager : MonoBehaviour
         else return (configValue - minValue) / (maxValue - minValue);
     }
 
-    private IEnumerator SliderSetting()
+    private async UniTask SliderSetting()
     {
-        yield return new WaitUntil(() => isPrepared);
+        await UniTask.WaitUntil(() => isPrepared);
         SetLimitValue();
         comboPositionSlider.value = GetSliderValue(GameUIManager.config.comboPosition, limitValueDict["MinComboPosition"], limitValueDict["MaxComboPosition"]);
         judgePositionSlider.value = GetSliderValue(GameUIManager.config.judgePosition, limitValueDict["MinJudgePosition"], limitValueDict["MaxJudgePosition"]);

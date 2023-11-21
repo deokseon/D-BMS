@@ -54,9 +54,12 @@ public class ObjectPool : MonoBehaviour
 
         notePoolParent = this.transform;
 
-        gameUIManager = FindObjectOfType<GameUIManager>();
-
         CreateNotePool();
+    }
+
+    public void SetComponent()
+    {
+        gameUIManager = FindObjectOfType<GameUIManager>();
     }
 
     public void Init()
@@ -309,6 +312,42 @@ public class ObjectPool : MonoBehaviour
             {
                 Destroy(noteParent.GetChild(i).gameObject);
             }
+        }
+    }
+
+    public void NoteSpriteEmpty()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < maxNoteCount; j++)
+            {
+                GameObject tempNoteObject = notePool[i].Dequeue();
+                for (int k = 0; k < 3; k++)
+                {
+                    tempNoteObject.transform.GetChild(k).GetComponent<SpriteRenderer>().sprite = null;
+                }
+                notePool[i].Enqueue(tempNoteObject);
+            }
+
+            for (int j = 0; j < maxLongNoteCount; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    GameObject tempLongNoteTopObject = longNotePool[i][k].Dequeue();
+                    for (int t = 0; t < 3; t++)
+                    {
+                        tempLongNoteTopObject.transform.GetChild(t).GetComponent<SpriteRenderer>().sprite = null;
+                    }
+                    longNotePool[i][k].Enqueue(tempLongNoteTopObject);
+                }
+            }
+        }
+
+        for (int i = 0; i < maxBarCount; i++)
+        {
+            GameObject tempBarObject = barPool.Dequeue();
+            tempBarObject.GetComponent<SpriteRenderer>().sprite = null;
+            barPool.Enqueue(tempBarObject);
         }
     }
 }

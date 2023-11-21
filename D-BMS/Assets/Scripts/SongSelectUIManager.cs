@@ -10,6 +10,9 @@ using UnityEngine.Video;
 
 public class SongSelectUIManager : MonoBehaviour
 {
+    private Texture stageImageTexture = null;
+    private Texture bgImageTexture = null;
+
     [SerializeField]
     private TextMeshProUGUI koolText;
     [SerializeField]
@@ -156,7 +159,9 @@ public class SongSelectUIManager : MonoBehaviour
         UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
         yield return uwr.SendWebRequest();
 
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+        bgImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+
+        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
 
         StartCoroutine(CoFadeOut());
     }
@@ -363,6 +368,18 @@ public class SongSelectUIManager : MonoBehaviour
         SetSongRecord();
     }
 
+    private void OnDestroy()
+    {
+        if (stageImageTexture != null)
+        {
+            Destroy(stageImageTexture);
+        }
+        if (bgImageTexture != null)
+        {
+            Destroy(bgImageTexture);
+        }
+    }
+
     public void GameStart()
     {
         if (BMSFileSystem.selectedHeader != null)
@@ -387,6 +404,12 @@ public class SongSelectUIManager : MonoBehaviour
 
     public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
     {
+        if (stageImageTexture != null)
+        {
+            Destroy(stageImageTexture);
+            stageImageTexture = null;
+        }
+
         if (string.IsNullOrEmpty(path)) 
         {
             rawImage.texture = noImage;
@@ -395,14 +418,12 @@ public class SongSelectUIManager : MonoBehaviour
         }
 
         string imagePath = $@"file:\\{musicFolderPath}{path}";
-
-        Texture tex = null;
         if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
         {
             UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
             yield return uwr.SendWebRequest();
 
-            tex = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+            stageImageTexture = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
         }
         else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
                  imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
@@ -410,17 +431,17 @@ public class SongSelectUIManager : MonoBehaviour
             UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
             yield return uwr.SendWebRequest();
 
-            tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+            stageImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
         }
 
-        if (tex == null)
+        if (stageImageTexture == null)
         {
             rawImage.texture = noImage;
             rawImage.color = new Color32(0, 0, 0, 230);
         }
         else
         {
-            rawImage.texture = tex;
+            rawImage.texture = stageImageTexture;
             rawImage.color = new Color32(255, 255, 255, 255);
         }
 

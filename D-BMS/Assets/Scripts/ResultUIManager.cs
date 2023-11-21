@@ -10,6 +10,9 @@ using UnityEngine.Video;
 
 public class ResultUIManager : MonoBehaviour
 {
+    private Texture stageImageTexture = null;
+    private Texture bgImageTexture = null;
+
     [SerializeField]
     private Sprite changeImage;
     [SerializeField]
@@ -83,7 +86,9 @@ public class ResultUIManager : MonoBehaviour
         UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
         yield return uwr.SendWebRequest();
 
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+        bgImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+
+        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
 
         StartCoroutine(CoFadeOut());
     }
@@ -261,13 +266,12 @@ public class ResultUIManager : MonoBehaviour
         {
             string imagePath = $@"file:\\{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.stageFilePath}";
 
-            Texture tex = null;
             if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
             {
                 UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
                 yield return uwr.SendWebRequest();
 
-                tex = new BMPLoader().LoadBMP(uwr.downloadHandler.data).ToTexture2D();
+                stageImageTexture = new BMPLoader().LoadBMP(uwr.downloadHandler.data).ToTexture2D();
             }
             else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
                      imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
@@ -275,18 +279,30 @@ public class ResultUIManager : MonoBehaviour
                 UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
                 yield return uwr.SendWebRequest();
 
-                tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+                stageImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
             }
 
-            if (tex == null)
+            if (stageImageTexture == null)
             {
                 stageImage.color = new Color32(0, 0, 0, 230);
             }
             else
             {
-                stageImage.texture = tex;
+                stageImage.texture = stageImageTexture;
                 stageImage.color = new Color32(255, 255, 255, 255);
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (stageImageTexture != null)
+        {
+            Destroy(stageImageTexture);
+        }
+        if (bgImageTexture != null)
+        {
+            Destroy(bgImageTexture);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,7 +34,8 @@ public class ScoreGraph : MonoBehaviour
                 return;
             }
             bmsResult = BMSGameManager.bmsResult;
-            StartCoroutine(CheckScoreGraphUpdate());
+            _ = CheckScoreGraphRankUpdate();
+            _ = CheckScoreGraphUpdate();
         }
 
         rankImage.texture = RankImageManager.rankImageArray[0];
@@ -47,11 +49,13 @@ public class ScoreGraph : MonoBehaviour
         maxScoreGraph = DataSaveManager.LoadData<ScoreGraphData>("DataSave", BMSGameManager.header.fileName + "_SG.json") ?? new ScoreGraphData(count);
     }
 
-    private IEnumerator CheckScoreGraphUpdate()
+    private async UniTask CheckScoreGraphRankUpdate()
     {
+        var token = this.GetCancellationTokenOnDestroy();
         while (true)
         {
-            lock (bmsGameManager.inputHandleLock)
+            await UniTask.WaitUntil(() => bmsGameManager.isChangeRankImage, cancellationToken: token);
+            lock (bmsGameManager.threadLock)
             {
                 if (bmsGameManager.isChangeRankImage)
                 {
@@ -59,7 +63,17 @@ public class ScoreGraph : MonoBehaviour
                     rankImage.rectTransform.localPosition = new Vector3(-240.0f + GameUIManager.config.scoreGraphPositionOffsetX, yPos[bmsResult.resultData.rankIndex] + GameUIManager.config.scoreGraphPositionOffsetY, 0.0f);
                     bmsGameManager.isChangeRankImage = false;
                 }
+            }
+        }
+    }
 
+    private async UniTask CheckScoreGraphUpdate()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        while (true)
+        {
+            lock (bmsGameManager.threadLock)
+            {
                 if (bmsGameManager.isScoreGraphUpdate)
                 {
                     int currentCount = bmsGameManager.currentCount + bmsGameManager.endCount;
@@ -68,7 +82,7 @@ public class ScoreGraph : MonoBehaviour
                     bmsGameManager.isScoreGraphUpdate = false;
                 }
             }
-            yield return null;
+            await UniTask.Yield(cancellationToken: token);
         }
     }
 

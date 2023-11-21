@@ -10,6 +10,8 @@ using UnityEngine.Networking;
 
 public class SystemOptionManager : MonoBehaviour
 {
+    private Texture bgImageTexture;
+
     [SerializeField]
     private Image fadeImage;
     [SerializeField]
@@ -170,7 +172,9 @@ public class SystemOptionManager : MonoBehaviour
         UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
         yield return uwr.SendWebRequest();
 
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+        bgImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+
+        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
 
         StartCoroutine(CoFadeOut());
     }
@@ -348,11 +352,21 @@ public class SystemOptionManager : MonoBehaviour
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
+    private void TextureDestroy()
+    {
+        if (bgImageTexture != null)
+        {
+            Destroy(bgImageTexture);
+        }
+    }
+
     private IEnumerator CoLoadScene(int scene)
     {
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
         yield return new WaitForSecondsRealtime(1.0f);
+
+        TextureDestroy();
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }

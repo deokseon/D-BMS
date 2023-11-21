@@ -129,8 +129,6 @@ public class BMSPattern
                     lines[i].noteList[j].tickTiming = lines[i].noteList[j].timing;
                     lines[i].noteList[j].timing = 20000000000.0d;
                 }
-                //lines[i].noteList[j].failTiming = lines[i].noteList[j].extra == 0 ? lines[i].noteList[j].timing + 1750000.0d : 20000000000.0d;
-                //lines[i].noteList[j].tickTiming = lines[i].noteList[j].extra == 2 ? lines[i].noteList[j].timing : 20000000000.0d;
             }
         }
         NoteDivideSave();

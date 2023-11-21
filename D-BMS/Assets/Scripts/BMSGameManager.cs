@@ -107,7 +107,7 @@ public class BMSGameManager : MonoBehaviour
 
     private Thread bgmThread;
     private TimeSpan threadFrequency;
-    [HideInInspector] public object inputHandleLock = new object();
+    [HideInInspector] public readonly object threadLock = new object();
     private bool[] isKeyDown = new bool[5] { false, false, false, false, false };
     private bool[] isNoteBombActive = new bool[5] { false, false, false, false, false };
     private int[] noteBombState = new int[5] { 0, 0, 0, 0, 0 };
@@ -219,7 +219,7 @@ public class BMSGameManager : MonoBehaviour
 
             GameUIManager.isCreateReady = false;
             gameUIManager.SetLoading();
-            totalLoading = gameUIManager.bgImageTable.Count + soundManager.pathes.Count + Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject").Length;
+            totalLoading = gameUIManager.bgImageList.Count + soundManager.pathes.Count + Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject").Length;
             for (int i = bgaChangeArrayCount; i > -1; i--) { if (!bgaChangeArray[i].isPic) { totalLoading++; break; } }
             divideTotalLoading = 1.0f / totalLoading;
             StartCoroutine(Loading());
@@ -246,8 +246,9 @@ public class BMSGameManager : MonoBehaviour
                     isBGAVideoSupported = !errorFlag;
                 }
             }
-            yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
+            yield return new WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
             keyInput.KeySetting();
+            gameUIManager.SetNullBGArray();
             yield return new WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
             yield return new WaitUntil(() => isFadeEnd);
             yield return new WaitForSeconds(3.0f);
@@ -269,14 +270,17 @@ public class BMSGameManager : MonoBehaviour
         {
             gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
         }
-        if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageTable.Count == 0) && !isBGAVideoSupported)) 
+        //if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageTable.Count == 0) && !isBGAVideoSupported)) 
+        if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported))
         {
+            gameUIManager.bga.gameObject.SetActive(false);
             bgaChangeArray = new BGChange[1] { new BGChange(0, 0, 0, 0, true) };
             bgaChangeArrayCount = 0;
             bgaChangeArray[0].timing = 20000000000.0d;
         }
         if (layerChangeArrayCount == -1)
         {
+            gameUIManager.layer.gameObject.SetActive(false);
             layerChangeArray = new BGChange[1] { new BGChange(0, 0, 0, 0, true) };
             layerChangeArrayCount = 0;
             layerChangeArray[0].timing = 20000000000.0d;
@@ -420,7 +424,7 @@ public class BMSGameManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         GameUIManager.isCreateReady = true;
         gameUIManager.CloseLoading();
-        yield return new WaitUntil(() => gameUIManager.isPrepared == 2);
+        yield return new WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
         gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(gameUIManager.FadeOut());
@@ -509,7 +513,7 @@ public class BMSGameManager : MonoBehaviour
         currentBeat += avg;
         currentScrollTime += frameTime;
 
-        lock (inputHandleLock) 
+        lock (threadLock) 
         { 
             PlayNotes();
             ChangeUI();
@@ -832,7 +836,7 @@ public class BMSGameManager : MonoBehaviour
         if (isClear) { soundManager.PlayKeySoundEnd(currentNote[index]); }
         else { soundManager.PlayKeySound(currentNote[index]); }
         isKeyDown[index] = true;
-        lock (inputHandleLock) { HandleNote(index, keyDownTime); }
+        lock (threadLock) { HandleNote(index, keyDownTime); }
     }
 
     public void KeyUp(int index)
@@ -937,7 +941,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void GamePause(int set)
     {
-        lock (inputHandleLock)
+        lock (threadLock)
         {
             if (isPaused) { return; }
             isPaused = true;
@@ -999,6 +1003,8 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.FadeIn();
         yield return new WaitForSecondsRealtime(1.0f);
         ReturnAllNotes();
+        gameUIManager.BGATextureDestroy();
+        gameUIManager.SkinTextureDestroy();
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }
 
@@ -1088,7 +1094,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void ChangeSpeed(int value)
     {
-        lock (inputHandleLock)
+        lock (threadLock)
         {
             userSpeed += value;
             if (userSpeed > 200) { userSpeed = 200; }
@@ -1160,7 +1166,7 @@ public class BMSGameManager : MonoBehaviour
         if (opacity > 10) { opacity = 10; }
         else if (opacity < 0) { opacity = 0; }
         PlayerPrefs.SetInt("BGAOpacity", opacity);
-        if (gameUIManager.bga.color.r == 1.0f)
+        if (gameUIManager.bga.gameObject.activeSelf || gameUIManager.layer.gameObject.activeSelf)
             gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
 
         if (pauseManager.enabled) { gameUIManager.SetBGAOpacityText(); }

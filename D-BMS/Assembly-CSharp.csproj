@@ -723,8 +723,14 @@
  <Reference Include="Unity.CollabProxy.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
+ <Reference Include="UniTask.Addressables">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/UniTask.Addressables.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Rider.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="UniTask">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/UniTask.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Mathematics">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Mathematics.dll</HintPath>
@@ -734,6 +740,9 @@
  </Reference>
  <Reference Include="Unity.InternalAPIEngineBridge.001">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.InternalAPIEngineBridge.001.dll</HintPath>
+ </Reference>
+ <Reference Include="UniTask.DOTween">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/UniTask.DOTween.dll</HintPath>
  </Reference>
  <Reference Include="Unity.2D.Sprite.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
@@ -752,6 +761,12 @@
  </Reference>
  <Reference Include="Unity.2D.Animation.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.2D.Animation.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="UniTask.TextMeshPro">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/UniTask.TextMeshPro.dll</HintPath>
+ </Reference>
+ <Reference Include="UniTask.Linq">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/UniTask.Linq.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Mathematics.Editor">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
