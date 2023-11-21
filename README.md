@@ -74,3 +74,13 @@ Copyright (c) 2019 Takuma Maruyama
 [Show License](https://github.com/umm/circle_mask_shader/blob/master/LICENSE.txt)
 
 MIT License
+<br/><br/>
+### UniTask
+
+Copyright (c) 2019 Yoshifumi Kawai / Cysharp, Inc.
+
+[Homepage](https://github.com/Cysharp/UniTask)
+
+[Show License](https://github.com/Cysharp/UniTask/blob/master/LICENSE)
+
+MIT License
