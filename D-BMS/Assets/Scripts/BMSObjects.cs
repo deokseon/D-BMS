@@ -16,6 +16,13 @@ public abstract class BMSObject : System.IComparable<BMSObject>
     public double beat;
     public double timing;
 
+    public BMSObject(double time)
+    {
+        bar = 0;
+        beat = 0;
+        timing = time;
+    }
+
     public BMSObject(int bar, double beat, double beatLength)
     {
         this.bar = bar;
@@ -57,6 +64,12 @@ public class Note : BMSObject
     public double tickTiming;
     public GameObject model;
     public Transform modelTransform;
+
+    public Note(double time) : base(time)
+    {
+        keySound = 0;
+        extra = 2;
+    }
 
     public Note(int bar, int keySound, double beat, double beatLength, int extra) : base(bar, beat, beatLength)
     {

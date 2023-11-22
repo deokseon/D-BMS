@@ -42,13 +42,13 @@ public class BMSPattern
 
     public void AddNote(int line, int bar, double beat, double beatLength, int keySound, int extra)
     {
-        if (extra != 1) { this.noteCount++; }
+        //if (extra != 1) { this.noteCount++; }
         lines[line].noteList.Add(new Note(bar, keySound, beat, beatLength, extra));
     }
 
     public void AddNote(int line, int bar, double beat, int keySound, int extra)
     {
-        if (extra != 1) { this.noteCount++; }
+        //if (extra != 1) { this.noteCount++; }
         lines[line].noteList.Add(new Note(bar, keySound, beat, extra));
     }
 
@@ -113,6 +113,50 @@ public class BMSPattern
 
         // GET NOTES
         for (int i = 0; i < 5; i++) { CalculateTimingsInListExtension(lines[i].noteList); }
+
+        AddLongNoteTick();
+        SetNoteTiming();
+        NoteDivideSave();
+
+        CalculateTimingsInListExtension(barLine.noteList);
+        barLine.noteList.RemoveAt(barLine.noteList.Count - 1);
+        for (int i = barLine.noteList.Count - 1; i >= 0; i--)
+        {
+            barLine.noteList[i].timing += 0.175d;
+        }
+    }
+
+    private void AddLongNoteTick()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            List<Note> tempList = new List<Note>();
+            for (int j = 0; j < lines[i].noteList.Count; j++)
+            {
+                tempList.Add(lines[i].noteList[j]);
+                if (lines[i].noteList[j].extra == 1)
+                {
+                    if (lines[i].noteList[j].timing - 0.07d <= lines[i].noteList[j + 1].timing) { continue; }
+                    Note tempNote = new Note(lines[i].noteList[j].timing - 0.055d);
+                    tempNote.beat = GetBeatFromTiming(tempNote);
+                    tempList.Add(tempNote);
+
+                    tempNote = new Note(0, 0, tempList[tempList.Count - 1].beat - 0.25d, 2);
+                    tempNote.timing = GetTimingInSecond(tempNote);
+                    while (tempNote.beat > lines[i].noteList[j + 1].beat)
+                    {
+                        tempList.Add(tempNote);
+                        tempNote = new Note(0, 0, tempList[tempList.Count - 1].beat - 0.25d, 2);
+                        tempNote.timing = GetTimingInSecond(tempNote);
+                    }
+                }
+            }
+            lines[i].noteList = tempList;
+        }
+    }
+
+    private void SetNoteTiming()
+    {
         for (int i = 0; i < 5; i++)
         {
             for (int j = lines[i].noteList.Count - 1; j >= 0; j--)
@@ -131,17 +175,9 @@ public class BMSPattern
                 }
             }
         }
-        NoteDivideSave();
-
-        CalculateTimingsInListExtension(barLine.noteList);
-        barLine.noteList.RemoveAt(barLine.noteList.Count - 1);
-        for (int i = barLine.noteList.Count - 1; i >= 0; i--)
-        {
-            barLine.noteList[i].timing += 0.175d;
-        }
     }
 
-    public void NoteDivideSave()
+    private void NoteDivideSave()
     {
         for (int i = 0; i < 5; i++)
         {
@@ -170,8 +206,8 @@ public class BMSPattern
                     lines[i].noteList.RemoveAt(j--);
                 }
             }
+            noteCount += lines[i].noteList.Count;
         }
-
     }
 
     public void CalculateTimingsInListExtension(List<Note> list)

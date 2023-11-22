@@ -228,7 +228,6 @@ public class BMSParser : MonoBehaviour
                         if ((lnBits & (1 << line)) != 0)
                         {
                             pattern.AddNote(line, bar, (k - 7) / 2, beatLength, -1, 1);
-                            PushLongNoteTick(line, bar, (((k - 7) / 2.0d) / beatLength) * 4.0d);
                             lnBits &= ~(1 << line);
                             continue;
                         }
@@ -237,7 +236,6 @@ public class BMSParser : MonoBehaviour
                     if (header.lnType.HasFlag(Lntype.LNOBJ) && keySound == header.lnobj)
                     {
                         pattern.AddNote(line, bar, (k - 7) / 2, beatLength, keySound, 1);
-                        PushLongNoteTick(line, bar, (((k - 7) / 2.0d) / beatLength) * 4.0d);
                     }
                     else
                     {
@@ -339,55 +337,6 @@ public class BMSParser : MonoBehaviour
         for (int i = 0; i < len; i++)
         {
             pattern.AddBar(i, 0, 1, 0, 3);
-        }
-    }
-
-    private void PushLongNoteTick(int line, int bar, double beat)
-    {
-        pattern.lines[line].noteList.Sort((x, y) => {
-            int ret1 = x.bar.CompareTo(y.bar);
-            return ret1 != 0 ? ret1 : x.beat.CompareTo(y.beat);
-        });
-
-        int currentCount = 0;
-        double currentBeat = 0.0d;
-        int currentBar = -1;
-        double prevBeat = -1;
-        for (int i = pattern.lines[line].noteList.Count - 1; i >= 0; i--)
-        {
-            if (pattern.lines[line].noteList[i].extra == 1)
-            {
-                currentBar = pattern.lines[line].noteList[i - 1].bar;
-                prevBeat = pattern.lines[line].noteList[i - 1].beat;
-                break;
-            }
-        }
-        double endBeat = beat - (0.25d / pattern.GetBeatC(bar));
-        if (endBeat < 0.0d)  { bar--; endBeat += 4.0d; }
-
-        double beat16Count = 16 * pattern.GetBeatC(currentBar);
-
-        if (currentBar == bar && (float)prevBeat >= (float)endBeat) { return; }
-
-        while (true)
-        {
-            currentCount++;
-            currentBeat = currentCount / beat16Count * 4.0d;
-
-            if ((float)currentBeat <= (float)prevBeat) { continue; }
-
-            if (currentCount >= beat16Count)
-            {
-                currentBar++;
-                beat16Count = 16 * pattern.GetBeatC(currentBar);
-                currentCount = 0;
-                currentBeat = 0.0d;
-                prevBeat = -4.0d;
-            }
-
-            if ((currentBar == bar && (float)currentBeat > (float)endBeat) || currentBar > bar) { break; }
-
-            pattern.AddNote(line, currentBar, currentBeat, 0, 2);
         }
     }
 
