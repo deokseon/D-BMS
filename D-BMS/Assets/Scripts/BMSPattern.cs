@@ -15,6 +15,7 @@ public class BMSPattern
     public Line barLine { get; set; }  // 마디선 리스트
     public List<Note>[] longNote { get; set; }
     public List<Note>[] normalNote { get; set; }
+    public List<KeySoundChange>[] keySoundChangeTimingList { get; set; }
 
     public BMSPattern()
     {
@@ -32,6 +33,7 @@ public class BMSPattern
         for (int i = 0; i < 5; i++) { longNote[i] = new List<Note>(500); }
         normalNote = new List<Note>[5];
         for (int i = 0; i < 5; i++) { normalNote[i] = new List<Note>(1000); }
+        keySoundChangeTimingList = new List<KeySoundChange>[5];
     }
 
     public void AddBGAChange(int bar, double beat, double beatLength, int key, bool isPic = false)
@@ -117,6 +119,7 @@ public class BMSPattern
         AddLongNoteTick();
         SetNoteTiming();
         NoteDivideSave();
+        SetKeySoundChangeTiming();
 
         CalculateTimingsInListExtension(barLine.noteList);
         barLine.noteList.RemoveAt(barLine.noteList.Count - 1);
@@ -136,14 +139,14 @@ public class BMSPattern
                 tempList.Add(lines[i].noteList[j]);
                 if (lines[i].noteList[j].extra == 1)
                 {
-                    if (lines[i].noteList[j].timing - 0.07d <= lines[i].noteList[j + 1].timing) { continue; }
+                    if ((float)(lines[i].noteList[j].timing - 0.07d) <= (float)lines[i].noteList[j + 1].timing) { continue; }
                     Note tempNote = new Note(lines[i].noteList[j].timing - 0.055d);
                     tempNote.beat = GetBeatFromTiming(tempNote);
                     tempList.Add(tempNote);
 
                     tempNote = new Note(0, 0, tempList[tempList.Count - 1].beat - 0.25d, 2);
                     tempNote.timing = GetTimingInSecond(tempNote);
-                    while (tempNote.beat > lines[i].noteList[j + 1].beat)
+                    while ((float)tempNote.beat > (float)lines[i].noteList[j + 1].beat)
                     {
                         tempList.Add(tempNote);
                         tempNote = new Note(0, 0, tempList[tempList.Count - 1].beat - 0.25d, 2);
@@ -207,6 +210,24 @@ public class BMSPattern
                 }
             }
             noteCount += lines[i].noteList.Count;
+        }
+    }
+
+    private void SetKeySoundChangeTiming()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            keySoundChangeTimingList[i] = new List<KeySoundChange>(lines[i].noteList.Count);
+            double preTiming = lines[i].noteList[0].timing;
+            int preKeySound = lines[i].noteList[0].keySound;
+            for (int j = 1; j < lines[i].noteList.Count; j++)
+            {
+                if (lines[i].noteList[j].extra != 0) { continue; }
+                keySoundChangeTimingList[i].Add(new KeySoundChange((preTiming + lines[i].noteList[j].timing) * 0.5d, preKeySound));
+                preTiming = lines[i].noteList[j].timing;
+                preKeySound = lines[i].noteList[j].keySound;
+            }
+            keySoundChangeTimingList[i].Add(new KeySoundChange(0.0d, lines[i].noteList[lines[i].noteList.Count - 1].keySound));
         }
     }
 

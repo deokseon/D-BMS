@@ -71,7 +71,7 @@ public class BMSGameManager : MonoBehaviour
     private bool isBGAVideoSupported = false;
     private Coroutine songEndCheckCoroutine;
 
-    private int[] currentNote = new int[5] { 0, 0, 0, 0, 0 };
+    private int[] currentKeySound = new int[5] { 0, 0, 0, 0, 0 };
 
     private double koolAddScore;
     private double coolAddScore;
@@ -95,6 +95,7 @@ public class BMSGameManager : MonoBehaviour
     private int[] noteArrayCount = new int[5];
     private int[] longNoteArrayCount = new int[5];
     private int[] normalNoteArrayCount = new int[5];
+    private int[] keySoundChangeArrayCount = new int[5];
     private int barArrayCount;
     private BGChange[] bgaChangeArray;
     private BGChange[] layerChangeArray;
@@ -104,8 +105,10 @@ public class BMSGameManager : MonoBehaviour
     private Note[][] longNoteArray = new Note[5][];
     private Note[][] normalNoteArray = new Note[5][];
     private Note[] barArray;
+    private KeySoundChange[][] keySoundChangeArray = new KeySoundChange[5][];
 
     private Thread bgmThread;
+    private Thread keySoundChangeThread;
     private TimeSpan threadFrequency;
     [HideInInspector] public readonly object threadLock = new object();
     private bool[] isKeyDown = new bool[5] { false, false, false, false, false };
@@ -161,6 +164,7 @@ public class BMSGameManager : MonoBehaviour
         stopwatch.Reset();
         soundManager.AudioPause(false);
         bgmThread = new Thread(BGMPlayThread);
+        keySoundChangeThread = new Thread(KeySoundChangeThread);
 
         gameUIManager.bgaOpacity.color = new Color(0, 0, 0, 0);
 
@@ -180,10 +184,18 @@ public class BMSGameManager : MonoBehaviour
             noteArray[i] = pattern.lines[i].noteList.ToArray();
             longNoteArray[i] = pattern.longNote[i].ToArray();
             normalNoteArray[i] = pattern.normalNote[i].ToArray();
+            keySoundChangeArray[i] = pattern.keySoundChangeTimingList[i].ToArray();
 
             noteArrayCount[i] = noteArray[i].Length - 1;
             longNoteArrayCount[i] = longNoteArray[i].Length;
             normalNoteArrayCount[i] = normalNoteArray[i].Length;
+            keySoundChangeArrayCount[i] = keySoundChangeArray[i].Length - 1;
+
+            if (keySoundChangeArrayCount[i] == -1)
+            {
+                keySoundChangeArray[i] = new KeySoundChange[1] { new KeySoundChange(20000000000.0d, 0) };
+                keySoundChangeArrayCount[i] = 0;
+            }
         }
         barArray = pattern.barLine.noteList.ToArray();
 
@@ -260,7 +272,7 @@ public class BMSGameManager : MonoBehaviour
 
         inputBlockLine.localPosition = new Vector3(xPosition[2], -200.0f, 0.0f);
 
-        for (int i = 0; i < 5; i++) { if (noteArrayCount[i] >= 0) { currentNote[i] = noteArray[i][noteArrayCount[i]].keySound; } }
+        for (int i = 0; i < 5; i++) { currentKeySound[i] = 0; }
 
         if (bgaChangeArrayCount + layerChangeArrayCount == -2)
         {
@@ -270,7 +282,6 @@ public class BMSGameManager : MonoBehaviour
         {
             gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
         }
-        //if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageTable.Count == 0) && !isBGAVideoSupported)) 
         if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported))
         {
             gameUIManager.bga.gameObject.SetActive(false);
@@ -310,6 +321,7 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
+        keySoundChangeThread.Start();
         keyInput.InputThreadStart();
         stopwatch.Start();
     }
@@ -326,6 +338,7 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.CoUpdateInfoPanel(false);
         gameUIManager.SetInfoPanel(false);
         bgmThread.Abort();
+        keySoundChangeThread.Abort();
         keyInput.InputThreadAbort();
         stopwatch.Stop();
         videoPlayer.Pause();
@@ -539,6 +552,32 @@ public class BMSGameManager : MonoBehaviour
         }
     }
 
+    private void KeySoundChangeThread()
+    {
+        while (true)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (keySoundChangeArray[i][keySoundChangeArrayCount[i]].timing <= stopwatch.ElapsedTicks)
+                {
+                    lock (threadLock)
+                    {
+                        currentKeySound[i] = keySoundChangeArray[i][keySoundChangeArrayCount[i]].keySound;
+                    }
+                    if (keySoundChangeArrayCount[i] > 0)
+                    {
+                        keySoundChangeArrayCount[i]--;
+                    }
+                    else
+                    {
+                        keySoundChangeArray[i][keySoundChangeArrayCount[i]].timing = 20000000000.0d;
+                    }
+                }
+            }
+            Thread.Sleep(threadFrequency);
+        }
+    }
+
     private void ChangeUI()
     {
         #region Key Feedback Check
@@ -633,7 +672,6 @@ public class BMSGameManager : MonoBehaviour
             noteArray[idx][noteArrayCount[idx]].tickTiming = 20000000000.0d;
             noteArray[idx][noteArrayCount[idx]].failTiming = 20000000000.0d;
         }
-        currentNote[idx] = noteArray[idx][noteArrayCount[idx]].keySound;
 
         if (normalNoteArrayCount[idx] > 0 && n.beat == normalNoteArray[idx][normalNoteArrayCount[idx] - normalNoteHandleCount[idx] - 1].beat)
         {
@@ -699,7 +737,6 @@ public class BMSGameManager : MonoBehaviour
             noteArray[idx][noteArrayCount[idx]].tickTiming = 20000000000.0d;
             noteArray[idx][noteArrayCount[idx]].failTiming = 20000000000.0d;
         }
-        currentNote[idx] = noteArray[idx][noteArrayCount[idx]].keySound;
 
         if (!keyInput.prevKeyState[idx]) { currentLongNoteJudge[idx] = JudgeType.FAIL; }
         else { if (currentLongNoteJudge[idx] == JudgeType.FAIL) { currentLongNoteJudge[idx] = JudgeType.GOOD; } }
@@ -833,10 +870,13 @@ public class BMSGameManager : MonoBehaviour
     public void KeyDown(int index)
     {
         long keyDownTime = stopwatch.ElapsedTicks - resumeCountTicks;
-        if (isClear) { soundManager.PlayKeySoundEnd(currentNote[index]); }
-        else { soundManager.PlayKeySound(currentNote[index]); }
-        isKeyDown[index] = true;
-        lock (threadLock) { HandleNote(index, keyDownTime); }
+        lock (threadLock)
+        {
+            if (isClear) { soundManager.PlayKeySoundEnd(currentKeySound[index]); }
+            else { soundManager.PlayKeySound(currentKeySound[index]); }
+            isKeyDown[index] = true;
+            HandleNote(index, keyDownTime);
+        }
     }
 
     public void KeyUp(int index)
@@ -953,6 +993,10 @@ public class BMSGameManager : MonoBehaviour
             {
                 bgmThread.Abort();
             }
+            if (keySoundChangeThread.IsAlive)
+            {
+                keySoundChangeThread.Abort();
+            }
             if (isBGAVideoSupported) { videoPlayer.Pause(); }
             pauseManager.PausePanelSetting(set);
             pauseManager.Pause_SetActive(true);
@@ -983,6 +1027,10 @@ public class BMSGameManager : MonoBehaviour
             if (bgmThread.IsAlive)
             {
                 bgmThread.Abort();
+            }
+            if (keySoundChangeThread.IsAlive)
+            {
+                keySoundChangeThread.Abort();
             }
             soundManager.AudioAllStop();
         }
@@ -1019,6 +1067,15 @@ public class BMSGameManager : MonoBehaviour
         {
             bgmThread.Start();
         }
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < keySoundChangeArrayCount[i]; j++)
+            {
+                keySoundChangeArray[i][j].timing += 30000000;
+            }
+        }
+        keySoundChangeThread = new Thread(KeySoundChangeThread);
+        keySoundChangeThread.Start();
         combo = 0;
         inputBlockLine.localPosition = new Vector3(xPosition[2], (float)(currentBeat * gameSpeed), 0.0f);
         resumeTicks = currentTicks;
@@ -1180,6 +1237,10 @@ public class BMSGameManager : MonoBehaviour
         if (bgmThread.IsAlive)
         {
             bgmThread.Abort();
+        }
+        if (keySoundChangeThread.IsAlive)
+        {
+            keySoundChangeThread.Abort();
         }
         soundManager.SoundAndChannelRelease();
     }

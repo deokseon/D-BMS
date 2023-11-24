@@ -94,6 +94,18 @@ public class BPM : BMSObject
     }
 }
 
+public struct KeySoundChange
+{
+    public double timing;
+    public int keySound;
+
+    public KeySoundChange (double timing, int keySound)
+    {
+        this.timing = timing;
+        this.keySound = keySound;
+    }
+}
+
 public class Utility
 {
     public static double Dabs(double value) => (value > 0) ? value : -value;
