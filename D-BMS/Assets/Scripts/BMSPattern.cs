@@ -139,8 +139,8 @@ public class BMSPattern
                 tempList.Add(lines[i].noteList[j]);
                 if (lines[i].noteList[j].extra == 1)
                 {
-                    if ((float)(lines[i].noteList[j].timing - 0.07d) <= (float)lines[i].noteList[j + 1].timing) { continue; }
-                    Note tempNote = new Note(lines[i].noteList[j].timing - 0.055d);
+                    if ((float)(lines[i].noteList[j].timing - 0.11d) <= (float)lines[i].noteList[j + 1].timing) { continue; }
+                    Note tempNote = new Note(lines[i].noteList[j].timing - 0.11d);
                     tempNote.beat = GetBeatFromTiming(tempNote);
                     tempList.Add(tempNote);
 
