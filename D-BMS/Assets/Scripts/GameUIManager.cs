@@ -462,25 +462,28 @@ public class GameUIManager : MonoBehaviour
         int end = (int)((value + 1) / (double)taskCount * bgImageList.Count);
         for (int i = start; i < end; i++)
         {
-            string path = @"file:\\" + BMSGameManager.header.musicFolderPath + bgImageList[i].Value;
+            string path = BMSGameManager.header.musicFolderPath + bgImageList[i].Value.Substring(0, bgImageList[i].Value.Length - 4);
 
             Texture2D texture2D = null;
-            if (path.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
+            if (File.Exists(path + ".bmp"))
             {
-                var uwr = await UnityWebRequest.Get(path).SendWebRequest().WithCancellation(cancellationToken: token);
+                var uwr = await UnityWebRequest.Get(@"file:\\" + path + ".bmp").SendWebRequest().WithCancellation(cancellationToken: token);
                 var uwrData = uwr.downloadHandler.data;
                 var bmpImage = await UniTask.RunOnThreadPool(() => loader.LoadBMP(uwrData));
                 texture2D = bmpImage.ToTexture2D();
             }
-            else if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                     path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
+            else if (File.Exists(path + ".jpg"))
             {
-                var uwr = await UnityWebRequestTexture.GetTexture(path).SendWebRequest().WithCancellation(cancellationToken: token);
-
+                var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".jpg").SendWebRequest().WithCancellation(cancellationToken: token);
+                texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+            }
+            else if (File.Exists(path + ".png"))
+            {
+                var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".png").SendWebRequest().WithCancellation(cancellationToken: token);
                 texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
             }
 
-            if (layerImageSet.Contains(bgImageList[i].Key))
+            if (texture2D != null && layerImageSet.Contains(bgImageList[i].Key))
             {
                 var colors = texture2D.GetPixels32();
 

@@ -241,7 +241,7 @@ public class BMSGameManager : MonoBehaviour
             {
                 for (int i = bgaChangeArrayCount; i > -1; i--)
                 {
-                    if (!bgaChangeArray[i].isPic)
+                    if (!bgaChangeArray[i].isPic && File.Exists(header.musicFolderPath + pattern.bgVideoTable[pattern.bgaChanges[i].key]))
                     {
                         videoPlayer.url = "file://" + header.musicFolderPath + pattern.bgVideoTable[pattern.bgaChanges[i].key];
                         break;
