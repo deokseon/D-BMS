@@ -9,8 +9,8 @@ After that, put the BMSFiles folder in the D-BMS folder.<br/>
 
 BMSFiles (Split compression)
 
-[Split 1](https://drive.google.com/file/d/1MsVWi05RvcjZ_EmvcUKVaqUSgCJb3BoE/view?usp=sharing)<br/>
-[Split 2](https://drive.google.com/file/d/1SoAeNFzinZbCslS-G3xqeQWSJq306WOm/view?usp=sharing)<br/><br/>
+[Split 1](https://drive.google.com/file/d/1vT6pe2wiOZ-bwi-1gY9PEk4xyQ45M88C/view?usp=sharing)<br/>
+[Split 2](https://drive.google.com/file/d/1HxrttzrgXJ5AM_R-XR7mFhP87chH79on/view?usp=sharing)<br/><br/>
 
 # Open source licenses
 
