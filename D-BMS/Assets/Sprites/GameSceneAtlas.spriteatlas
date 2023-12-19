@@ -61,6 +61,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bdf61205d51885e489c1b48885f847f0, type: 3}
   - {fileID: 21300000, guid: cf981606408410a44ad3d72937155409, type: 3}
   - {fileID: 21300000, guid: 1952b718dc091054b84bd73855a109ac, type: 3}
+  - {fileID: 21300000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
   - {fileID: 21300000, guid: e9f68119734b3c14ea59c3a7e983d4a7, type: 3}
   - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
@@ -80,10 +81,11 @@ SpriteAtlas:
   - favorite_0
   - StageImageFrame
   - ToggleFrame
-  - background
+  - white
   - SongToggleFrame
   - TransparentImage
   - Gear
+  - black
   - favorite_1
   - Triangle
   - PersonIcon

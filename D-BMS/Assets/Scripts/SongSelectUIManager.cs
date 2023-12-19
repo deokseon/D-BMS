@@ -7,9 +7,12 @@ using TMPro;
 using B83.Image.BMP;
 using System.IO;
 using UnityEngine.Video;
+using Cysharp.Threading.Tasks;
 
 public class SongSelectUIManager : MonoBehaviour
 {
+    [SerializeField]
+    private TextureDownloadManager textureDownloadManager;
     private Texture stageImageTexture = null;
     private Texture bgImageTexture = null;
 
@@ -116,85 +119,37 @@ public class SongSelectUIManager : MonoBehaviour
         prevFindAlphabet = '.';
         findSequence = 0;
 
-        SetBackground();
+        _ = SetBackground();
     }
 
-    private void SetBackground()
+    private async UniTask SetBackground()
     {
         string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\select-bg";
-        if (File.Exists(filePath + ".jpg"))
+
+        bgImageTexture = await textureDownloadManager.GetTexture(filePath);
+        if (bgImageTexture != null)
         {
-            StartCoroutine(LoadBG(filePath + ".jpg"));
+            GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
         }
-        else if (File.Exists(filePath + ".png"))
+        else
         {
-            StartCoroutine(LoadBG(filePath + ".png"));
+            await textureDownloadManager.PrepareVideo(filePath, "VideoPlayer", "Screen");
         }
-        else if (File.Exists(filePath + ".mp4"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mp4"));
-        }
-        else if (File.Exists(filePath + ".avi"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".avi"));
-        }
-        else if (File.Exists(filePath + ".wmv"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".wmv"));
-        }
-        else if (File.Exists(filePath + ".mpeg"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mpeg"));
-        }
-        else if (File.Exists(filePath + ".mpg"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mpg"));
-        }
+        _ = FadeOut();
     }
 
-    private IEnumerator LoadBG(string path)
+    private async UniTask FadeOut()
     {
-        string imagePath = $@"file:\\{path}";
-
-        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-        yield return uwr.SendWebRequest();
-
-        bgImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
-
-        StartCoroutine(CoFadeOut());
-    }
-
-
-    private IEnumerator PrepareVideo(string path)
-    {
-        VideoPlayer videoPlayer = GameObject.Find("VideoPlayer").GetComponent<VideoPlayer>();
-        videoPlayer.url = $"file://{path}";
-
-        videoPlayer.Prepare();
-
-        yield return new WaitUntil(() => videoPlayer.isPrepared);
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = videoPlayer.texture;
-
-        videoPlayer.Play();
-
-        StartCoroutine(CoFadeOut());
-    }
-
-    private IEnumerator CoFadeOut()
-    {
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
-    private IEnumerator CoLoadStartScene()
+    private async UniTask LoadStartScene()
     {
         PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
@@ -214,7 +169,7 @@ public class SongSelectUIManager : MonoBehaviour
             }
             else
             {
-                StartCoroutine(CoLoadStartScene());
+                _ = LoadStartScene();
             }
         }
         if (optionCanvas.enabled) { return; }
@@ -394,7 +349,7 @@ public class SongSelectUIManager : MonoBehaviour
         if (BMSFileSystem.selectedHeader == null || stageImage.texture == null ||
             BMSFileSystem.selectedHeader.textFolderPath.CompareTo(header.textFolderPath) != 0)
         {
-            StartCoroutine(LoadRawImage(stageImage, header.musicFolderPath, header.stageFilePath, noneTexture));
+            _ = LoadStageImage($"{header.musicFolderPath}{header.stageFilePath}");
         }
 
         BMSFileSystem.selectedHeader = header;
@@ -402,7 +357,7 @@ public class SongSelectUIManager : MonoBehaviour
         levelText.text = header.level.ToString();
     }
 
-    public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
+    private async UniTask LoadStageImage(string path)
     {
         if (stageImageTexture != null)
         {
@@ -410,40 +365,8 @@ public class SongSelectUIManager : MonoBehaviour
             stageImageTexture = null;
         }
 
-        if (string.IsNullOrEmpty(path)) 
-        {
-            rawImage.texture = noImage;
-            rawImage.color = new Color32(0, 0, 0, 230);
-            yield break;
-        }
-
-        string imagePath = $@"file:\\{musicFolderPath}{path}";
-        if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
-        {
-            UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
-            yield return uwr.SendWebRequest();
-
-            stageImageTexture = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
-        }
-        else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
-                 imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
-        {
-            UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-            yield return uwr.SendWebRequest();
-
-            stageImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-        }
-
-        if (stageImageTexture == null)
-        {
-            rawImage.texture = noImage;
-            rawImage.color = new Color32(0, 0, 0, 230);
-        }
-        else
-        {
-            rawImage.texture = stageImageTexture;
-            rawImage.color = new Color32(255, 255, 255, 255);
-        }
+        stageImageTexture = await textureDownloadManager.GetTexture(path);
+        stageImage.texture = stageImageTexture ?? noneTexture;
 
         stageImageAnimator.SetTrigger(Random.Range(0, 2) == 0 ? hashLeftRotate : hashRightRotate);
     }

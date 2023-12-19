@@ -31,7 +31,6 @@ public class SoundManager : MonoBehaviour
     {
         bmsGameManager = FindObjectOfType<BMSGameManager>();
         isPrepared = 0;
-        //threadCount = Mathf.Max(SystemInfo.processorCount - 2, 1);
         threadCount = Mathf.Max((int)(SystemInfo.processorCount * 0.5f) - 2, 1);
 
         keySoundVolume = PlayerPrefs.GetFloat("KeySoundVolume") * 0.7f + 0.3f;

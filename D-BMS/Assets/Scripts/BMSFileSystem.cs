@@ -71,7 +71,7 @@ public class BMSFileSystem : MonoBehaviour
             {
                 switch (temp)
                 {
-                    case "#STA": header.stageFilePath = line.Substring(11); break;   // STAGEFILE
+                    case "#STA": header.stageFilePath = line.Substring(11, line.Length - 15); break;   // STAGEFILE
                     case "#ART": header.artist = line.Substring(8); break;           // ARTIST
                     case "#LNT": header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
                     case "#SUB":  // SUBTITLE

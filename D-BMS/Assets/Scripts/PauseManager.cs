@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.IO;
 using UnityEngine.Networking;
+using Cysharp.Threading.Tasks;
 
 public class PauseManager : MonoBehaviour
 {
@@ -34,33 +35,15 @@ public class PauseManager : MonoBehaviour
             AddToggleListener(toggleArray[i], i, toggleText[i]);
         }
 
-        SetBackground(0, "pause-bg");
-        SetBackground(1, "fail-bg");
+        _ = SetBackground();
 
         pauseManager.Pause_SetActive(false);
     }
 
-    private void SetBackground(int index, string file)
+    private async UniTask SetBackground()
     {
-        string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\{file}";
-        if (File.Exists(filePath + ".jpg"))
-        {
-            StartCoroutine(LoadBG(index, filePath + ".jpg"));
-        }
-        else if (File.Exists(filePath + ".png"))
-        {
-            StartCoroutine(LoadBG(index, filePath + ".png"));
-        }
-    }
-
-    private IEnumerator LoadBG(int index, string path)
-    {
-        string imagePath = $@"file:\\{path}";
-
-        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-        yield return uwr.SendWebRequest();
-
-        backgroundTexture[index] = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+        backgroundTexture[0] = await FindObjectOfType<TextureDownloadManager>().GetTexture($@"{Directory.GetParent(Application.dataPath)}\Skin\Background\pause-bg");
+        backgroundTexture[1] = await FindObjectOfType<TextureDownloadManager>().GetTexture($@"{Directory.GetParent(Application.dataPath)}\Skin\Background\fail-bg");
     }
 
     public void PausePanelSetting(int set)
@@ -149,16 +132,16 @@ public class PauseManager : MonoBehaviour
             }
             else
             {
-                StartCoroutine(bmsGameManager.GameEnd(false));
+                _ = bmsGameManager.GameEnd(false);
             }
         }
         else if (currentIndex == 1)
         {
-            StartCoroutine(bmsGameManager.GameRestart());
+            _ = bmsGameManager.GameRestart();
         }
         else
         {
-            StartCoroutine(bmsGameManager.CoLoadScene(1));
+            _ = bmsGameManager.LoadScene(1);
         }
     }
 }

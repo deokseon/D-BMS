@@ -4093,7 +4093,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 0}
+  m_Texture: {fileID: 2800000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -7499,6 +7499,7 @@ GameObject:
   - component: {fileID: 1971044593}
   - component: {fileID: 1971044592}
   - component: {fileID: 1971044595}
+  - component: {fileID: 1971044596}
   m_Layer: 5
   m_Name: UI_Canvas
   m_TagString: Untagged
@@ -7585,6 +7586,18 @@ MonoBehaviour:
   changeImage: {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   dot: {fileID: 8915827379289084883, guid: 3d7a1ba55c0d00e45804ec3e2e0f1c38, type: 3}
   fadeImage: {fileID: 2121507812}
+--- !u!114 &1971044596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971044591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 137a56b3be6c92f4db51411daea576f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1979661389
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ using UnityEngine;
 using B83.Image.BMP;
 using System.IO;
 using UnityEngine.Video;
+using Cysharp.Threading.Tasks;
 
 public class ResultUIManager : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class ResultUIManager : MonoBehaviour
 
         DrawStatisticsResult();
         DrawJudgeGraph();
-        StartCoroutine(DrawSongInfo());
+        _ = DrawSongInfo();
 
         if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < BMSGameManager.bmsResult.resultData.score)
         {
@@ -43,84 +44,36 @@ public class ResultUIManager : MonoBehaviour
             GameObject.Find("NewRecord").SetActive(false);
         }
 
-        SetBackground();
+        _ = SetBackground();
     }
 
-    private void SetBackground()
+    private async UniTask SetBackground()
     {
         string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\result-bg";
-        if (File.Exists(filePath + ".jpg"))
+
+        bgImageTexture = await FindObjectOfType<TextureDownloadManager>().GetTexture(filePath);
+        if (bgImageTexture != null)
         {
-            StartCoroutine(LoadBG(filePath + ".jpg"));
+            GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
         }
-        else if (File.Exists(filePath + ".png"))
+        else
         {
-            StartCoroutine(LoadBG(filePath + ".png"));
+            await FindObjectOfType<TextureDownloadManager>().PrepareVideo(filePath, "VideoPlayer", "Screen");
         }
-        else if (File.Exists(filePath + ".mp4"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mp4"));
-        }
-        else if (File.Exists(filePath + ".avi"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".avi"));
-        }
-        else if (File.Exists(filePath + ".wmv"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".wmv"));
-        }
-        else if (File.Exists(filePath + ".mpeg"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mpeg"));
-        }
-        else if (File.Exists(filePath + ".mpg"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mpg"));
-        }
+        _ = FadeOut();
     }
 
-    private IEnumerator LoadBG(string path)
+    private async UniTask FadeOut()
     {
-        string imagePath = $@"file:\\{path}";
-
-        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-        yield return uwr.SendWebRequest();
-
-        bgImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
-
-        StartCoroutine(CoFadeOut());
-    }
-
-
-    private IEnumerator PrepareVideo(string path)
-    {
-        VideoPlayer videoPlayer = GameObject.Find("VideoPlayer").GetComponent<VideoPlayer>();
-        videoPlayer.url = $"file://{path}";
-
-        videoPlayer.Prepare();
-
-        yield return new WaitUntil(() => videoPlayer.isPrepared);
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = videoPlayer.texture;
-
-        videoPlayer.Play();
-
-        StartCoroutine(CoFadeOut());
-    }
-
-    private IEnumerator CoFadeOut()
-    {
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
-    private IEnumerator CoLoadSelectScene()
+    private async UniTask LoadSelectScene()
     {
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
@@ -130,7 +83,7 @@ public class ResultUIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             if (fadeImage.IsActive()) { return; }
-            StartCoroutine(CoLoadSelectScene());
+            _ = LoadSelectScene();
         }
     }
 
@@ -255,42 +208,12 @@ public class ResultUIManager : MonoBehaviour
         GameObject.Find("AverageInputTiming").GetComponent<TextMeshProUGUI>().text = $"{average} MS";
     }
 
-    private IEnumerator DrawSongInfo()
+    private async UniTask DrawSongInfo()
     {
-        RawImage stageImage = GameObject.Find("StageImage").GetComponent<RawImage>();
-        if (string.IsNullOrEmpty(BMSGameManager.header.stageFilePath)) 
+        stageImageTexture = await FindObjectOfType<TextureDownloadManager>().GetTexture($"{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.stageFilePath}");
+        if (stageImageTexture != null)
         {
-            stageImage.color = new Color32(0, 0, 0, 230);
-        }
-        else
-        {
-            string imagePath = $@"file:\\{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.stageFilePath}";
-
-            if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
-            {
-                UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
-                yield return uwr.SendWebRequest();
-
-                stageImageTexture = new BMPLoader().LoadBMP(uwr.downloadHandler.data).ToTexture2D();
-            }
-            else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
-                     imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
-            {
-                UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-                yield return uwr.SendWebRequest();
-
-                stageImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-            }
-
-            if (stageImageTexture == null)
-            {
-                stageImage.color = new Color32(0, 0, 0, 230);
-            }
-            else
-            {
-                stageImage.texture = stageImageTexture;
-                stageImage.color = new Color32(255, 255, 255, 255);
-            }
+            GameObject.Find("StageImage").GetComponent<RawImage>().texture = stageImageTexture;
         }
     }
 

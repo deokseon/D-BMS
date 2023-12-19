@@ -28,6 +28,7 @@ public class GameUIManager : MonoBehaviour
 
     private BMSDrawer bmsDrawer = null;
     private BMSGameManager bmsGameManager = null;
+    private TextureDownloadManager textureDownloadManger = null;
 
     [SerializeField]
     private GameObject comboTitle;
@@ -86,6 +87,8 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI bgaOpacityText;
 
+    private RawImage loadingPanelBG;
+    private RawImage stageImage;
     [SerializeField]
     private Texture noStageImage;
     [SerializeField]
@@ -112,6 +115,9 @@ public class GameUIManager : MonoBehaviour
     {
         assetPacker = GetComponent<AssetPacker>();
         bmsGameManager = FindObjectOfType<BMSGameManager>();
+        textureDownloadManger = FindObjectOfType<TextureDownloadManager>();
+        loadingPanelBG = GameObject.Find("Loading_Panel").GetComponent<RawImage>();
+        stageImage = GameObject.Find("Loading_StageImage").GetComponent<RawImage>();
 
         assetPacker.AddTexturesToPack(Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject"));
         assetPacker.Process();
@@ -135,10 +141,10 @@ public class GameUIManager : MonoBehaviour
 
     private void SpriteSetting()
     {
-        StartCoroutine(CoSpriteSetting());
+        _ = UniSpriteSetting();
     }
 
-    private IEnumerator CoSpriteSetting()
+    private async UniTask UniSpriteSetting()
     {
         ObjectPool.poolInstance.SetComponent();
         ObjectPool.poolInstance.SetVerticalLineSprite();
@@ -175,9 +181,9 @@ public class GameUIManager : MonoBehaviour
         {
             FindObjectOfType<EarlyLate>().ObjectSetting();
             GameUIUpdate(0, JudgeType.IGNORE, 1.0f, 789, 123456);
-            yield return new WaitForSeconds(0.2f);
+            await UniTask.Delay(200);
             CustomSetting();
-            StartCoroutine(FadeOut());
+            _ = FadeOut();
         }
     }
 
@@ -457,32 +463,11 @@ public class GameUIManager : MonoBehaviour
 
     private async UniTask LoadImageTask(int value)
     {
-        var token = this.GetCancellationTokenOnDestroy();
         int start = (int)(value / (double)taskCount * bgImageList.Count);
         int end = (int)((value + 1) / (double)taskCount * bgImageList.Count);
         for (int i = start; i < end; i++)
         {
-            string path = BMSGameManager.header.musicFolderPath + bgImageList[i].Value.Substring(0, bgImageList[i].Value.Length - 4);
-
-            Texture2D texture2D = null;
-            if (File.Exists(path + ".bmp"))
-            {
-                var uwr = await UnityWebRequest.Get(@"file:\\" + path + ".bmp").SendWebRequest().WithCancellation(cancellationToken: token);
-                var uwrData = uwr.downloadHandler.data;
-                var bmpImage = await UniTask.RunOnThreadPool(() => loader.LoadBMP(uwrData));
-                texture2D = bmpImage.ToTexture2D();
-            }
-            else if (File.Exists(path + ".jpg"))
-            {
-                var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".jpg").SendWebRequest().WithCancellation(cancellationToken: token);
-                texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
-            }
-            else if (File.Exists(path + ".png"))
-            {
-                var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".png").SendWebRequest().WithCancellation(cancellationToken: token);
-                texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
-            }
-
+            Texture2D texture2D = await textureDownloadManger.GetTexture(BMSGameManager.header.musicFolderPath + bgImageList[i].Value.Substring(0, bgImageList[i].Value.Length - 4));
             if (texture2D != null && layerImageSet.Contains(bgImageList[i].Key))
             {
                 var colors = texture2D.GetPixels32();
@@ -636,10 +621,11 @@ public class GameUIManager : MonoBehaviour
         fadeObject.SetActive(true);
         fadeObject.GetComponent<Animator>().SetTrigger("FadeIn");
     }
-    public IEnumerator FadeOut()
+
+    public async UniTask FadeOut()
     {
         fadeObject.GetComponent<Animator>().SetTrigger("FadeOut");
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
         fadeObject.SetActive(false);
     }
 
@@ -695,17 +681,9 @@ public class GameUIManager : MonoBehaviour
 
     public void SetLoading()
     {
-        string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\loading-bg";
-        if (File.Exists(filePath + ".jpg"))
-        {
-            StartCoroutine(LoadRawImage(GameObject.Find("Loading_Panel").GetComponent<RawImage>(), "", filePath + ".jpg", noStageImage));
-        }
-        else if (File.Exists(filePath + ".png"))
-        {
-            StartCoroutine(LoadRawImage(GameObject.Find("Loading_Panel").GetComponent<RawImage>(), "", filePath + ".png", noStageImage));
-        }
-        StartCoroutine(LoadRawImage(GameObject.Find("Loading_StageImage").GetComponent<RawImage>(), BMSGameManager.header.musicFolderPath, BMSGameManager.header.stageFilePath, noStageImage));
-        //StartCoroutine(StageImageFade());
+        _ = LoadImage(loadingPanelBG, $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\loading-bg");
+        _ = LoadImage(stageImage, $"{BMSGameManager.header.musicFolderPath}{BMSGameManager.header.stageFilePath}");
+
         TextMeshProUGUI titleText = GameObject.Find("Loading_Title").GetComponent<TextMeshProUGUI>();
         titleText.text = BMSGameManager.header.title;
         titleText.fontSize = 35;
@@ -719,55 +697,10 @@ public class GameUIManager : MonoBehaviour
         GameObject.Find("Loading_Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
     }
 
-    /*private IEnumerator StageImageFade()
+    private async UniTask LoadImage(RawImage rawImage, string path)
     {
-        float fadeValue = 0.1f;
-        while (fadeValue < 0.9f)
-        {
-            fadeValue += 0.015f;
-            yield return new WaitForSecondsRealtime(0.01f);
-            stageImage.color = new Color(1, 1, 1, fadeValue);
-        }
-    }*/
-
-    public IEnumerator LoadRawImage(RawImage rawImage, string musicFolderPath, string path, Texture noImage)
-    {
-        if (string.IsNullOrEmpty(path))
-        {
-            rawImage.texture = noImage;
-            rawImage.color = new Color32(0, 0, 0, 230);
-            yield break; 
-        }
-
-        string imagePath = $@"file:\\{musicFolderPath}{path}";
-
-        Texture tex = null;
-        if (imagePath.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase))
-        {
-            UnityWebRequest uwr = UnityWebRequest.Get(imagePath);
-            yield return uwr.SendWebRequest();
-
-            tex = loader.LoadBMP(uwr.downloadHandler.data).ToTexture2D();
-        }
-        else if (imagePath.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) ||
-                 imagePath.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
-        {
-            UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-            yield return uwr.SendWebRequest();
-
-            tex = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-        }
-
-        if (tex == null)
-        {
-            rawImage.texture = noImage;
-            rawImage.color = new Color32(0, 0, 0, 230);
-        }
-        else
-        {
-            rawImage.texture = tex;
-            rawImage.color = new Color32(255, 255, 255, 255);
-        }
+        Texture tex = await textureDownloadManger.GetTexture(path);
+        rawImage.texture = tex ?? noStageImage;
     }
 
     public void SetLoadingSlider(float loadingValue)
@@ -806,6 +739,14 @@ public class GameUIManager : MonoBehaviour
         {
             if (bgSpriteArray[i] == transparentTexture) continue;
             Destroy(bgSpriteArray[i]);
+        }
+        if (loadingPanelBG.texture != noStageImage)
+        {
+            Destroy(loadingPanelBG.texture);
+        }
+        if (stageImage.texture != noStageImage)
+        {
+            Destroy(stageImage.texture);
         }
     }
 

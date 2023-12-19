@@ -37,69 +37,24 @@ public class StartSceneManager : MonoBehaviour
         toggleArray[currentIndex].isOn = true;
         toggleGroup.allowSwitchOff = false;
 
-        SetBackground();
+        _ = SetBackground();
     }
 
-    private void SetBackground()
+    private async UniTask SetBackground()
     {
         string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\start-bg";
-        if (File.Exists(filePath + ".jpg"))
-        {
-            _ = LoadBG(filePath + ".jpg");
-        }
-        else if (File.Exists(filePath + ".png"))
-        {
-            _ = LoadBG(filePath + ".png");
-        }
-        else if (File.Exists(filePath + ".mp4"))
-        {
-            _ = PrepareVideo(filePath + ".mp4");
-        }
-        else if (File.Exists(filePath + ".avi"))
-        {
-            _ = PrepareVideo(filePath + ".avi");
-        }
-        else if (File.Exists(filePath + ".wmv"))
-        {
-            _ = PrepareVideo(filePath + ".wmv");
-        }
-        else if (File.Exists(filePath + ".mpeg"))
-        {
-            _ = PrepareVideo(filePath + ".mpeg");
-        }
-        else if (File.Exists(filePath + ".mpg"))
-        {
-            _ = PrepareVideo(filePath + ".mpg");
-        }
-    }
 
-    private async UniTask LoadBG(string path)
-    {
-        string imagePath = $@"file:\\{path}";
-
-        var uwr = await UnityWebRequestTexture.GetTexture(imagePath).SendWebRequest();
-        bgImageTexture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
-
+        bgImageTexture = await FindObjectOfType<TextureDownloadManager>().GetTexture(filePath);
+        if (bgImageTexture != null)
+        {
+            GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
+        }
+        else
+        {
+            await FindObjectOfType<TextureDownloadManager>().PrepareVideo(filePath, "VideoPlayer", "Screen");
+        }
         _ = FadeOut();
     }
-
-    private async UniTask PrepareVideo(string path)
-    {
-        VideoPlayer videoPlayer = GameObject.Find("VideoPlayer").GetComponent<VideoPlayer>();
-        videoPlayer.url = $"file://{path}";
-
-        videoPlayer.Prepare();
-
-        await UniTask.WaitUntil(() => videoPlayer.isPrepared);
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = videoPlayer.texture;
-
-        videoPlayer.Play();
-
-        _ = FadeOut();
-    }
-
 
     private void Update()
     {

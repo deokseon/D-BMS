@@ -5,6 +5,7 @@ using System.Threading;
 using UnityEngine.Video;
 using System;
 using System.IO;
+using Cysharp.Threading.Tasks;
 
 public class BMSGameManager : MonoBehaviour
 {
@@ -150,7 +151,7 @@ public class BMSGameManager : MonoBehaviour
         fsStates = new int[2] { 0, 0 };
         threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
 
-        StartCoroutine(PreLoad(false));
+        _ = PreLoad(false);
     }
 
     public float CalulateSpeed()
@@ -159,7 +160,7 @@ public class BMSGameManager : MonoBehaviour
         return (userSpeed * 13.0f * divideBPM);
     }
 
-    private IEnumerator PreLoad(bool isRestart)
+    private async UniTask PreLoad(bool isRestart)
     {
         stopwatch.Reset();
         soundManager.AudioPause(false);
@@ -234,7 +235,7 @@ public class BMSGameManager : MonoBehaviour
             totalLoading = gameUIManager.bgImageList.Count + soundManager.pathes.Count + Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject").Length;
             for (int i = bgaChangeArrayCount; i > -1; i--) { if (!bgaChangeArray[i].isPic) { totalLoading++; break; } }
             divideTotalLoading = 1.0f / totalLoading;
-            StartCoroutine(Loading());
+            _ = Loading();
             gameUIManager.LoadImages();
             soundManager.AddAudioClips();
             if (videoPlayer.isActiveAndEnabled)
@@ -253,17 +254,17 @@ public class BMSGameManager : MonoBehaviour
                     bool errorFlag = false;
                     videoPlayer.errorReceived += (a, b) => errorFlag = true;
                     videoPlayer.Prepare();
-                    yield return new WaitUntil(() => (videoPlayer.isPrepared || errorFlag));
+                    await UniTask.WaitUntil(() => videoPlayer.isPrepared || errorFlag);
                     currentLoading++;
                     isBGAVideoSupported = !errorFlag;
                 }
             }
-            yield return new WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
+            await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
             keyInput.KeySetting();
             gameUIManager.SetNullBGArray();
-            yield return new WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
-            yield return new WaitUntil(() => isFadeEnd);
-            yield return new WaitForSeconds(3.0f);
+            await UniTask.WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
+            await UniTask.WaitUntil(() => isFadeEnd);
+            await UniTask.Delay(3000);
         }
         else
         {
@@ -311,8 +312,8 @@ public class BMSGameManager : MonoBehaviour
 
         if (isRestart)
         {
-            StartCoroutine(gameUIManager.FadeOut());
-            yield return new WaitForSeconds(1.0f);
+            _ = gameUIManager.FadeOut();
+            await UniTask.Delay(1000);
         }
 
         isStarted = true;
@@ -326,9 +327,9 @@ public class BMSGameManager : MonoBehaviour
         stopwatch.Start();
     }
 
-    public IEnumerator GameRestart()
+    public async UniTask GameRestart()
     {
-        if (isCountdown || isClear || !isStarted) { yield break; }
+        if (isCountdown || isClear || !isStarted) { return; }
 
         if (songEndCheckCoroutine != null)
         {
@@ -347,13 +348,13 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.AnimationPause(false);
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
-        yield return new WaitForSeconds(1.0f);
+        await UniTask.Delay(1000);
 
         if (isBGAVideoSupported)
         {
             videoPlayer.Stop();
             videoPlayer.Prepare();
-            yield return new WaitUntil(() => videoPlayer.isPrepared);
+            await UniTask.WaitUntil(() => videoPlayer.isPrepared);
         }
         gameUIManager.InitBGALayer();
         ReturnAllNotes();
@@ -394,7 +395,7 @@ public class BMSGameManager : MonoBehaviour
             fsUpdate[i] = false;
         }
 
-        StartCoroutine(PreLoad(true));
+        _ = PreLoad(true);
     }
 
     private void ReturnAllNotes()
@@ -425,23 +426,23 @@ public class BMSGameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Loading()
+    private async UniTask Loading()
     {
         while (currentLoading < totalLoading)
         {
             gameUIManager.SetLoadingSlider(currentLoading * divideTotalLoading);
-            yield return null;
+            await UniTask.Yield();
         }
         gameUIManager.SetLoadingSlider(1.0f);
         gameUIManager.FadeIn();
-        yield return new WaitForSeconds(1.0f);
+        await UniTask.Delay(1000);
         GameUIManager.isCreateReady = true;
         gameUIManager.CloseLoading();
-        yield return new WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
+        await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
         gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
-        yield return new WaitForSeconds(0.5f);
-        StartCoroutine(gameUIManager.FadeOut());
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
+        _ = gameUIManager.FadeOut();
+        await UniTask.Delay(500);
         isFadeEnd = true;
     }
 
@@ -644,7 +645,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (isGameEnd)
         {
-            songEndCheckCoroutine = StartCoroutine(SongEndCheck());
+            _ = SongEndCheck();
             isEndJudgeInfoUpdate = 2;
             isGameEnd = false;
         }
@@ -1006,7 +1007,7 @@ public class BMSGameManager : MonoBehaviour
         }
     }
 
-    public IEnumerator GameEnd(bool clear)
+    public async UniTask GameEnd(bool clear)
     {
         pauseManager.Pause_SetActive(false);
         gameUIManager.SetInfoPanel(false);
@@ -1019,7 +1020,7 @@ public class BMSGameManager : MonoBehaviour
             float checkTime = 0.0f;
             while (soundManager.IsPlayingAudio(checkTime += Time.deltaTime))
             {
-                yield return null;
+                await UniTask.Yield();
             }
         }
         else
@@ -1039,17 +1040,17 @@ public class BMSGameManager : MonoBehaviour
         bmsResult.resultData.score = currentScore + bmsResult.resultData.maxCombo;
         bmsResult.resultData.accuracy = bmsResult.resultData.score / (1100000.0d + pattern.noteCount);
 
-        if (isClear) { yield return new WaitForSeconds(1.0f); }
-        StartCoroutine(CoLoadScene(3));
+        if (isClear) { await UniTask.Delay(1000); }
+        _ = LoadScene(3);
     }
 
-    public IEnumerator CoLoadScene(int scene)
+    public async UniTask LoadScene(int scene)
     {
         gameUIManager.AnimationPause(false);
         pauseManager.Pause_SetActive(false);
         gameUIManager.SetInfoPanel(false);
         gameUIManager.FadeIn();
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
         ReturnAllNotes();
         gameUIManager.BGATextureDestroy();
         gameUIManager.SkinTextureDestroy();
@@ -1084,12 +1085,12 @@ public class BMSGameManager : MonoBehaviour
         pauseManager.Pause_SetActive(false);
         gameUIManager.SetInfoPanel(false);
         stopwatch.Start();
-        StartCoroutine(CoCountDown3());
+        _ = CountDown3();
         Thread bgmResumeThread = new Thread(ResumeBGM);
         bgmResumeThread.Start();
     }
 
-    private IEnumerator CoCountDown3()
+    private async UniTask CountDown3()
     {
         isCountdown = true;
         gameUIManager.SetActiveCountdown(true);
@@ -1115,7 +1116,7 @@ public class BMSGameManager : MonoBehaviour
                 int second = (int)countdownMS;
                 gameUIManager.SetCountdown(countdownMS - second, second, countdownBar, countdownTime);
             }
-            yield return null;
+            await UniTask.Yield();
         }
     }
 
@@ -1128,17 +1129,17 @@ public class BMSGameManager : MonoBehaviour
         soundManager.AudioPause(false);
     }
 
-    private IEnumerator SongEndCheck()
+    private async UniTask SongEndCheck()
     {
         while (true)
         {
             if (((!isBGAVideoSupported && bgaChangeArrayCount == 0) || (isBGAVideoSupported && !videoPlayer.isPlaying)) && bgSoundArrayCount < 0)
             {
-                StartCoroutine(GameEnd(true));
+                _ = GameEnd(true);
                 songEndCheckCoroutine = null;
-                yield break;
+                break;
             }
-            yield return null;
+            await UniTask.Yield();
         }
     }
 

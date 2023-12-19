@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -10,32 +11,18 @@ public class RankImageManager : MonoBehaviour
 
     void Awake()
     {
-        StartCoroutine(LoadRankImage());
+        if (rankImageArray == null)
+        {
+            _ = LoadRankImage();
+        }
     }
 
-    private IEnumerator LoadRankImage()
+    private async UniTask LoadRankImage()
     {
-        if (rankImageArray != null) { yield break; }
         rankImageArray = new Texture2D[12];
         for (int i = 0; i < 12; i++)
         {
-            string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Rank\{GetRankImageName(i)}";
-            if (File.Exists(filePath + ".jpg"))
-            {
-                filePath += ".jpg";
-            }
-            else if (File.Exists(filePath + ".png"))
-            {
-                filePath += ".png";
-            }
-            else
-            {
-                continue;
-            }
-            UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(filePath);
-            yield return uwr.SendWebRequest();
-
-            rankImageArray[i] = (uwr.downloadHandler as DownloadHandlerTexture).texture;
+            rankImageArray[i] = await FindObjectOfType<TextureDownloadManager>().GetTexture($@"{Directory.GetParent(Application.dataPath)}\Skin\Rank\{GetRankImageName(i)}");
         }
     }
 

@@ -837,6 +837,7 @@ GameObject:
   - component: {fileID: 71882829}
   - component: {fileID: 71882832}
   - component: {fileID: 71882828}
+  - component: {fileID: 71882833}
   m_Layer: 5
   m_Name: SongSelect_UI_Canvas
   m_TagString: Untagged
@@ -856,6 +857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb09021e4547a24d9a0101fa215d3ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textureDownloadManager: {fileID: 71882833}
   koolText: {fileID: 798399764}
   coolText: {fileID: 1203046569}
   goodText: {fileID: 1449047472}
@@ -869,7 +871,7 @@ MonoBehaviour:
   rankImage: {fileID: 1410572403}
   stageImage: {fileID: 1282682464}
   stageImageAnimator: {fileID: 1282682465}
-  noneTexture: {fileID: 2800000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
+  noneTexture: {fileID: 2800000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
   noteSpeedText: {fileID: 1704013138}
   randomEffectorText: {fileID: 2049951141}
   levelText: {fileID: 61852799}
@@ -973,6 +975,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &71882833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 71882827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 137a56b3be6c92f4db51411daea576f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &74060398
 GameObject:
   m_ObjectHideFlags: 0

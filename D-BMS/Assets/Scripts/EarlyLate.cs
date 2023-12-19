@@ -49,7 +49,7 @@ public class EarlyLate : MonoBehaviour
             _ = CheckEarlyLate(0);
             _ = CheckEarlyLate(1);
             _ = CheckEndInfoUpdate();
-            StartCoroutine(WaitSetting());
+            _ = WaitSetting();
         }
     }
 
@@ -87,9 +87,9 @@ public class EarlyLate : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitSetting()
+    private async UniTask WaitSetting()
     {
-        yield return new WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
+        await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
 
         ObjectSetting();
     }

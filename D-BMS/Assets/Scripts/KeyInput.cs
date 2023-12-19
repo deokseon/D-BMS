@@ -380,7 +380,7 @@ public class KeyInput : MonoBehaviour
     private void MakeFunctionKeyAction()
     {
         funcGamePauseAction.started += ctx => { bmsGameManager.GamePause(0); };
-        funcGameRestartAction.started += ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
+        funcGameRestartAction.started += ctx => { _ = bmsGameManager.GameRestart(); };
         funcSpeedUpAction.started += ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started += ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcSpeedUp2Action.started += ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };
@@ -403,7 +403,7 @@ public class KeyInput : MonoBehaviour
         if (funcGamePauseAction == null) { return; }
 
         funcGamePauseAction.started -= ctx => { bmsGameManager.GamePause(0); };
-        funcGameRestartAction.started -= ctx => { StartCoroutine(bmsGameManager.GameRestart()); };
+        funcGameRestartAction.started -= ctx => { _ = bmsGameManager.GameRestart(); };
         funcSpeedUpAction.started -= ctx => { bmsGameManager.ChangeSpeed(1); };
         funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcSpeedUp2Action.started -= ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };

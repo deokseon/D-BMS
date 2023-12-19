@@ -12392,6 +12392,7 @@ GameObject:
   - component: {fileID: 1775494454}
   - component: {fileID: 1775494456}
   - component: {fileID: 1775494457}
+  - component: {fileID: 1775494458}
   m_Layer: 5
   m_Name: Dynamic_UI_Canvas
   m_TagString: Untagged
@@ -12487,6 +12488,7 @@ MonoBehaviour:
   bgaOpacity: {fileID: 225687819}
   transparentTexture: {fileID: 2800000, guid: cf981606408410a44ad3d72937155409, type: 3}
   bgSpriteArrayLength: 0
+  taskCount: 0
   comboTitle: {fileID: 2137158661}
   comboParentTransform: {fileID: 441251055}
   comboDigitArray:
@@ -12553,7 +12555,7 @@ MonoBehaviour:
   infoPanel: {fileID: 1060953706}
   noteSpeedText: {fileID: 502843351}
   bgaOpacityText: {fileID: 908919323}
-  noStageImage: {fileID: 2800000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
+  noStageImage: {fileID: 2800000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
   countdownObject: {fileID: 181444076}
   fadeObject: {fileID: 1949911352}
   assetPacker: {fileID: 0}
@@ -12577,6 +12579,18 @@ MonoBehaviour:
   cacheName: 
   cacheVersion: 1
   deletePreviousCacheVersion: 1
+--- !u!114 &1775494458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775494452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 137a56b3be6c92f4db51411daea576f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1779824183
 GameObject:
   m_ObjectHideFlags: 0

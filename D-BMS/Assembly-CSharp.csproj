@@ -105,6 +105,7 @@
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\StartSceneManager.cs" />
      <Compile Include="Assets\Scripts\SystemOptionManager.cs" />
+     <Compile Include="Assets\Scripts\TextureDownloadManager.cs" />
      <Compile Include="Assets\Scripts\ToggleController.cs" />
      <Compile Include="Assets\Scripts\ToggleMouseHandler.cs" />
      <Compile Include="Assets\Scripts\UIMouseClick.cs" />

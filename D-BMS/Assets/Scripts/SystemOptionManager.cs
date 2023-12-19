@@ -7,6 +7,7 @@ using UnityEngine.Video;
 using System;
 using System.IO;
 using UnityEngine.Networking;
+using Cysharp.Threading.Tasks;
 
 public class SystemOptionManager : MonoBehaviour
 {
@@ -129,71 +130,23 @@ public class SystemOptionManager : MonoBehaviour
             }
         }
 
-        //StartCoroutine(PrepareVideo());
-        SetBackground();
+        _ = SetBackground();
     }
-    private void SetBackground()
+
+    private async UniTask SetBackground()
     {
         string filePath = $@"{Directory.GetParent(Application.dataPath)}\Skin\Background\option-bg";
-        if (File.Exists(filePath + ".jpg"))
+
+        bgImageTexture = await FindObjectOfType<TextureDownloadManager>().GetTexture(filePath);
+        if (bgImageTexture != null)
         {
-            StartCoroutine(LoadBG(filePath + ".jpg"));
+            GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
         }
-        else if (File.Exists(filePath + ".png"))
+        else
         {
-            StartCoroutine(LoadBG(filePath + ".png"));
+            await FindObjectOfType<TextureDownloadManager>().PrepareVideo(filePath, "VideoPlayer", "Screen");
         }
-        else if (File.Exists(filePath + ".mp4"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mp4"));
-        }
-        else if (File.Exists(filePath + ".avi"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".avi"));
-        }
-        else if (File.Exists(filePath + ".wmv"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".wmv"));
-        }
-        else if (File.Exists(filePath + ".mpeg"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mpeg"));
-        }
-        else if (File.Exists(filePath + ".mpg"))
-        {
-            StartCoroutine(PrepareVideo(filePath + ".mpg"));
-        }
-    }
-
-    private IEnumerator LoadBG(string path)
-    {
-        string imagePath = $@"file:\\{path}";
-
-        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imagePath);
-        yield return uwr.SendWebRequest();
-
-        bgImageTexture = (uwr.downloadHandler as DownloadHandlerTexture).texture;
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = bgImageTexture;
-
-        StartCoroutine(CoFadeOut());
-    }
-
-
-    private IEnumerator PrepareVideo(string path)
-    {
-        VideoPlayer videoPlayer = GameObject.Find("VideoPlayer").GetComponent<VideoPlayer>();
-        videoPlayer.url = $"file://{path}";
-
-        videoPlayer.Prepare();
-
-        yield return new WaitUntil(() => videoPlayer.isPrepared);
-
-        GameObject.Find("Screen").GetComponent<RawImage>().texture = videoPlayer.texture;
-
-        videoPlayer.Play();
-
-        StartCoroutine(CoFadeOut());
+        _ = FadeOut();
     }
 
     private void FitTextSize(TextMeshProUGUI text, int initFontSize, int maxSize)
@@ -346,9 +299,9 @@ public class SystemOptionManager : MonoBehaviour
         outputDeviceCount = wasapiCount + asioCount > 10 ? 10 : wasapiCount + asioCount;
     }
 
-    private IEnumerator CoFadeOut()
+    private async UniTask FadeOut()
     {
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
@@ -360,15 +313,15 @@ public class SystemOptionManager : MonoBehaviour
         }
     }
 
-    private IEnumerator CoLoadScene(int scene)
+    private async UniTask LoadScene()
     {
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
-        yield return new WaitForSecondsRealtime(1.0f);
+        await UniTask.Delay(1000);
 
         TextureDestroy();
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
     void Update()
@@ -376,7 +329,7 @@ public class SystemOptionManager : MonoBehaviour
         if (isChanging || fadeImage.IsActive()) { return; }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            StartCoroutine(CoLoadScene(0));
+            _ = LoadScene();
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
