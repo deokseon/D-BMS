@@ -52,7 +52,9 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI levelText;
     [SerializeField]
-    private TextMeshProUGUI songIndexText;
+    private TextMeshProUGUI currentIndexText;
+    [SerializeField]
+    private TextMeshProUGUI maxIndexText;
     [SerializeField]
     private Scrollbar scrollbar;
     [SerializeField]
@@ -70,6 +72,12 @@ public class SongSelectUIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI sortByText;
     private int sortByCount;
+
+    [SerializeField]
+    private GameObject replayPanel;
+    [SerializeField]
+    private TextMeshProUGUI[] replayTextList;
+    private readonly string[] replayName = { "AUTO SAVE 1", "AUTO SAVE 2", "BEST SCORE", "STAGE FAILED", "[1]", "[2]", "[3]" };
 
     private readonly int hashRightRotate = Animator.StringToHash("RightRotate");
     private readonly int hashLeftRotate = Animator.StringToHash("LeftRotate");
@@ -157,20 +165,26 @@ public class SongSelectUIManager : MonoBehaviour
     void Update()
     {
         if (fadeImage.IsActive()) { return; }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ToggleOptionCanvas();
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (optionCanvas.enabled)
             {
                 ToggleOptionCanvas();
             }
+            else if (replayPanel.activeSelf)
+            {
+                replayPanel.SetActive(false);
+            }
             else
             {
                 _ = LoadStartScene();
             }
+        }
+        if (replayPanel.activeSelf) { return; }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ToggleOptionCanvas();
         }
         if (optionCanvas.enabled) { return; }
 
@@ -229,9 +243,17 @@ public class SongSelectUIManager : MonoBehaviour
         {
             CategoryChangeButtonClick(1);
         }
+        else if (Input.GetKeyDown(KeyCode.F4))
+        {
+            SortByClick(1);
+        }
         else if (Input.GetKeyDown(KeyCode.F6))
         {
             SongRandomSelect();
+        }
+        else if (Input.GetKeyDown(KeyCode.F7))
+        {
+            SetReplayListPanel();
         }
         else if (Input.anyKeyDown)
         {
@@ -340,6 +362,8 @@ public class SongSelectUIManager : MonoBehaviour
         if (BMSFileSystem.selectedHeader != null)
         {
             PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
+            BMSGameManager.isReplay = false;
+            BMSGameManager.replayData = null;
             UnityEngine.SceneManagement.SceneManager.LoadScene(2);
         }
     }
@@ -543,7 +567,8 @@ public class SongSelectUIManager : MonoBehaviour
     {
         if (currentHeaderListCount == 0) { return; }
         int tempIndex = convertedIndex + 1;
-        songIndexText.text = tempIndex.ToString() + " / " + currentHeaderListCount.ToString();
+        currentIndexText.text = tempIndex.ToString();
+        maxIndexText.text = currentHeaderListCount.ToString();
     }
 
     private void ConvertIndex()
@@ -588,11 +613,22 @@ public class SongSelectUIManager : MonoBehaviour
         MoveToIndex(Random.Range(0, currentHeaderListCount));
     }
 
-    public void Check()
+    public void SetReplayListPanel()
     {
-        if (BMSFileSystem.selectedHeader.title.CompareTo(BMSFileSystem.selectedCategoryHeaderList[convertedIndex].title) != 0)
+        for (int i = 0; i < replayTextList.Length; i++)
         {
-            Debug.Log("Change");
+            BMSGameManager.replayData = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSFileSystem.selectedHeader.fileName}_RP{i}.json");
+            replayTextList[i].text = replayName[i] + " - " + (BMSGameManager.replayData == null ? "EMPTY" : $"{(int)(float)BMSGameManager.replayData.score} : {BMSGameManager.replayData.date}");
         }
+        replayPanel.SetActive(true);
+    }
+
+    public void ReplayButtonClick(int index)
+    {
+        BMSGameManager.replayData = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSFileSystem.selectedHeader.fileName}_RP{index}.json");
+        if (BMSGameManager.replayData == null) { return; }
+        PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
+        BMSGameManager.isReplay = true;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(2);
     }
 }

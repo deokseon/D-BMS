@@ -140,8 +140,8 @@ public class BMSPattern
                 if (lines[i].noteList[j].extra == 1)
                 {
                     if ((float)(lines[i].noteList[j].timing - 0.11d) <= (float)lines[i].noteList[j + 1].timing) { continue; }
-                    Note tempNote = new Note(lines[i].noteList[j].timing - 0.11d);
-                    tempNote.beat = GetBeatFromTiming(tempNote);
+                    Note tempNote = new Note(lines[i].noteList[j].timing - 0.11d, 2);
+                    tempNote.beat = GetBeatFromTiming(tempNote.timing);
                     tempList.Add(tempNote);
 
                     tempNote = new Note(0, 0, tempList[tempList.Count - 1].beat - 0.25d, 2);
@@ -160,21 +160,36 @@ public class BMSPattern
 
     private void SetNoteTiming()
     {
-        for (int i = 0; i < 5; i++)
+        if (BMSGameManager.isReplay)
         {
-            for (int j = lines[i].noteList.Count - 1; j >= 0; j--)
+            for (int i = 0; i < 5; i++)
             {
-                lines[i].noteList[j].timing *= 10000000.0d;
-                if (lines[i].noteList[j].extra == 0)
+                for (int j = lines[i].noteList.Count - 1; j >= 0; j--)
                 {
-                    lines[i].noteList[j].failTiming = lines[i].noteList[j].timing + 1750000.0d;
+                    lines[i].noteList[j].timing *= 10000000.0d;
+                    lines[i].noteList[j].failTiming = 20000000000.0d;
                     lines[i].noteList[j].tickTiming = 20000000000.0d;
                 }
-                else
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = lines[i].noteList.Count - 1; j >= 0; j--)
                 {
-                    lines[i].noteList[j].failTiming = 20000000000.0d;
-                    lines[i].noteList[j].tickTiming = lines[i].noteList[j].timing;
-                    lines[i].noteList[j].timing = 20000000000.0d;
+                    lines[i].noteList[j].timing *= 10000000.0d;
+                    if (lines[i].noteList[j].extra == 0)
+                    {
+                        lines[i].noteList[j].failTiming = lines[i].noteList[j].timing + 1750000.0d;
+                        lines[i].noteList[j].tickTiming = 20000000000.0d;
+                    }
+                    else
+                    {
+                        lines[i].noteList[j].failTiming = 20000000000.0d;
+                        lines[i].noteList[j].tickTiming = lines[i].noteList[j].timing;
+                        lines[i].noteList[j].timing = 20000000000.0d;
+                    }
                 }
             }
         }
@@ -250,7 +265,7 @@ public class BMSPattern
         return bpms[idx + 1].bpm;
     }
 
-    private double GetTimingInSecond(BMSObject obj)
+    public double GetTimingInSecond(BMSObject obj)
     {
         double timing = 0;
         int i;
@@ -262,15 +277,15 @@ public class BMSPattern
         return timing;
     }
 
-    private double GetBeatFromTiming(BMSObject obj)  // 리플레이용
+    public double GetBeatFromTiming(double timing)  // 리플레이용
     {
         double beat = 0;
         int i;
-        for (i = bpms.Count - 1; i > 0 && obj.timing > bpms[i - 1].timing; i--)
+        for (i = bpms.Count - 1; i > 0 && timing > bpms[i - 1].timing; i--)
         {
             beat += (bpms[i - 1].timing - bpms[i].timing) * bpms[i].bpm / 60;
         }
-        beat += (obj.timing - bpms[i].timing) * bpms[i].bpm / 60;
+        beat += (timing - bpms[i].timing) * bpms[i].bpm / 60;
         return beat;
     }
 

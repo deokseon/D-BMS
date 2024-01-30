@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class BMSDrawer : MonoBehaviour
 {
-    public BMSPattern pattern;
+    [SerializeField]
+    private GameObject replayNoteObject;
 
-    public void DrawNotes(float[] xPosition)
+    public void DrawNotes(bool isRestart)
     {
-        float speed = GetComponent<BMSGameManager>().CalulateSpeed();
+        BMSPattern pattern = BMSParser.instance.pattern;
+        BMSGameManager bmsGameManager = GetComponent<BMSGameManager>();
+
+        float speed = bmsGameManager.CalulateSpeed();
         float offset = ObjectPool.poolInstance.GetOffset();
         float longNoteLen = ObjectPool.poolInstance.GetLength();
-
-        pattern = BMSParser.instance.pattern;
 
         for (int i = 0; i < 5; i++)
         {
@@ -23,7 +25,7 @@ public class BMSDrawer : MonoBehaviour
                 if (note == null) { break; }
 
                 note.SetActive(true);
-                note.transform.localPosition = new Vector3(xPosition[i], (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
+                note.transform.localPosition = new Vector3(bmsGameManager.xPosition[i], (float)(pattern.normalNote[i][j].beat * speed), 0.0f);
 
                 pattern.normalNote[i][j].model = note;
                 pattern.normalNote[i][j].modelTransform = note.GetComponent<Transform>();
@@ -46,7 +48,7 @@ public class BMSDrawer : MonoBehaviour
                         pattern.longNote[i][j - ((k + 2) % 3)].model.transform.localScale =
                             new Vector3(1.0f, ((float)pattern.longNote[i][j - 1].beat * speed - offset) * longNoteLen, 1.0f);
                     }
-                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
+                    pattern.longNote[i][j - ((k + 2) % 3)].modelTransform.localPosition = new Vector3(bmsGameManager.xPosition[i], yPos, 0.0f);
                 }
             }
         }
@@ -60,7 +62,41 @@ public class BMSDrawer : MonoBehaviour
             bar.model = ObjectPool.poolInstance.GetBarInPool();
             bar.modelTransform = bar.model.GetComponent<Transform>();
             bar.model.SetActive(true);
-            bar.model.transform.localPosition = new Vector3(xPosition[2], (float)(bar.beat * speed), 0.0f);
+            bar.model.transform.localPosition = new Vector3(bmsGameManager.xPosition[2], (float)(bar.beat * speed), 0.0f);
         }
+
+        if (!BMSGameManager.isReplay || isRestart) { return; }
+
+        Transform replayNoteParent = new GameObject("ReplayNoteParent").transform;
+        replayNoteParent.SetParent(GameObject.Find("Notes").transform);
+        replayNoteParent.localPosition = Vector3.zero;
+
+        Sprite replayNoteSprite = FindObjectOfType<GameUIManager>().assetPacker.GetSprite("ReplayNote");
+        float replayNoteSize = ObjectPool.poolInstance.GetNoteWidth() / replayNoteSprite.bounds.size.x;
+
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = bmsGameManager.replayNoteArray[i].Length - 1; j >= 0; j--)
+            {
+                if (bmsGameManager.replayNoteArray[i][j].extra != 0) { continue; }
+
+                GameObject note = Instantiate(replayNoteObject, replayNoteParent);
+                SpriteRenderer noteSpriteRenderer = note.GetComponent<SpriteRenderer>();
+                noteSpriteRenderer.sprite = replayNoteSprite;
+                noteSpriteRenderer.color = GetReplayNoteColor(bmsGameManager.replayNoteArray[i][j].diff, bmsGameManager.earlyLateThreshold * 10000);
+                note.transform.localPosition = new Vector3(bmsGameManager.xPosition[i], (float)(bmsGameManager.replayNoteArray[i][j].beat * speed), 0.0f);
+                note.transform.localScale = new Vector3(replayNoteSize, replayNoteSize, 1.0f);
+                bmsGameManager.replayNoteArray[i][j].model = note;
+            }
+        }
+    }
+
+    private Color GetReplayNoteColor(double diff, int threshold)
+    {
+        if (diff < -1750000.0d)
+        {
+            return Color.white;
+        }
+        return (diff <= threshold && diff >= -threshold) ? Color.green : (diff > 0 ? Color.red : Color.cyan);
     }
 }

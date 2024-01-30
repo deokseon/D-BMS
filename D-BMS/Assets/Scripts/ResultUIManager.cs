@@ -8,6 +8,7 @@ using B83.Image.BMP;
 using System.IO;
 using UnityEngine.Video;
 using Cysharp.Threading.Tasks;
+using System;
 
 public class ResultUIManager : MonoBehaviour
 {
@@ -20,6 +21,12 @@ public class ResultUIManager : MonoBehaviour
     private GameObject dot;
     [SerializeField]
     private Image fadeImage;
+
+    [SerializeField]
+    private GameObject replayPanel;
+    [SerializeField]
+    private TextMeshProUGUI[] replayTextList;
+    private readonly string[] replayName = { "[1]", "[2]", "[3]" };
 
     private SongInfoObject songInfoObject;
 
@@ -34,17 +41,51 @@ public class ResultUIManager : MonoBehaviour
         DrawJudgeGraph();
         _ = DrawSongInfo();
 
-        if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < BMSGameManager.bmsResult.resultData.score)
+        if (!BMSGameManager.isReplay)
         {
-            DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + ".json", BMSGameManager.bmsResult.resultData);
-            DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + "_SG.json", BMSGameManager.bmsResult.scoreGraphData);
-        }
-        else
-        {
-            GameObject.Find("NewRecord").SetActive(false);
+            ReplayAutoSave();
+            if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < BMSGameManager.bmsResult.resultData.score)
+            {
+                DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + ".json", BMSGameManager.bmsResult.resultData);
+                DataSaveManager.SaveData("DataSave", BMSGameManager.header.fileName + "_SG.json", BMSGameManager.bmsResult.scoreGraphData);
+                DataSaveManager.SaveData("Replay", BMSGameManager.header.fileName + "_RP2.json", BMSGameManager.replayData);
+            }
+            else
+            {
+                GameObject.Find("NewRecord").SetActive(false);
+                if (!BMSGameManager.isClear)
+                {
+                    DataSaveManager.SaveData("Replay", BMSGameManager.header.fileName + "_RP3.json", BMSGameManager.replayData);
+                }
+            }
         }
 
         _ = SetBackground();
+    }
+
+    private void ReplayAutoSave()
+    {
+        ReplayData autoSaveData1 = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSGameManager.header.fileName}_RP{0}.json");
+        ReplayData autoSaveData2 = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSGameManager.header.fileName}_RP{1}.json");
+        if (autoSaveData1 == null)
+        {
+            DataSaveManager.SaveData("Replay", BMSGameManager.header.fileName + "_RP0.json", BMSGameManager.replayData);
+        }
+        else if (autoSaveData2 == null)
+        {
+            DataSaveManager.SaveData("Replay", BMSGameManager.header.fileName + "_RP1.json", BMSGameManager.replayData);
+        }
+        else
+        {
+            if (DateTime.Compare(DateTime.ParseExact(autoSaveData1.date, "yyyy-MM-dd HH:mm:ss", null), DateTime.ParseExact(autoSaveData2.date, "yyyy-MM-dd HH:mm:ss", null)) == -1)
+            {
+                DataSaveManager.SaveData("Replay", BMSGameManager.header.fileName + "_RP0.json", BMSGameManager.replayData);
+            }
+            else
+            {
+                DataSaveManager.SaveData("Replay", BMSGameManager.header.fileName + "_RP1.json", BMSGameManager.replayData);
+            }
+        }
     }
 
     private async UniTask SetBackground()
@@ -69,28 +110,91 @@ public class ResultUIManager : MonoBehaviour
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
-    private async UniTask LoadSelectScene()
+    private async UniTask LoadScene(int scene)
     {
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");
 
         await UniTask.Delay(1000);
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (fadeImage.IsActive()) { return; }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (fadeImage.IsActive()) { return; }
-            _ = LoadSelectScene();
+            if (replayPanel.activeSelf)
+                replayPanel.SetActive(false);
+            else
+                _ = LoadScene(1);
         }
+        if (replayPanel.activeSelf) { return; }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            Restart();
+        }
+        else if (Input.GetKeyDown(KeyCode.F7))
+        {
+            SetReplayPanel();
+        }
+        else if (Input.GetKeyDown(KeyCode.F9))
+        {
+            FavoriteToggleClick();
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            SetStageImageRotateSpeed();
+        }
+        else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            _ = LoadScene(1);
+        }
+    }
+
+    private void Restart()
+    {
+        if (!BMSGameManager.isReplay)
+        {
+            BMSGameManager.replayData = null;
+        }
+        BMSFileSystem.selectedHeader = BMSGameManager.header;
+        _ = LoadScene(2);
+    }
+
+    private void FavoriteToggleClick()
+    {
+        GameObject.Find("Favorite_Toggle").GetComponent<Toggle>().isOn = !GameObject.Find("Favorite_Toggle").GetComponent<Toggle>().isOn;
+    }
+
+    private void SetStageImageRotateSpeed()
+    {
+        GameObject.Find("StageImage").GetComponent<ImageRotate>().SetRotateSpeed();
+    }
+
+    private void SetReplayPanel()
+    {
+        for (int i = 0; i < replayTextList.Length; i++)
+        {
+            ReplayData replayData = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSGameManager.header.fileName}_RP{i + 4}.json");
+            replayTextList[i].text = replayName[i] + " - " + (replayData == null ? "EMPTY" : $"{(int)(float)replayData.score} : {replayData.date}");
+        }
+        replayPanel.SetActive(true);
+    }
+
+    public void SaveReplayData(int index)
+    {
+        DataSaveManager.SaveData("Replay", $"{BMSGameManager.header.fileName}_RP{index}.json", BMSGameManager.replayData);
+        replayPanel.SetActive(false);
     }
 
     private void DrawStatisticsResult()
     {
         songInfoObject.SetSongInfo(BMSGameManager.header);
         songInfoObject.SetFavoriteToggle(BMSGameManager.header);
+        songInfoObject.FavoriteToggleAddListener(BMSGameManager.header);
 
         GameObject.Find("TotalNote").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.noteCount.ToString();
         GameObject.Find("Kool").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.koolCount.ToString();
@@ -104,7 +208,7 @@ public class ResultUIManager : MonoBehaviour
         GameObject.Find("MaxCombo").GetComponent<TextMeshProUGUI>().text = BMSGameManager.bmsResult.resultData.maxCombo.ToString();
         GameObject.Find("Score").GetComponent<TextMeshProUGUI>().text = ((int)((float)BMSGameManager.bmsResult.resultData.score)).ToString();
         GameObject.Find("NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
-        SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
+        SetRandomEffectorText(BMSGameManager.isReplay ? BMSGameManager.replayData.randomEffector : PlayerPrefs.GetInt("RandomEffector"));
         GameObject.Find("Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
 
         DrawDiffTextAndImage(BMSGameManager.bmsResult.resultData.koolCount - SongSelectUIManager.resultData.koolCount, GameObject.Find("KoolDiff").GetComponent<TextMeshProUGUI>(), GameObject.Find("KoolChangeImage").GetComponent<Image>());

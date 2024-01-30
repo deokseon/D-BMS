@@ -119,6 +119,15 @@ public class FavoriteSong
     }
 }
 
+public class ReplayData
+{
+    public List<AbstractNote>[] noteList;
+    public List<ReplayNoteData>[] replayNoteList;
+    public int randomEffector;
+    public string date;
+    public double score;
+}
+
 public static class DataSaveManager
 {
     public static void SaveData<T>(string saveFolder, string jsonFileName, T saveObject)

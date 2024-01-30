@@ -26,6 +26,7 @@ public class SoundManager : MonoBehaviour
     public FMOD.Sound[] keySoundArray;
 
     private readonly string[] soundFileExtension = { ".ogg", ".mp3", ".wav" };
+    private bool isDestroy = false;
 
     private void Awake()
     {
@@ -128,11 +129,13 @@ public class SoundManager : MonoBehaviour
 
     public void SoundAndChannelRelease()
     {
+        if (isDestroy) { return; }
         for (int i = pathes.Count - 1; i >= 0; i--)
         {
             keySoundArray[pathes[i].Key].release();
         }
         channelGroup.release();
         endChannelGroup.release();
+        isDestroy = true;
     }
 }

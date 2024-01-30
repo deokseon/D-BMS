@@ -12,27 +12,18 @@ public class Line
 
 public abstract class BMSObject : System.IComparable<BMSObject>
 {
-    public int bar { get; protected set; }
+    public int bar;
     public double beat;
     public double timing;
 
-    public BMSObject(double time)
-    {
-        bar = 0;
-        beat = 0;
-        timing = time;
-    }
+    public BMSObject() { }
 
     public BMSObject(int bar, double beat, double beatLength)
     {
         this.bar = bar;
         this.beat = (beat / beatLength) * 4.0d;
     }
-    public BMSObject(int bar, double beat)
-    {
-        this.bar = bar;
-        this.beat = beat;
-    }
+
     public void CalculateBeat(double prevBeats, double beatC)
     {
         this.beat = this.beat * beatC + prevBeats;
@@ -56,19 +47,37 @@ public class BGChange : BMSObject
         this.isPic = isPic;
     }
 }
-public class Note : BMSObject
+
+public class AbstractNote : BMSObject
 {
     public int keySound;
     public int extra;
+
+    public AbstractNote() { }
+
+    public AbstractNote(int bar, double beat, double beatLength) : base(bar, beat, beatLength) { }
+
+    public AbstractNote(Note note)
+    {
+        bar = note.bar;
+        beat = note.beat;
+        timing = note.timing;
+        keySound = note.keySound;
+        extra = note.extra;
+    }
+}
+
+public class Note : AbstractNote
+{
     public double failTiming;
     public double tickTiming;
     public GameObject model;
     public Transform modelTransform;
 
-    public Note(double time) : base(time)
+    public Note(double time, int extra)
     {
-        keySound = 0;
-        extra = 2;
+        timing = time;
+        this.extra = extra;
     }
 
     public Note(int bar, int keySound, double beat, double beatLength, int extra) : base(bar, beat, beatLength)
@@ -77,13 +86,51 @@ public class Note : BMSObject
         this.extra = extra;
     }
 
-    public Note(int bar, int keySound, double beat, int extra) : base(bar, beat)
+    public Note(int bar, int keySound, double beat, int extra)
     {
+        this.bar = bar;
+        this.beat = beat;
         this.keySound = keySound;
         this.extra = extra;
     }
+
+    public Note(AbstractNote abstractNote)
+    {
+        bar = abstractNote.bar;
+        beat = abstractNote.beat;
+        timing = abstractNote.timing;
+        keySound = abstractNote.keySound;
+        extra = abstractNote.extra;
+    }
 }
 
+public class ReplayNote : AbstractNote
+{
+    public double diff;
+    public GameObject model;
+
+    public ReplayNote(ReplayNoteData data)
+    {
+        timing = data.timing;
+        diff = data.diff;
+        extra = data.extra;
+        model = null;
+    }
+}
+
+public struct ReplayNoteData
+{
+    public double timing;
+    public double diff;
+    public int extra;
+
+    public ReplayNoteData(double timing, double diff, int extra)
+    {
+        this.timing = timing;
+        this.diff = diff;
+        this.extra = extra;
+    }
+}
 
 public class BPM : BMSObject
 {

@@ -137,6 +137,8 @@ public class GameUIManager : MonoBehaviour
         bgImageList = new List<KeyValuePair<int, string>>(500);
         layerImageSet = new HashSet<int>();
         taskCount = Mathf.Max((int)(SystemInfo.processorCount * 0.5f) - 2, 1);
+
+        SetReplayFunctionText();
     }
 
     private void SpriteSetting()
@@ -173,7 +175,7 @@ public class GameUIManager : MonoBehaviour
 
             bmsGameManager.longNoteOffset = ObjectPool.poolInstance.GetOffset();
             bmsGameManager.longNoteLength = ObjectPool.poolInstance.GetLength();
-            bmsDrawer.DrawNotes(bmsGameManager.xPosition);
+            bmsDrawer.DrawNotes(false);
 
             isPrepared++;
         }
@@ -693,7 +695,7 @@ public class GameUIManager : MonoBehaviour
         }
         GameObject.Find("Loading_Artist").GetComponent<TextMeshProUGUI>().text = BMSGameManager.header.artist;
         GameObject.Find("Loading_NoteSpeed").GetComponent<TextMeshProUGUI>().text = (PlayerPrefs.GetInt("NoteSpeed") * 0.1f).ToString("0.0");
-        SetRandomEffectorText(GameObject.Find("Loading_Random").GetComponent<TextMeshProUGUI>(), PlayerPrefs.GetInt("RandomEffector"));
+        SetRandomEffectorText(GameObject.Find("Loading_Random").GetComponent<TextMeshProUGUI>(), BMSGameManager.isReplay ? BMSGameManager.replayData.randomEffector : PlayerPrefs.GetInt("RandomEffector"));
         GameObject.Find("Loading_Fader").GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetFloat("FadeIn") == 0.0f ? "NONE" : $"{(int)(PlayerPrefs.GetFloat("FadeIn") * 100.0f)}%";
     }
 
@@ -729,6 +731,17 @@ public class GameUIManager : MonoBehaviour
     public void AnimationPause(bool isPause)
     {
         Time.timeScale = isPause ? 0.0f : 1.0f;
+    }
+
+    private void SetReplayFunctionText()
+    {
+        if (!BMSGameManager.isReplay)
+        {
+            GameObject.Find("ReplayFuncTextBG").SetActive(false);
+            GameObject.Find("ReplayFuncKeyTextBG").SetActive(false);
+            GameObject.Find("ReplayFuncText").SetActive(false);
+            GameObject.Find("ReplayFuncKeyText").SetActive(false);
+        }
     }
 
     public void BGATextureDestroy()

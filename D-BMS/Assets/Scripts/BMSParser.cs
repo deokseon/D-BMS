@@ -82,6 +82,7 @@ public class BMSParser : MonoBehaviour
         GetFile();
         ParseGameHeader(isRestart);
         ParseMainData();
+        SetReplayNoteList();
     }
 
     public void GetFile()
@@ -355,5 +356,18 @@ public class BMSParser : MonoBehaviour
             result += (str[0] - '0') * 36;
 
         return result;
+    }
+
+    private void SetReplayNoteList()
+    {
+        if (!BMSGameManager.isReplay) { return; }
+        for (int i = 0; i < 5; i++)
+        {
+            pattern.lines[i].noteList = new List<Note>(BMSGameManager.replayData.noteList[i].Count);
+            for (int j = 0; j < BMSGameManager.replayData.noteList[i].Count; j++)
+            {
+                pattern.lines[i].noteList.Add(new Note(BMSGameManager.replayData.noteList[i][j]));
+            }
+        }
     }
 }

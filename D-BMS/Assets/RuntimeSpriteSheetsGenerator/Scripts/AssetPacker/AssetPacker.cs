@@ -233,7 +233,7 @@ namespace DaVikingCode.AssetPacker {
 			}
 			else if (name.CompareTo("hpbar") == 0 || name.CompareTo("panel-bg") == 0 ||
 					 name.CompareTo("keyfeedback") == 0 || name.CompareTo("judgeline") == 0 ||
-					 name.CompareTo("note1") == 0 || name.CompareTo("note2") == 0 ||
+					 name.CompareTo("note1") == 0 || name.CompareTo("note2") == 0 || name.CompareTo("ReplayNote") == 0 ||
 					 name.CompareTo("longnotebottom1") == 0 || name.CompareTo("longnotebottom2") == 0 ||
 					 name.CompareTo("longnotetop1") == 0 || name.CompareTo("longnotetop2") == 0)  // pivot - bottom
 			{

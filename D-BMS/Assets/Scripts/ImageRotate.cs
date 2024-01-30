@@ -22,4 +22,10 @@ public class ImageRotate : MonoBehaviour
     {
         rotateImage.Rotate(new Vector3(0, 0, rotateSpeed * Time.deltaTime));
     }
+
+    public void SetRotateSpeed()
+    {
+        rotateSpeed = rotateSpeed != 0.0f ? 0.0f : 36.0f * (direction == RotateDirection.clockwise ? -1 : 1);
+        rotateImage.rotation = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+    }
 }

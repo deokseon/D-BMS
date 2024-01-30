@@ -23,6 +23,7 @@ public class KeyInput : MonoBehaviour
     private InputAction funcSpeedDown2Action;
     private InputAction funcBGAOpacityUpAction;
     private InputAction funcBGAOpacityDownAction;
+    private InputAction funcReplayNoteShowAction;
 
     [SerializeField]
     private BMSGameManager bmsGameManager;
@@ -55,6 +56,10 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action = new InputAction("FuncSpeedDown2", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown2"))}");
         funcBGAOpacityUpAction = new InputAction("FuncBGAOpacityUp", InputActionType.Button, $"<Keyboard>/F4");
         funcBGAOpacityDownAction = new InputAction("FuncBGAOpacityDown", InputActionType.Button, $"<Keyboard>/F3");
+        if (BMSGameManager.isReplay)
+        {
+            funcReplayNoteShowAction = new InputAction("FuncReplayNoteShow", InputActionType.Button, $"<Keyboard>/F6");
+        }
     }
 
     public void InputThreadStart()
@@ -331,7 +336,6 @@ public class KeyInput : MonoBehaviour
             case 0x6F: value = "NumpadDivide"; break;
             case 0x70: value = "F1"; break;
             case 0x71: value = "F2"; break;
-            case 0x75: value = "F6"; break;
             case 0x76: value = "F7"; break;
             case 0x77: value = "F8"; break;
             case 0x78: value = "F9"; break;
@@ -396,6 +400,12 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.Enable();
         funcBGAOpacityUpAction.Enable();
         funcBGAOpacityDownAction.Enable();
+
+        if (BMSGameManager.isReplay)
+        {
+            funcReplayNoteShowAction.started += ctx => { bmsGameManager.ReplayNoteSetActive(); };
+            funcReplayNoteShowAction.Enable();
+        }
     }
 
     private void DeleteFunctionKeyAction()
@@ -408,8 +418,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDownAction.started -= ctx => { bmsGameManager.ChangeSpeed(-1); };
         funcSpeedUp2Action.started -= ctx => { bmsGameManager.ChangeSpeed(PlayerPrefs.GetInt("NoteSpeed")); };
         funcSpeedDown2Action.started -= ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
-        funcBGAOpacityUpAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(-1); };
-        funcBGAOpacityDownAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(1); };
+        funcBGAOpacityUpAction.started -= ctx => { bmsGameManager.ChangeBGAOpacity(1); };
+        funcBGAOpacityDownAction.started -= ctx => { bmsGameManager.ChangeBGAOpacity(-1); };
 
         funcGamePauseAction.Disable();
         funcGameRestartAction.Disable();
@@ -427,5 +437,12 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action = null;
         funcBGAOpacityUpAction = null;
         funcBGAOpacityDownAction = null;
+
+        if (BMSGameManager.isReplay)
+        {
+            funcReplayNoteShowAction.started -= ctx => { bmsGameManager.ReplayNoteSetActive(); };
+            funcReplayNoteShowAction.Disable();
+            funcReplayNoteShowAction = null;
+        }
     }
 }

@@ -65,6 +65,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e9f68119734b3c14ea59c3a7e983d4a7, type: 3}
   - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
+  - {fileID: 21300000, guid: ac919d0a71f45ed4fae87793bd2994b6, type: 3}
   - {fileID: 21300000, guid: 6cd098db8e1d7b943bee83610be50bb2, type: 3}
   - {fileID: 21300000, guid: fa95eaebf10aa48c1b9a954b7fd6e9b4, type: 3}
   - {fileID: 21300000, guid: 75717c3cd8ff71c4db83b5ed7c238f9b, type: 3}
@@ -89,6 +90,7 @@ SpriteAtlas:
   - favorite_1
   - Triangle
   - PersonIcon
+  - ReplayIcon
   - LoadingIcon
   - toggleBG
   - RoundRect2

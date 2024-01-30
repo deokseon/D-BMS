@@ -9,8 +9,10 @@ using Cysharp.Threading.Tasks;
 
 public class BMSGameManager : MonoBehaviour
 {
+    public static ReplayData replayData;
     public static BMSResult bmsResult;
     public static bool isClear;
+    public static bool isReplay;
     private bool isPaused = true;
     private bool isStarted = false;
     private bool isCountdown = false;
@@ -20,7 +22,7 @@ public class BMSGameManager : MonoBehaviour
     private float verticalLine;
     private int userSpeed;
     private float gameSpeed;
-    private int earlyLateThreshold;
+    [HideInInspector] public int earlyLateThreshold;
     private float judgeLineYPosition;
 
     [SerializeField]
@@ -39,6 +41,7 @@ public class BMSGameManager : MonoBehaviour
     private PauseManager pauseManager;
     [SerializeField]
     private Transform inputBlockLine;
+    private GameObject replayNoteParent;
 
     private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
     private double currentBeat = 0;
@@ -107,9 +110,13 @@ public class BMSGameManager : MonoBehaviour
     private Note[][] normalNoteArray = new Note[5][];
     private Note[] barArray;
     private KeySoundChange[][] keySoundChangeArray = new KeySoundChange[5][];
+    private int[] replayNoteArrayCount = new int[5];
+    public ReplayNote[][] replayNoteArray = new ReplayNote[5][];
+    private List<ReplayNoteData>[] replayNoteDataList = new List<ReplayNoteData>[5];
 
     private Thread bgmThread;
     private Thread keySoundChangeThread;
+    private Thread replayInputThread;
     private TimeSpan threadFrequency;
     [HideInInspector] public readonly object threadLock = new object();
     private bool[] isKeyDown = new bool[5] { false, false, false, false, false };
@@ -151,12 +158,17 @@ public class BMSGameManager : MonoBehaviour
         fsStates = new int[2] { 0, 0 };
         threadFrequency = new TimeSpan(10000000 / PlayerPrefs.GetInt("PollingRate"));
 
+        if (replayData == null)
+        {
+            replayData = new ReplayData();
+            replayData.noteList = new List<AbstractNote>[5];
+        }
+
         _ = PreLoad(false);
     }
 
     public float CalulateSpeed()
     {
-        //return (userSpeed * 13.35f * divideBPM);
         return (userSpeed * 13.0f * divideBPM);
     }
 
@@ -173,14 +185,16 @@ public class BMSGameManager : MonoBehaviour
 
         BMSParser.instance.Parse(isRestart);
         pattern = BMSParser.instance.pattern;
+        SaveReplayNoteList();
 
         pattern.GetBeatsAndTimings();
+        SetReplayNoteArray();
 
         bgaChangeArray = pattern.bgaChanges.ToArray();
         layerChangeArray = pattern.layerChanges.ToArray();
         bgSoundArray = pattern.bgSounds.ToArray();
         bpmArray = pattern.bpms.ToArray();
-        for (int i = 0; i < 5; i++) 
+        for (int i = 0; i < 5; i++)
         {
             noteArray[i] = pattern.lines[i].noteList.ToArray();
             longNoteArray[i] = pattern.longNote[i].ToArray();
@@ -197,6 +211,8 @@ public class BMSGameManager : MonoBehaviour
                 keySoundChangeArray[i] = new KeySoundChange[1] { new KeySoundChange(20000000000.0d, 0) };
                 keySoundChangeArrayCount[i] = 0;
             }
+
+            replayNoteDataList[i] = new List<ReplayNoteData>(noteArrayCount[i] * 2 + 200);
         }
         barArray = pattern.barLine.noteList.ToArray();
 
@@ -260,6 +276,10 @@ public class BMSGameManager : MonoBehaviour
                 }
             }
             await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
+            if (isReplay)
+            {
+                replayNoteParent = GameObject.Find("ReplayNoteParent");
+            }
             keyInput.KeySetting();
             gameUIManager.SetNullBGArray();
             await UniTask.WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
@@ -268,7 +288,7 @@ public class BMSGameManager : MonoBehaviour
         }
         else
         {
-            bmsDrawer.DrawNotes(xPosition);
+            bmsDrawer.DrawNotes(true);
         }
 
         inputBlockLine.localPosition = new Vector3(xPosition[2], -200.0f, 0.0f);
@@ -323,7 +343,7 @@ public class BMSGameManager : MonoBehaviour
             bgmThread.Start();
         }
         keySoundChangeThread.Start();
-        keyInput.InputThreadStart();
+        InputThreadStart();
         stopwatch.Start();
     }
 
@@ -340,7 +360,7 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.SetInfoPanel(false);
         bgmThread.Abort();
         keySoundChangeThread.Abort();
-        keyInput.InputThreadAbort();
+        InputThreadAbort();
         stopwatch.Stop();
         videoPlayer.Pause();
         isPaused = true;
@@ -579,6 +599,58 @@ public class BMSGameManager : MonoBehaviour
         }
     }
 
+    private void ReplayInputCheck()
+    {
+        while (true)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (replayNoteArray[i][replayNoteArrayCount[i]].timing <= stopwatch.ElapsedTicks)
+                {
+                    lock (threadLock)
+                    {
+                        switch (replayNoteArray[i][replayNoteArrayCount[i]].extra)
+                        {
+                            case 0:
+                                keyInput.prevKeyState[i] = true;
+                                isKeyDown[i] = true;
+                                if (isClear) { soundManager.PlayKeySoundEnd(currentKeySound[i]); }
+                                else { soundManager.PlayKeySound(currentKeySound[i]); }
+                                if (replayNoteArray[i][replayNoteArrayCount[i]].diff >= -1750000.0d)
+                                {
+                                    HandleNote(i, replayNoteArray[i][replayNoteArrayCount[i]].timing);
+                                }
+                                break;
+                            case 1:
+                                keyInput.prevKeyState[i] = false;
+                                isKeyDown[i] = true;
+                                break;
+                            case 2:
+                                HandleReplayLongNoteTick(i, replayNoteArray[i][replayNoteArrayCount[i]].diff);
+                                break;
+                            case 3:
+                                HandleNote(i, replayNoteArray[i][replayNoteArrayCount[i]].timing);
+                                break;
+                            case 4:
+                                combo = 0;
+                                isGameUIUpdate = true;
+                                break;
+                        }
+                    }
+                    if (replayNoteArrayCount[i] > 0)
+                    {
+                        replayNoteArrayCount[i]--;
+                    }
+                    else
+                    {
+                        replayNoteArray[i][replayNoteArrayCount[i]].timing = 20000000000.0d;
+                    }
+                }
+            }
+            Thread.Sleep(1);
+        }
+    }
+
     private void ChangeUI()
     {
         #region Key Feedback Check
@@ -662,6 +734,7 @@ public class BMSGameManager : MonoBehaviour
         Note n = noteArray[idx][noteArrayCount[idx]];
         double diff = time - n.timing;
         JudgeType result = judge.Judge(diff);
+        replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, result == JudgeType.FAIL ? 3 : 0));
         if (result == JudgeType.IGNORE) { return; }
 
         currentCount++;
@@ -731,6 +804,8 @@ public class BMSGameManager : MonoBehaviour
     {
         currentCount++;
 
+        double timing = noteArray[idx][noteArrayCount[idx]].tickTiming;
+
         if (noteArrayCount[idx] > 0) --noteArrayCount[idx];
         else
         {
@@ -752,6 +827,43 @@ public class BMSGameManager : MonoBehaviour
         }
 
         currentJudge = currentLongNoteJudge[idx];
+
+        UpdateResult(result);
+
+        double diff = 0.0d;
+        switch (result)
+        {
+            case JudgeType.KOOL: diff = 0.0d; break;
+            case JudgeType.COOL: diff = 350000.0d; break;
+            case JudgeType.GOOD: diff = 700000.0d; break;
+            case JudgeType.MISS: diff = 1400000.0d; break;
+            case JudgeType.FAIL: diff = 1800000.0d; break;
+        }
+
+        replayNoteDataList[idx].Add(new ReplayNoteData(timing, diff, 2));
+    }
+
+    private void HandleReplayLongNoteTick(int idx, double diff)
+    {
+        JudgeType result = judge.Judge(diff);
+        currentCount++;
+
+        if (noteArrayCount[idx] > 0) --noteArrayCount[idx];
+        else
+        {
+            noteArray[idx][noteArrayCount[idx]].timing = 20000000000.0d;
+            noteArray[idx][noteArrayCount[idx]].tickTiming = 20000000000.0d;
+            noteArray[idx][noteArrayCount[idx]].failTiming = 20000000000.0d;
+        }
+
+        if (result <= JudgeType.MISS) { combo = -1; }
+        else if (result >= JudgeType.COOL)
+        {
+            isNoteBombActive[idx] = true;
+            noteBombState[idx] = 1;
+        }
+
+        currentJudge = result;
 
         UpdateResult(result);
     }
@@ -796,7 +908,7 @@ public class BMSGameManager : MonoBehaviour
                         if (j == 1)
                         {
                             longNoteArray[i][len].modelTransform.localScale =
-                                new Vector3(1.0f, ((float)pattern.longNote[i][len].beat * gameSpeed - longNoteOffset) * longNoteLength, 1.0f);
+                                new Vector3(1.0f, ((float)longNoteArray[i][len].beat * gameSpeed - longNoteOffset) * longNoteLength, 1.0f);
                         }
                     }
                     else
@@ -882,6 +994,7 @@ public class BMSGameManager : MonoBehaviour
 
     public void KeyUp(int index)
     {
+        replayNoteDataList[index].Add(new ReplayNoteData(stopwatch.ElapsedTicks - resumeCountTicks, 0, 1));
         isKeyDown[index] = true;
     }
 
@@ -985,11 +1098,15 @@ public class BMSGameManager : MonoBehaviour
         lock (threadLock)
         {
             if (isPaused) { return; }
+            if (set == 0 && !isReplay)
+            {
+                replayNoteDataList[0].Add(new ReplayNoteData(stopwatch.ElapsedTicks - resumeCountTicks, 0, 4));
+            }
             isPaused = true;
             gameUIManager.AnimationPause(true);
             stopwatch.Stop();
             soundManager.AudioPause(true);
-            keyInput.InputThreadAbort();
+            InputThreadAbort();
             if (bgmThread.IsAlive)
             {
                 bgmThread.Abort();
@@ -1052,16 +1169,19 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.FadeIn();
         await UniTask.Delay(1000);
         ReturnAllNotes();
+        ThreadDestroy();
         gameUIManager.BGATextureDestroy();
         gameUIManager.SkinTextureDestroy();
+        SaveReplayData();
         UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }
 
     public void GameResume()
     {
-        for (int i = 0; i <= bgSoundArrayCount; i++)
+        int tickOffset = isReplay ? 0 : 30000000;
+        for (int i = 0; i < bgSoundArray.Length; i++)
         {
-            bgSoundArray[i].timing += 30000000;
+            bgSoundArray[i].timing += tickOffset;
         }
         bgmThread = new Thread(BGMPlayThread);
         if (bgSoundArrayCount >= 0)
@@ -1070,17 +1190,17 @@ public class BMSGameManager : MonoBehaviour
         }
         for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < keySoundChangeArrayCount[i]; j++)
+            for (int j = 0; j < keySoundChangeArray[i].Length; j++)
             {
-                keySoundChangeArray[i][j].timing += 30000000;
+                keySoundChangeArray[i][j].timing += tickOffset;
             }
         }
         keySoundChangeThread = new Thread(KeySoundChangeThread);
         keySoundChangeThread.Start();
-        combo = 0;
+        combo = isReplay ? combo : 0;
         inputBlockLine.localPosition = new Vector3(xPosition[2], (float)(currentBeat * gameSpeed), 0.0f);
         resumeTicks = currentTicks;
-        resumeCountTicks += 30000000;
+        resumeCountTicks += tickOffset;
         currentTicks = stopwatch.ElapsedTicks - resumeCountTicks;
         pauseManager.Pause_SetActive(false);
         gameUIManager.SetInfoPanel(false);
@@ -1103,11 +1223,11 @@ public class BMSGameManager : MonoBehaviour
             {
                 gameUIManager.SetActiveCountdown(false);
                 gameUIManager.AnimationPause(false);
-                keyInput.InputThreadStart();
+                InputThreadStart();
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
                 isCountdown = false;
-                gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+                if (!isReplay) { gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore); }
                 break;
             }
             else
@@ -1216,6 +1336,16 @@ public class BMSGameManager : MonoBehaviour
             }
             noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed), 0.0f);
         }
+
+        if (!isReplay) { return; }
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < replayNoteArray[i].Length; j++)
+            {
+                if (replayNoteArray[i][j].extra != 0) { continue; }
+                replayNoteArray[i][j].model.transform.localPosition = new Vector3(xPosition[i], (float)(replayNoteArray[i][j].beat * gameSpeed), 0.0f);
+            }
+        }
     }
 
     public void ChangeBGAOpacity(int value)
@@ -1231,10 +1361,84 @@ public class BMSGameManager : MonoBehaviour
         else { gameUIManager.CoUpdateInfoPanel(true); }
     }
 
-    private void OnDestroy()
+    private void SetReplayNoteArray()
+    {
+        if (!isReplay) { return; }
+        for (int i = 0; i < 5; i++)
+        {
+            replayNoteArray[i] = new ReplayNote[replayData.replayNoteList[i].Count];
+            replayNoteArrayCount[i] = replayData.replayNoteList[i].Count - 1;
+            for (int j = 0; j < replayNoteArray[i].Length; j++)
+            {
+                replayNoteArray[i][j] = new ReplayNote(replayData.replayNoteList[i][j]);
+                replayNoteArray[i][j].beat = pattern.GetBeatFromTiming(replayNoteArray[i][j].timing * 0.0000001d);
+            }
+        }
+    }
+
+    private void SaveReplayNoteList()
+    {
+        if (isReplay) { return; }
+        for (int i = 0; i < 5; i++)
+        {
+            replayData.noteList[i] = new List<AbstractNote>(pattern.lines[i].noteList.Count);
+            for (int j = 0; j < pattern.lines[i].noteList.Count; j++)
+            {
+                replayData.noteList[i].Add(new AbstractNote(pattern.lines[i].noteList[j]));
+            }
+        }
+    }
+
+    private void SaveReplayData()
+    {
+        if (isReplay) { return; }
+        replayData.randomEffector = PlayerPrefs.GetInt("RandomEffector");
+        replayData.score = bmsResult.resultData.score;
+        replayData.date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        for (int i = 0; i < 5; i++)
+        {
+            replayNoteDataList[i].Reverse();
+        }
+        replayData.replayNoteList = replayNoteDataList;
+    }
+
+    public void ReplayNoteSetActive()
+    {
+        replayNoteParent.SetActive(!replayNoteParent.activeSelf);
+    }
+
+    private void InputThreadStart()
+    {
+        if (isReplay)
+        {
+            replayInputThread = new Thread(ReplayInputCheck);
+            replayInputThread.Start();
+        }
+        else
+        {
+            keyInput.InputThreadStart();
+        }
+    }
+
+    private void InputThreadAbort()
+    {
+        if (isReplay)
+        {
+            if (replayInputThread != null && replayInputThread.IsAlive)
+            {
+                replayInputThread.Abort();
+            }
+        }
+        else
+        {
+            keyInput.InputThreadAbort();
+        }
+    }
+
+    private void ThreadDestroy()
     {
         keyInput.KeyDisable();
-        keyInput.InputThreadAbort();
+        InputThreadAbort();
         if (bgmThread.IsAlive)
         {
             bgmThread.Abort();
@@ -1244,5 +1448,10 @@ public class BMSGameManager : MonoBehaviour
             keySoundChangeThread.Abort();
         }
         soundManager.SoundAndChannelRelease();
+    }
+
+    private void OnDestroy()
+    {
+        ThreadDestroy();
     }
 }

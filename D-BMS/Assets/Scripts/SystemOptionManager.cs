@@ -705,7 +705,6 @@ public class SystemOptionManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.KeypadPlus)) { key = 0x6B; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.F1)) { key = 0x70; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.F2)) { key = 0x71; isChanging = false; }
-            else if (Input.GetKeyDown(KeyCode.F6)) { key = 0x75; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.F7)) { key = 0x76; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.F8)) { key = 0x77; isChanging = false; }
             else if (Input.GetKeyDown(KeyCode.F9)) { key = 0x78; isChanging = false; }
@@ -846,7 +845,6 @@ public class SystemOptionManager : MonoBehaviour
             case 0x6F: value = "Numpad /"; break;
             case 0x70: value = "F1"; break;
             case 0x71: value = "F2"; break;
-            case 0x75: value = "F6"; break;
             case 0x76: value = "F7"; break;
             case 0x77: value = "F8"; break;
             case 0x78: value = "F9"; break;
