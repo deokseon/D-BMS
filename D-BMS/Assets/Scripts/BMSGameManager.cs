@@ -138,7 +138,7 @@ public class BMSGameManager : MonoBehaviour
         QualitySettings.vSyncCount = PlayerPrefs.GetInt("SyncCount");
         Application.targetFrameRate = PlayerPrefs.GetInt("FrameRate");
         userSpeed = PlayerPrefs.GetInt("NoteSpeed");
-        earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold");
+        earlyLateThreshold = PlayerPrefs.GetInt("EarlyLateThreshold") * 10000;
         verticalLine = PlayerPrefs.GetFloat("VerticalLine") * 0.018f;
         judgeLineYPosition = PlayerPrefs.GetInt("JudgeLine") == 0 ? GameUIManager.config.judgeLinePosition : GameUIManager.config.judgeLinePosition - 0.24f;
 
@@ -612,6 +612,7 @@ public class BMSGameManager : MonoBehaviour
                         switch (replayNoteArray[i][replayNoteArrayCount[i]].extra)
                         {
                             case 0:
+                            case 5:
                                 keyInput.prevKeyState[i] = true;
                                 isKeyDown[i] = true;
                                 if (isClear) { soundManager.PlayKeySoundEnd(currentKeySound[i]); }
@@ -734,8 +735,9 @@ public class BMSGameManager : MonoBehaviour
         Note n = noteArray[idx][noteArrayCount[idx]];
         double diff = time - n.timing;
         JudgeType result = judge.Judge(diff);
-        replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, result == JudgeType.FAIL ? 3 : 0));
-        if (result == JudgeType.IGNORE) { return; }
+        int replayExtra = 0;
+        //replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, result == JudgeType.FAIL ? 3 : 0));
+        if (result == JudgeType.IGNORE) { replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, 0)); return; }
 
         currentCount++;
 
@@ -753,7 +755,7 @@ public class BMSGameManager : MonoBehaviour
         }
         else
         {
-            if (result == JudgeType.COOL) { result = JudgeType.KOOL; }
+            if (result == JudgeType.COOL) { result = JudgeType.KOOL; replayExtra = 5; }
             currentLongNoteJudge[idx] = result;
             if (isCurrentLongNote[idx])
             {
@@ -780,9 +782,9 @@ public class BMSGameManager : MonoBehaviour
 
         UpdateResult(result);
 
-        if (result == JudgeType.FAIL) { return; }
+        if (result == JudgeType.FAIL) { replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, 3)); return; }
 
-        if ((earlyLateThreshold == 22 && result != JudgeType.KOOL) || (earlyLateThreshold < 22 && (diff > earlyLateThreshold || diff < -earlyLateThreshold)))
+        if ((earlyLateThreshold == 220000 && result != JudgeType.KOOL) || (earlyLateThreshold < 220000 && (diff > earlyLateThreshold || diff < -earlyLateThreshold)))
         {
             int index = idx < 2 ? 0 : 1;
             fsUpdate[index] = true;
@@ -798,6 +800,7 @@ public class BMSGameManager : MonoBehaviour
                 bmsResult.resultData.lateCount++;
             }
         }
+        replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, replayExtra));
     }
 
     private void HandleLongNoteTick(int idx)

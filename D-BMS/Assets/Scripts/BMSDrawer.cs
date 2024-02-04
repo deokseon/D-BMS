@@ -78,12 +78,12 @@ public class BMSDrawer : MonoBehaviour
         {
             for (int j = bmsGameManager.replayNoteArray[i].Length - 1; j >= 0; j--)
             {
-                if (bmsGameManager.replayNoteArray[i][j].extra != 0) { continue; }
+                if (bmsGameManager.replayNoteArray[i][j].extra != 0 && bmsGameManager.replayNoteArray[i][j].extra != 5) { continue; }
 
                 GameObject note = Instantiate(replayNoteObject, replayNoteParent);
                 SpriteRenderer noteSpriteRenderer = note.GetComponent<SpriteRenderer>();
                 noteSpriteRenderer.sprite = replayNoteSprite;
-                noteSpriteRenderer.color = GetReplayNoteColor(bmsGameManager.replayNoteArray[i][j].diff, bmsGameManager.earlyLateThreshold * 10000);
+                noteSpriteRenderer.color = GetReplayNoteColor(bmsGameManager.replayNoteArray[i][j].diff, (bmsGameManager.replayNoteArray[i][j].extra == 5 && bmsGameManager.earlyLateThreshold == 220000) ? 550000 : bmsGameManager.earlyLateThreshold);
                 note.transform.localPosition = new Vector3(bmsGameManager.xPosition[i], (float)(bmsGameManager.replayNoteArray[i][j].beat * speed), 0.0f);
                 note.transform.localScale = new Vector3(replayNoteSize, replayNoteSize, 1.0f);
                 bmsGameManager.replayNoteArray[i][j].model = note;
@@ -97,6 +97,7 @@ public class BMSDrawer : MonoBehaviour
         {
             return Color.white;
         }
+
         return (diff <= threshold && diff >= -threshold) ? Color.green : (diff > 0 ? Color.red : Color.cyan);
     }
 }
