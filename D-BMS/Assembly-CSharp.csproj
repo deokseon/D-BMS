@@ -784,6 +784,12 @@
  <Reference Include="UnityEditor.UI">
  <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.Postprocessing.Editor">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Postprocessing.Runtime">
+ <HintPath>C:/Users/user/D-BMS/D-BMS/D-BMS/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="FMODUnity.csproj">
