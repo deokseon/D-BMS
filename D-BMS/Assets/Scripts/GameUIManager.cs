@@ -115,9 +115,6 @@ public class GameUIManager : MonoBehaviour
     {
         assetPacker = GetComponent<AssetPacker>();
         bmsGameManager = FindObjectOfType<BMSGameManager>();
-        textureDownloadManger = FindObjectOfType<TextureDownloadManager>();
-        loadingPanelBG = GameObject.Find("Loading_Panel").GetComponent<RawImage>();
-        stageImage = GameObject.Find("Loading_StageImage").GetComponent<RawImage>();
 
         assetPacker.AddTexturesToPack(Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject"));
         assetPacker.Process();
@@ -132,6 +129,9 @@ public class GameUIManager : MonoBehaviour
         }
 
         bmsDrawer = FindObjectOfType<BMSDrawer>();
+        textureDownloadManger = FindObjectOfType<TextureDownloadManager>();
+        loadingPanelBG = GameObject.Find("Loading_Panel").GetComponent<RawImage>();
+        stageImage = GameObject.Find("Loading_StageImage").GetComponent<RawImage>();
 
         loader = new BMPLoader();
         bgImageList = new List<KeyValuePair<int, string>>(500);
@@ -349,7 +349,10 @@ public class GameUIManager : MonoBehaviour
         }
         currentJudge = -1;
         judgeEffectIndex = 15;
-        _ = JudgeEffect();
+        if (bmsGameManager != null)
+        {
+            _ = JudgeEffect();
+        }
 
         SetJudgePosition();
     }

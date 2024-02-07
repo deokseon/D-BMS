@@ -32,7 +32,7 @@ namespace DaVikingCode.AssetPacker {
 			itemsToRaster = new List<TextureToPack>[2];
 			for (int i = 0;i < 2; i++)
             {
-				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 15 : 66);
+				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 15 : 67);
             }
 			mSprites = new Dictionary<string, Sprite>(81);
 

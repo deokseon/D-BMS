@@ -59,6 +59,10 @@ public class ResultUIManager : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            GameObject.Find("NewRecord").SetActive(false);
+        }
 
         _ = SetBackground();
     }
