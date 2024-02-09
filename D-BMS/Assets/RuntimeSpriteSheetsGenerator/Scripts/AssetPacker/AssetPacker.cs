@@ -135,8 +135,8 @@ namespace DaVikingCode.AssetPacker {
 			while (rectangles.Count > 0)
 			{
 
-				Texture2D texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
-				texture.filterMode = itemIndex == 0 ? FilterMode.Point : FilterMode.Bilinear;
+				Texture2D texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, itemIndex == 0 ? false : true);
+				texture.filterMode = itemIndex == 0 ? FilterMode.Point : FilterMode.Trilinear;
 				Color32[] fillColor = texture.GetPixels32();
 				for (int i = 0; i < fillColor.Length; ++i)
 					fillColor[i] = Color.clear;
@@ -191,7 +191,7 @@ namespace DaVikingCode.AssetPacker {
 					foreach (string garbage in garbageImages)
 						images.Remove(garbage);
 
-					texture.Apply();
+					texture.Apply(itemIndex == 0 ? false : true);
 
 					if (savePath != "")
 					{
