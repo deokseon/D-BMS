@@ -58,13 +58,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
   - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
-  - {fileID: 21300000, guid: bdf61205d51885e489c1b48885f847f0, type: 3}
   - {fileID: 21300000, guid: cf981606408410a44ad3d72937155409, type: 3}
   - {fileID: 21300000, guid: 1952b718dc091054b84bd73855a109ac, type: 3}
   - {fileID: 21300000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
   - {fileID: 21300000, guid: e9f68119734b3c14ea59c3a7e983d4a7, type: 3}
   - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
+  - {fileID: 21300000, guid: 1e3cdd2b45e8ca54f85f6c81c8cd61de, type: 3}
   - {fileID: 21300000, guid: 6cd098db8e1d7b943bee83610be50bb2, type: 3}
   - {fileID: 21300000, guid: fa95eaebf10aa48c1b9a954b7fd6e9b4, type: 3}
   - {fileID: 21300000, guid: 75717c3cd8ff71c4db83b5ed7c238f9b, type: 3}
@@ -82,13 +82,13 @@ SpriteAtlas:
   - StageImageFrame
   - ToggleFrame
   - white
-  - SongToggleFrame
   - TransparentImage
   - Gear
   - black
   - favorite_1
   - Triangle
   - PersonIcon
+  - SongToggleFrame
   - LoadingIcon
   - toggleBG
   - RoundRect2
