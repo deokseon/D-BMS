@@ -293,6 +293,7 @@ public class ResultUIManager : MonoBehaviour
 
     private void DrawJudgeGraph()
     {
+        int threshold = PlayerPrefs.GetInt("EarlyLateThreshold");
         Transform dotParent = GameObject.Find("JudgeGraph_Panel").transform;
         int len = BMSGameManager.bmsResult.judgeList.Length;
         double divideNoteCount = 1.0d / BMSGameManager.bmsResult.noteCount;
@@ -306,7 +307,7 @@ public class ResultUIManager : MonoBehaviour
             double x = (i * divideNoteCount * 600) - 300;
 
             GameObject tempDot = Instantiate(dot, dotParent);
-            if (y > 22.0d || y < -22.0d)
+            if (y > threshold || y < -threshold)
             {
                 tempDot.GetComponent<Image>().color = y > 0.0d ? Color.red : new Color(0.0f, 155.0f / 255.0f, 1.0f);
             }
@@ -314,6 +315,8 @@ public class ResultUIManager : MonoBehaviour
         }
         int average = (totalCount == 0 ? 0 : (int)(total / totalCount));
         GameObject.Find("AverageInputTiming").GetComponent<TextMeshProUGUI>().text = $"{average} MS";
+        GameObject.Find("Late_Line").transform.localPosition = new Vector3(0.0f, threshold * 2.0f, 0.0f);
+        GameObject.Find("Early_Line").transform.localPosition = new Vector3(0.0f, -threshold * 2.0f, 0.0f);
     }
 
     private async UniTask DrawSongInfo()

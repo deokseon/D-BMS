@@ -23,6 +23,11 @@ public class RankImageManager : MonoBehaviour
         for (int i = 0; i < 12; i++)
         {
             rankImageArray[i] = await FindObjectOfType<TextureDownloadManager>().GetTexture($@"{Directory.GetParent(Application.dataPath)}\Skin\Rank\{GetRankImageName(i)}");
+            Texture2D textureMipmaps = new Texture2D(rankImageArray[i].width, rankImageArray[i].height, rankImageArray[i].format, true);
+            textureMipmaps.SetPixels32(rankImageArray[i].GetPixels32(0), 0);
+            textureMipmaps.filterMode = FilterMode.Trilinear;
+            textureMipmaps.Apply(true);
+            rankImageArray[i] = textureMipmaps;
         }
     }
 
