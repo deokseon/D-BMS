@@ -618,7 +618,7 @@ public class SongSelectUIManager : MonoBehaviour
         for (int i = 0; i < replayTextList.Length; i++)
         {
             BMSGameManager.replayData = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSFileSystem.selectedHeader.fileName}_RP{i}.json");
-            replayTextList[i].text = replayName[i] + " - " + (BMSGameManager.replayData == null ? "EMPTY" : $"{(int)(float)BMSGameManager.replayData.score} : {BMSGameManager.replayData.date}");
+            replayTextList[i].text = replayName[i] + (BMSGameManager.replayData == null ? " - EMPTY" : $" {BMSGameManager.replayData.replayTitle} - {(int)(float)BMSGameManager.replayData.score} : {BMSGameManager.replayData.date}");
         }
         replayPanel.SetActive(true);
     }

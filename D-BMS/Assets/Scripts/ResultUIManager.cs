@@ -22,11 +22,15 @@ public class ResultUIManager : MonoBehaviour
     [SerializeField]
     private Image fadeImage;
 
+    private int replaySaveIndex = 0;
     [SerializeField]
     private GameObject replayPanel;
     [SerializeField]
+    private GameObject[] replaySaveProcessPanels;
+    [SerializeField]
     private TextMeshProUGUI[] replayTextList;
-    private readonly string[] replayName = { "[1]", "[2]", "[3]" };
+    [SerializeField]
+    private TMP_InputField replayTitleInputField;
 
     private SongInfoObject songInfoObject;
 
@@ -43,6 +47,7 @@ public class ResultUIManager : MonoBehaviour
 
         if (!BMSGameManager.isReplay)
         {
+            BMSGameManager.replayData.replayTitle = null;
             ReplayAutoSave();
             if (BMSGameManager.isClear && SongSelectUIManager.resultData.score < BMSGameManager.bmsResult.resultData.score)
             {
@@ -142,7 +147,8 @@ public class ResultUIManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.F7))
         {
-            SetReplayPanel();
+            replayPanel.SetActive(true);
+            SetReplayProcess(0);
         }
         else if (Input.GetKeyDown(KeyCode.F9))
         {
@@ -178,19 +184,56 @@ public class ResultUIManager : MonoBehaviour
         GameObject.Find("StageImage").GetComponent<ImageRotate>().SetRotateSpeed();
     }
 
-    private void SetReplayPanel()
+    public void ReplaySaveExitButton()
+    {
+        replayPanel.SetActive(false);
+    }
+
+    private void SetSelectSlotPanel()
     {
         for (int i = 0; i < replayTextList.Length; i++)
         {
             ReplayData replayData = DataSaveManager.LoadData<ReplayData>("Replay", $"{BMSGameManager.header.fileName}_RP{i + 4}.json");
-            replayTextList[i].text = replayName[i] + " - " + (replayData == null ? "EMPTY" : $"{(int)(float)replayData.score} : {replayData.date}");
+            replayTextList[i].text = $"[{i + 1}]" + (replayData == null ? " - EMPTY" : $" {replayData.replayTitle} - {(int)(float)replayData.score} : {replayData.date}");
         }
-        replayPanel.SetActive(true);
     }
 
-    public void SaveReplayData(int index)
+    private void SetSaveCheckPanel()
     {
-        DataSaveManager.SaveData("Replay", $"{BMSGameManager.header.fileName}_RP{index}.json", BMSGameManager.replayData);
+        GameObject.Find("SlotNameText").GetComponent<TextMeshProUGUI>().text = replayTextList[replaySaveIndex - 4].text;
+    }
+
+    private void SetEnterReplayTitlePanel()
+    {
+        replayTitleInputField.text = null;
+        GameObject.Find("EnterTitleNoticeText").GetComponent<TextMeshProUGUI>().text = $"[{replaySaveIndex - 3}] Enter the title of the replay.";
+    }
+
+    public void SetReplayProcess(int index)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            replaySaveProcessPanels[i].SetActive(i == index ? true : false);
+        }
+
+        switch (index)
+        {
+            case 0: SetSelectSlotPanel(); break;
+            case 1: SetSaveCheckPanel(); break;
+            case 2: SetEnterReplayTitlePanel(); break;
+        }
+    }
+
+    public void SelectReplaySlot(int index)
+    {
+        replaySaveIndex = index;
+        SetReplayProcess(1);
+    }
+
+    public void SaveReplay()
+    {
+        BMSGameManager.replayData.replayTitle = replayTitleInputField.text;
+        DataSaveManager.SaveData("Replay", $"{BMSGameManager.header.fileName}_RP{replaySaveIndex}.json", BMSGameManager.replayData);
         replayPanel.SetActive(false);
     }
 

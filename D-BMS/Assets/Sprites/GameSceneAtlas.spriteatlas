@@ -50,18 +50,17 @@ SpriteAtlas:
   m_PackedSprites:
   - {fileID: 21300000, guid: 7a6ce34019936e346948305e4c6744e8, type: 3}
   - {fileID: 21300000, guid: 86669070dbe416549b8d6c0ed3e85752, type: 3}
-  - {fileID: 21300000, guid: 664cd511d8204ac449eb3be3d42ece97, type: 3}
+  - {fileID: 21300000, guid: 936866c0ecbf5d4418ec27ee4e3fee6a, type: 3}
+  - {fileID: 21300000, guid: d1e6aa319b5ece846bca6fd7905d2da4, type: 3}
   - {fileID: 21300000, guid: 9487ed319d5c04841b1b9f0332de4c79, type: 3}
   - {fileID: 21300000, guid: cd7ec5b1bc9552746bf1d4beebae392f, type: 3}
-  - {fileID: 21300000, guid: 9670a5423f2b5a84dbd8c62642c571bd, type: 3}
-  - {fileID: 21300000, guid: 9589f6429d8c60540ba4b31da9115666, type: 3}
+  - {fileID: 21300000, guid: c5d0433359d3c864eb1bafc401b14a15, type: 3}
   - {fileID: 21300000, guid: 68127593bd2b04448a096473ef7a069f, type: 3}
   - {fileID: 21300000, guid: 62bdf4f3415c0314596f8074935f1159, type: 3}
   - {fileID: 21300000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
   - {fileID: 21300000, guid: cf981606408410a44ad3d72937155409, type: 3}
   - {fileID: 21300000, guid: 1952b718dc091054b84bd73855a109ac, type: 3}
   - {fileID: 21300000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
-  - {fileID: 21300000, guid: e9f68119734b3c14ea59c3a7e983d4a7, type: 3}
   - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
   - {fileID: 21300000, guid: 1e3cdd2b45e8ca54f85f6c81c8cd61de, type: 3}
@@ -71,21 +70,22 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eebe875e68762744d969965df9d11545, type: 3}
   - {fileID: 21300000, guid: 02cbb6dee3a07134fa1ea37cd80b9aad, type: 3}
   - {fileID: 21300000, guid: 8566f04fc73d3a84daa6d5e1f33d0658, type: 3}
+  - {fileID: 21300000, guid: 4be8bccfdb631f14a8b0bb07ffc49968, type: 3}
+  - {fileID: 21300000, guid: 308c9eefeb77efb43b993a04f610cf48, type: 3}
   m_PackedSpriteNamesToIndex:
   - RoundRect
   - Button
-  - PlayButton
+  - Exit_Icon
+  - favorite_1
   - toggleHandle
   - NoChange
-  - return
-  - favorite_0
+  - PlayButton
   - StageImageFrame
   - ToggleFrame
   - white
   - TransparentImage
   - Gear
   - black
-  - favorite_1
   - Triangle
   - PersonIcon
   - SongToggleFrame
@@ -95,5 +95,7 @@ SpriteAtlas:
   - AllCoolLamp_mini
   - Frame
   - TriangleCircle
+  - return
+  - favorite_0
   m_Tag: GameSceneAtlas
   m_IsVariant: 0

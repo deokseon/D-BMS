@@ -123,6 +123,7 @@ public class ReplayData
 {
     public List<AbstractNote>[] noteList;
     public List<ReplayNoteData>[] replayNoteList;
+    public string replayTitle;
     public int randomEffector;
     public string date;
     public double score;
