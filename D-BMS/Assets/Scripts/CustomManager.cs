@@ -107,28 +107,28 @@ public class CustomManager : MonoBehaviour
 
     private void SetLimitValue()
     {
-        limitValueDict.Add("MinComboPosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.8f * 0.5f); // 0.8f = comboObjectScaleY
-        limitValueDict.Add("MaxComboPosition", 7.5f - 0.085f - gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.8f * 0.5f - gameUIManager.assetPacker.GetSprite("text-combo").bounds.size.y * 0.17f); // 0.8f = comboObjectScaleY, 0.17f = comboTitleScaleY, 0.085f = distance between combo and comboTitle
+        limitValueDict.Add("MinComboPosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.5f);
+        limitValueDict.Add("MaxComboPosition", 7.5f - 0.085f - gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.5f - gameUIManager.assetPacker.GetSprite("text-combo").bounds.size.y); // 0.085f = distance between combo and comboTitle
         limitValueDict.Add("MinJudgePosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("kool-0").bounds.size.y * 0.7f * 0.5f); // 0.7f = judgeScaleY
         limitValueDict.Add("MaxJudgePosition", 7.5f - gameUIManager.assetPacker.GetSprite("kool-0").bounds.size.y * 0.7f * 0.5f); // 0.7f = judgeScaleY
         limitValueDict.Add("MinEarlyLatePosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("early").bounds.size.y * 0.26f * 0.5f); // 0.26f = earlylateScaleY
         limitValueDict.Add("MaxEarlyLatePosition", 7.5f - gameUIManager.assetPacker.GetSprite("early").bounds.size.y * 0.26f * 0.5f); // 0.26f = earlylateScaleY
-        limitValueDict.Add("MinScoreDigitPositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 6.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x * 0.5f); // 0.5f = scoredigitScaleX
-        limitValueDict.Add("MaxScoreDigitPositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x * 0.5f); // 0.5f = scoredigitScaleX
-        limitValueDict.Add("MinScoreDigitPositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y * 0.5f); // 0.5f = scoredigitScaleY
-        limitValueDict.Add("MaxScoreDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y * 0.5f); // 0.5f = scoredigitScaleY
-        limitValueDict.Add("MinScoreImagePositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.x * 0.16f); // 0.16f = scoreimageScaleX
-        limitValueDict.Add("MaxScoreImagePositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.x * 0.16f); // 0.16f = scoreimageScaleX
-        limitValueDict.Add("MinScoreImagePositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.y * 0.16f); // 0.16f = scoreimageScaleY
-        limitValueDict.Add("MaxScoreImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.y * 0.16f); // 0.16f = scoreimageScaleY
-        limitValueDict.Add("MinMaxcomboDigitPositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 4.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x * 0.5f); // 0.5f = maxcombodigitScaleX
-        limitValueDict.Add("MaxMaxcomboDigitPositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x * 0.5f); // 0.5f = maxcombodigitScaleX
-        limitValueDict.Add("MinMaxcomboDigitPositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y * 0.5f); // 0.5f = maxcombodigitScaleY
-        limitValueDict.Add("MaxMaxcomboDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y * 0.5f); // 0.5f = maxcombodigitScaleY
-        limitValueDict.Add("MinMaxcomboImagePositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.x * 0.17f); // 0.17f = maxcomboimageScaleX
-        limitValueDict.Add("MaxMaxcomboImagePositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.x * 0.17f); // 0.17f = maxcomboimageScaleX
-        limitValueDict.Add("MinMaxcomboImagePositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y * 0.17f); // 0.17f = maxcomboimageScaleY
-        limitValueDict.Add("MaxMaxcomboImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y * 0.17f); // 0.17f = maxcomboimageScaleY
+        limitValueDict.Add("MinScoreDigitPositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 6.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x);
+        limitValueDict.Add("MaxScoreDigitPositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x);
+        limitValueDict.Add("MinScoreDigitPositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y);
+        limitValueDict.Add("MaxScoreDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y);
+        limitValueDict.Add("MinScoreImagePositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.x);
+        limitValueDict.Add("MaxScoreImagePositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.x);
+        limitValueDict.Add("MinScoreImagePositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.y);
+        limitValueDict.Add("MaxScoreImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.y);
+        limitValueDict.Add("MinMaxcomboDigitPositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 4.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x);
+        limitValueDict.Add("MaxMaxcomboDigitPositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.x);
+        limitValueDict.Add("MinMaxcomboDigitPositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y);
+        limitValueDict.Add("MaxMaxcomboDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y);
+        limitValueDict.Add("MinMaxcomboImagePositionX", gameUIManager.GetXPosition(0) - ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) + 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.x);
+        limitValueDict.Add("MaxMaxcomboImagePositionX", gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.x);
+        limitValueDict.Add("MinMaxcomboImagePositionY", -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y);
+        limitValueDict.Add("MaxMaxcomboImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y);
         limitValueDict.Add("MinPanelPosition", -8.889f + ObjectPool.poolInstance.GetNoteWidth() * 0.5f + gameUIManager.assetPacker.GetSprite("panel-left").bounds.size.x);
         limitValueDict.Add("MaxPanelPosition", 8.889f - ObjectPool.poolInstance.GetNoteWidth() * 4.5f - gameUIManager.assetPacker.GetSprite("panel-right").bounds.size.x);
         limitValueDict.Add("MinBGAPositionX", -960.0f + GameUIManager.config.bgaWidth * 0.5f);
@@ -400,20 +400,20 @@ public class CustomManager : MonoBehaviour
     public void JudgelinePositionSliderValueChange(float value)
     {
         GameUIManager.config.judgeLinePosition = value * 3.0f - 1.0f;
-        SetLimitValue("MinComboPosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.8f * 0.5f,
+        SetLimitValue("MinComboPosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.5f,
                       GameUIManager.config.comboPosition, 0.0f, comboPositionSlider, ComboPositionSliderValueChange);
         SetLimitValue("MinJudgePosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("kool-0").bounds.size.y * 0.7f * 0.5f,
                       GameUIManager.config.judgePosition, 0.0f, judgePositionSlider, JudgePositionSliderValueChange);
         SetLimitValue("MinEarlyLatePosition", GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("early").bounds.size.y * 0.26f * 0.5f,
                       GameUIManager.config.earlyLatePosition, 0.0f, earlyLatePositionSlider, EarlyLatePositionSliderValueChange);
 
-        SetLimitValue("MaxScoreDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y * 0.5f,
+        SetLimitValue("MaxScoreDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y,
                       GameUIManager.config.scoreDigitPositionY, 1.0f, scoreDigitPositionYSlider, ScoreDigitPositionYSliderValueChange);
-        SetLimitValue("MaxScoreImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.y * 0.16f,
+        SetLimitValue("MaxScoreImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-score").bounds.size.y,
                       GameUIManager.config.scoreImagePositionY, 1.0f, scoreImagePositionYSlider, ScoreImagePositionYSliderValueChange);
-        SetLimitValue("MaxMaxcomboDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y * 0.5f,
+        SetLimitValue("MaxMaxcomboDigitPositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("default-0").bounds.size.y,
                       GameUIManager.config.maxcomboDigitPositionY, 1.0f, maxcomboDigitPositionYSlider, MaxcomboDigitPositionYSliderValueChange);
-        SetLimitValue("MaxMaxcomboImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y * 0.17f,
+        SetLimitValue("MaxMaxcomboImagePositionY", GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y,
                       GameUIManager.config.maxcomboImagePositionY, 1.0f, maxcomboImagePositionYSlider, MaxcomboImagePositionYSliderValueChange);
 
         gameUIManager.SetGamePanel();
