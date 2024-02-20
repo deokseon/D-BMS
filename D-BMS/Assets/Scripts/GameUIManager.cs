@@ -86,6 +86,8 @@ public class GameUIManager : MonoBehaviour
     private TextMeshProUGUI noteSpeedText;
     [SerializeField]
     private TextMeshProUGUI bgaOpacityText;
+    [SerializeField]
+    private TextMeshProUGUI displayDelayCorrectionText;
 
     private RawImage loadingPanelBG;
     private RawImage stageImage;
@@ -105,6 +107,7 @@ public class GameUIManager : MonoBehaviour
     private readonly int hashJudgeEffect = Animator.StringToHash("JudgeEffect");
 
     private Coroutine infoPanelCoroutine;
+    private Coroutine displayDelayCorrectionCoroutine;
 
     [HideInInspector]
     public AssetPacker assetPacker;
@@ -670,6 +673,24 @@ public class GameUIManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.0f);
         SetInfoPanel(false);
         infoPanelCoroutine = null;
+    }
+
+    public void CoUpdateDisplayDelayCorrectionText()
+    {
+        if (displayDelayCorrectionCoroutine != null)
+        {
+            StopCoroutine(displayDelayCorrectionCoroutine);
+            displayDelayCorrectionCoroutine = null;
+        }
+        displayDelayCorrectionCoroutine = StartCoroutine(UpdateDisplayDelayCorrectionText());
+    }
+    private IEnumerator UpdateDisplayDelayCorrectionText()
+    {
+        displayDelayCorrectionText.text = "Display Delay Correction : " + PlayerPrefs.GetInt("DisplayDelayCorrection") + "ms";
+        displayDelayCorrectionText.gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(1.0f);
+        displayDelayCorrectionText.gameObject.SetActive(false);
+        displayDelayCorrectionCoroutine = null;
     }
 
     private void SetRandomEffectorText(TextMeshProUGUI randomText, int index)

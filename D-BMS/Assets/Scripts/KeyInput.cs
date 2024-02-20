@@ -23,6 +23,8 @@ public class KeyInput : MonoBehaviour
     private InputAction funcSpeedDown2Action;
     private InputAction funcBGAOpacityUpAction;
     private InputAction funcBGAOpacityDownAction;
+    private InputAction funcDisplayDelayCorrectionUpAction;
+    private InputAction funcDisplayDelayCorrectionDownAction;
     private InputAction funcReplayNoteShowAction;
 
     [SerializeField]
@@ -56,6 +58,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action = new InputAction("FuncSpeedDown2", InputActionType.Button, $"<Keyboard>/{KeyCodeToString(PlayerPrefs.GetInt("SpeedDown2"))}");
         funcBGAOpacityUpAction = new InputAction("FuncBGAOpacityUp", InputActionType.Button, $"<Keyboard>/F4");
         funcBGAOpacityDownAction = new InputAction("FuncBGAOpacityDown", InputActionType.Button, $"<Keyboard>/F3");
+        funcDisplayDelayCorrectionUpAction = new InputAction("FuncDisplayDelayCorrectionUp", InputActionType.Button, $"<Keyboard>/F8");
+        funcDisplayDelayCorrectionDownAction = new InputAction("FuncDisplayDelayCorrectionDown", InputActionType.Button, $"<Keyboard>/F7");
         if (BMSGameManager.isReplay)
         {
             funcReplayNoteShowAction = new InputAction("FuncReplayNoteShow", InputActionType.Button, $"<Keyboard>/F6");
@@ -336,8 +340,6 @@ public class KeyInput : MonoBehaviour
             case 0x6F: value = "NumpadDivide"; break;
             case 0x70: value = "F1"; break;
             case 0x71: value = "F2"; break;
-            case 0x76: value = "F7"; break;
-            case 0x77: value = "F8"; break;
             case 0x78: value = "F9"; break;
             case 0x79: value = "F10"; break;
             case 0x7A: value = "F11"; break;
@@ -391,6 +393,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.started += ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
         funcBGAOpacityUpAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(1); };
         funcBGAOpacityDownAction.started += ctx => { bmsGameManager.ChangeBGAOpacity(-1); };
+        funcDisplayDelayCorrectionUpAction.started += ctx => { bmsGameManager.ChangeDisplayDelayCorrection(1); };
+        funcDisplayDelayCorrectionDownAction.started += ctx => { bmsGameManager.ChangeDisplayDelayCorrection(-1); };
 
         funcGamePauseAction.Enable();
         funcGameRestartAction.Enable();
@@ -400,6 +404,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.Enable();
         funcBGAOpacityUpAction.Enable();
         funcBGAOpacityDownAction.Enable();
+        funcDisplayDelayCorrectionUpAction.Enable();
+        funcDisplayDelayCorrectionDownAction.Enable();
 
         if (BMSGameManager.isReplay)
         {
@@ -420,6 +426,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.started -= ctx => { bmsGameManager.ChangeSpeed(-(int)(PlayerPrefs.GetInt("NoteSpeed") * 0.5f)); };
         funcBGAOpacityUpAction.started -= ctx => { bmsGameManager.ChangeBGAOpacity(1); };
         funcBGAOpacityDownAction.started -= ctx => { bmsGameManager.ChangeBGAOpacity(-1); };
+        funcDisplayDelayCorrectionUpAction.started -= ctx => { bmsGameManager.ChangeDisplayDelayCorrection(1); };
+        funcDisplayDelayCorrectionDownAction.started -= ctx => { bmsGameManager.ChangeDisplayDelayCorrection(-1); };
 
         funcGamePauseAction.Disable();
         funcGameRestartAction.Disable();
@@ -429,6 +437,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action.Disable();
         funcBGAOpacityUpAction.Disable();
         funcBGAOpacityDownAction.Disable();
+        funcDisplayDelayCorrectionUpAction.Disable();
+        funcDisplayDelayCorrectionDownAction.Disable();
         funcGamePauseAction = null;
         funcGameRestartAction = null;
         funcSpeedUpAction = null;
@@ -437,6 +447,8 @@ public class KeyInput : MonoBehaviour
         funcSpeedDown2Action = null;
         funcBGAOpacityUpAction = null;
         funcBGAOpacityDownAction = null;
+        funcDisplayDelayCorrectionUpAction = null;
+        funcDisplayDelayCorrectionDownAction = null;
 
         if (BMSGameManager.isReplay)
         {

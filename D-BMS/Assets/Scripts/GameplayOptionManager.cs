@@ -20,6 +20,10 @@ public class GameplayOptionManager : MonoBehaviour
     [SerializeField]
     private Image[] currentRandomEffectorImage;
     [SerializeField]
+    private TextMeshProUGUI displayDelayCorrectionValueText;
+    [SerializeField]
+    private Slider displayDelayCorrectionSlider;
+    [SerializeField]
     private TextMeshProUGUI earlyLateThresholdValueText;
     [SerializeField]
     private Slider earlyLateThresholdSlider;
@@ -131,11 +135,12 @@ public class GameplayOptionManager : MonoBehaviour
         {
             case 0: noteSpeedSlider.value = (PlayerPrefs.GetInt("NoteSpeed") - 10.0f + value) / 190.0f; break;
             case 1: bgaOpacitySlider.value = (PlayerPrefs.GetInt("BGAOpacity") + value) / 10.0f; break;
-            case 2: earlyLateThresholdSlider.value = (PlayerPrefs.GetInt("EarlyLateThreshold") - 1.0f + value) / 21.0f; break;
-            case 3: verticalLineSlider.value += value * 0.01f; break;
-            case 4: keyFeedbackOpacitySlider.value += value * 0.01f; break;
-            case 6: ChangeRandomEffector(value); break;
-            case 7: fadeInSlider.value += value * 0.01f; break;
+            case 2: displayDelayCorrectionSlider.value = (PlayerPrefs.GetInt("DisplayDelayCorrection") + 100.0f + value) / 200.0f; break;
+            case 3: earlyLateThresholdSlider.value = (PlayerPrefs.GetInt("EarlyLateThreshold") - 1.0f + value) / 21.0f; break;
+            case 4: verticalLineSlider.value += value * 0.01f; break;
+            case 5: keyFeedbackOpacitySlider.value += value * 0.01f; break;
+            case 7: ChangeRandomEffector(value); break;
+            case 8: fadeInSlider.value += value * 0.01f; break;
         }
     }
 
@@ -143,10 +148,10 @@ public class GameplayOptionManager : MonoBehaviour
     {
         switch (currentOptionIndex)
         {
-            case 8: judgementTrackerToggle.switching = true; break;
-            case 9: scoreGraphToggle.switching = true; break;
-            case 10: judgeLineToggle.switching = true; break;
-            case 11: earlyLateToggle.switching = true; break;
+            case 9: judgementTrackerToggle.switching = true; break;
+            case 10: scoreGraphToggle.switching = true; break;
+            case 11: judgeLineToggle.switching = true; break;
+            case 12: earlyLateToggle.switching = true; break;
         }
     }
 
@@ -156,6 +161,8 @@ public class GameplayOptionManager : MonoBehaviour
         SetNoteSpeedValueText();
         bgaOpacitySlider.value = PlayerPrefs.GetInt("BGAOpacity") / 10.0f;
         SetBGAOpacityValueText();
+        displayDelayCorrectionSlider.value = (PlayerPrefs.GetInt("DisplayDelayCorrection") + 100.0f) / 200.0f;
+        SetDisplayDelayCorrectionValueText();
         earlyLateThresholdSlider.value = (PlayerPrefs.GetInt("EarlyLateThreshold") - 1.0f) / 21.0f;
         SetEarlyLateThresholdValueText();
         verticalLineSlider.value = PlayerPrefs.GetFloat("VerticalLine");
@@ -217,6 +224,16 @@ public class GameplayOptionManager : MonoBehaviour
         currentRandomEffectorImage[index].color = new Color(1, 1, 1);
 
         PlayerPrefs.SetInt("RandomEffector", index);
+    }
+
+    public void DisplayDelayCorrectionSliderValueChange(float value)
+    {
+        PlayerPrefs.SetInt("DisplayDelayCorrection", Mathf.RoundToInt(value * 200.0f - 100.0f));
+        SetDisplayDelayCorrectionValueText();
+    }
+    private void SetDisplayDelayCorrectionValueText()
+    {
+        displayDelayCorrectionValueText.text = PlayerPrefs.GetInt("DisplayDelayCorrection") + "ms";
     }
 
     public void EarlyLateThresholdSliderValueChange(float value)

@@ -225,6 +225,8 @@ public class BMSGameManager : MonoBehaviour
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
 
+        SetDisplayDelayCorrection();
+
         noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed) + judgeLineYPosition, 0.0f);
 
         currentBPM = bpmArray[bpmArrayCount - 1].bpm;
@@ -935,12 +937,20 @@ public class BMSGameManager : MonoBehaviour
             if (!isCurrentLongNote[i]) { continue; }
 
             float longNoteNextYscale = ((float)(longNoteArray[i][longNoteArrayCount[i] - 1].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength;
+            float longNoteNextPosition = (float)currentBeat * gameSpeed;
+            longNoteArray[i][longNoteArrayCount[i] - 3].modelTransform.localPosition = new Vector3(xPosition[i], longNoteNextPosition, 0.0f);
             if (longNoteNextYscale > 0.0f)
             {
-                longNoteArray[i][longNoteArrayCount[i] - 3].modelTransform.localPosition = new Vector3(xPosition[i], (float)currentBeat * gameSpeed, 0.0f);
                 longNoteArray[i][longNoteArrayCount[i] - 2].modelTransform.localScale = new Vector3(1.0f, longNoteNextYscale, 1.0f);
             }
             else
+            {
+                float longNoteTopNextPosition = longNoteNextPosition + longNoteOffset;
+                longNoteArray[i][longNoteArrayCount[i] - 2].modelTransform.localPosition = new Vector3(xPosition[i], longNoteTopNextPosition, 0.0f);
+                longNoteArray[i][longNoteArrayCount[i] - 1].modelTransform.localPosition = new Vector3(xPosition[i], longNoteTopNextPosition, 0.0f);
+            }
+
+            if (currentTicks >= longNoteArray[i][longNoteArrayCount[i] - 1].timing)
             {
                 isCurrentLongNote[i] = false;
                 longNoteHandleCount[i]++;
@@ -1273,6 +1283,46 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 1; i < len; i++) { divideTable[i] = 1.0d / i; }
     }
 
+    private void SetDisplayDelayCorrection()
+    {
+        if (isReplay) { return; }
+        double displayDelayCorrection = PlayerPrefs.GetInt("DisplayDelayCorrection") * 0.001d;
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = normalNoteArrayCount[i] - 1; j >= 0; j--)
+            {
+                normalNoteArray[i][j].beat = pattern.GetBeatFromTiming(normalNoteArray[i][j].timing * 0.0000001d - displayDelayCorrection);
+            }
+
+            for (int j = longNoteArrayCount[i] - 1; j >= 0; j--)
+            {
+                if (longNoteArray[i][j].extra == 2) { continue; }
+                longNoteArray[i][j].beat = pattern.GetBeatFromTiming(longNoteArray[i][j].timing * 0.0000001d - displayDelayCorrection);
+            }
+        }
+        for (int i = barArrayCount; i >= 0; i--)
+        {
+            barArray[i].beat = pattern.GetBeatFromTiming(barArray[i].timing - 0.175d - displayDelayCorrection);
+        }
+    }
+
+    public void ChangeDisplayDelayCorrection(int value)
+    {
+        if (isReplay) { return; }
+        lock (threadLock)
+        {
+            int displayDelayCorrectionValue = PlayerPrefs.GetInt("DisplayDelayCorrection");
+            displayDelayCorrectionValue += value;
+            if (displayDelayCorrectionValue > 100) { userSpeed = 100; }
+            else if (displayDelayCorrectionValue < -100) { displayDelayCorrectionValue = -100; }
+            PlayerPrefs.SetInt("DisplayDelayCorrection", displayDelayCorrectionValue);
+
+            SetDisplayDelayCorrection();
+            RedrawNote();
+            gameUIManager.CoUpdateDisplayDelayCorrectionText();
+        }
+    }
+
     public void ChangeSpeed(int value)
     {
         lock (threadLock)
@@ -1285,58 +1335,8 @@ public class BMSGameManager : MonoBehaviour
             else { gameUIManager.CoUpdateInfoPanel(true); }
             gameSpeed = CalulateSpeed();
 
-            float verticalLineLength = verticalLine * userSpeed;
-
-            for (int i = 0; i < 5; i++)
-            {
-                for (int j = normalNoteArrayCount[i] - 1; j >= 0; j--)
-                {
-                    if (normalNoteArray[i][j].model == null) { break; }
-
-                    normalNoteArray[i][j].modelTransform.localPosition = new Vector3(xPosition[i], (float)(normalNoteArray[i][j].beat * gameSpeed), 0.0f);
-                    normalNoteArray[i][j].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
-                    normalNoteArray[i][j].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
-                }
-
-                bool isCurrent = true;
-                for (int j = longNoteArrayCount[i] - 1; j >= 0; j -= 3)
-                {
-                    if (longNoteArray[i][j].model == null) { break; }
-
-                    for (int k = 0; k < 3; k++)
-                    {
-                        float yPos;
-                        if (k == 2)
-                        {
-                            if (isCurrentLongNote[i] && isCurrent) { yPos = (float)currentBeat * gameSpeed; }
-                            else { yPos = (float)longNoteArray[i][j - 2].beat * gameSpeed; }
-                        }
-                        else { yPos = (float)longNoteArray[i][j].beat * gameSpeed; }
-
-                        longNoteArray[i][j - k].modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
-
-                        if (k == 1)
-                        {
-                            float scale;
-                            if (isCurrentLongNote[i] && isCurrent) { scale = ((float)(longNoteArray[i][j].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength; }
-                            else { scale = ((float)longNoteArray[i][j - 1].beat * gameSpeed - longNoteOffset) * longNoteLength; }
-                            longNoteArray[i][j - k].modelTransform.localScale = new Vector3(1.0f, scale, 1.0f);
-                        }
-                        else
-                        {
-                            longNoteArray[i][j - k].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
-                            longNoteArray[i][j - k].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
-                        }
-                    }
-                    isCurrent = false;
-                }
-            }
-            for (int i = barArrayCount; i >= 0; i--)
-            {
-                if (barArray[i].model == null) { break; }
-
-                barArray[i].modelTransform.localPosition = new Vector3(xPosition[2], (float)(barArray[i].beat * gameSpeed), 0.0f);
-            }
+            RedrawNote();
+            RedrawVerticalLine();
             noteParent.position = new Vector3(0.0f, (float)(-currentBeat * gameSpeed), 0.0f);
         }
 
@@ -1347,6 +1347,76 @@ public class BMSGameManager : MonoBehaviour
             {
                 if (replayNoteArray[i][j].extra != 0) { continue; }
                 replayNoteArray[i][j].model.transform.localPosition = new Vector3(xPosition[i], (float)(replayNoteArray[i][j].beat * gameSpeed), 0.0f);
+            }
+        }
+    }
+
+    private void RedrawNote()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = normalNoteArrayCount[i] - 1; j >= 0; j--)
+            {
+                if (normalNoteArray[i][j].model == null) { break; }
+
+                normalNoteArray[i][j].modelTransform.localPosition = new Vector3(xPosition[i], (float)(normalNoteArray[i][j].beat * gameSpeed), 0.0f);
+            }
+
+            bool isCurrent = true;
+            for (int j = longNoteArrayCount[i] - 1; j >= 0; j -= 3)
+            {
+                if (longNoteArray[i][j].model == null) { break; }
+
+                for (int k = 0; k < 3; k++)
+                {
+                    float yPos;
+                    if (k == 2)
+                    {
+                        if (isCurrentLongNote[i] && isCurrent) { yPos = (float)currentBeat * gameSpeed; }
+                        else { yPos = (float)longNoteArray[i][j - 2].beat * gameSpeed; }
+                    }
+                    else { yPos = (float)longNoteArray[i][j].beat * gameSpeed; }
+
+                    longNoteArray[i][j - k].modelTransform.localPosition = new Vector3(xPosition[i], yPos, 0.0f);
+
+                    if (k == 1)
+                    {
+                        float scale;
+                        if (isCurrentLongNote[i] && isCurrent) { scale = ((float)(longNoteArray[i][j].beat - currentBeat) * gameSpeed - longNoteOffset) * longNoteLength; }
+                        else { scale = ((float)longNoteArray[i][j - 1].beat * gameSpeed - longNoteOffset) * longNoteLength; }
+                        longNoteArray[i][j - k].modelTransform.localScale = new Vector3(1.0f, scale, 1.0f);
+                    }
+                }
+                isCurrent = false;
+            }
+        }
+        for (int i = barArrayCount; i >= 0; i--)
+        {
+            if (barArray[i].model == null) { break; }
+
+            barArray[i].modelTransform.localPosition = new Vector3(xPosition[2], (float)(barArray[i].beat * gameSpeed), 0.0f);
+        }
+    }
+
+    public void RedrawVerticalLine()
+    {
+        float verticalLineLength = verticalLine * userSpeed;
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = normalNoteArrayCount[i] - 1; j >= 0; j--)
+            {
+                if (normalNoteArray[i][j].model == null) { break; }
+
+                normalNoteArray[i][j].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
+                normalNoteArray[i][j].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
+            }
+
+            for (int j = longNoteArrayCount[i] - 1; j >= 0; j--)
+            {
+                if (longNoteArray[i][j].model == null) { break; }
+                if (longNoteArray[i][j].extra == 2) { continue; }
+                longNoteArray[i][j].modelTransform.GetChild(0).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
+                longNoteArray[i][j].modelTransform.GetChild(1).localScale = new Vector3(verticalLineLength, 1.0f, 1.0f);
             }
         }
     }

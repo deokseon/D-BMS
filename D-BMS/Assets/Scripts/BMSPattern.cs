@@ -184,7 +184,7 @@ public class BMSPattern
                         lines[i].noteList[j].failTiming = lines[i].noteList[j].timing + 1750000.0d;
                         lines[i].noteList[j].tickTiming = 20000000000.0d;
                     }
-                    else
+                    else if (lines[i].noteList[j].extra == 2)
                     {
                         lines[i].noteList[j].failTiming = 20000000000.0d;
                         lines[i].noteList[j].tickTiming = lines[i].noteList[j].timing;
@@ -277,7 +277,7 @@ public class BMSPattern
         return timing;
     }
 
-    public double GetBeatFromTiming(double timing)  // 리플레이용
+    public double GetBeatFromTiming(double timing)
     {
         double beat = 0;
         int i;
