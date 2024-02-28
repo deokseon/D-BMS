@@ -888,7 +888,7 @@ ScriptsOnlyBuild:
     className: ToggleMouseHandler
   - hash:
       serializedVersion: 2
-      Hash: 7ff5be29988c385ef95bd854d8a46c48
+      Hash: 0279054e078c0a374dd6915b87d1a879
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameplayOptionManager
@@ -948,7 +948,7 @@ ScriptsOnlyBuild:
     className: AsyncAwakeTrigger
   - hash:
       serializedVersion: 2
-      Hash: 5f2ba184a1619ffdeab18919349bf69c
+      Hash: e8051b23136feb17112057f545196a38
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameUIManager

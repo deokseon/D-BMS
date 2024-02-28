@@ -24737,6 +24737,7 @@ MonoBehaviour:
   infoPanel: {fileID: 0}
   noteSpeedText: {fileID: 0}
   bgaOpacityText: {fileID: 0}
+  displayDelayCorrectionText: {fileID: 0}
   noStageImage: {fileID: 2800000, guid: 925d2e94f0dfe264c94f763010242393, type: 3}
   countdownObject: {fileID: 181444076}
   fadeObject: {fileID: 1949911352}

@@ -109,6 +109,14 @@ public class SongSelectUIManager : MonoBehaviour
         SetRandomEffectorText(PlayerPrefs.GetInt("RandomEffector"));
         randomEffectorCount = System.Enum.GetValues(typeof(RandomEffector)).Length;
 
+        isUpPressed = false;
+        isDownPressed = false;
+        prevFindAlphabet = '.';
+        findSequence = 0;
+    }
+
+    public void SetSongScrollView()
+    {
         for (int i = categoryToggles.Length - 1; i >= 0; i--) { AddToggleListener(categoryToggles[i]); }
         categoryCount = System.Enum.GetValues(typeof(Category)).Length;
         sortByCount = System.Enum.GetValues(typeof(SortBy)).Length;
@@ -121,11 +129,6 @@ public class SongSelectUIManager : MonoBehaviour
         categoryToggleGroup.SetAllTogglesOff(false);
         categoryToggles[PlayerPrefs.GetInt("Category")].isOn = true;
         categoryToggleGroup.allowSwitchOff = false;
-
-        isUpPressed = false;
-        isDownPressed = false;
-        prevFindAlphabet = '.';
-        findSequence = 0;
 
         _ = SetBackground();
     }

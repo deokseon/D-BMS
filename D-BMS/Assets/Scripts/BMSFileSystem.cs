@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 public class BMSFileSystem : MonoBehaviour
 {
+    private FileInfo[] fileInfos;
+    private List<string> bmsTextFileList;
     public static BMSHeader[] headers;
     public static List<BMSHeader> selectedCategoryHeaderList;
     public static BMSHeader selectedHeader;
@@ -17,40 +21,84 @@ public class BMSFileSystem : MonoBehaviour
     public static SongClearLamp songClearLamp;
     public static FavoriteSong favoriteSong;
 
+    private int threadCount = 4;
+    private int completeThreadCount;
+    private bool isCompleteHeadersSort = true;
+    private readonly object threadLock = new object();
+
     void Awake()
     {
         if (string.IsNullOrEmpty(rootPath))
         {
+            completeThreadCount = 0;
             rootPath = $@"{Directory.GetParent(Application.dataPath)}\BMSFiles";
-            FileInfo[] fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
-            int len = fileInfos.Length;
-            int bmsFileCount = 0;
-            for (int i = 0; i < len; i++)
+            fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
+            bmsTextFileList = new List<string>(fileInfos.Length);
+            for (int i = fileInfos.Length - 1; i >= 0; i--)
             {
                 string extend = fileInfos[i].Name.Substring(fileInfos[i].Name.IndexOf('.', 0) + 1).ToLower();
-                if (extend.CompareTo("bms") == 0 || extend.CompareTo("bme") == 0 || extend.CompareTo("bml") == 0) { bmsFileCount++; }
+                if (extend.CompareTo("bms") == 0 || extend.CompareTo("bme") == 0 || extend.CompareTo("bml") == 0) 
+                {
+                    bmsTextFileList.Add(fileInfos[i].Name);
+                }
             }
-            headers = new BMSHeader[bmsFileCount];
-            selectedCategoryHeaderList = new List<BMSHeader>(bmsFileCount);
+            headers = new BMSHeader[bmsTextFileList.Count];
+            selectedCategoryHeaderList = new List<BMSHeader>(bmsTextFileList.Count);
 
-            int headersIndex = 0;
-            for (int i = 0; i < len; i++) 
+            for (int i = 0; i < threadCount; i++)
             {
-                string extend = fileInfos[i].Name.Substring(fileInfos[i].Name.IndexOf('.', 0) + 1).ToLower();
-                if (extend.CompareTo("bms") != 0 && extend.CompareTo("bme") != 0 && extend.CompareTo("bml") != 0) { continue; }
-                ParseHeader(fileInfos[i].Name, out headers[headersIndex]);
-                selectedCategoryHeaderList.Add(headers[headersIndex++]);
+                AddHeaderAsync(i);
             }
-            selectedCategoryHeaderList.Sort((x, y) => {
-                int result = x.level.CompareTo(y.level);
-                return result != 0 ? result : string.Compare(x.title, y.title);
-            });
+
+            _ = WaitHeadersSort();
         }
 
         songClearLamp = songClearLamp ?? DataSaveManager.LoadData<SongClearLamp>("DataSave", "ClearLamp.json") ?? new SongClearLamp();
         favoriteSong = favoriteSong ?? DataSaveManager.LoadData<FavoriteSong>("DataSave", "FavoriteSong.json") ?? new FavoriteSong();
+        _ = WaitDrawSongUI();
+    }
+
+    async private void AddHeaderAsync(int value)
+    {
+        await Task.Run(() =>
+        {
+            int start = (int)(value / (double)threadCount * bmsTextFileList.Count);
+            int end = (int)((value + 1) / (double)threadCount * bmsTextFileList.Count);
+            for (int i = start; i < end; i++)
+            {
+                ParseHeader(bmsTextFileList[i], out headers[i]);
+                lock (threadLock)
+                {
+                    selectedCategoryHeaderList.Add(headers[i]);
+                }
+            }
+            lock (threadLock)
+            {
+                completeThreadCount++;
+            }
+        });
+    }
+
+    private async UniTask WaitHeadersSort()
+    {
+        isCompleteHeadersSort = false;
+        await UniTask.WaitUntil(() => completeThreadCount == threadCount);
+
+        selectedCategoryHeaderList.Sort((x, y) => {
+            int result = x.level.CompareTo(y.level);
+            return result != 0 ? result : string.Compare(x.title, y.title);
+        });
+
+        isCompleteHeadersSort = true;
+    }
+
+    private async UniTask WaitDrawSongUI()
+    {
+        await UniTask.WaitUntil(() => isCompleteHeadersSort);
 
         initOnStart.DrawSongUI();
+
+        FindObjectOfType<SongSelectUIManager>().SetSongScrollView();
     }
 
     private void ParseHeader(string sname, out BMSHeader header)
