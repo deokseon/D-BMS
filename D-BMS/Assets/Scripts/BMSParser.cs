@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Text;
 
 public class BMSParser : MonoBehaviour
 {
@@ -89,7 +90,7 @@ public class BMSParser : MonoBehaviour
     {
         header = BMSGameManager.header;
         bmsFile = null;
-        bmsFile = File.ReadAllLines(header.textFolderPath);
+        bmsFile = File.ReadAllLines(header.textFolderPath, Encoding.GetEncoding(932));
     }
 
     private void ParseGameHeader(bool isRestart)
