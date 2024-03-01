@@ -1345,7 +1345,7 @@ public class BMSGameManager : MonoBehaviour
         {
             for (int j = 0; j < replayNoteArray[i].Length; j++)
             {
-                if (replayNoteArray[i][j].extra != 0) { continue; }
+                if (replayNoteArray[i][j].extra != 0 && replayNoteArray[i][j].extra != 5) { continue; }
                 replayNoteArray[i][j].model.transform.localPosition = new Vector3(xPosition[i], (float)(replayNoteArray[i][j].beat * gameSpeed), 0.0f);
             }
         }
