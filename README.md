@@ -2,7 +2,7 @@ Unity RhythmGame ( EZ2ON REBOOT:R Clone Project, only 5key mode ).<br/><br/>
 This program is made for studying.<br/><br/>
 I used the music of BMS.<br/>
 
-[Trial version (D-BMS.exe)](https://drive.google.com/file/d/1Q2c--fe2oVIkYwx_VAqH5E5SsL-wqAV7/view?usp=sharing) <br/>
+[Trial version (D-BMS.exe)](https://drive.google.com/file/d/1NyiEOM7Mri61trmIizM0zI1LLVG06dAw/view?usp=sharing) <br/>
 
 If you want more music, download all the files below and decompress them.<br/>
 After that, put the BMSFiles folder in the D-BMS folder.<br/>
@@ -87,5 +87,15 @@ Copyright (c) 2019 Yoshifumi Kawai / Cysharp, Inc.
 [Homepage](https://github.com/Cysharp/UniTask)
 
 [Show License](https://github.com/Cysharp/UniTask/blob/master/LICENSE)
+
+MIT License
+<br/><br/>
+### UnitySpriteShaders
+
+Copyright (c) 2016 Todd Rivers
+
+[Homepage](https://github.com/traggett/UnitySpriteShaders)
+
+[Show License](https://github.com/traggett/UnitySpriteShaders/blob/master/LICENSE)
 
 MIT License
