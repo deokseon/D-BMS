@@ -190,7 +190,7 @@ public class CustomManager : MonoBehaviour
                 earlyLatePositionSlider.value = GetSliderValue(2.17f, limitValueDict["MinEarlyLatePosition"], limitValueDict["MaxEarlyLatePosition"]);
                 break;
             case 3:
-                noteBombScaleSlider.value = 1.25f / 3.0f;
+                noteBombScaleSlider.value = 1.5f / 3.0f;
                 break;
             case 4:
                 scoreDigitPositionXSlider.value = GetSliderValue(1.19f, limitValueDict["MinScoreDigitPositionX"], limitValueDict["MaxScoreDigitPositionX"]);

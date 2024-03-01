@@ -77,7 +77,7 @@ public class ConfigData
         comboPosition = 5.15f;
         judgePosition = 1.4f;
         earlyLatePosition = 2.17f;
-        noteBombScale = 1.25f;
+        noteBombScale = 1.5f;
         scoreDigitPositionX = 1.19f;
         scoreDigitPositionY = -1.76f;
         scoreImagePositionX = -0.95f;
