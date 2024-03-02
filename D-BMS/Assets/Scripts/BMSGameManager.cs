@@ -73,7 +73,6 @@ public class BMSGameManager : MonoBehaviour
     private double currentBPM;
     private int combo = 0;
     private bool isBGAVideoSupported = false;
-    private Coroutine songEndCheckCoroutine;
 
     private int[] currentKeySound = new int[5] { 0, 0, 0, 0, 0 };
 
@@ -353,10 +352,6 @@ public class BMSGameManager : MonoBehaviour
     {
         if (isCountdown || isClear || !isStarted) { return; }
 
-        if (songEndCheckCoroutine != null)
-        {
-            StopCoroutine(songEndCheckCoroutine);
-        }
         pauseManager.Pause_SetActive(false);
         gameUIManager.CoUpdateInfoPanel(false);
         gameUIManager.SetInfoPanel(false);
@@ -1103,6 +1098,7 @@ public class BMSGameManager : MonoBehaviour
             endCount++;
             UpdateScoreGraph((float)bmsResult.resultData.score, currentCount + 1);
             UpdateRank((float)bmsResult.resultData.score);
+            keyInput.KeyDisable();
         }
     }
 
@@ -1269,7 +1265,6 @@ public class BMSGameManager : MonoBehaviour
             if (((!isBGAVideoSupported && bgaChangeArrayCount == 0) || (isBGAVideoSupported && !videoPlayer.isPlaying)) && bgSoundArrayCount < 0)
             {
                 _ = GameEnd(true);
-                songEndCheckCoroutine = null;
                 break;
             }
             await UniTask.Yield();

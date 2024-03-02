@@ -786,6 +786,10 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="UnitySpriteShadersEditor.csproj">
+      <Project>{46DD6536-7005-FF8C-A009-4665D1B5C20C}</Project>
+      <Name>UnitySpriteShadersEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="FMODUnity.csproj">
       <Project>{83FEAF7C-699C-3950-22D5-4CD75A8CF9AF}</Project>
       <Name>FMODUnity</Name>
@@ -817,10 +821,6 @@
     <ProjectReference Include="FMODUnityEditor.csproj">
       <Project>{D2BB31A1-9D9B-0399-9918-4282AFABB33B}</Project>
       <Name>FMODUnityEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="UnitySpriteShadersEditor.csproj">
-      <Project>{46DD6536-7005-FF8C-A009-4665D1B5C20C}</Project>
-      <Name>UnitySpriteShadersEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
