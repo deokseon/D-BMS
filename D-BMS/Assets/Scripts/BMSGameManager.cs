@@ -16,6 +16,7 @@ public class BMSGameManager : MonoBehaviour
     private bool isPaused = true;
     private bool isStarted = false;
     private bool isCountdown = false;
+    private bool isSongEndChecking = false;
 
     [HideInInspector] public float longNoteOffset;
     [HideInInspector] public float longNoteLength;
@@ -296,7 +297,7 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++) { currentKeySound[i] = 0; }
 
-        if (bgaChangeArrayCount + layerChangeArrayCount == -2)
+        if (bgaChangeArrayCount + layerChangeArrayCount == -2 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported))
         {
             gameUIManager.bgaOpacity.color = Color.black;
         }
@@ -362,6 +363,8 @@ public class BMSGameManager : MonoBehaviour
         videoPlayer.Pause();
         isPaused = true;
         isStarted = false;
+        isGameEnd = false;
+        isSongEndChecking = false;
         gameUIManager.AnimationPause(false);
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
@@ -405,7 +408,6 @@ public class BMSGameManager : MonoBehaviour
         isJudgementTrackerUpdate = false;
         isScoreGraphUpdate = false;
         isChangeRankImage = false;
-        isGameEnd = false;
         isGameOver = false;
         for (int i = 0; i < 2; i++)
         {
@@ -1098,7 +1100,6 @@ public class BMSGameManager : MonoBehaviour
             endCount++;
             UpdateScoreGraph((float)bmsResult.resultData.score, currentCount + 1);
             UpdateRank((float)bmsResult.resultData.score);
-            keyInput.KeyDisable();
         }
     }
 
@@ -1130,6 +1131,20 @@ public class BMSGameManager : MonoBehaviour
             gameUIManager.CoUpdateInfoPanel(false);
             gameUIManager.SetInfoPanel(true);
             gameUIManager.SetNoteSpeedText();
+        }
+    }
+
+    private async UniTask SongEndCheck()
+    {
+        isSongEndChecking = true;
+        while (isSongEndChecking)
+        {
+            if (((!isBGAVideoSupported && bgaChangeArrayCount == 0) || (isBGAVideoSupported && !videoPlayer.isPlaying)) && bgSoundArrayCount < 0)
+            {
+                _ = GameEnd(true);
+                break;
+            }
+            await UniTask.Yield();
         }
     }
 
@@ -1256,19 +1271,6 @@ public class BMSGameManager : MonoBehaviour
             Thread.Sleep(threadFrequency);
         }
         soundManager.AudioPause(false);
-    }
-
-    private async UniTask SongEndCheck()
-    {
-        while (true)
-        {
-            if (((!isBGAVideoSupported && bgaChangeArrayCount == 0) || (isBGAVideoSupported && !videoPlayer.isPlaying)) && bgSoundArrayCount < 0)
-            {
-                _ = GameEnd(true);
-                break;
-            }
-            await UniTask.Yield();
-        }
     }
 
     private void MakeTable()

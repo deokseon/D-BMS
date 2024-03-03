@@ -170,6 +170,7 @@ public class ResultUIManager : MonoBehaviour
         {
             BMSGameManager.replayData = null;
         }
+        SongSelectUIManager.resultData = DataSaveManager.LoadData<ResultData>("DataSave", BMSGameManager.header.fileName + ".json") ?? new ResultData(11);
         BMSFileSystem.selectedHeader = BMSGameManager.header;
         _ = LoadScene(2);
     }

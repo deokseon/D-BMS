@@ -476,16 +476,20 @@ public class GameUIManager : MonoBehaviour
         for (int i = start; i < end; i++)
         {
             Texture2D texture2D = await textureDownloadManger.GetTexture(BMSGameManager.header.musicFolderPath + bgImageList[i].Value.Substring(0, bgImageList[i].Value.Length - 4));
-            if (texture2D != null && layerImageSet.Contains(bgImageList[i].Key))
+            if (texture2D != null)
             {
-                var colors = texture2D.GetPixels32();
-
-                for (int k = colors.Length - 1; k >= 0; k--)
+                texture2D.filterMode = FilterMode.Point;
+                if (layerImageSet.Contains(bgImageList[i].Key))
                 {
-                    if (colors[k].a != 0 && colors[k].r + colors[k].g + colors[k].b == 0) colors[k].a = 0;
-                }
+                    var colors = texture2D.GetPixels32();
 
-                texture2D.SetPixels32(colors);
+                    for (int k = colors.Length - 1; k >= 0; k--)
+                    {
+                        if (colors[k].a != 0 && colors[k].r + colors[k].g + colors[k].b == 0) colors[k].a = 0;
+                    }
+
+                    texture2D.SetPixels32(colors);
+                }
                 texture2D.Apply();
             }
             bgSpriteArray[bgImageList[i].Key] = texture2D;
