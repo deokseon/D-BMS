@@ -120,8 +120,6 @@ public class BMSGameManager : MonoBehaviour
     private TimeSpan threadFrequency;
     [HideInInspector] public readonly object threadLock = new object();
     private bool[] isKeyDown = new bool[5] { false, false, false, false, false };
-    private bool[] isNoteBombActive = new bool[5] { false, false, false, false, false };
-    private int[] noteBombState = new int[5] { 0, 0, 0, 0, 0 };
     [HideInInspector] public bool isChangeRankImage = false;
     [HideInInspector] public bool isJudgementTrackerUpdate = false;
     [HideInInspector] public bool isScoreGraphUpdate = false;
@@ -365,6 +363,7 @@ public class BMSGameManager : MonoBehaviour
         isStarted = false;
         isGameEnd = false;
         isSongEndChecking = false;
+        gameUIManager.NoteBombLEffectOff();
         gameUIManager.AnimationPause(false);
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
@@ -397,8 +396,6 @@ public class BMSGameManager : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             isKeyDown[i] = false;
-            isNoteBombActive[i] = false;
-            noteBombState[i] = 0;
             isCurrentLongNote[i] = false;
             longNoteHandleCount[i] = 0;
             normalNoteHandleCount[i] = 0;
@@ -681,34 +678,6 @@ public class BMSGameManager : MonoBehaviour
         }
         #endregion
 
-        #region Notebomb Check
-        if (isNoteBombActive[0])
-        {
-            gameUIManager.NoteBombActive(0, noteBombState[0]);
-            isNoteBombActive[0] = false;
-        }
-        if (isNoteBombActive[1])
-        {
-            gameUIManager.NoteBombActive(1, noteBombState[1]);
-            isNoteBombActive[1] = false;
-        }
-        if (isNoteBombActive[2])
-        {
-            gameUIManager.NoteBombActive(2, noteBombState[2]);
-            isNoteBombActive[2] = false;
-        }
-        if (isNoteBombActive[3])
-        {
-            gameUIManager.NoteBombActive(3, noteBombState[3]);
-            isNoteBombActive[3] = false;
-        }
-        if (isNoteBombActive[4])
-        {
-            gameUIManager.NoteBombActive(4, noteBombState[4]);
-            isNoteBombActive[4] = false;
-        }
-        #endregion
-
         if (isGameUIUpdate)
         {
             gameUIManager.GameUIUpdate(combo, currentJudge, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
@@ -735,7 +704,6 @@ public class BMSGameManager : MonoBehaviour
         double diff = time - n.timing;
         JudgeType result = judge.Judge(diff);
         int replayExtra = 0;
-        //replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, result == JudgeType.FAIL ? 3 : 0));
         if (result == JudgeType.IGNORE) { replayNoteDataList[idx].Add(new ReplayNoteData(time, diff, 0)); return; }
 
         currentCount++;
@@ -754,7 +722,11 @@ public class BMSGameManager : MonoBehaviour
         }
         else
         {
-            if (result == JudgeType.COOL) { result = JudgeType.KOOL; replayExtra = 5; }
+            if (result == JudgeType.COOL) 
+            {
+                result = JudgeType.KOOL;
+                replayExtra = 5; 
+            }
             currentLongNoteJudge[idx] = result;
             if (isCurrentLongNote[idx])
             {
@@ -762,18 +734,22 @@ public class BMSGameManager : MonoBehaviour
             }
             else
             {
+                gameUIManager.isNoteBombLEffectActive[idx] = true;
                 isCurrentLongNote[idx] = true;
             }
         }
 
-        if (result <= JudgeType.MISS) { combo = -1; }
+        if (result <= JudgeType.MISS) 
+        {
+            combo = -1; 
+            gameUIManager.isNoteBombLEffectActive[idx] = false; 
+        }
         else
         {
             bmsResult.judgeList[currentCount] = diff;
             if (result != JudgeType.GOOD) 
             { 
-                isNoteBombActive[idx] = true;
-                noteBombState[idx] = 0;
+                gameUIManager.noteBombNAnimationIndex[idx] = 0;
             }
         }
 
@@ -821,11 +797,14 @@ public class BMSGameManager : MonoBehaviour
 
         JudgeType result = currentLongNoteJudge[idx];
 
-        if (result <= JudgeType.MISS) { combo = -1; }
+        if (result <= JudgeType.MISS) 
+        {
+            combo = -1; 
+            gameUIManager.isNoteBombLEffectActive[idx] = false;
+        }
         else if (result >= JudgeType.COOL) 
-        { 
-            isNoteBombActive[idx] = true;
-            noteBombState[idx] = 1;
+        {
+            gameUIManager.noteBombNAnimationIndex[idx] = 0;
         }
 
         currentJudge = currentLongNoteJudge[idx];
@@ -858,11 +837,14 @@ public class BMSGameManager : MonoBehaviour
             noteArray[idx][noteArrayCount[idx]].failTiming = 20000000000.0d;
         }
 
-        if (result <= JudgeType.MISS) { combo = -1; }
+        if (result <= JudgeType.MISS) 
+        { 
+            combo = -1; 
+            gameUIManager.isNoteBombLEffectActive[idx] = false;
+        }
         else if (result >= JudgeType.COOL)
         {
-            isNoteBombActive[idx] = true;
-            noteBombState[idx] = 1;
+            gameUIManager.noteBombNAnimationIndex[idx] = 0;
         }
 
         currentJudge = result;
@@ -949,6 +931,7 @@ public class BMSGameManager : MonoBehaviour
 
             if (currentTicks >= longNoteArray[i][longNoteArrayCount[i] - 1].timing)
             {
+                gameUIManager.isNoteBombLEffectActive[i] = false;
                 isCurrentLongNote[i] = false;
                 longNoteHandleCount[i]++;
             }
@@ -1187,6 +1170,7 @@ public class BMSGameManager : MonoBehaviour
 
     public async UniTask LoadScene(int scene)
     {
+        gameUIManager.NoteBombLEffectOff();
         gameUIManager.AnimationPause(false);
         pauseManager.Pause_SetActive(false);
         gameUIManager.SetInfoPanel(false);

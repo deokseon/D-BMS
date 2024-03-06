@@ -251,7 +251,7 @@ public class CustomManager : MonoBehaviour
 
     public void NoteBombTriggerButtonClick()
     {
-        gameUIManager.NoteBombActive(2, 0);
+        gameUIManager.noteBombNAnimationIndex[2] = 0;
     }
 
     public void ComboPositionSliderValueChange(float value)

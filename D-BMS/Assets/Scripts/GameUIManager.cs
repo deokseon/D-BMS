@@ -66,11 +66,15 @@ public class GameUIManager : MonoBehaviour
     private TimeSpan effectWaitSecond = TimeSpan.FromSeconds(1.0d / 60.0d);
 
     [SerializeField]
-    private SpriteRenderer[] noteBombArray;
-    private Sprite[][] noteBombSpriteArray;
-    private int[] noteBombState;
-    private int[] noteBombAnimationIndex;
-    private int[] noteBombSpriteArrayLength;
+    private SpriteRenderer[] noteBombNArray;
+    [SerializeField]
+    private SpriteRenderer[] noteBombLArray;
+    private Sprite[] noteBombNSpriteArray;
+    private Sprite[] noteBombLSpriteArray;
+    [HideInInspector]
+    public bool[] isNoteBombLEffectActive;
+    [HideInInspector]
+    public int[] noteBombNAnimationIndex;
 
     [SerializeField]
     private Animator judgeEffectAnimator;
@@ -97,8 +101,6 @@ public class GameUIManager : MonoBehaviour
     private GameObject countdownObject;
 
     public GameObject fadeObject;
-
-    private BMPLoader loader;
 
     private readonly int hashComboTitle = Animator.StringToHash("ComboTitle"); 
     private readonly int hashComboTitleBounce = Animator.StringToHash("ComboTitleBounce");
@@ -136,7 +138,6 @@ public class GameUIManager : MonoBehaviour
         loadingPanelBG = GameObject.Find("Loading_Panel").GetComponent<RawImage>();
         stageImage = GameObject.Find("Loading_StageImage").GetComponent<RawImage>();
 
-        loader = new BMPLoader();
         bgImageList = new List<KeyValuePair<int, string>>(500);
         layerImageSet = new HashSet<int>();
         taskCount = Mathf.Max((int)(SystemInfo.processorCount * 0.5f) - 2, 1);
@@ -251,12 +252,6 @@ public class GameUIManager : MonoBehaviour
         inputBlockLine.transform.localScale = new Vector3(ObjectPool.poolInstance.GetLineWidth() * 5 / inputBlockSprite.bounds.size.x, 0.75f, 1.0f);
     }
 
-    private void NoteBombAnimationSet(int line)
-    {
-        noteBombAnimationIndex[line] = noteBombSpriteArrayLength[0];
-        _ = NoteBombEffect(line);
-    }
-
     public void SetGamePanel()
     {
         float cameraSize = Camera.main.orthographicSize;
@@ -367,14 +362,15 @@ public class GameUIManager : MonoBehaviour
 
     private void SetNoteBomb()
     {
-        noteBombSpriteArray = new Sprite[2][] { assetPacker.GetSprites("notebombN-"), assetPacker.GetSprites("notebombL-") };
-        noteBombSpriteArrayLength = new int[2] { noteBombSpriteArray[0].Length, noteBombSpriteArray[1].Length };
+        noteBombNSpriteArray = assetPacker.GetSprites("notebombN-");
+        noteBombLSpriteArray = assetPacker.GetSprites("notebombL-");
 
-        noteBombState = new int[5] { 0, 0, 0, 0, 0 };
-        noteBombAnimationIndex = new int[5];
+        noteBombNAnimationIndex = new int[5];
+        isNoteBombLEffectActive = new bool[5] { false, false, false, false, false };
         for (int i = 0; i < 5; i++)
         {
-            NoteBombAnimationSet(i);
+            _ = NoteBombNEffect(i);
+            _ = NoteBombLEffect(i);
         }
 
         SetNoteBombScale();
@@ -385,7 +381,8 @@ public class GameUIManager : MonoBehaviour
     {
         for (int i = 1; i < 6; i++)
         {
-            GameObject.Find($"NoteBomb{i}").transform.localScale = new Vector3(config.noteBombScale, config.noteBombScale, 1.0f);
+            GameObject.Find($"NoteBombN{i}").transform.localScale = new Vector3(config.noteBombScale, config.noteBombScale, 1.0f);
+            GameObject.Find($"NoteBombL{i}").transform.localScale = new Vector3(config.noteBombScale, config.noteBombScale, 1.0f);
         }
     }
 
@@ -395,7 +392,8 @@ public class GameUIManager : MonoBehaviour
                      GameObject.Find("JudgeLine1").transform.localScale.y * 0.5f + (PlayerPrefs.GetInt("JudgeLine") == 0 ? config.judgeLinePosition : config.judgeLinePosition - 0.24f);
         for (int i = 1; i < 6; i++)
         {
-            GameObject.Find($"NoteBomb{i}").transform.localPosition = new Vector3(GetXPosition(i - 1), yPos, 0.0f);
+            GameObject.Find($"NoteBombN{i}").transform.localPosition = new Vector3(GetXPosition(i - 1), yPos, 0.0f);
+            GameObject.Find($"NoteBombL{i}").transform.localPosition = new Vector3(GetXPosition(i - 1), yPos, 0.0f);
         }
     }
 
@@ -531,12 +529,6 @@ public class GameUIManager : MonoBehaviour
         keyboard[index].sprite = active ? keyPressedImage[index] : keyInitImage[index];
     }
 
-    public void NoteBombActive(int index, int state)
-    {
-        noteBombAnimationIndex[index] = 0;
-        noteBombState[index] = state;
-    }
-
     public void GameUIUpdate(int combo, JudgeType judge, float hp, int maxcombo, int score)
     {
         if (combo != 0)
@@ -598,17 +590,46 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    private async UniTask NoteBombEffect(int line)
+    public void NoteBombLEffectOff()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            isNoteBombLEffectActive[i] = false;
+        }
+    }
+
+    private async UniTask NoteBombNEffect(int line)
     {
         var token = this.GetCancellationTokenOnDestroy();
+        int noteBombNSpriteArrayLength = noteBombNSpriteArray.Length;
+        noteBombNAnimationIndex[line] = noteBombNSpriteArrayLength;
         while (true)
         {
-            while (noteBombAnimationIndex[line] < noteBombSpriteArrayLength[noteBombState[line]])
+            while (noteBombNAnimationIndex[line] < noteBombNSpriteArrayLength)
             {
-                noteBombArray[line].sprite = noteBombSpriteArray[noteBombState[line]][noteBombAnimationIndex[line]++];
+                noteBombNArray[line].sprite = noteBombNSpriteArray[noteBombNAnimationIndex[line]++];
                 await UniTask.Delay(effectWaitSecond, cancellationToken: token);
             }
-            noteBombArray[line].sprite = null;
+            noteBombNArray[line].sprite = null;
+            await UniTask.Yield(cancellationToken: token);
+        }
+    }
+
+    private async UniTask NoteBombLEffect(int line)
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        int noteBombLSpriteArrayLength = noteBombLSpriteArray.Length - 1;
+        int currentEffectIndex = 0;
+        while (true)
+        {
+            while (isNoteBombLEffectActive[line])
+            {
+                noteBombLArray[line].sprite = noteBombLSpriteArray[currentEffectIndex];
+                currentEffectIndex = currentEffectIndex == noteBombLSpriteArrayLength ? 0 : currentEffectIndex + 1;
+                await UniTask.Delay(effectWaitSecond, cancellationToken: token);
+            }
+            noteBombLArray[line].sprite = null;
+            currentEffectIndex = 0;
             await UniTask.Yield(cancellationToken: token);
         }
     }
