@@ -8,7 +8,6 @@ using Cysharp.Threading.Tasks;
 
 public class BMSFileSystem : MonoBehaviour
 {
-    private FileInfo[] fileInfos;
     private List<string> bmsTextFileList;
     public static BMSHeader[] headers;
     public static List<BMSHeader> selectedCategoryHeaderList;
@@ -32,7 +31,7 @@ public class BMSFileSystem : MonoBehaviour
         {
             completeThreadCount = 0;
             rootPath = $@"{Directory.GetParent(Application.dataPath)}\BMSFiles";
-            fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
+            FileInfo[] fileInfos = new DirectoryInfo($@"{rootPath}\TextFolder").GetFiles();
             bmsTextFileList = new List<string>(fileInfos.Length);
             for (int i = fileInfos.Length - 1; i >= 0; i--)
             {
@@ -112,69 +111,74 @@ public class BMSFileSystem : MonoBehaviour
         string line;
         while ((line = reader.ReadLine()) != null)
         {
-            if (line.Length <= 3) { continue; }
-
-            string temp = line.Substring(0, 4).ToUpper();
-            try
+            if (line.Length <= 4) { continue; }
+            switch (line[3])
             {
-                switch (temp)
-                {
-                    case "#STA": header.stageFilePath = line.Substring(11, line.Length - 15); break;   // STAGEFILE
-                    case "#ART": header.artist = line.Substring(8); break;           // ARTIST
-                    case "#LNT": header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
-                    case "#SUB":  // SUBTITLE
-                        if (line[4] == 'T') { header.subTitle = line.Substring(10).Trim('[', ']'); }
-                        break;
-                    case "#PLA":  // PLAYLEVEL
-                        if (line[5] == 'L')
-                        {
+                case 'A':
+                    switch (line[6])
+                    {
+                        case 'E':  // PLAYLEVEL
                             int lvl = 0;
                             int.TryParse(line.Substring(11), out lvl);
                             header.level = lvl;
-                        } break;
-                    case "#TIT":   // TITLE
-                        header.title = line.Substring(7);
-                        if (!string.IsNullOrEmpty(header.title))
-                        {
-                            int idx;
-                            if ((idx = header.title.LastIndexOf('[')) >= 0)
+                            break;
+                        case 'F': header.stageFilePath = line.Substring(11, line.Length - 15); break;  // STAGEFILE
+                    }
+                    break;
+                case 'T':
+                    switch (line[4])
+                    {
+                        case 'L':  // TITLE
+                            header.title = line.Substring(7);
+                            if (!string.IsNullOrEmpty(header.title))
                             {
-                                header.subTitle = header.title.Substring(idx).Trim('[', ']');
-                                header.title = header.title.Remove(idx);
-                                if (header.title == null || header.title.Length == 0)
+                                int idx;
+                                if ((idx = header.title.LastIndexOf('[')) >= 0)
                                 {
-                                    header.title = "[" + header.subTitle + "]";
-                                    header.subTitle = null;
+                                    header.subTitle = header.title.Substring(idx).Trim('[', ']');
+                                    header.title = header.title.Remove(idx);
+                                    if (header.title == null || header.title.Length == 0)
+                                    {
+                                        header.title = "[" + header.subTitle + "]";
+                                        header.subTitle = null;
+                                    }
                                 }
                             }
-                        } break;
-                    case "#BPM":  // BPM
-                        if (line[4] == ' ')
-                        {
-                            header.bpm = double.Parse(line.Substring(5));
-                            header.minBPM = header.bpm;
-                            header.maxBPM = header.bpm;
-                        }
-                        else
-                        {
-                            double tempBPM = double.Parse(line.Substring(7));
-                            if (header.minBPM > tempBPM) { header.minBPM = tempBPM; }
-                            if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
-                        } break;
-                    case "#CAT":  // CATEGORY
-                        switch (line.Substring(10))
-                        {
-                            case "AERY": header.songCategory = Category.AERY; break;
-                            case "SeoRi": header.songCategory = Category.SEORI; break;
-                            default: header.songCategory = Category.NONE; break;
-                        } break;
-                    case "*---":
-                        if (string.Compare(line, "*---------------------- MAIN DATA FIELD", true) == 0) { ParseBPM(reader, header); return; }
-                        break;
-                    default: break;
-                }
+                            break;
+                        case 'I': header.artist = line.Substring(8); break;  // ARTIST
+                        case 'E':  // CATEGORY
+                            switch (line[10])
+                            {
+                                case 'A': header.songCategory = Category.AERY; break;
+                                case 'S': header.songCategory = Category.SEORI; break;
+                                default: header.songCategory = Category.NONE; break;
+                            }
+                            break;
+                        case 'Y': header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
+                    }
+                    break;
+                case 'B':
+                    if (line[4] == 'T') { header.subTitle = line.Substring(10).Trim('[', ']'); }  // SUBTITLE
+                    break;
+                case 'M':  // BPM
+                    if (line[4] == ' ')
+                    {
+                        header.bpm = double.Parse(line.Substring(5));
+                        header.minBPM = header.bpm;
+                        header.maxBPM = header.bpm;
+                    }
+                    else if (line[6] == ' ')
+                    {
+                        double tempBPM = double.Parse(line.Substring(7));
+                        if (header.minBPM > tempBPM) { header.minBPM = tempBPM; }
+                        if (header.maxBPM < tempBPM) { header.maxBPM = tempBPM; }
+                    }
+                    break;
+                case '-':  // MAIN DATA FIELD
+                    if (line.Length > 24 && line[24] == 'M') { ParseBPM(reader, header); return; }
+                    break;
+                default: break;
             }
-            catch (System.Exception e) { Debug.LogWarning(e); break; }
         }
     }
 

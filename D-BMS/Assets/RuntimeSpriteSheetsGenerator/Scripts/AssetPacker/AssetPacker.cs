@@ -27,17 +27,6 @@ namespace DaVikingCode.AssetPacker {
 
 		protected bool allow4096Textures = false;
 
-		private void Awake()
-        {
-			itemsToRaster = new List<TextureToPack>[2];
-			for (int i = 0;i < 2; i++)
-            {
-				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 15 : 67);
-            }
-			mSprites = new Dictionary<string, Sprite>(81);
-
-		}
-
 		public void AddTextureToPack(string file, string customID = null) {
 
 			string fileName = Path.GetFileNameWithoutExtension(file);
@@ -57,6 +46,13 @@ namespace DaVikingCode.AssetPacker {
 		}
 
 		public void AddTexturesToPack(string[] files) {
+			int listCapacity = files.Length;
+			itemsToRaster = new List<TextureToPack>[2];
+			for (int i = 0; i < 2; i++)
+			{
+				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 15 : listCapacity - 15);
+			}
+			mSprites = new Dictionary<string, Sprite>(listCapacity);
 
 			foreach (string file in files)
 				AddTextureToPack(file);
