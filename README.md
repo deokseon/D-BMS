@@ -14,7 +14,7 @@ BMSFiles (Split compression)
 
 # Game Video<br/>
 ### Play
-[![video1](http://img.youtube.com/vi/I3bnBAneCA0/0.jpg)](https://www.youtube.com/watch?v=I3bnBAneCA0)<br/><br/>
+[![video1](http://img.youtube.com/vi/Mcmanuw70kk/0.jpg)](https://www.youtube.com/watch?v=Mcmanuw70kk)<br/><br/>
 ### Replay Mode
 [![video2](http://img.youtube.com/vi/jWs-XPdMy7g/0.jpg)](https://www.youtube.com/watch?v=jWs-XPdMy7g)<br/><br/>
 
