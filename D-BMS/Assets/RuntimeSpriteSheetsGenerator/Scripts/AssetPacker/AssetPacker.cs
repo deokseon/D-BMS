@@ -27,14 +27,13 @@ namespace DaVikingCode.AssetPacker {
 
 		protected bool allow4096Textures = false;
 
-		public void AddTextureToPack(string file, string customID = null) {
-
+		public void AddTextureToPack(string file, string customID = null)
+		{
 			string fileName = Path.GetFileNameWithoutExtension(file);
 			switch (fileName)
             {
-				case "barline": case "keyfeedback": case "longnotebody1": case "longnotebody2": case "longnotebodyverticalline": 
-				case "panel-bg": case "verticalline": case "longnotebottom1": case "longnotebottom2": case "longnotetop1": 
-				case "longnotetop2": case "key1-init": case "key2-init": case "key1-pressed": case "key2-pressed":
+				case "barline": case "keyfeedback": case "longnotebody1": case "longnotebody2": case "longnotebodyverticalline": case "longnotestart1": 
+				case "longnotestart2": case "panel-bg": case "verticalline":  case "key1-init": case "key2-init": case "key1-pressed": case "key2-pressed":
 					itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
 					break;
 				default:
@@ -50,7 +49,7 @@ namespace DaVikingCode.AssetPacker {
 			itemsToRaster = new List<TextureToPack>[2];
 			for (int i = 0; i < 2; i++)
 			{
-				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 15 : listCapacity - 15);
+				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 14 : listCapacity - 14);
 			}
 			mSprites = new Dictionary<string, Sprite>(listCapacity);
 
@@ -81,6 +80,18 @@ namespace DaVikingCode.AssetPacker {
 			_ = createPack(1);
 		}
 
+		private Texture2D FlipTexture(Texture2D originalTexture)
+		{
+			Texture2D rotatedTex = new Texture2D(originalTexture.width, originalTexture.height);
+
+			Color[] pixels = originalTexture.GetPixels();
+			Array.Reverse(pixels);
+			rotatedTex.SetPixels(pixels);
+
+			rotatedTex.Apply();
+			return rotatedTex;
+		}
+
 		protected async UniTask createPack(int itemIndex, string savePath = "")
         {
 			var token = this.GetCancellationTokenOnDestroy();
@@ -102,8 +113,21 @@ namespace DaVikingCode.AssetPacker {
 			{
 				var uwr = await UnityWebRequestTexture.GetTexture("file:///" + itemToRaster.file).SendWebRequest().WithCancellation(cancellationToken: token);
 
-				textures.Add(((DownloadHandlerTexture)uwr.downloadHandler).texture);
-				images.Add(itemToRaster.id);
+				if (itemToRaster.id.CompareTo("longnotestart1") == 0 || itemToRaster.id.CompareTo("longnotestart2") == 0)
+				{
+					Texture2D longNoteBottomTexture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+					textures.Add(longNoteBottomTexture);
+					images.Add("longnotebottom" + itemToRaster.id[13]);
+
+					Texture2D longNoteTopTexture = FlipTexture(longNoteBottomTexture);
+					textures.Add(longNoteTopTexture);
+					images.Add("longnotetop" + itemToRaster.id[13]);
+				}
+				else
+				{
+					textures.Add(((DownloadHandlerTexture)uwr.downloadHandler).texture);
+					images.Add(itemToRaster.id);
+				}
 
 				if (bmsGameManager != null)
 				{
