@@ -63,6 +63,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 005635a804c9cce408640afb9a89100f, type: 3}
   - {fileID: 21300000, guid: 7a3907e97f3f1e84383a9eff4a2dca01, type: 3}
   - {fileID: 21300000, guid: 5d71b20a68fe679488d66dda6acd7d57, type: 3}
+  - {fileID: 21300000, guid: 300083ca09424b04fa763f76ca5b7417, type: 3}
   - {fileID: 21300000, guid: 1e3cdd2b45e8ca54f85f6c81c8cd61de, type: 3}
   - {fileID: 21300000, guid: 6cd098db8e1d7b943bee83610be50bb2, type: 3}
   - {fileID: 21300000, guid: fa95eaebf10aa48c1b9a954b7fd6e9b4, type: 3}
@@ -88,6 +89,7 @@ SpriteAtlas:
   - black
   - Triangle
   - PersonIcon
+  - stop
   - SongToggleFrame
   - LoadingIcon
   - toggleBG

@@ -381,8 +381,8 @@ public class GameUIManager : MonoBehaviour
     {
         for (int i = 1; i < 6; i++)
         {
-            GameObject.Find($"NoteBombN{i}").transform.localScale = new Vector3(config.noteBombScale, config.noteBombScale, 1.0f);
-            GameObject.Find($"NoteBombL{i}").transform.localScale = new Vector3(config.noteBombScale, config.noteBombScale, 1.0f);
+            GameObject.Find($"NoteBombN{i}").transform.localScale = new Vector3(config.noteBombNScale, config.noteBombNScale, 1.0f);
+            GameObject.Find($"NoteBombL{i}").transform.localScale = new Vector3(config.noteBombLScale, config.noteBombLScale, 1.0f);
         }
     }
 

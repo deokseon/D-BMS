@@ -52,7 +52,8 @@ public class ConfigData
     public float comboPosition;
     public float judgePosition;
     public float earlyLatePosition;
-    public float noteBombScale;
+    public float noteBombNScale;
+    public float noteBombLScale;
     public float scoreDigitPositionX;
     public float scoreDigitPositionY;
     public float scoreImagePositionX;
@@ -77,7 +78,8 @@ public class ConfigData
         comboPosition = 5.15f;
         judgePosition = 1.4f;
         earlyLatePosition = 2.17f;
-        noteBombScale = 1.5f;
+        noteBombNScale = 1.5f;
+        noteBombLScale = 1.5f;
         scoreDigitPositionX = 1.19f;
         scoreDigitPositionY = -1.76f;
         scoreImagePositionX = -0.95f;

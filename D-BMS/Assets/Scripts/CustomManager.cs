@@ -25,7 +25,9 @@ public class CustomManager : MonoBehaviour
     [SerializeField]
     private Slider earlyLatePositionSlider;
     [SerializeField]
-    private Slider noteBombScaleSlider;
+    private Slider noteBombNScaleSlider;
+    [SerializeField]
+    private Slider noteBombLScaleSlider;
     [SerializeField]
     private Slider scoreDigitPositionXSlider;
     [SerializeField]
@@ -62,6 +64,11 @@ public class CustomManager : MonoBehaviour
     private Slider bgaHeightSlider;
     [SerializeField]
     private Slider judgelinePositionSlider;
+
+    [SerializeField]
+    private Sprite[] noteBombLTriggerButtomSprite;
+    [SerializeField]
+    private Image noteBombLTriggerButtomImage;
 
     [SerializeField]
     private GameObject[] settingPanelArray;
@@ -150,7 +157,8 @@ public class CustomManager : MonoBehaviour
         comboPositionSlider.value = GetSliderValue(GameUIManager.config.comboPosition, limitValueDict["MinComboPosition"], limitValueDict["MaxComboPosition"]);
         judgePositionSlider.value = GetSliderValue(GameUIManager.config.judgePosition, limitValueDict["MinJudgePosition"], limitValueDict["MaxJudgePosition"]);
         earlyLatePositionSlider.value = GetSliderValue(GameUIManager.config.earlyLatePosition, limitValueDict["MinEarlyLatePosition"], limitValueDict["MaxEarlyLatePosition"]);
-        noteBombScaleSlider.value = GameUIManager.config.noteBombScale / 3.0f;
+        noteBombNScaleSlider.value = GameUIManager.config.noteBombNScale / 3.0f;
+        noteBombLScaleSlider.value = GameUIManager.config.noteBombLScale / 3.0f;
         scoreDigitPositionXSlider.value = GetSliderValue(GameUIManager.config.scoreDigitPositionX, limitValueDict["MinScoreDigitPositionX"], limitValueDict["MaxScoreDigitPositionX"]);
         scoreDigitPositionYSlider.value = GetSliderValue(GameUIManager.config.scoreDigitPositionY, limitValueDict["MinScoreDigitPositionY"], limitValueDict["MaxScoreDigitPositionY"]);
         scoreImagePositionXSlider.value = GetSliderValue(GameUIManager.config.scoreImagePositionX, limitValueDict["MinScoreImagePositionX"], limitValueDict["MaxScoreImagePositionX"]);
@@ -190,7 +198,7 @@ public class CustomManager : MonoBehaviour
                 earlyLatePositionSlider.value = GetSliderValue(2.17f, limitValueDict["MinEarlyLatePosition"], limitValueDict["MaxEarlyLatePosition"]);
                 break;
             case 3:
-                noteBombScaleSlider.value = 1.5f / 3.0f;
+                noteBombNScaleSlider.value = 1.5f / 3.0f;
                 break;
             case 4:
                 scoreDigitPositionXSlider.value = GetSliderValue(1.19f, limitValueDict["MinScoreDigitPositionX"], limitValueDict["MaxScoreDigitPositionX"]);
@@ -246,12 +254,21 @@ public class CustomManager : MonoBehaviour
             case 21:
                 judgelinePositionSlider.value = 1.0f / 3.0f;
                 break;
+            case 22:
+                noteBombLScaleSlider.value = 1.5f / 3.0f;
+                break;
         }
     }
 
-    public void NoteBombTriggerButtonClick()
+    public void NoteBombNTriggerButtonClick()
     {
         gameUIManager.noteBombNAnimationIndex[2] = 0;
+    }
+
+    public void NoteBombLTriggerButtonClick()
+    {
+        noteBombLTriggerButtomImage.sprite = gameUIManager.isNoteBombLEffectActive[2] ? noteBombLTriggerButtomSprite[0] : noteBombLTriggerButtomSprite[1];
+        gameUIManager.isNoteBombLEffectActive[2] = !gameUIManager.isNoteBombLEffectActive[2];
     }
 
     public void ComboPositionSliderValueChange(float value)
@@ -273,9 +290,15 @@ public class CustomManager : MonoBehaviour
         earlyLateManager.SetEarlyLatePosition();
     }
 
-    public void NoteBombScaleSliderValueChange(float value)
+    public void NoteBombNScaleSliderValueChange(float value)
     {
-        GameUIManager.config.noteBombScale = value * 3.0f;
+        GameUIManager.config.noteBombNScale = value * 3.0f;
+        gameUIManager.SetNoteBombScale();
+    }
+
+    public void NoteBombLScaleSliderValueChange(float value)
+    {
+        GameUIManager.config.noteBombLScale = value * 3.0f;
         gameUIManager.SetNoteBombScale();
     }
 
