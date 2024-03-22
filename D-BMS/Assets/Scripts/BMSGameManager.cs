@@ -96,6 +96,7 @@ public class BMSGameManager : MonoBehaviour
     private int layerChangeArrayCount;
     private int bgSoundArrayCount;
     private int bpmArrayCount;
+    private int fourBeatArrayCount;
     private int[] noteArrayCount = new int[5];
     private int[] longNoteArrayCount = new int[5];
     private int[] normalNoteArrayCount = new int[5];
@@ -110,6 +111,7 @@ public class BMSGameManager : MonoBehaviour
     private Note[][] normalNoteArray = new Note[5][];
     private Note[] barArray;
     private KeySoundChange[][] keySoundChangeArray = new KeySoundChange[5][];
+    private double[] fourBeatArray;
     private int[] replayNoteArrayCount = new int[5];
     public ReplayNote[][] replayNoteArray = new ReplayNote[5][];
     private List<ReplayNoteData>[] replayNoteDataList = new List<ReplayNoteData>[5];
@@ -213,12 +215,14 @@ public class BMSGameManager : MonoBehaviour
             replayNoteDataList[i] = new List<ReplayNoteData>(noteArrayCount[i] * 2 + 200);
         }
         barArray = pattern.barLine.noteList.ToArray();
+        fourBeatArray = pattern.fourBeatList.ToArray();
 
         bgaChangeArrayCount = bgaChangeArray.Length - 1;
         layerChangeArrayCount = layerChangeArray.Length - 1;
         bgSoundArrayCount = bgSoundArray.Length - 1;
         bpmArrayCount = bpmArray.Length;
         barArrayCount = barArray.Length - 1;
+        fourBeatArrayCount = fourBeatArray.Length - 1;
 
         divideBPM = (float)(1.0f / header.bpm);
         gameSpeed = CalulateSpeed();
@@ -323,10 +327,13 @@ public class BMSGameManager : MonoBehaviour
         {
             gameUIManager.KeyInputImageSetActive(false, i);
         }
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+        gameUIManager.SetHPbar(1.0f);
         isJudgementTrackerUpdate = true;
         isScoreGraphUpdate = true;
         isChangeRankImage = true;
+
+        gameUIManager.SetAnimationSpeed(currentBPM);
 
         GC.Collect();
 
@@ -455,7 +462,7 @@ public class BMSGameManager : MonoBehaviour
         GameUIManager.isCreateReady = true;
         gameUIManager.CloseLoading();
         await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, bmsResult.resultData.maxCombo, (int)(float)currentScore);
         await UniTask.Delay(500);
         _ = gameUIManager.FadeOut();
         await UniTask.Delay(500);
@@ -499,6 +506,18 @@ public class BMSGameManager : MonoBehaviour
                 layerChangeArray[layerChangeArrayCount].timing = 20000000000.0d;
             }
         }
+        while (fourBeatArray[fourBeatArrayCount] <= currentTime)
+        {
+            gameUIManager.SetHPbarAnimationIndex();
+            if (fourBeatArrayCount > 0)
+            {
+                fourBeatArrayCount--;
+            }
+            else
+            {
+                fourBeatArray[fourBeatArrayCount] = 20000000000.0d;
+            }
+        }
 
         currentTicks = stopwatch.ElapsedTicks - resumeCountTicks;
         double tempTime = currentTicks * 0.0000001d;
@@ -529,6 +548,7 @@ public class BMSGameManager : MonoBehaviour
             currentBPM = next.bpm;
             prevTime = next.timing;
             --bpmArrayCount;
+            gameUIManager.SetAnimationSpeed(currentBPM);
 
             next = null;
             if (bpmArrayCount > 0) { next = bpmArray[bpmArrayCount - 1]; }
@@ -680,7 +700,7 @@ public class BMSGameManager : MonoBehaviour
 
         if (isGameUIUpdate)
         {
-            gameUIManager.GameUIUpdate(combo, currentJudge, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+            gameUIManager.GameUIUpdate(combo, currentJudge, bmsResult.resultData.maxCombo, (int)(float)currentScore);
             isGameUIUpdate = false;
         }
 
@@ -694,6 +714,7 @@ public class BMSGameManager : MonoBehaviour
         if (isGameOver)
         {
             GamePause(1);
+            gameUIManager.SetHPbar(0.0f);
             isGameOver = false;
         }
     }
@@ -1235,7 +1256,7 @@ public class BMSGameManager : MonoBehaviour
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
                 isCountdown = false;
-                if (!isReplay) { gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, gauge.hp, bmsResult.resultData.maxCombo, (int)(float)currentScore); }
+                if (!isReplay) { gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, bmsResult.resultData.maxCombo, (int)(float)currentScore); }
                 break;
             }
             else

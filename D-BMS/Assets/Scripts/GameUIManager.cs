@@ -56,6 +56,13 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private Transform hpBarMask;
+    private Sprite[] hpBarSpriteArray;
+    private int hpbarSpriteArrayLength;
+    private TimeSpan hpbarSpriteAnimationDelay;
+    private TimeSpan hpbarPulseAnimationDelay;
+    private int hpbarSpriteAnimationIndex;
+    private int hpbarPulseAnimationIndex;
+    private const double animationMaxSpeed = 1.0d / 300.0d;
     [SerializeField]
     private GameObject[] keyFeedback;
     [SerializeField]
@@ -186,7 +193,8 @@ public class GameUIManager : MonoBehaviour
         else
         {
             FindObjectOfType<EarlyLate>().ObjectSetting();
-            GameUIUpdate(0, JudgeType.IGNORE, 1.0f, 789, 123456);
+            GameUIUpdate(0, JudgeType.IGNORE, 789, 123456);
+            SetHPbar(1.0f);
             await UniTask.Delay(200);
             CustomSetting();
             _ = FadeOut();
@@ -275,15 +283,25 @@ public class GameUIManager : MonoBehaviour
         panelBackground.transform.localPosition = new Vector3(GetXPosition(2), config.judgeLinePosition - 0.24f, 0.0f);
         panelBackground.transform.localScale = new Vector3(noteWidth * 5.0f / panelBGSprite.bounds.size.x, (cameraSize + 2.74f - config.judgeLinePosition) / panelBGSprite.bounds.size.y, 1.0f);
 
-        Sprite hpBarBGSprite = assetPacker.GetSprite("hpbar-bg");
+        Sprite hpBarBGSprite = assetPacker.GetSprite("hpbarbg");
         GameObject hpBarBackground = GameObject.Find("HPbar_bg");
         hpBarBackground.GetComponent<SpriteRenderer>().sprite = hpBarBGSprite;
         hpBarBackground.transform.localPosition = new Vector3(GetXPosition(4) + noteWidth * 0.5f + panelRightSprite.bounds.size.x + hpBarBGSprite.bounds.size.x * 0.5f,
                                                       -0.24f + hpBarBGSprite.bounds.size.y * 0.5f, 0.0f);
 
         GameObject hpBar = GameObject.Find("HPbar");
-        hpBar.GetComponent<SpriteRenderer>().sprite = assetPacker.GetSprite("hpbar");
-        hpBarMask.GetComponent<SpriteMask>().sprite = assetPacker.GetSprite("hpbar");
+        hpBarSpriteArray = assetPacker.GetSprites("hpbar-");
+        hpbarSpriteArrayLength = hpBarSpriteArray.Length - 1;
+        hpBar.GetComponent<SpriteRenderer>().sprite = hpBarSpriteArray[0];
+        hpBarMask.GetComponent<SpriteMask>().sprite = hpBarSpriteArray[0];
+        if (bmsGameManager != null)
+        {
+            if (hpbarSpriteArrayLength > 1)
+            {
+                _ = HPbarSpriteAnimation();
+            }
+            _ = HPbarPulseAnimation();
+        }
 
         keyInitImage = new Sprite[5];
         keyPressedImage = new Sprite[5];
@@ -529,7 +547,7 @@ public class GameUIManager : MonoBehaviour
         keyboard[index].sprite = active ? keyPressedImage[index] : keyInitImage[index];
     }
 
-    public void GameUIUpdate(int combo, JudgeType judge, float hp, int maxcombo, int score)
+    public void GameUIUpdate(int combo, JudgeType judge, int maxcombo, int score)
     {
         if (combo != 0)
         {
@@ -564,8 +582,6 @@ public class GameUIManager : MonoBehaviour
             comboTitle.SetActive(false);
         }
 
-        hpBarMask.localScale = new Vector3(1.0f, hp, 1.0f);
-
         for (int i = 0; i < 5; i++)
         {
             int tempValue = (int)(maxcombo * 0.1f);
@@ -595,6 +611,58 @@ public class GameUIManager : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             isNoteBombLEffectActive[i] = false;
+        }
+    }
+
+    public void SetHPbar(float hp)
+    {
+        hpBarMask.localScale = new Vector3(1.0f, hp, 1.0f);
+    }
+
+    public void SetAnimationSpeed(double bpm)
+    {
+        double hpbarSpriteAnimationDelayValue = 60.0d / bpm / hpbarSpriteArrayLength;
+        double hpbarPulseAnimationDelayValue = 3.0d / bpm;
+        hpbarSpriteAnimationDelay = TimeSpan.FromSeconds(hpbarSpriteAnimationDelayValue > animationMaxSpeed ? hpbarSpriteAnimationDelayValue : animationMaxSpeed);
+        hpbarPulseAnimationDelay = TimeSpan.FromSeconds(hpbarPulseAnimationDelayValue > animationMaxSpeed ? hpbarPulseAnimationDelayValue : animationMaxSpeed);
+    }
+
+    public void SetHPbarAnimationIndex()
+    {
+        hpbarSpriteAnimationIndex = hpbarSpriteArrayLength;
+        hpbarPulseAnimationIndex = 19;
+    }
+
+    private async UniTask HPbarSpriteAnimation()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        SpriteRenderer hpBar = GameObject.Find("HPbar").GetComponent<SpriteRenderer>();
+        Gauge gauge = bmsGameManager.gauge;
+        hpbarSpriteAnimationIndex = -1;
+        while (true)
+        {
+            while (hpbarSpriteAnimationIndex >= 0)
+            {
+                hpBar.sprite = gauge.hp == 1.0f ? hpBarSpriteArray[hpbarSpriteAnimationIndex--] : hpBarSpriteArray[0];
+                await UniTask.Delay(hpbarSpriteAnimationDelay, cancellationToken: token);
+            }
+            await UniTask.Yield(cancellationToken: token);
+        }
+    }
+
+    private async UniTask HPbarPulseAnimation()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        Gauge gauge = bmsGameManager.gauge;
+        hpbarPulseAnimationIndex = -1;
+        while (true)
+        {
+            while (hpbarPulseAnimationIndex >= 0)
+            {
+                hpBarMask.localScale = new Vector3(1.0f, gauge.hp + 0.005f * hpbarPulseAnimationIndex--, 1.0f);
+                await UniTask.Delay(hpbarPulseAnimationDelay, cancellationToken: token);
+            }
+            await UniTask.Yield(cancellationToken: token);
         }
     }
 
@@ -762,7 +830,7 @@ public class GameUIManager : MonoBehaviour
 
     public void CloseLoading()
     {
-        hpBarMask.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        SetHPbar(1.0f);
         GameObject.Find("Loading_Panel").SetActive(false);
     }
 

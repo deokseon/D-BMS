@@ -16,6 +16,7 @@ public class BMSPattern
     public List<Note>[] longNote { get; set; }
     public List<Note>[] normalNote { get; set; }
     public List<KeySoundChange>[] keySoundChangeTimingList { get; set; }
+    public List<double> fourBeatList { get; set; }
 
     public BMSPattern()
     {
@@ -127,6 +128,7 @@ public class BMSPattern
         {
             barLine.noteList[i].timing += 0.175d;
         }
+        SetHPbarAnimationTriggerList();
     }
 
     private void AddLongNoteTick()
@@ -246,6 +248,15 @@ public class BMSPattern
         }
     }
 
+    private void SetHPbarAnimationTriggerList()
+    {
+        fourBeatList = new List<double>((int)barLine.noteList[0].beat + 1);
+        for (int i = (int)barLine.noteList[0].beat; i >= 0; i--)
+        {
+            fourBeatList.Add(GetTimingInSecond(i));
+        }
+    }
+
     public void CalculateTimingsInListExtension(List<Note> list)
     {
         int len = list.Count;
@@ -274,6 +285,18 @@ public class BMSPattern
             timing += (bpms[i - 1].beat - bpms[i].beat) / bpms[i].bpm * 60;
         }
         timing += (obj.beat - bpms[i].beat) / bpms[i].bpm * 60;
+        return timing;
+    }
+
+    public double GetTimingInSecond(double beat)
+    {
+        double timing = 0;
+        int i;
+        for (i = bpms.Count - 1; i > 0 && beat > bpms[i - 1].beat; --i)
+        {
+            timing += (bpms[i - 1].beat - bpms[i].beat) / bpms[i].bpm * 60;
+        }
+        timing += (beat - bpms[i].beat) / bpms[i].bpm * 60;
         return timing;
     }
 

@@ -244,14 +244,14 @@ namespace DaVikingCode.AssetPacker {
 			Vector2 pivot;
 
 			if (name.CompareTo("panel-left") == 0 || name.CompareTo("longnotebodyverticalline") == 0)  // pivot - right
-            {
+			{
 				pivot = new Vector2(1.0f, 0.5f);
 			}
 			else if (name.CompareTo("panel-right") == 0)  // pivot - left
 			{
 				pivot = new Vector2(0.0f, 0.5f);
 			}
-			else if (name.CompareTo("hpbar") == 0 || name.CompareTo("panel-bg") == 0 ||
+			else if (name.CompareTo("panel-bg") == 0 || (name.Length >= 6 && name.Substring(0, 6).CompareTo("hpbar-") == 0) ||
 					 name.CompareTo("keyfeedback") == 0 || name.CompareTo("judgeline") == 0 ||
 					 name.CompareTo("note1") == 0 || name.CompareTo("note2") == 0 || name.CompareTo("ReplayNote") == 0 ||
 					 name.CompareTo("longnotebottom1") == 0 || name.CompareTo("longnotebottom2") == 0 ||
