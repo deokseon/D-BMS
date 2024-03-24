@@ -30,18 +30,15 @@ namespace DaVikingCode.AssetPacker {
 		public void AddTextureToPack(string file, string customID = null)
 		{
 			string fileName = Path.GetFileNameWithoutExtension(file);
-			switch (fileName)
-            {
-				case "barline": case "keyfeedback": case "longnotebody1": case "longnotebody2": case "longnotebodyverticalline": case "longnotestart1": 
-				case "longnotestart2": case "panel-bg": case "verticalline":  case "key1-init": case "key2-init": case "key1-pressed": case "key2-pressed":
-					itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
-					break;
-				default:
-					itemsToRaster[1].Add(new TextureToPack(file, customID != null ? customID : fileName));
-					break;
-
+			if (fileName.StartsWith("key1") || fileName.StartsWith("key2") || fileName.CompareTo("barline") == 0 || fileName.CompareTo("panel-bg") == 0 ||
+					 fileName.StartsWith("longnote") || fileName.CompareTo("keyfeedback") == 0 || fileName.StartsWith("panelbottom-") || fileName.CompareTo("verticalline") == 0)
+			{
+				itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
 			}
-			
+			else
+            {
+				itemsToRaster[1].Add(new TextureToPack(file, customID != null ? customID : fileName));
+			}
 		}
 
 		public void AddTexturesToPack(string[] files) {
@@ -242,7 +239,7 @@ namespace DaVikingCode.AssetPacker {
 		private Vector2 GetSpritePivot(string name)
         {
 			Vector2 pivot;
-
+			//(name.Length >= 6 && name.Substring(0, 6).CompareTo("hpbar-") == 0)
 			if (name.CompareTo("panel-left") == 0 || name.CompareTo("longnotebodyverticalline") == 0)  // pivot - right
 			{
 				pivot = new Vector2(1.0f, 0.5f);
@@ -251,7 +248,7 @@ namespace DaVikingCode.AssetPacker {
 			{
 				pivot = new Vector2(0.0f, 0.5f);
 			}
-			else if (name.CompareTo("panel-bg") == 0 || (name.Length >= 6 && name.Substring(0, 6).CompareTo("hpbar-") == 0) ||
+			else if (name.CompareTo("panel-bg") == 0 || name.StartsWith("hpbar-") ||
 					 name.CompareTo("keyfeedback") == 0 || name.CompareTo("judgeline") == 0 ||
 					 name.CompareTo("note1") == 0 || name.CompareTo("note2") == 0 || name.CompareTo("ReplayNote") == 0 ||
 					 name.CompareTo("longnotebottom1") == 0 || name.CompareTo("longnotebottom2") == 0 ||
@@ -259,8 +256,8 @@ namespace DaVikingCode.AssetPacker {
 			{
 				pivot = new Vector2(0.5f, 0.0f);
 			}
-			else if (name.StartsWith("key1") || name.StartsWith("key2") || name.StartsWith("inputblock") ||
-					 name.CompareTo("longnotebody1") == 0 || name.CompareTo("longnotebody2") == 0)  // pivot - top
+			else if (name.StartsWith("key1") || name.StartsWith("key2") || name.CompareTo("inputblock") == 0 ||
+					 name.CompareTo("longnotebody1") == 0 || name.CompareTo("longnotebody2") == 0 || name.StartsWith("panelbottom-"))  // pivot - top
 			{
 				pivot = new Vector2(0.5f, 1.0f);
 			}

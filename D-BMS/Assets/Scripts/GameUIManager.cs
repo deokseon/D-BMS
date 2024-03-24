@@ -55,6 +55,13 @@ public class GameUIManager : MonoBehaviour
     private SpriteRenderer[] maxcomboDigitArray;
 
     [SerializeField]
+    private SpriteRenderer panelBottom;
+    private Sprite[] panelBottomSpriteArray;
+    private int panelBottomSpriteArrayLength;
+    private int panelBottomAnimationIndex;
+    private TimeSpan panelBottomAnimationDelay;
+
+    [SerializeField]
     private Transform hpBarMask;
     private Sprite[] hpBarSpriteArray;
     private int hpbarSpriteArrayLength;
@@ -283,6 +290,12 @@ public class GameUIManager : MonoBehaviour
         panelBackground.transform.localPosition = new Vector3(GetXPosition(2), config.judgeLinePosition - 0.24f, 0.0f);
         panelBackground.transform.localScale = new Vector3(noteWidth * 5.0f / panelBGSprite.bounds.size.x, (cameraSize + 2.74f - config.judgeLinePosition) / panelBGSprite.bounds.size.y, 1.0f);
 
+        panelBottomSpriteArray = assetPacker.GetSprites("panelbottom-");
+        panelBottomSpriteArrayLength = panelBottomSpriteArray.Length;
+        panelBottom.sprite = panelBottomSpriteArray[0];
+        panelBottom.transform.localPosition = new Vector3(GetXPosition(2), config.judgeLinePosition - 0.24f, 0.0f);
+        panelBottom.transform.localScale = new Vector3(noteWidth * 5.0f / panelBottomSpriteArray[0].bounds.size.x, (config.judgeLinePosition + 2.26f) / panelBottomSpriteArray[0].bounds.size.y, 0.0f);
+
         Sprite hpBarBGSprite = assetPacker.GetSprite("hpbarbg");
         GameObject hpBarBackground = GameObject.Find("HPbar_bg");
         hpBarBackground.GetComponent<SpriteRenderer>().sprite = hpBarBGSprite;
@@ -294,14 +307,6 @@ public class GameUIManager : MonoBehaviour
         hpbarSpriteArrayLength = hpBarSpriteArray.Length - 1;
         hpBar.GetComponent<SpriteRenderer>().sprite = hpBarSpriteArray[0];
         hpBarMask.GetComponent<SpriteMask>().sprite = hpBarSpriteArray[0];
-        if (bmsGameManager != null)
-        {
-            if (hpbarSpriteArrayLength > 1)
-            {
-                _ = HPbarSpriteAnimation();
-            }
-            _ = HPbarPulseAnimation();
-        }
 
         keyInitImage = new Sprite[5];
         keyPressedImage = new Sprite[5];
@@ -330,6 +335,19 @@ public class GameUIManager : MonoBehaviour
             panelFade.GetComponent<SpriteMask>().sprite = panelBGSprite;
             panelFade.transform.localPosition = new Vector3(GetXPosition(2), 2.5f + cameraSize, 0.0f);
             panelFade.transform.localScale = new Vector3(noteWidth * 5.0f / panelBGSprite.bounds.size.x, 4.0f / panelBGSprite.bounds.size.y * fadeInSize, 1.0f);
+        }
+
+        if (bmsGameManager != null)
+        {
+            if (hpbarSpriteArrayLength > 1)
+            {
+                _ = HPbarSpriteAnimation();
+            }
+            if (panelBottomSpriteArrayLength > 1)
+            {
+                _ = PanelBottomSpriteAnimation();
+            }
+            _ = HPbarPulseAnimation();
         }
     }
 
@@ -621,16 +639,34 @@ public class GameUIManager : MonoBehaviour
 
     public void SetAnimationSpeed(double bpm)
     {
+        double panelBottpmAnimationDelayValue = 60.0d / bpm / panelBottomSpriteArrayLength;
         double hpbarSpriteAnimationDelayValue = 60.0d / bpm / hpbarSpriteArrayLength;
         double hpbarPulseAnimationDelayValue = 3.0d / bpm;
+        panelBottomAnimationDelay = TimeSpan.FromSeconds(panelBottpmAnimationDelayValue > animationMaxSpeed ? panelBottpmAnimationDelayValue : animationMaxSpeed);
         hpbarSpriteAnimationDelay = TimeSpan.FromSeconds(hpbarSpriteAnimationDelayValue > animationMaxSpeed ? hpbarSpriteAnimationDelayValue : animationMaxSpeed);
         hpbarPulseAnimationDelay = TimeSpan.FromSeconds(hpbarPulseAnimationDelayValue > animationMaxSpeed ? hpbarPulseAnimationDelayValue : animationMaxSpeed);
     }
 
     public void SetHPbarAnimationIndex()
     {
+        panelBottomAnimationIndex = panelBottomSpriteArrayLength;
         hpbarSpriteAnimationIndex = hpbarSpriteArrayLength;
         hpbarPulseAnimationIndex = 19;
+    }
+
+    private async UniTask PanelBottomSpriteAnimation()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        panelBottomAnimationIndex = -1;
+        while (true)
+        {
+            while (panelBottomAnimationIndex >= 0)
+            {
+                panelBottom.sprite = panelBottomSpriteArray[panelBottomAnimationIndex--];
+                await UniTask.Delay(hpbarSpriteAnimationDelay, cancellationToken: token);
+            }
+            await UniTask.Yield(cancellationToken: token);
+        }
     }
 
     private async UniTask HPbarSpriteAnimation()
