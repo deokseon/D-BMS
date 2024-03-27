@@ -44,10 +44,14 @@ namespace DaVikingCode.AssetPacker {
 		public void AddTexturesToPack(string[] files) {
 			int listCapacity = files.Length;
 			itemsToRaster = new List<TextureToPack>[2];
-			for (int i = 0; i < 2; i++)
-			{
-				itemsToRaster[i] = new List<TextureToPack>(i == 0 ? 14 : listCapacity - 14);
-			}
+			int listIndexZeroCount = 13;
+			foreach (string file in files)
+            {
+				if (Path.GetFileNameWithoutExtension(file).StartsWith("panelbottom-"))
+					listIndexZeroCount++;
+            }
+			itemsToRaster[0] = new List<TextureToPack>(listIndexZeroCount);
+			itemsToRaster[1] = new List<TextureToPack>(listCapacity - listIndexZeroCount);
 			mSprites = new Dictionary<string, Sprite>(listCapacity);
 
 			foreach (string file in files)
@@ -239,7 +243,6 @@ namespace DaVikingCode.AssetPacker {
 		private Vector2 GetSpritePivot(string name)
         {
 			Vector2 pivot;
-			//(name.Length >= 6 && name.Substring(0, 6).CompareTo("hpbar-") == 0)
 			if (name.CompareTo("panel-left") == 0 || name.CompareTo("longnotebodyverticalline") == 0)  // pivot - right
 			{
 				pivot = new Vector2(1.0f, 0.5f);

@@ -62,8 +62,13 @@ public class ConfigData
     public float maxcomboDigitPositionY;
     public float maxcomboImagePositionX;
     public float maxcomboImagePositionY;
+    public float hpbarBGPositionX;
+    public float hpbarBGPositionY;
+    public float hpbarPositionX;
+    public float hpbarPositionY;
     public float panelPosition;
     public float judgeLinePosition;
+    public float panelBottomScaleX;
     public float scoreGraphPositionOffsetX;
     public float scoreGraphPositionOffsetY;
     public float judgementTrackerPositionOffsetX;
@@ -88,8 +93,13 @@ public class ConfigData
         maxcomboDigitPositionY = -2.17f;
         maxcomboImagePositionX = -0.69f;
         maxcomboImagePositionY = -2.17f;
+        hpbarBGPositionX = 0.0f;
+        hpbarBGPositionY = 0.0f;
+        hpbarPositionX = 0.0f;
+        hpbarPositionY = 0.0f;
         panelPosition = -7.63f;
         judgeLinePosition = 0.0f;
+        panelBottomScaleX = 1.0f;
         scoreGraphPositionOffsetX = 0.0f;
         scoreGraphPositionOffsetY = 0.0f;
         judgementTrackerPositionOffsetX = 0.0f;

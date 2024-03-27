@@ -291,22 +291,22 @@ public class GameUIManager : MonoBehaviour
         panelBackground.transform.localScale = new Vector3(noteWidth * 5.0f / panelBGSprite.bounds.size.x, (cameraSize + 2.74f - config.judgeLinePosition) / panelBGSprite.bounds.size.y, 1.0f);
 
         panelBottomSpriteArray = assetPacker.GetSprites("panelbottom-");
-        panelBottomSpriteArrayLength = panelBottomSpriteArray.Length;
+        panelBottomSpriteArrayLength = panelBottomSpriteArray.Length - 1;
         panelBottom.sprite = panelBottomSpriteArray[0];
         panelBottom.transform.localPosition = new Vector3(GetXPosition(2), config.judgeLinePosition - 0.24f, 0.0f);
-        panelBottom.transform.localScale = new Vector3(noteWidth * 5.0f / panelBottomSpriteArray[0].bounds.size.x, (config.judgeLinePosition + 2.26f) / panelBottomSpriteArray[0].bounds.size.y, 0.0f);
+        panelBottom.transform.localScale = new Vector3(config.panelBottomScaleX, (config.judgeLinePosition + 2.26f) / panelBottomSpriteArray[0].bounds.size.y, 0.0f);
 
         Sprite hpBarBGSprite = assetPacker.GetSprite("hpbarbg");
         GameObject hpBarBackground = GameObject.Find("HPbar_bg");
         hpBarBackground.GetComponent<SpriteRenderer>().sprite = hpBarBGSprite;
-        hpBarBackground.transform.localPosition = new Vector3(GetXPosition(4) + noteWidth * 0.5f + panelRightSprite.bounds.size.x + hpBarBGSprite.bounds.size.x * 0.5f,
-                                                      -0.24f + hpBarBGSprite.bounds.size.y * 0.5f, 0.0f);
+        hpBarBackground.transform.localPosition = new Vector3(config.hpbarBGPositionX, config.hpbarBGPositionY, 0.0f);
 
         GameObject hpBar = GameObject.Find("HPbar");
         hpBarSpriteArray = assetPacker.GetSprites("hpbar-");
         hpbarSpriteArrayLength = hpBarSpriteArray.Length - 1;
         hpBar.GetComponent<SpriteRenderer>().sprite = hpBarSpriteArray[0];
         hpBarMask.GetComponent<SpriteMask>().sprite = hpBarSpriteArray[0];
+        hpBar.transform.localPosition = new Vector3(config.hpbarPositionX, config.hpbarPositionY, 0.0f);
 
         keyInitImage = new Sprite[5];
         keyPressedImage = new Sprite[5];
@@ -663,7 +663,7 @@ public class GameUIManager : MonoBehaviour
             while (panelBottomAnimationIndex >= 0)
             {
                 panelBottom.sprite = panelBottomSpriteArray[panelBottomAnimationIndex--];
-                await UniTask.Delay(hpbarSpriteAnimationDelay, cancellationToken: token);
+                await UniTask.Delay(panelBottomAnimationDelay, cancellationToken: token);
             }
             await UniTask.Yield(cancellationToken: token);
         }

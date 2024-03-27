@@ -84,7 +84,7 @@ public class CustomManager : MonoBehaviour
 
     private void SetCustomValue()
     {
-        customValueArray = new CustomValue[23];
+        customValueArray = new CustomValue[sliderArray.Length];
         customValueArray[0] = new CustomValue(GameUIManager.config.comboPosition, 5.15f, GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.5f, 
                                                 7.5f - 0.085f - gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.5f - gameUIManager.assetPacker.GetSprite("text-combo").bounds.size.y);
         customValueArray[1] = new CustomValue(GameUIManager.config.judgePosition, 1.4f, GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("kool-0").bounds.size.y * 0.7f * 0.5f,
@@ -109,17 +109,26 @@ public class CustomManager : MonoBehaviour
                                                 gameUIManager.GetXPosition(4) + ObjectPool.poolInstance.GetLineWidth() * 0.5f - gameUIManager.GetXPosition(2) - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.x);
         customValueArray[12] = new CustomValue(GameUIManager.config.maxcomboImagePositionY, -2.17f, -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y,
                                                 GameUIManager.config.judgeLinePosition - 0.24f - 0.5f * gameUIManager.assetPacker.GetSprite("text-maxcombo").bounds.size.y);
-        customValueArray[13] = new CustomValue(GameUIManager.config.panelPosition, -7.63f, -8.889f + ObjectPool.poolInstance.GetNoteWidth() * 0.5f + gameUIManager.assetPacker.GetSprite("panel-left").bounds.size.x,
+        customValueArray[13] = new CustomValue(GameUIManager.config.hpbarBGPositionX, 0.0f, -8.889f + 0.5f * gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.x, 
+                                                8.889f - 0.5f * gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.x);
+        customValueArray[14] = new CustomValue(GameUIManager.config.hpbarBGPositionY, 0.0f, -2.5f + 0.5f * gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y,
+                                                7.5f - 0.5f * gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y);
+        customValueArray[15] = new CustomValue(GameUIManager.config.hpbarPositionX, 0.0f, gameUIManager.assetPacker.GetSprite("hpbar-00").bounds.size.x * 0.5f - gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.x * 0.5f,
+                                                gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.x * 0.5f - gameUIManager.assetPacker.GetSprite("hpbar-00").bounds.size.x * 0.5f);
+        customValueArray[16] = new CustomValue(GameUIManager.config.hpbarPositionY, gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y * -0.5f, gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y * -0.5f,
+                                                gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y * 0.5f - gameUIManager.assetPacker.GetSprite("hpbar-00").bounds.size.y);
+        customValueArray[17] = new CustomValue(GameUIManager.config.panelPosition, -7.63f, -8.889f + ObjectPool.poolInstance.GetNoteWidth() * 0.5f + gameUIManager.assetPacker.GetSprite("panel-left").bounds.size.x,
                                                 8.889f - ObjectPool.poolInstance.GetNoteWidth() * 4.5f - gameUIManager.assetPacker.GetSprite("panel-right").bounds.size.x);
-        customValueArray[14] = new CustomValue(GameUIManager.config.judgeLinePosition, 0.0f, -1.0f, 2.0f);
-        customValueArray[15] = new CustomValue(GameUIManager.config.scoreGraphPositionOffsetX, 0.0f, -670.0f, 885.0f);
-        customValueArray[16] = new CustomValue(GameUIManager.config.scoreGraphPositionOffsetY, 0.0f, -370.0f, 70.0f);
-        customValueArray[17] = new CustomValue(GameUIManager.config.judgementTrackerPositionOffsetX, 0.0f, -670.0f, 885.0f);
-        customValueArray[18] = new CustomValue(GameUIManager.config.judgementTrackerPositionOffsetY, 0.0f, -20.0f, 720.0f);
-        customValueArray[19] = new CustomValue(GameUIManager.config.bgaPositionX, 520.0f, -960.0f + GameUIManager.config.bgaWidth * 0.5f, 960.0f - GameUIManager.config.bgaWidth * 0.5f);
-        customValueArray[20] = new CustomValue(GameUIManager.config.bgaPositionY, 100.0f, -540.0f + GameUIManager.config.bgaHeight * 0.5f, 540.0f - GameUIManager.config.bgaHeight * 0.5f);
-        customValueArray[21] = new CustomValue(GameUIManager.config.bgaWidth, 700.0f, 0.0f, 1980.0f);
-        customValueArray[22] = new CustomValue(GameUIManager.config.bgaHeight, 700.0f, 0.0f, 1080.0f);
+        customValueArray[18] = new CustomValue(GameUIManager.config.judgeLinePosition, 0.0f, -1.0f, 2.0f);
+        customValueArray[19] = new CustomValue(GameUIManager.config.panelBottomScaleX, 1.0f, 0.0f, 3.0f);
+        customValueArray[20] = new CustomValue(GameUIManager.config.scoreGraphPositionOffsetX, 0.0f, -670.0f, 885.0f);
+        customValueArray[21] = new CustomValue(GameUIManager.config.scoreGraphPositionOffsetY, 0.0f, -370.0f, 70.0f);
+        customValueArray[22] = new CustomValue(GameUIManager.config.judgementTrackerPositionOffsetX, 0.0f, -670.0f, 885.0f);
+        customValueArray[23] = new CustomValue(GameUIManager.config.judgementTrackerPositionOffsetY, 0.0f, -20.0f, 720.0f);
+        customValueArray[24] = new CustomValue(GameUIManager.config.bgaPositionX, 520.0f, -960.0f + GameUIManager.config.bgaWidth * 0.5f, 960.0f - GameUIManager.config.bgaWidth * 0.5f);
+        customValueArray[25] = new CustomValue(GameUIManager.config.bgaPositionY, 100.0f, -540.0f + GameUIManager.config.bgaHeight * 0.5f, 540.0f - GameUIManager.config.bgaHeight * 0.5f);
+        customValueArray[26] = new CustomValue(GameUIManager.config.bgaWidth, 700.0f, 0.0f, 1980.0f);
+        customValueArray[27] = new CustomValue(GameUIManager.config.bgaHeight, 700.0f, 0.0f, 1080.0f);
     }
 
     private float GetSliderValue(float configValue, float minValue, float maxValue)
@@ -238,9 +247,33 @@ public class CustomManager : MonoBehaviour
         gameUIManager.SetScoreAndMaxcombo();
     }
 
+    public void HPbarBGPositionXSliderValueChange(float value)
+    {
+        GameUIManager.config.hpbarBGPositionX = value * (customValueArray[13].maxValue - customValueArray[13].minValue) + customValueArray[13].minValue;
+        gameUIManager.SetGamePanel();
+    }
+
+    public void HPbarBGPositionYSliderValueChange(float value)
+    {
+        GameUIManager.config.hpbarBGPositionY = value * (customValueArray[14].maxValue - customValueArray[14].minValue) + customValueArray[14].minValue;
+        gameUIManager.SetGamePanel();
+    }
+
+    public void HPbarPositionXSliderValueChange(float value)
+    {
+        GameUIManager.config.hpbarPositionX = value * (customValueArray[15].maxValue - customValueArray[15].minValue) + customValueArray[15].minValue;
+        gameUIManager.SetGamePanel();
+    }
+
+    public void HPbarPositionYSliderValueChange(float value)
+    {
+        GameUIManager.config.hpbarPositionY = value * (customValueArray[16].maxValue - customValueArray[16].minValue) + customValueArray[16].minValue;
+        gameUIManager.SetGamePanel();
+    }
+
     public void PanelPositionSliderValueChange(float value)
     {
-        GameUIManager.config.panelPosition = value * (customValueArray[13].maxValue - customValueArray[13].minValue) + customValueArray[13].minValue;
+        GameUIManager.config.panelPosition = value * (customValueArray[17].maxValue - customValueArray[17].minValue) + customValueArray[17].minValue;
         gameUIManager.SetCombo();
         gameUIManager.SetGamePanel();
         gameUIManager.SetJudgeLine();
@@ -254,7 +287,7 @@ public class CustomManager : MonoBehaviour
 
     public void JudgelinePositionSliderValueChange(float value)
     {
-        GameUIManager.config.judgeLinePosition = value * (customValueArray[14].maxValue - customValueArray[14].minValue) + customValueArray[14].minValue;
+        GameUIManager.config.judgeLinePosition = value * (customValueArray[18].maxValue - customValueArray[18].minValue) + customValueArray[18].minValue;
         SetLimitValue(0, GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("combo-0").bounds.size.y * 0.5f,
                       GameUIManager.config.comboPosition, 0.0f, ComboPositionSliderValueChange);
         SetLimitValue(1, GameUIManager.config.judgeLinePosition - 0.24f + gameUIManager.assetPacker.GetSprite("kool-0").bounds.size.y * 0.7f * 0.5f,
@@ -277,59 +310,65 @@ public class CustomManager : MonoBehaviour
         gameUIManager.SetKeyFeedback();
     }
 
+    public void PanelBottomScaleXSliderValueChange(float value)
+    {
+        GameUIManager.config.panelBottomScaleX = value * (customValueArray[19].maxValue - customValueArray[19].minValue) + customValueArray[19].minValue;
+        gameUIManager.SetGamePanel();
+    }
+
     public void ScoreGraphPositionXSliderValueChange(float value)
     {
-        float newOffset = value * (customValueArray[15].maxValue - customValueArray[15].minValue) + customValueArray[15].minValue;
+        float newOffset = value * (customValueArray[20].maxValue - customValueArray[20].minValue) + customValueArray[20].minValue;
         scoreGraph.SetScoreGraphPosition(newOffset - GameUIManager.config.scoreGraphPositionOffsetX, 0.0f);
         GameUIManager.config.scoreGraphPositionOffsetX = newOffset;
     }
 
     public void ScoreGraphPositionYSliderValueChange(float value)
     {
-        float newOffset = value * (customValueArray[16].maxValue - customValueArray[16].minValue) + customValueArray[16].minValue;
+        float newOffset = value * (customValueArray[21].maxValue - customValueArray[21].minValue) + customValueArray[21].minValue;
         scoreGraph.SetScoreGraphPosition(0.0f, newOffset - GameUIManager.config.scoreGraphPositionOffsetY);
         GameUIManager.config.scoreGraphPositionOffsetY = newOffset;
     }
 
     public void JudgementTrackerPositionXSliderValueChange(float value)
     {
-        float newOffset = value * (customValueArray[17].maxValue - customValueArray[17].minValue) + customValueArray[17].minValue;
+        float newOffset = value * (customValueArray[22].maxValue - customValueArray[22].minValue) + customValueArray[22].minValue;
         judgementTracker.SetJudgementTrackerPosition(newOffset - GameUIManager.config.judgementTrackerPositionOffsetX, 0.0f);
         GameUIManager.config.judgementTrackerPositionOffsetX = newOffset;
     }
 
     public void JudgementTrackerPositionYSliderValueChange(float value)
     {
-        float newOffset = value * (customValueArray[18].maxValue - customValueArray[18].minValue) + customValueArray[18].minValue;
+        float newOffset = value * (customValueArray[23].maxValue - customValueArray[23].minValue) + customValueArray[23].minValue;
         judgementTracker.SetJudgementTrackerPosition(0.0f, newOffset - GameUIManager.config.judgementTrackerPositionOffsetY);
         GameUIManager.config.judgementTrackerPositionOffsetY = newOffset;
     }
 
     public void BGAPositionXSliderValueChange(float value)
     {
-        GameUIManager.config.bgaPositionX = value * (customValueArray[19].maxValue - customValueArray[19].minValue) + customValueArray[19].minValue;
+        GameUIManager.config.bgaPositionX = value * (customValueArray[24].maxValue - customValueArray[24].minValue) + customValueArray[24].minValue;
         gameUIManager.SetBGAPanel();
     }
 
     public void BGAPositionYSliderValueChange(float value)
     {
-        GameUIManager.config.bgaPositionY = value * (customValueArray[20].maxValue - customValueArray[20].minValue) + customValueArray[20].minValue;
+        GameUIManager.config.bgaPositionY = value * (customValueArray[25].maxValue - customValueArray[25].minValue) + customValueArray[25].minValue;
         gameUIManager.SetBGAPanel();
     }
 
     public void BGAWidthSliderValueChange(float value)
     {
-        GameUIManager.config.bgaWidth = value * (customValueArray[21].maxValue - customValueArray[21].minValue) + customValueArray[21].minValue;
-        SetLimitValue(19, -960.0f + GameUIManager.config.bgaWidth * 0.5f, GameUIManager.config.bgaPositionX, 0.0f, BGAPositionXSliderValueChange);
-        SetLimitValue(19, 960.0f - GameUIManager.config.bgaWidth * 0.5f, GameUIManager.config.bgaPositionX, 1.0f, BGAPositionXSliderValueChange);
+        GameUIManager.config.bgaWidth = value * (customValueArray[26].maxValue - customValueArray[26].minValue) + customValueArray[26].minValue;
+        SetLimitValue(24, -960.0f + GameUIManager.config.bgaWidth * 0.5f, GameUIManager.config.bgaPositionX, 0.0f, BGAPositionXSliderValueChange);
+        SetLimitValue(24, 960.0f - GameUIManager.config.bgaWidth * 0.5f, GameUIManager.config.bgaPositionX, 1.0f, BGAPositionXSliderValueChange);
         gameUIManager.SetBGAPanel();
     }
 
     public void BGAHeigthSliderValueChange(float value)
     {
-        GameUIManager.config.bgaHeight = value * (customValueArray[22].maxValue - customValueArray[22].minValue) + customValueArray[22].minValue;
-        SetLimitValue(20, -540.0f + GameUIManager.config.bgaHeight * 0.5f, GameUIManager.config.bgaPositionY, 0.0f, BGAPositionYSliderValueChange);
-        SetLimitValue(20, 540.0f - GameUIManager.config.bgaHeight * 0.5f, GameUIManager.config.bgaPositionY, 1.0f, BGAPositionYSliderValueChange);
+        GameUIManager.config.bgaHeight = value * (customValueArray[27].maxValue - customValueArray[27].minValue) + customValueArray[27].minValue;
+        SetLimitValue(25, -540.0f + GameUIManager.config.bgaHeight * 0.5f, GameUIManager.config.bgaPositionY, 0.0f, BGAPositionYSliderValueChange);
+        SetLimitValue(25, 540.0f - GameUIManager.config.bgaHeight * 0.5f, GameUIManager.config.bgaPositionY, 1.0f, BGAPositionYSliderValueChange);
         gameUIManager.SetBGAPanel();
     }
 
