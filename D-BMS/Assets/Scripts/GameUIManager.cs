@@ -339,11 +339,11 @@ public class GameUIManager : MonoBehaviour
 
         if (bmsGameManager != null)
         {
-            if (hpbarSpriteArrayLength > 1)
+            if (hpbarSpriteArrayLength > 0)
             {
                 _ = HPbarSpriteAnimation();
             }
-            if (panelBottomSpriteArrayLength > 1)
+            if (panelBottomSpriteArrayLength > 0)
             {
                 _ = PanelBottomSpriteAnimation();
             }
@@ -639,8 +639,8 @@ public class GameUIManager : MonoBehaviour
 
     public void SetAnimationSpeed(double bpm)
     {
-        double panelBottpmAnimationDelayValue = 60.0d / bpm / panelBottomSpriteArrayLength;
-        double hpbarSpriteAnimationDelayValue = 60.0d / bpm / hpbarSpriteArrayLength;
+        double panelBottpmAnimationDelayValue = panelBottomSpriteArrayLength == 0 ? 0.0d : 60.0d / bpm / panelBottomSpriteArrayLength;
+        double hpbarSpriteAnimationDelayValue = hpbarSpriteArrayLength == 0 ? 0.0d : 60.0d / bpm / hpbarSpriteArrayLength;
         double hpbarPulseAnimationDelayValue = 3.0d / bpm;
         panelBottomAnimationDelay = TimeSpan.FromSeconds(panelBottpmAnimationDelayValue > animationMaxSpeed ? panelBottpmAnimationDelayValue : animationMaxSpeed);
         hpbarSpriteAnimationDelay = TimeSpan.FromSeconds(hpbarSpriteAnimationDelayValue > animationMaxSpeed ? hpbarSpriteAnimationDelayValue : animationMaxSpeed);

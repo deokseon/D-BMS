@@ -900,7 +900,7 @@ ScriptsOnlyBuild:
     className: ColorLabel
   - hash:
       serializedVersion: 2
-      Hash: ae83841362424017bfab41153b4470c8
+      Hash: 03dce6529845d0c887d9fc1b01377775
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CustomManager
@@ -948,7 +948,7 @@ ScriptsOnlyBuild:
     className: AsyncAwakeTrigger
   - hash:
       serializedVersion: 2
-      Hash: 06c5095fecf6ed87a5b8e008c6ac35f2
+      Hash: b05d061b0d2ea35953c74abd0c4cd41d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameUIManager
