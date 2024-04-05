@@ -12,7 +12,7 @@ public class BMSDrawer : MonoBehaviour
         BMSPattern pattern = BMSParser.instance.pattern;
         BMSGameManager bmsGameManager = GetComponent<BMSGameManager>();
 
-        float speed = bmsGameManager.CalulateSpeed();
+        float speed = bmsGameManager.ConvertSpeed();
         float offset = ObjectPool.poolInstance.GetOffset();
         float longNoteLen = ObjectPool.poolInstance.GetLength();
 

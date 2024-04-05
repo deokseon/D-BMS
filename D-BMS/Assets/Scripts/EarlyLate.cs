@@ -108,7 +108,7 @@ public class EarlyLate : MonoBehaviour
 
         SetEarlyLatePosition();
 
-        float numberSize = gameUIManager.defaultNumberArray[0].bounds.size.x * earlyDigitArray[0].transform.localScale.x;
+        float numberSize = gameUIManager.comboScore.defaultNumberArray[0].bounds.size.x * earlyDigitArray[0].transform.localScale.x;
         digitPositionX = new float[4];
         for (int i = 0; i < 4; i++)
         {
@@ -158,7 +158,7 @@ public class EarlyLate : MonoBehaviour
         {
             int tempValue = (int)(count * 0.1f);
             int remainder = count - (tempValue * 10);
-            digitArray[digitCount++].sprite = gameUIManager.defaultNumberArray[remainder];
+            digitArray[digitCount++].sprite = gameUIManager.comboScore.defaultNumberArray[remainder];
             count = tempValue;
         } while (count > 0);
         digitParent.localPosition = new Vector3(digitPositionX[digitCount - 1], digitParent.localPosition.y, 0.0f);
@@ -166,9 +166,9 @@ public class EarlyLate : MonoBehaviour
 
     public void SetEarlyLatePosition()
     {
-        earlyLateSprite[0].transform.localPosition = new Vector3((gameUIManager.GetXPosition(0) + gameUIManager.GetXPosition(1)) * 0.5f, GameUIManager.config.earlyLatePosition, 0.0f);
-        earlyLateSprite[1].transform.localPosition = new Vector3((gameUIManager.GetXPosition(3) + gameUIManager.GetXPosition(4)) * 0.5f, GameUIManager.config.earlyLatePosition, 0.0f);
-        judgementInfo.transform.localPosition = new Vector3(gameUIManager.GetXPosition(2), 3.5f, 0.0f);
+        earlyLateSprite[0].transform.localPosition = new Vector3((gameUIManager.GetLinePositionX(0) + gameUIManager.GetLinePositionX(1)) * 0.5f, GameUIManager.config.earlyLatePosition, 0.0f);
+        earlyLateSprite[1].transform.localPosition = new Vector3((gameUIManager.GetLinePositionX(3) + gameUIManager.GetLinePositionX(4)) * 0.5f, GameUIManager.config.earlyLatePosition, 0.0f);
+        judgementInfo.transform.localPosition = new Vector3(gameUIManager.GetLinePositionX(2), 3.5f, 0.0f);
     }
 
     public float GetMinEarlyLatePosition()

@@ -42,6 +42,14 @@ public class BMSGameManager : MonoBehaviour
     private PauseManager pauseManager;
     [SerializeField]
     private Transform inputBlockLine;
+    [SerializeField]
+    private NoteBomb noteBomb;
+    [SerializeField]
+    private GamePanel gamePanel;
+    [SerializeField]
+    private JudgeEffect judgeEffect;
+    [SerializeField]
+    private ComboScore comboScore;
     private GameObject replayNoteParent;
 
     private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -167,7 +175,7 @@ public class BMSGameManager : MonoBehaviour
         _ = PreLoad(false);
     }
 
-    public float CalulateSpeed()
+    public float ConvertSpeed()
     {
         return (userSpeed * 13.0f * divideBPM);
     }
@@ -225,7 +233,7 @@ public class BMSGameManager : MonoBehaviour
         fourBeatArrayCount = fourBeatArray.Length - 1;
 
         divideBPM = (float)(1.0f / header.bpm);
-        gameSpeed = CalulateSpeed();
+        gameSpeed = ConvertSpeed();
 
         SetDisplayDelayCorrection();
 
@@ -251,12 +259,12 @@ public class BMSGameManager : MonoBehaviour
             gauge = new Gauge();
 
             GameUIManager.isCreateReady = false;
-            gameUIManager.SetLoading();
+            gameUIManager.SetLoadingPanel();
             totalLoading = gameUIManager.bgImageList.Count + soundManager.pathes.Count + Directory.GetFiles($@"{Directory.GetParent(Application.dataPath)}\Skin\GameObject").Length;
             for (int i = bgaChangeArrayCount; i > -1; i--) { if (!bgaChangeArray[i].isPic) { totalLoading++; break; } }
             divideTotalLoading = 1.0f / totalLoading;
             _ = Loading();
-            gameUIManager.LoadImages();
+            gameUIManager.LoadBGATextures();
             soundManager.AddAudioClips();
             if (videoPlayer.isActiveAndEnabled)
             {
@@ -285,7 +293,7 @@ public class BMSGameManager : MonoBehaviour
                 replayNoteParent = GameObject.Find("ReplayNoteParent");
             }
             keyInput.KeySetting();
-            gameUIManager.SetNullBGArray();
+            gameUIManager.SetNullBGATextureArray();
             await UniTask.WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
             await UniTask.WaitUntil(() => isFadeEnd);
             await UniTask.Delay(3000);
@@ -325,15 +333,15 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++)
         {
-            gameUIManager.KeyInputImageSetActive(false, i);
+            gamePanel.KeyInputImageSetActive(false, i);
         }
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, bmsResult.resultData.maxCombo, (int)(float)currentScore);
-        gameUIManager.SetHPbar(1.0f);
+        comboScore.ScoreComboUpdate(0, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+        gamePanel.SetHPbarValue(1.0f);
         isJudgementTrackerUpdate = true;
         isScoreGraphUpdate = true;
         isChangeRankImage = true;
 
-        gameUIManager.SetAnimationSpeed(currentBPM);
+        gamePanel.SetAnimationSpeed(currentBPM);
 
         GC.Collect();
 
@@ -359,8 +367,8 @@ public class BMSGameManager : MonoBehaviour
         if (isCountdown || isClear || !isStarted) { return; }
 
         pauseManager.Pause_SetActive(false);
-        gameUIManager.CoUpdateInfoPanel(false);
-        gameUIManager.SetInfoPanel(false);
+        gameUIManager.InfoPanelUpdateCoroutine(false);
+        gameUIManager.SetActiveInfoPanel(false);
         bgmThread.Abort();
         keySoundChangeThread.Abort();
         InputThreadAbort();
@@ -370,7 +378,7 @@ public class BMSGameManager : MonoBehaviour
         isStarted = false;
         isGameEnd = false;
         isSongEndChecking = false;
-        gameUIManager.NoteBombLEffectOff();
+        noteBomb.NoteBombLEffectOff();
         gameUIManager.AnimationPause(false);
         gameUIManager.FadeIn();
         soundManager.AudioAllStop();
@@ -460,9 +468,10 @@ public class BMSGameManager : MonoBehaviour
         gameUIManager.FadeIn();
         await UniTask.Delay(1000);
         GameUIManager.isCreateReady = true;
-        gameUIManager.CloseLoading();
+        gameUIManager.CloseLoadingPanel();
+        gamePanel.SetHPbarValue(1.0f);
         await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
-        gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+        comboScore.ScoreComboUpdate(0, bmsResult.resultData.maxCombo, (int)(float)currentScore);
         await UniTask.Delay(500);
         _ = gameUIManager.FadeOut();
         await UniTask.Delay(500);
@@ -508,7 +517,7 @@ public class BMSGameManager : MonoBehaviour
         }
         while (fourBeatArray[fourBeatArrayCount] <= currentTime)
         {
-            gameUIManager.SetHPbarAnimationIndex();
+            gamePanel.SetGamePanelAnimationIndex();
             if (fourBeatArrayCount > 0)
             {
                 fourBeatArrayCount--;
@@ -548,7 +557,7 @@ public class BMSGameManager : MonoBehaviour
             currentBPM = next.bpm;
             prevTime = next.timing;
             --bpmArrayCount;
-            gameUIManager.SetAnimationSpeed(currentBPM);
+            gamePanel.SetAnimationSpeed(currentBPM);
 
             next = null;
             if (bpmArrayCount > 0) { next = bpmArray[bpmArrayCount - 1]; }
@@ -673,34 +682,35 @@ public class BMSGameManager : MonoBehaviour
         #region Key Feedback Check
         if (isKeyDown[0])
         {
-            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[0], 0);
+            gamePanel.KeyInputImageSetActive(keyInput.prevKeyState[0], 0);
             isKeyDown[0] = false;
         }
         if (isKeyDown[1])
         {
-            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[1], 1);
+            gamePanel.KeyInputImageSetActive(keyInput.prevKeyState[1], 1);
             isKeyDown[1] = false;
         }
         if (isKeyDown[2])
         {
-            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[2] || keyInput.prevKeyState[5], 2);
+            gamePanel.KeyInputImageSetActive(keyInput.prevKeyState[2] || keyInput.prevKeyState[5], 2);
             isKeyDown[2] = false;
         }
         if (isKeyDown[3])
         {
-            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[3], 3);
+            gamePanel.KeyInputImageSetActive(keyInput.prevKeyState[3], 3);
             isKeyDown[3] = false;
         }
         if (isKeyDown[4])
         {
-            gameUIManager.KeyInputImageSetActive(keyInput.prevKeyState[4], 4);
+            gamePanel.KeyInputImageSetActive(keyInput.prevKeyState[4], 4);
             isKeyDown[4] = false;
         }
         #endregion
 
         if (isGameUIUpdate)
         {
-            gameUIManager.GameUIUpdate(combo, currentJudge, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+            comboScore.ScoreComboUpdate(combo, bmsResult.resultData.maxCombo, (int)(float)currentScore);
+            judgeEffect.JudgeEffectAnimationActive(currentJudge);
             isGameUIUpdate = false;
         }
 
@@ -714,7 +724,7 @@ public class BMSGameManager : MonoBehaviour
         if (isGameOver)
         {
             GamePause(1);
-            gameUIManager.SetHPbar(0.0f);
+            gamePanel.SetHPbarValue(0.0f);
             isGameOver = false;
         }
     }
@@ -755,22 +765,22 @@ public class BMSGameManager : MonoBehaviour
             }
             else
             {
-                gameUIManager.isNoteBombLEffectActive[idx] = true;
+                noteBomb.isNoteBombLEffectActive[idx] = true;
                 isCurrentLongNote[idx] = true;
             }
         }
 
         if (result <= JudgeType.MISS) 
         {
-            combo = -1; 
-            gameUIManager.isNoteBombLEffectActive[idx] = false; 
+            combo = -1;
+            noteBomb.isNoteBombLEffectActive[idx] = false;
         }
         else
         {
             bmsResult.judgeList[currentCount] = diff;
             if (result != JudgeType.GOOD) 
-            { 
-                gameUIManager.noteBombNAnimationIndex[idx] = 0;
+            {
+                noteBomb.noteBombNAnimationIndex[idx] = 0;
             }
         }
 
@@ -820,12 +830,12 @@ public class BMSGameManager : MonoBehaviour
 
         if (result <= JudgeType.MISS) 
         {
-            combo = -1; 
-            gameUIManager.isNoteBombLEffectActive[idx] = false;
+            combo = -1;
+            noteBomb.isNoteBombLEffectActive[idx] = false;
         }
         else if (result >= JudgeType.COOL) 
         {
-            gameUIManager.noteBombNAnimationIndex[idx] = 0;
+            noteBomb.noteBombNAnimationIndex[idx] = 0;
         }
 
         currentJudge = currentLongNoteJudge[idx];
@@ -860,12 +870,12 @@ public class BMSGameManager : MonoBehaviour
 
         if (result <= JudgeType.MISS) 
         { 
-            combo = -1; 
-            gameUIManager.isNoteBombLEffectActive[idx] = false;
+            combo = -1;
+            noteBomb.isNoteBombLEffectActive[idx] = false;
         }
         else if (result >= JudgeType.COOL)
         {
-            gameUIManager.noteBombNAnimationIndex[idx] = 0;
+            noteBomb.noteBombNAnimationIndex[idx] = 0;
         }
 
         currentJudge = result;
@@ -952,7 +962,7 @@ public class BMSGameManager : MonoBehaviour
 
             if (currentTicks >= longNoteArray[i][longNoteArrayCount[i] - 1].timing)
             {
-                gameUIManager.isNoteBombLEffectActive[i] = false;
+                noteBomb.isNoteBombLEffectActive[i] = false;
                 isCurrentLongNote[i] = false;
                 longNoteHandleCount[i]++;
             }
@@ -1132,8 +1142,8 @@ public class BMSGameManager : MonoBehaviour
             if (isBGAVideoSupported) { videoPlayer.Pause(); }
             pauseManager.PausePanelSetting(set);
             pauseManager.Pause_SetActive(true);
-            gameUIManager.CoUpdateInfoPanel(false);
-            gameUIManager.SetInfoPanel(true);
+            gameUIManager.InfoPanelUpdateCoroutine(false);
+            gameUIManager.SetActiveInfoPanel(true);
             gameUIManager.SetNoteSpeedText();
         }
     }
@@ -1155,7 +1165,7 @@ public class BMSGameManager : MonoBehaviour
     public async UniTask GameEnd(bool clear)
     {
         pauseManager.Pause_SetActive(false);
-        gameUIManager.SetInfoPanel(false);
+        gameUIManager.SetActiveInfoPanel(false);
         keyInput.KeyDisable();
         isPaused = true;
         isClear = clear;
@@ -1191,10 +1201,10 @@ public class BMSGameManager : MonoBehaviour
 
     public async UniTask LoadScene(int scene)
     {
-        gameUIManager.NoteBombLEffectOff();
+        noteBomb.NoteBombLEffectOff();
         gameUIManager.AnimationPause(false);
         pauseManager.Pause_SetActive(false);
-        gameUIManager.SetInfoPanel(false);
+        gameUIManager.SetActiveInfoPanel(false);
         gameUIManager.FadeIn();
         await UniTask.Delay(1000);
         ReturnAllNotes();
@@ -1232,7 +1242,7 @@ public class BMSGameManager : MonoBehaviour
         resumeCountTicks += tickOffset;
         currentTicks = stopwatch.ElapsedTicks - resumeCountTicks;
         pauseManager.Pause_SetActive(false);
-        gameUIManager.SetInfoPanel(false);
+        gameUIManager.SetActiveInfoPanel(false);
         stopwatch.Start();
         _ = CountDown3();
         Thread bgmResumeThread = new Thread(ResumeBGM);
@@ -1242,28 +1252,26 @@ public class BMSGameManager : MonoBehaviour
     private async UniTask CountDown3()
     {
         isCountdown = true;
-        gameUIManager.SetActiveCountdown(true);
-        GameObject countdownBar = GameObject.Find("CountDown_Bar");
-        GameObject countdownTime = GameObject.Find("CountDown_Time");
+        gameUIManager.countdown.SetActiveCountdown(true);
         while (true)
         {
             long countdown = resumeTicks - currentTicks;
             if (countdown <= 0)
             {
-                gameUIManager.SetActiveCountdown(false);
+                gameUIManager.countdown.SetActiveCountdown(false);
                 gameUIManager.AnimationPause(false);
                 InputThreadStart();
                 if (isBGAVideoSupported) { videoPlayer.Play(); }
                 isPaused = false;
                 isCountdown = false;
-                if (!isReplay) { gameUIManager.GameUIUpdate(0, JudgeType.IGNORE, bmsResult.resultData.maxCombo, (int)(float)currentScore); }
+                if (!isReplay) { comboScore.ScoreComboUpdate(0, bmsResult.resultData.maxCombo, (int)(float)currentScore); }
                 break;
             }
             else
             {
                 float countdownMS = countdown * 0.0000001f;
                 int second = (int)countdownMS;
-                gameUIManager.SetCountdown(countdownMS - second, second, countdownBar, countdownTime);
+                gameUIManager.countdown.SetCountdownProcessivity(countdownMS - second, second);
             }
             await UniTask.Yield();
         }
@@ -1321,7 +1329,7 @@ public class BMSGameManager : MonoBehaviour
 
             SetDisplayDelayCorrection();
             RedrawNote();
-            gameUIManager.CoUpdateDisplayDelayCorrectionText();
+            gameUIManager.DisplayDelayCorrectionTextUpdateCoroutine();
         }
     }
 
@@ -1334,8 +1342,8 @@ public class BMSGameManager : MonoBehaviour
             else if (userSpeed < 10) { userSpeed = 10; }
             PlayerPrefs.SetInt("NoteSpeed", userSpeed);
             if (pauseManager.enabled) { gameUIManager.SetNoteSpeedText(); }
-            else { gameUIManager.CoUpdateInfoPanel(true); }
-            gameSpeed = CalulateSpeed();
+            else { gameUIManager.InfoPanelUpdateCoroutine(true); }
+            gameSpeed = ConvertSpeed();
 
             RedrawNote();
             RedrawVerticalLine();
@@ -1433,7 +1441,7 @@ public class BMSGameManager : MonoBehaviour
             gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
 
         if (pauseManager.enabled) { gameUIManager.SetBGAOpacityText(); }
-        else { gameUIManager.CoUpdateInfoPanel(true); }
+        else { gameUIManager.InfoPanelUpdateCoroutine(true); }
     }
 
     private void SetReplayNoteArray()

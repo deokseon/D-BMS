@@ -140,7 +140,7 @@ public class BMSParser : MonoBehaviour
             else if (bmsFile[i].Length >= 6 && string.Compare(bmsFile[i].Substring(0, 4), "#BMP", true) == 0)
             {
                 int key = Decode36(bmsFile[i].Substring(4, 2));
-                gameUIManager.bgSpriteArrayLength = gameUIManager.bgSpriteArrayLength > key ? gameUIManager.bgSpriteArrayLength : key;
+                gameUIManager.bgaTextureArrayLength = gameUIManager.bgaTextureArrayLength > key ? gameUIManager.bgaTextureArrayLength : key;
                 string extend = bmsFile[i].Substring(bmsFile[i].IndexOf('.', 0) + 1).ToLower();
                 string path = bmsFile[i].Substring(7, bmsFile[i].Length - 7);
                 if (string.Compare(extend, "mpg", true) == 0 || string.Compare(extend, "mpeg", true) == 0 ||
@@ -287,7 +287,7 @@ public class BMSParser : MonoBehaviour
                     for (int k = 7; k < iLen; k += 2)
                     {
                         int key = Decode36(bmsFile[i].Substring(k, 2));
-                        gameUIManager.bgSpriteArrayLength = gameUIManager.bgSpriteArrayLength > key ? gameUIManager.bgSpriteArrayLength : key;
+                        gameUIManager.bgaTextureArrayLength = gameUIManager.bgaTextureArrayLength > key ? gameUIManager.bgaTextureArrayLength : key;
                         if (key != 0)
                         {
                             if (pattern.bgVideoTable.ContainsKey(key))
@@ -308,7 +308,7 @@ public class BMSParser : MonoBehaviour
                     for (int k = 7; k < iLen; k += 2)
                     {
                         int key = Decode36(bmsFile[i].Substring(k, 2));
-                        gameUIManager.bgSpriteArrayLength = gameUIManager.bgSpriteArrayLength > key ? gameUIManager.bgSpriteArrayLength : key;
+                        gameUIManager.bgaTextureArrayLength = gameUIManager.bgaTextureArrayLength > key ? gameUIManager.bgaTextureArrayLength : key;
                         if (key != 0)
                         {
                             if (pattern.bgVideoTable.ContainsKey(key))
