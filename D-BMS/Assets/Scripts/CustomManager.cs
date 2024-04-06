@@ -117,8 +117,8 @@ public class CustomManager : MonoBehaviour
                                                 gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.x * 0.5f - gameUIManager.assetPacker.GetSprite("hpbar-00").bounds.size.x * 0.5f);
         customValueArray[16] = new CustomValue(GameUIManager.config.hpbarPositionY, gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y * -0.5f, gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y * -0.5f,
                                                 gameUIManager.assetPacker.GetSprite("hpbarbg").bounds.size.y * 0.5f - gameUIManager.assetPacker.GetSprite("hpbar-00").bounds.size.y);
-        customValueArray[17] = new CustomValue(GameUIManager.config.panelPosition, -7.63f, -8.889f + ObjectPool.poolInstance.GetNoteWidth() * 0.5f + gameUIManager.assetPacker.GetSprite("panel-left").bounds.size.x,
-                                                8.889f - ObjectPool.poolInstance.GetNoteWidth() * 4.5f - gameUIManager.assetPacker.GetSprite("panel-right").bounds.size.x);
+        customValueArray[17] = new CustomValue(GameUIManager.config.panelPosition, -7.63f, -8.889f + ObjectPool.poolInstance.GetLineWidth() * 0.5f + gameUIManager.assetPacker.GetSprite("panel-left").bounds.size.x,
+                                                8.889f - ObjectPool.poolInstance.GetLineWidth() * 4.5f - gameUIManager.assetPacker.GetSprite("panel-right").bounds.size.x);
         customValueArray[18] = new CustomValue(GameUIManager.config.judgeLinePosition, 0.0f, -1.0f, 2.0f);
         customValueArray[19] = new CustomValue(GameUIManager.config.panelBottomScaleX, 1.0f, 0.0f, 3.0f);
         customValueArray[20] = new CustomValue(GameUIManager.config.scoreGraphPositionOffsetX, 0.0f, -670.0f, 885.0f);
