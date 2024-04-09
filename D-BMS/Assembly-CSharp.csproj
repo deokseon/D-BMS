@@ -76,6 +76,7 @@
      <Compile Include="Assets\RuntimeSpriteSheetsGenerator\Scripts\RectanglePacking\SortableSize.cs" />
      <Compile Include="Assets\Scripts\BMPLoader.cs" />
      <Compile Include="Assets\Scripts\BMSDrawer.cs" />
+     <Compile Include="Assets\Scripts\BMSFileConverter.cs" />
      <Compile Include="Assets\Scripts\BMSFileSystem.cs" />
      <Compile Include="Assets\Scripts\BMSGameManager.cs" />
      <Compile Include="Assets\Scripts\BMSHeader.cs" />

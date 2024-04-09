@@ -823,7 +823,7 @@ public class BMSGameManager : MonoBehaviour
             noteArray[idx][noteArrayCount[idx]].failTiming = 20000000000.0d;
         }
 
-        if (!keyInput.prevKeyState[idx]) { currentLongNoteJudge[idx] = JudgeType.FAIL; }
+        if (idx == 2 ? !keyInput.prevKeyState[idx] && !keyInput.prevKeyState[5] : !keyInput.prevKeyState[idx]) { currentLongNoteJudge[idx] = JudgeType.FAIL; }
         else { if (currentLongNoteJudge[idx] == JudgeType.FAIL) { currentLongNoteJudge[idx] = JudgeType.GOOD; } }
 
         JudgeType result = currentLongNoteJudge[idx];
