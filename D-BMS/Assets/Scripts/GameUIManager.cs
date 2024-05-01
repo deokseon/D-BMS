@@ -224,6 +224,15 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
+    public bool CheckBGATextureEmpty()
+    {
+        for (int i = 0; i < bgaTextureArray.Length; i++)
+        {
+            if (bgaTextureArray[i] != transparentTexture) return false;
+        }
+        return true;
+    }
+
     public void ChangeBGA(int key)
     {
         bga.texture = bgaTextureArray[key];

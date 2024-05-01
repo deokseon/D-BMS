@@ -47,6 +47,10 @@ public class ScoreGraph : MonoBehaviour
     public void SetMaxScoreGraph(int count)
     {
         maxScoreGraph = DataSaveManager.LoadData<ScoreGraphData>("DataSave", BMSGameManager.header.fileName + "_SG.json") ?? new ScoreGraphData(count);
+        if (count != maxScoreGraph.scoreGraphList.Count)
+        {
+            maxScoreGraph = new ScoreGraphData(count);
+        }
     }
 
     private async UniTask CheckScoreGraphRankUpdate()

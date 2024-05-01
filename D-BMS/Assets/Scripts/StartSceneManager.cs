@@ -20,6 +20,8 @@ public class StartSceneManager : MonoBehaviour
     private Toggle[] toggleArray;
     [SerializeField]
     private TextMeshProUGUI[] toggleTextArray;
+    [SerializeField]
+    private GameObject convertingNoticeBoard;
     private int currentIndex;
 
     private void Awake()
@@ -58,6 +60,11 @@ public class StartSceneManager : MonoBehaviour
 
     private void Update()
     {
+        if (convertingNoticeBoard.activeSelf)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ExitButtonClick();

@@ -35,9 +35,10 @@ public class BMSFileSystem : MonoBehaviour
             bmsTextFileList = new List<string>(fileInfos.Length);
             for (int i = fileInfos.Length - 1; i >= 0; i--)
             {
-                string extend = fileInfos[i].Name.Substring(fileInfos[i].Name.IndexOf('.', 0) + 1).ToLower();
-                if (extend.CompareTo("bms") == 0 || extend.CompareTo("bme") == 0 || extend.CompareTo("bml") == 0) 
+                string extend = Path.GetExtension(fileInfos[i].Name).ToLower();
+                if (extend.CompareTo(".bms") == 0 || extend.CompareTo(".bme") == 0 || extend.CompareTo(".bml") == 0) 
                 {
+                    if (File.ReadAllLines($@"{rootPath}\TextFolder\{fileInfos[i].Name}").Length < 10) { continue; }
                     bmsTextFileList.Add(fileInfos[i].Name);
                 }
             }
@@ -107,6 +108,13 @@ public class BMSFileSystem : MonoBehaviour
         header.textFolderPath = $@"{rootPath}\TextFolder\{sname}";
         header.fileName = sname.Substring(0, sname.Length - 4);
 
+        switch (sname.Substring(sname.Length - 8, 2))
+        {
+            case "AR": header.songCategory = Category.AERY; break;
+            case "SR": header.songCategory = Category.SEORI; break;
+            default: header.songCategory = Category.NONE; break;
+        }
+
         StreamReader reader = new StreamReader($@"{rootPath}\TextFolder\{sname}", Encoding.GetEncoding(932));
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -146,14 +154,6 @@ public class BMSFileSystem : MonoBehaviour
                             }
                             break;
                         case 'I': header.artist = line.Substring(8); break;  // ARTIST
-                        case 'E':  // CATEGORY
-                            switch (line[10])
-                            {
-                                case 'A': header.songCategory = Category.AERY; break;
-                                case 'S': header.songCategory = Category.SEORI; break;
-                                default: header.songCategory = Category.NONE; break;
-                            }
-                            break;
                         case 'Y': header.lnType |= (Lntype)(1 << (line[8] - '0')); break;  // LNTYPE
                     }
                     break;
@@ -175,7 +175,7 @@ public class BMSFileSystem : MonoBehaviour
                     }
                     break;
                 case '-':  // MAIN DATA FIELD
-                    if (line.Length > 24 && line[24] == 'M') { ParseBPM(reader, header); return; }
+                    if (line.CompareTo("*---------------------- MAIN DATA FIELD") == 0) { ParseBPM(reader, header); return; }
                     break;
                 default: break;
             }

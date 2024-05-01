@@ -18,22 +18,29 @@ public class TextureDownloadManager : MonoBehaviour
         var token = this.GetCancellationTokenOnDestroy();
 
         Texture2D texture2D = null;
-        if (File.Exists(path + ".bmp"))
+        try
         {
-            var uwr = await UnityWebRequest.Get(@"file:\\" + path + ".bmp").SendWebRequest().WithCancellation(cancellationToken: token);
-            var uwrData = uwr.downloadHandler.data;
-            var bmpImage = await UniTask.RunOnThreadPool(() => loader.LoadBMP(uwrData));
-            texture2D = bmpImage.ToTexture2D();
+            if (File.Exists(path + ".bmp"))
+            {
+                var uwr = await UnityWebRequest.Get(@"file:\\" + path + ".bmp").SendWebRequest().WithCancellation(cancellationToken: token);
+                var uwrData = uwr.downloadHandler.data;
+                var bmpImage = await UniTask.RunOnThreadPool(() => loader.LoadBMP(uwrData));
+                texture2D = bmpImage.ToTexture2D();
+            }
+            else if (File.Exists(path + ".jpg"))
+            {
+                var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".jpg").SendWebRequest().WithCancellation(cancellationToken: token);
+                texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+            }
+            else if (File.Exists(path + ".png"))
+            {
+                var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".png").SendWebRequest().WithCancellation(cancellationToken: token);
+                texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+            }
         }
-        else if (File.Exists(path + ".jpg"))
+        catch (System.Exception)
         {
-            var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".jpg").SendWebRequest().WithCancellation(cancellationToken: token);
-            texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
-        }
-        else if (File.Exists(path + ".png"))
-        {
-            var uwr = await UnityWebRequestTexture.GetTexture(@"file:\\" + path + ".png").SendWebRequest().WithCancellation(cancellationToken: token);
-            texture2D = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+            texture2D = null;
         }
 
         return texture2D;

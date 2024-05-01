@@ -307,7 +307,8 @@ public class BMSGameManager : MonoBehaviour
 
         for (int i = 0; i < 5; i++) { currentKeySound[i] = 0; }
 
-        if (bgaChangeArrayCount + layerChangeArrayCount == -2 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported))
+        if (bgaChangeArrayCount + layerChangeArrayCount == -2 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported) ||
+            (!isBGAVideoSupported && gameUIManager.CheckBGATextureEmpty()))
         {
             gameUIManager.bgaOpacity.color = Color.black;
         }
@@ -315,7 +316,8 @@ public class BMSGameManager : MonoBehaviour
         {
             gameUIManager.bgaOpacity.color = new Color(0, 0, 0, (10 - PlayerPrefs.GetInt("BGAOpacity")) * 0.1f);
         }
-        if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported))
+        if (bgaChangeArrayCount == -1 || ((!string.IsNullOrEmpty(videoPlayer.url) || gameUIManager.bgImageList.Count == 0) && !isBGAVideoSupported) || 
+            (!isBGAVideoSupported && gameUIManager.CheckBGATextureEmpty()))
         {
             gameUIManager.bga.gameObject.SetActive(false);
             bgaChangeArray = new BGChange[1] { new BGChange(0, 0, 0, 0, true) };
