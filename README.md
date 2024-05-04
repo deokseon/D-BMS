@@ -12,6 +12,9 @@ BMSFiles (Split compression)
 [Split 1](https://drive.google.com/file/d/1vT6pe2wiOZ-bwi-1gY9PEk4xyQ45M88C/view?usp=sharing)<br/>
 [Split 2](https://drive.google.com/file/d/1HxrttzrgXJ5AM_R-XR7mFhP87chH79on/view?usp=sharing)<br/><br/>
 
+ ※ 원래 에리팩을 가지고 계신 분들은 에리팩 패턴 각각의 폴더를 BMSFiles/Converting 폴더에 넣고<br/>
+게임 실행 후 첫 화면에서 오른쪽 아래에 있는 Converting 버튼을 누르면 됩니다.
+
 # Game Video<br/>
 ### Play
 [![video1](http://img.youtube.com/vi/Mcmanuw70kk/0.jpg)](https://www.youtube.com/watch?v=Mcmanuw70kk)<br/><br/>
