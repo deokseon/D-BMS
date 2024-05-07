@@ -2,7 +2,7 @@ Unity RhythmGame ( EZ2ON REBOOT:R Clone Project, only 5key mode ).<br/><br/>
 This program is made for studying.<br/><br/>
 I used the music of BMS.<br/>
 
-[Trial version (D-BMS.exe)](https://drive.google.com/file/d/12ul5Ugrx6i98IZHO2ramgUApxYxZMnH9/view?usp=sharing) <br/>
+[Trial version (D-BMS.exe)](https://drive.google.com/file/d/1fENNEg53zctcG0GjaCmLjnQXOPxvYM3r/view?usp=sharing) <br/>
 
 If you want more music, download all the files below and decompress them.<br/>
 After that, put the BMSFiles folder in the D-BMS folder.<br/>
