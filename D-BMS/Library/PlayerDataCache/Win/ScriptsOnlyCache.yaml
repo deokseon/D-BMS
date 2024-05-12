@@ -2,6 +2,7 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - BMSDrawer
+    - BMSFileConverter
     - BMSFileSystem
     - BMSGameManager
     - BMSParser
@@ -685,6 +686,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14232}
     - Class: 114
+      Script: {instanceID: 14312}
+    - Class: 114
       Script: {instanceID: 14670}
     - Class: 114
       Script: {instanceID: 14690}
@@ -1249,7 +1252,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 7b0360549465bbb1383f0c129ba877ed
+      Hash: e08c654ed4e16d77324a14308f5bcd20
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: StartSceneManager
@@ -1471,7 +1474,7 @@ ScriptsOnlyBuild:
     className: ToggleController
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 661286bafabc86f97f723267e6a7201c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BMSFileConverter

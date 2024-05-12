@@ -30,8 +30,8 @@ namespace DaVikingCode.AssetPacker {
 		public void AddTextureToPack(string file, string customID = null)
 		{
 			string fileName = Path.GetFileNameWithoutExtension(file);
-			if (fileName.StartsWith("key1") || fileName.StartsWith("key2") || fileName.CompareTo("barline") == 0 || fileName.CompareTo("panel-bg") == 0 ||
-					 fileName.StartsWith("longnote") || fileName.CompareTo("keyfeedback") == 0 || fileName.StartsWith("panelbottom-") || fileName.CompareTo("verticalline") == 0)
+			if (fileName.StartsWith("key1") || fileName.StartsWith("key2") || fileName.CompareTo("barline") == 0 || fileName.StartsWith("longnote") ||
+				fileName.CompareTo("keyfeedback") == 0 || fileName.StartsWith("panel") || fileName.CompareTo("verticalline") == 0)
 			{
 				itemsToRaster[0].Add(new TextureToPack(file, customID != null ? customID : fileName));
 			}

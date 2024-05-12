@@ -15719,7 +15719,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxNoteCount: 16
   maxLongNoteCount: 5
-  maxBarCount: 30
+  maxBarCount: 80
   note:
   - {fileID: 1660616530319246603, guid: 5d15b30613ac086488379cb1ec656e5a, type: 3}
   - {fileID: 2461257564141293340, guid: 206dff2f0e661194c9d13f7cb86a8f4d, type: 3}
@@ -29518,7 +29518,7 @@ MonoBehaviour:
   layer: {fileID: 514678244}
   bgaOpacity: {fileID: 420025806}
   transparentTexture: {fileID: 2800000, guid: cf981606408410a44ad3d72937155409, type: 3}
-  bgSpriteArrayLength: 0
+  bgaTextureArrayLength: 0
   taskCount: 0
   noteBomb: {fileID: 1996424780}
   gamePanel: {fileID: 322943298}

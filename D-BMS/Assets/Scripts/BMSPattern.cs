@@ -95,13 +95,6 @@ public class BMSPattern
             bgaChanges[i].timing = GetTimingInSecond(bgaChanges[i]);
         }
         bgaChanges.Sort();
-        for (int i = bgaChanges.Count - 1; i >= 0; i--)
-        {
-            if (!bgaChanges[i].isPic)
-            {
-                bgaChanges[i].timing -= 0.4d;
-            }
-        }
 
         for (int i = 0; i < layerChanges.Count; i++)
         {
@@ -208,6 +201,7 @@ public class BMSPattern
                 {
                     int k = 0;
                     for (k = j; k < len; k++) { if (lines[i].noteList[k].extra == 0) { break; } }
+                    lines[i].noteList[k].extra = 3;
                     longNote[i].Add(lines[i].noteList[k]);
                     longNote[i].Add(new Note(lines[i].noteList[k].bar, 0, lines[i].noteList[j].beat - lines[i].noteList[k].beat, 2));
                     longNote[i].Add(lines[i].noteList[j]);
@@ -239,7 +233,7 @@ public class BMSPattern
             int preKeySound = lines[i].noteList[0].keySound;
             for (int j = 1; j < lines[i].noteList.Count; j++)
             {
-                if (lines[i].noteList[j].extra != 0) { continue; }
+                if (lines[i].noteList[j].extra != 0 && lines[i].noteList[j].extra != 3) { continue; }
                 keySoundChangeTimingList[i].Add(new KeySoundChange((preTiming + lines[i].noteList[j].timing) * 0.5d, preKeySound));
                 preTiming = lines[i].noteList[j].timing;
                 preKeySound = lines[i].noteList[j].keySound;

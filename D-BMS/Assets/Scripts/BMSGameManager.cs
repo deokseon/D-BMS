@@ -283,8 +283,14 @@ public class BMSGameManager : MonoBehaviour
                     videoPlayer.errorReceived += (a, b) => errorFlag = true;
                     videoPlayer.Prepare();
                     await UniTask.WaitUntil(() => videoPlayer.isPrepared || errorFlag);
-                    currentLoading++;
                     isBGAVideoSupported = !errorFlag;
+                    if (isBGAVideoSupported)
+                    {
+                        videoPlayer.Play();
+                        await UniTask.WaitUntil(() => videoPlayer.frame != -1);
+                        videoPlayer.Pause();
+                    }
+                    currentLoading++;
                 }
             }
             await UniTask.WaitUntil(() => gameUIManager.isPrepared == gameUIManager.taskCount + 1);
@@ -296,7 +302,6 @@ public class BMSGameManager : MonoBehaviour
             gameUIManager.SetNullBGATextureArray();
             await UniTask.WaitUntil(() => soundManager.isPrepared == soundManager.threadCount);
             await UniTask.WaitUntil(() => isFadeEnd);
-            await UniTask.Delay(3000);
         }
         else
         {
@@ -391,6 +396,9 @@ public class BMSGameManager : MonoBehaviour
             videoPlayer.Stop();
             videoPlayer.Prepare();
             await UniTask.WaitUntil(() => videoPlayer.isPrepared);
+            videoPlayer.Play();
+            await UniTask.WaitUntil(() => videoPlayer.frame != -1);
+            videoPlayer.Pause();
         }
         gameUIManager.InitBGALayer();
         ReturnAllNotes();
@@ -749,7 +757,8 @@ public class BMSGameManager : MonoBehaviour
             noteArray[idx][noteArrayCount[idx]].failTiming = 20000000000.0d;
         }
 
-        if (normalNoteArrayCount[idx] > 0 && n.beat == normalNoteArray[idx][normalNoteArrayCount[idx] - normalNoteHandleCount[idx] - 1].beat)
+        //if (normalNoteArrayCount[idx] > 0 && n.beat == normalNoteArray[idx][normalNoteArrayCount[idx] - normalNoteHandleCount[idx] - 1].beat)
+        if (n.extra == 0)
         {
             normalNoteHandleCount[idx]++;
         }

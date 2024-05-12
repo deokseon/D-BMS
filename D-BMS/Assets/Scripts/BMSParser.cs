@@ -229,7 +229,7 @@ public class BMSParser : MonoBehaviour
                     {
                         if ((lnBits & (1 << line)) != 0)
                         {
-                            pattern.AddNote(line, bar, (k - 7) / 2, beatLength, -1, 1);
+                            pattern.AddNote(line, bar + 2, (k - 7) / 2, beatLength, -1, 1);
                             lnBits &= ~(1 << line);
                             continue;
                         }
@@ -237,11 +237,11 @@ public class BMSParser : MonoBehaviour
                     }
                     if (header.lnType.HasFlag(Lntype.LNOBJ) && keySound == header.lnobj)
                     {
-                        pattern.AddNote(line, bar, (k - 7) / 2, beatLength, keySound, 1);
+                        pattern.AddNote(line, bar + 2, (k - 7) / 2, beatLength, keySound, 1);
                     }
                     else
                     {
-                        pattern.AddNote(line, bar, (k - 7) / 2, beatLength, keySound, 0);
+                        pattern.AddNote(line, bar + 2, (k - 7) / 2, beatLength, keySound, 0);
                     }
                 }
             }
@@ -259,14 +259,14 @@ public class BMSParser : MonoBehaviour
 
                         if (keySound != 0)
                         {
-                            pattern.AddBGSound(bar, (k - 7) / 2, beatLength, keySound);
+                            pattern.AddBGSound(bar + 2, (k - 7) / 2, beatLength, keySound);
                         }
                     }
                 }
                 else if (bmsFile[i][5] == '2')
                 {
                     beatC = double.Parse(bmsFile[i].Substring(7));
-                    pattern.AddNewBeatC(bar, beatC);
+                    pattern.AddNewBeatC(bar + 2, beatC);
                 }
                 else if (bmsFile[i][5] == '3')
                 {
@@ -277,7 +277,7 @@ public class BMSParser : MonoBehaviour
                     {
                         double bpm = int.Parse(bmsFile[i].Substring(k, 2), System.Globalization.NumberStyles.HexNumber);
 
-                        if (bpm != 0) { pattern.AddBPM(bar, (k - 7) / 2, beatLength, bpm); }
+                        if (bpm != 0) { pattern.AddBPM(bar + 2, (k - 7) / 2, beatLength, bpm); }
                     }
                 }
                 else if (bmsFile[i][5] == '4')
@@ -292,11 +292,11 @@ public class BMSParser : MonoBehaviour
                         {
                             if (pattern.bgVideoTable.ContainsKey(key))
                             {
-                                pattern.AddBGAChange(bar, (k - 7) / 2, beatLength, key);
+                                pattern.AddBGAChange(bar + 2, (k - 7) / 2, beatLength, key);
                             }
                             else
                             {
-                                pattern.AddBGAChange(bar, (k - 7) / 2, beatLength, key, true);
+                                pattern.AddBGAChange(bar + 2, (k - 7) / 2, beatLength, key, true);
                             }
                         }
                     }
@@ -313,12 +313,12 @@ public class BMSParser : MonoBehaviour
                         {
                             if (pattern.bgVideoTable.ContainsKey(key))
                             {
-                                pattern.AddBGAChange(bar, (k - 7) / 2, beatLength, key);
+                                pattern.AddBGAChange(bar + 2, (k - 7) / 2, beatLength, key);
                             }
                             else
                             {
                                 gameUIManager.layerImageSet.Add(key);
-                                pattern.AddLayerChange(bar, (k - 7) / 2, beatLength, key, true);
+                                pattern.AddLayerChange(bar + 2, (k - 7) / 2, beatLength, key, true);
                             }
                         }
                     }
@@ -330,12 +330,12 @@ public class BMSParser : MonoBehaviour
                     for (int k = 7; k < iLen; k += 2)
                     {
                         string key = bmsFile[i].Substring(k, 2);
-                        if (key.CompareTo("00") != 0) pattern.AddBPM(bar, (k - 7) / 2, beatLength, exBpms[key]);
+                        if (key.CompareTo("00") != 0) pattern.AddBPM(bar + 2, (k - 7) / 2, beatLength, exBpms[key]);
                     }
                 }
             }
         }
-        len = pattern.barCount + 4;
+        len = pattern.barCount + 20;
         for (int i = 0; i < len; i++)
         {
             pattern.AddBar(i, 0, 1, 0, 3);
