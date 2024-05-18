@@ -96,9 +96,16 @@ public class BMSFileSystem : MonoBehaviour
     {
         await UniTask.WaitUntil(() => isCompleteHeadersSort);
 
-        initOnStart.DrawSongUI();
+        if (selectedCategoryHeaderList.Count == 0)
+        {
+            _ = FindObjectOfType<SongSelectUIManager>().LoadStartScene();
+        }
+        else
+        {
+            initOnStart.DrawSongUI();
 
-        FindObjectOfType<SongSelectUIManager>().SetSongScrollView();
+            FindObjectOfType<SongSelectUIManager>().SetSongScrollView();
+        }
     }
 
     private void ParseHeader(string sname, out BMSHeader header)

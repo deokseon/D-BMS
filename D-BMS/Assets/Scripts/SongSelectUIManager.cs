@@ -155,7 +155,7 @@ public class SongSelectUIManager : MonoBehaviour
         fadeImage.GetComponent<Animator>().SetTrigger("FadeOut");
     }
 
-    private async UniTask LoadStartScene()
+    public async UniTask LoadStartScene()
     {
         PlayerPrefs.SetInt($"Category{PlayerPrefs.GetInt("Category")}Index", currentIndex);
         fadeImage.GetComponent<Animator>().SetTrigger("FadeIn");

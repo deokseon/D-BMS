@@ -50,12 +50,12 @@ public class BMSFileConverter : MonoBehaviour
         _ = WaitConverting();
     }
 
-    async private void ConvertingThread(int value)
+    async private void ConvertingThread(int threadIndex)
     {
         await Task.Run(() =>
         {
-            int start = (int)(value / (double)threadCount * convertingFolderNameArray.Length);
-            int end = (int)((value + 1) / (double)threadCount * convertingFolderNameArray.Length);
+            int start = (int)(threadIndex / (double)threadCount * convertingFolderNameArray.Length);
+            int end = (int)((threadIndex + 1) / (double)threadCount * convertingFolderNameArray.Length);
             for (int i = start; i < end; i++)
             {
                 FileInfo[] currentConvertingFolderFiles = new DirectoryInfo(convertingFolderNameArray[i]).GetFiles();
@@ -68,18 +68,12 @@ public class BMSFileConverter : MonoBehaviour
                     if (!CompatibleBMSFileCheck($@"{convertingFolderNameArray[i]}\{currentConvertingFolderFiles[j].Name}")) { continue; }
 
                     File.Copy($@"{convertingFolderNameArray[i]}\{currentConvertingFolderFiles[j].Name}",
-                        $@"{rootPath}\TextFolder\{Path.GetFileName(convertingFolderNameArray[i])}_AR{AllocatePatternFileIndex(rootPath, convertingFolderNameArray[i], currentConvertingFolderFiles[j].Name).ToString("D2")}.bms", true);
+                        $@"{rootPath}\TextFolder\{Path.GetFileName(convertingFolderNameArray[i])}_AR{
+                            AllocatePatternFileIndex(rootPath, convertingFolderNameArray[i], currentConvertingFolderFiles[j].Name).ToString("D2")}.bms", true);
                 }
 
                 DirectoryMove($@"{rootPath}\Converting\{Path.GetFileName(convertingFolderNameArray[i])}", $@"{rootPath}\MusicFolder\{Path.GetFileName(convertingFolderNameArray[i])}");
-                try
-                {
-                    DirectoryDelete($@"{rootPath}\Converting\{Path.GetFileName(convertingFolderNameArray[i])}");
-                }
-                catch (System.Exception e)
-                {
-                    Debug.Log(e);
-                }
+                DirectoryDelete($@"{rootPath}\Converting\{Path.GetFileName(convertingFolderNameArray[i])}");
                 lock (threadLock)
                 {
                     currentCompleteConvertingCount++;

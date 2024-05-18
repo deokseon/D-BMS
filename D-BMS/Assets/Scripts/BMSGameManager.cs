@@ -270,11 +270,17 @@ public class BMSGameManager : MonoBehaviour
             {
                 for (int i = bgaChangeArrayCount; i > -1; i--)
                 {
-                    if (!bgaChangeArray[i].isPic && File.Exists(header.musicFolderPath + pattern.bgVideoTable[pattern.bgaChanges[i].key]))
+                    if (bgaChangeArray[i].isPic) { continue; }
+                    if (File.Exists(header.musicFolderPath + pattern.bgVideoTable[pattern.bgaChanges[i].key]))
                     {
                         videoPlayer.url = "file://" + header.musicFolderPath + pattern.bgVideoTable[pattern.bgaChanges[i].key];
-                        break;
                     }
+                    else
+                    {
+                        bgaChangeArrayCount = -1;
+                        currentLoading++;
+                    }
+                    break;
                 }
 
                 if (!string.IsNullOrEmpty(videoPlayer.url))
