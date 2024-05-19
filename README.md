@@ -4,6 +4,9 @@ I used the music of BMS.<br/>
 
 [Trial version (D-BMS.exe)](https://drive.google.com/file/d/1XzxJOCF6JEvcVjDz8nPh_2BB_wDjuImT/view?usp=sharing) <br/>
 
+If you want to use Unity Project, download "Trial version" first.<br/>
+After that, put the "Skin" folder and "BMSFiles" folder in the "Trial version" folder into the Unity Project folder and use Unity Project.<br/>
+
 If you want more music, download all the files below and decompress them.<br/>
 After that, put the BMSFiles folder in the D-BMS folder.<br/>
 
